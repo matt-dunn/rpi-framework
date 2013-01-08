@@ -23,8 +23,8 @@ class MemCached implements \RPI\Framework\Cache\Data\IStore
     {
         if (!isset(self::$memCached)) {
             self::$memCached = new \Memcached();
-//            var_dump(self::$memCached->getServerList());
-//            echo "[{$this->host}][{$this->port}]";
+            //var_dump(self::$memCached->getServerList());
+            //echo "[{$this->host}][{$this->port}]";
             self::$memCached->addServer($this->host, $this->port);
         }
 
