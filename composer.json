@@ -1,0 +1,9 @@
+{
+    "name": "rpi/framework",
+    "autoload": {
+        "psr-0": {"RPI/Framework": "/"}
+    },
+    "require": {
+        "php": ">=5.3.2"
+    }
+}

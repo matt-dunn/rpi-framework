@@ -1,0 +1,52 @@
+form fieldset p.error input.t,
+form fieldset p.error select,
+form fieldset p.error textarea {
+	border:1px solid #ff0000;
+	background-color:#FFF7F5;
+	font-weight:normal;
+	border-color:#ff0000 !important;
+}
+
+form fieldset fieldset.r p.msg,
+form fieldset fieldset.error span.msg,
+form fieldset span.error span.msg,
+form fieldset p.error span.msg {
+	display:block;
+	color:#ff0000;
+	margin:0.2em 0 0.5em 0;
+	font-weight:normal;
+}
+
+form fieldset p.error,
+form fieldset span.error {
+	color:#ff0000;
+	font-weight:bold;
+}
+
+form fieldset p.error span.c,
+form fieldset p.success span.c {
+    display:block;
+    position:relative;
+}
+
+form fieldset.error:after,
+form fieldset p.error span.c:after {
+	background:url(I/Form/icons.png) no-repeat -20px 0;
+    content:'';
+    position:absolute;
+    top:5px;
+    right:0;
+    width:20px;
+    height:20px;
+}
+
+form fieldset.success:after,
+form fieldset p.success span.c:after {
+	background:url(I/Form/icons.png) no-repeat 0 0;
+    content:'';
+    position:absolute;
+    top:5px;
+    right:0;
+    width:20px;
+    height:20px;
+}

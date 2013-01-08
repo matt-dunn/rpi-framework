@@ -1,0 +1,11 @@
+form .c-form-ta textarea {
+	float:left;
+}
+
+form .c-form-ta .c-form-ta-count {
+	float:left;
+	color:#ccc;
+	margin:0 0 0 0.5em;
+    font-weight: normal;
+}
+

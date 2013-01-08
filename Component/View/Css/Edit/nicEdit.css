@@ -1,0 +1,106 @@
+.nicEdit-toolbar {
+    position:fixed !important;
+    top:0 !important;
+    left:0 !important;
+    width:auto !important;
+    line-height: 1.6em;
+    z-index: 99999999999;
+}
+
+.nicEdit-panel-outer {
+/*    border:none !important;
+    background-color:transparent !important;*/
+    overflow: hidden;
+    width: 100%;
+}
+
+
+
+.nicEdit-panel {
+    overflow:hidden;
+    zoom: 1;
+}
+
+.nicEdit-panel .nicEdit-select-contain {
+    float:left;
+/*    height:20px;*/
+    cursor: pointer;
+    overflow:hidden;
+}
+
+.nicEdit-panel .nicEdit-select-items {
+    overflow:hidden;
+}
+
+.nicEdit-panel .nicEdit-select-control {
+    overflow: hidden;
+    float:right;
+}
+
+.nicEdit-panel .nicEdit-select-txt {
+    float:left;
+    overflow: hidden;
+}
+
+
+
+
+
+.nicEdit-panel .nicEdit-btn {
+    overflow:hidden;
+}
+
+.nicEdit-panel .nicEdit-btn-contain {
+    float:left;
+}
+
+.nicEdit-panel .nicEdit-btn {
+    overflow:hidden;
+    zoom:1;
+    cursor: pointer;
+}
+
+/*.nicEdit-panel .nicEdit-btn-state-hover {
+}
+
+.nicEdit-panel .nicEdit-btn-state-active {
+}*/
+
+
+
+
+.nicEdit-pane-container {
+    line-height: 1.6em;
+    position:fixed !important;
+    left:0;
+    z-index: 99999999999 !important;
+    overflow: hidden;
+}
+
+.nicEdit-pane .nicEdit-submit {
+    float:right;
+}
+
+.nicEdit-pane-container .nicEdit-pane {
+    overflow:hidden;
+    width:auto !important;
+}
+
+.nicEdit-pane-container .nicEdit-btn-close {
+    float:right;
+    cursor: pointer;
+}
+
+.nicEdit-pane .nicEdit-itm-contain {
+    overflow: hidden;
+    cursor: pointer;
+}
+
+/*.nicEdit-pane .nicEdit-itm {
+}*/
+
+
+.nicEdit-pane .nicEdit-form-contain {
+    overflow:hidden;
+    clear:both;
+}

@@ -1,0 +1,196 @@
+.nicEdit-toolbar {
+    border-right:1px solid !section_border_color;
+    border-bottom:1px solid !section_border_color;
+    padding:0 2px 2px 0;
+    border-radius:0 0 5px 0;
+    background-color: rgb(239, 239, 239);
+    box-shadow: 0 0 10px #999;
+    font-size:1em;
+}
+
+.nicEdit-panel {
+    margin:4px 6px 2px 6px;
+}
+
+
+
+
+.nicEdit-panel .nicEdit-select-contain {
+    margin:0 4px 0 0;
+    width:9.75em;
+}
+
+.nicEdit-panel .nicEdit-select-items {
+    border:1px solid #ccc;
+    background-color: #fff;
+    padding-left:0;
+}
+
+.nicEdit-panel .nicEdit-select-control {
+    background:url(i/Component/Edit/Theme/Default/nicEditorIcons.gif) no-repeat;
+    background-position: -378px 0;
+    width:18px;
+    height:18px;
+    overflow: hidden;
+    float:right;
+    margin:2px 0 0 0;
+}
+
+.nicEdit-panel .nicEdit-select-txt {
+/*    width:66px;
+    height:14px;*/
+    margin: 0 0.4em 1px 0.4em;
+    text-align: center;
+}
+
+
+
+
+
+
+.nicEdit-panel .nicEdit-btn-contain {
+    border:1px solid #efefef;
+    margin:4px 2px;
+}
+
+.nicEdit-panel .nicEdit-btn {
+    background:url(i/Component/Edit/Theme/Default/nicEditorIcons.gif) no-repeat;
+    width: 18px;
+    height: 18px;
+}
+
+.nicEdit-panel .nicEdit-btn-state-hover {
+    border:1px solid #666;
+    background-color: #ddd;
+}
+
+.nicEdit-panel .nicEdit-btn-state-active {
+    border:1px solid #666;
+    background-color: #ccc;
+}
+
+
+.nicEdit-panel .nicEdit-btn-bold .nicEdit-btn {
+    background-position: 0 0;
+}
+.nicEdit-panel .nicEdit-btn-italic .nicEdit-btn {
+    background-position: -72px 0;
+}
+.nicEdit-panel .nicEdit-btn-ol .nicEdit-btn {
+    background-position: -126px 0;
+}
+.nicEdit-panel .nicEdit-btn-ul .nicEdit-btn {
+    background-position: -270px 0;
+}
+.nicEdit-panel .nicEdit-btn-subscript .nicEdit-btn {
+    background-position: -234px 0;
+}
+.nicEdit-panel .nicEdit-btn-superscript .nicEdit-btn {
+    background-position: -252px 0;
+}
+.nicEdit-panel .nicEdit-btn-indent .nicEdit-btn {
+    background-position: -54px 0;
+}
+.nicEdit-panel .nicEdit-btn-outdent .nicEdit-btn {
+    background-position: -144px 0;
+}
+.nicEdit-panel .nicEdit-btn-link .nicEdit-btn {
+    background-position: -324px 0;
+}
+.nicEdit-panel .nicEdit-btn-unlink .nicEdit-btn {
+    background-position: -342px 0;
+}
+.nicEdit-panel .nicEdit-btn-image .nicEdit-btn {
+    background-position: -306px 0;
+}
+.nicEdit-panel .nicEdit-btn-upload .nicEdit-btn {
+    background-position: -396px 0;
+}
+
+
+.nicEdit-pane-container {
+    box-shadow: 0 0 10px #999;
+    font-size:1em;
+}
+
+.nicEdit-pane-container .nicEdit-pane {
+    font-size: 1em;
+    border:1px solid #ccc;
+    padding:0.25em;
+    text-align: left;
+    background-color: #fff;
+}
+
+.nicEdit-pane-container .nicEdit-tooltip {
+    background-color: #ffffc9;
+    font-size:0.8em;
+    padding:0 0.25em;
+}
+
+.nicEdit-pane-container .nicEdit-btn-close {
+    height:16px;
+    width:16px;
+    background:url(i/Component/Edit/Theme/Default/nicEditorIcons.gif) no-repeat;
+    background-position: -360px 0;
+}
+
+.nicEdit-pane .nicEdit-itm-contain {
+    border-bottom:1px solid #e0e0e0;
+    width:200px;
+    text-align: left;
+}
+
+.nicEdit-pane .nicEdit-itm {
+    padding:0.25em 0.5em;
+}
+
+.nicEdit-pane .nicEdit-sel {
+    background-color:#ccc;
+}
+
+.nicEdit-pane form {
+    width:20em;
+    padding:0.5em;
+}
+
+.nicEdit-pane .nicEdit-h {
+    font-size:1em;
+    font-weight:bold;
+    margin:0.25em 0 0.5em 0;
+}
+
+.nicEdit-pane form label {
+    margin:0.25em 0.5em 0.25em 0;
+    width:5em;
+    text-align: right;
+    float:left;
+}
+
+.nicEdit-pane form input,
+.nicEdit-pane form textarea,
+.nicEdit-pane form select {
+    margin:0.25em 0;
+    padding:2px;
+    font-size:1em;
+    border:1px solid #ccc;
+}
+
+.nicEdit-pane form input,
+.nicEdit-pane form textarea {
+    width:14em;
+}
+
+.nicEdit-pane .nicEdit-submit {
+    margin:0.25em 0;
+    padding:0.1em 0.75em;
+    background-color: #efefef;
+    border:1px solid #ccc;
+    clear:both;
+    cursor: pointer;
+    width:auto;
+}
+
+.nicEdit-pane form .nicEdit-file {
+    border:1px solid #ccc;
+    width:10em;
+}

@@ -1,0 +1,119 @@
+.document {
+	line-height: 1.6;
+/*	overflow: hidden;*/
+/*	font-size:1.2em;*/
+}
+
+.document p {
+	margin:0.5em 0 0.7em 0;
+}
+
+.document em {
+	font-style: italic;
+}
+
+.document ol {
+	margin:0.5em 0 0.5em 1.75em;
+	list-style: decimal outside none;
+}
+
+.document ol ol {
+	list-style: lower-alpha outside none;
+}
+
+.document ol ol ol {
+	list-style: lower-roman outside none;
+}
+
+.document ul {
+	margin:0.5em 0 0.5em 1em;
+	list-style-position: outside;
+	list-style-type: none;
+}
+
+.document ul li {
+	margin:0.2em 0;
+	background: url(i/Document/bullet.gif) no-repeat 0 0.7em;
+	padding:0 0 0 1em;
+}
+
+.document h2,
+.document h3 {
+	font-weight: bold;
+	clear:both;
+	margin:0.25em 0 0.75em 0;
+}
+
+.document h4,
+.document h5,
+.document h6 {
+	font-weight: bold;
+	clear:both;
+	margin:1em 0 0.5em 0;
+	font-size:1em;
+}
+
+.document span.c-caption {
+	border:1px solid !section_border_color;
+	float:left;
+	margin:0.25em 0.75em 0.5em 0;
+}
+
+.document img {
+    max-width:100%;
+}
+
+.document img.left,
+.document span.c-caption-left {
+	float:left;
+	clear:both;
+	margin:0.25em 0.75em 0.5em 0;
+}
+
+.document img.right,
+.document span.c-caption-right {
+	float:right;
+	clear:both;
+	margin:0.25em 0 0.5em 0.75em;
+}
+
+.document span.c-caption,
+.document span.c-caption span {
+	display:block;
+}
+
+.document span.c-caption span {
+	padding:0.5em;
+}
+
+.document code {
+	font-size:1.2em;
+	font-family:"Courier New", monospace;
+}
+
+.document blockquote {
+    border-left: 4px solid #bbb;
+    background: #eee url(i/Document/quote-bg-content.png) no-repeat scroll right bottom;
+    padding:0.5em 0.5em 22px 1.25em;
+	margin:1em 0 1em 3em;
+}
+
+.document pre {
+/*	line-height:0.7;*/
+	margin:0.5em 0;
+	padding:0.25em 0.5em;
+	background-color:#f5f5f5;
+	font-family:"Courier New", monospace;
+    overflow: hidden;
+}
+
+.document .c-intro {
+    clear: both;
+    color: #485444;
+    display: block;
+    font-family: !type_intro_font_family;
+    font-size: 1.25em;
+    line-height: 1.4;
+    margin-bottom: 0.8888em;
+}
+

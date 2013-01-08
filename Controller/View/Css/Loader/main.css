@@ -1,0 +1,11 @@
+#RPI_webService_call_loading {
+	position:fixed;
+	top:0;
+	left:0;
+	width:20px;
+	height:20px;
+	overflow:hidden;
+	background:url(i/Controller/Loader/loading.gif) no-repeat;
+	margin:5px 0 0 5px;
+}
+

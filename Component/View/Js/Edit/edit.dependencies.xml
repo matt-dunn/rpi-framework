@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dependencies>
+	<dependency name="../../../../View/Js/webService.js"/>
+	<dependency name="../../../../../Vendor/jQuery/plugins/jquery.htmlClean.js"/>
+	<dependency name="nicEdit.js"/>
+
+    <dependency name="../../Css/Edit/edit.css"/>
+    <dependency name="../../Css/Edit/nicEdit.css"/>
+</dependencies>

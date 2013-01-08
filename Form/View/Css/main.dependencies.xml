@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dependencies>
+	<dependency name="select.css"/>
+	<dependency name="fieldset.css"/>
+	<dependency name="radio.css"/>
+	<dependency name="button.css"/>
+	<dependency name="count.css"/>
+	<dependency name="Error/form.css"/>
+</dependencies>

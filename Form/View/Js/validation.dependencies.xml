@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dependencies>
+	<dependency name="../../../View/Js/core.js"/>
+	<dependency name="../../../../Vendor/jQuery/jquery.js"/>
+	<dependency name="../../../../Vendor/jQuery/plugins/jquery.domec.js"/>
+<!--	<dependency name="../../../../Vendor/jQuery/plugins/jqueryui/jquery.ui.effect.js"/>
+	<dependency name="../../../../Vendor/jQuery/plugins/jqueryui/jquery.ui.effect-highlight.js"/>-->
+	<dependency name="../../../../Vendor/jQuery/plugins/jquery.caret.js"/>
+	<dependency name="../../../../Vendor/jQuery/plugins/jquery.overlay.js"/>
+	<dependency name="../../../View/Js/webService.js"/>
+</dependencies>

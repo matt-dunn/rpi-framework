@@ -1,0 +1,82 @@
+form fieldset p input.t,
+form fieldset p select {
+	padding:0.25em 0;
+}
+
+form fieldset p input.t:focus,
+form fieldset p select:focus,
+form fieldset p textarea:focus {
+	/* background-color:#FFF3F1; */
+	background-color: #E9F8CF;
+}
+
+form fieldset p.options {
+	margin:0.25em 0;
+	text-align:right;
+}
+
+form fieldset p.options .b {
+	margin-left:1em;
+}
+
+form fieldset span.ro {
+	padding:0.25em 0;
+	display:block;
+	font-weight:bold;
+	float:left;
+}
+
+form fieldset span.date {
+	display:block;
+	float:left;
+}
+
+form fieldset span.date-format {
+	font-size: 0.9em;
+	display:block;
+	overflow:hidden;
+	margin:0 0 0 0.5em;
+	color:#999;
+	font-weight: normal;
+}
+
+form .placeholder {
+	color:inherit !important;
+}
+
+form .placeholder-default {
+	color:#999 !important;
+}
+
+form input.t,
+form select,
+form textarea {
+	border:1px solid #999;
+	margin:1px;
+	padding:3px 1px !important;
+    border-radius:3px !important;
+    -moz-border-radius:3px !important;
+    -webkit-border-radius:3px !important;
+}
+
+form textarea {
+	width:20em;
+	min-width:40%;
+	min-height:2em;
+}
+
+form input.t {
+	width:16em;
+}
+
+form input.t:focus,
+form select:focus,
+form textarea:focus {
+	background-color: #f9edf1;
+	border:2px solid #333 !important;
+	margin:0;
+	outline:none !important;
+}
+
+
+

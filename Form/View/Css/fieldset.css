@@ -1,0 +1,48 @@
+form fieldset {
+	border:1px solid !form_border_color;
+/*	background:url(i/common/gradient-section.gif) repeat-x bottom;*/
+	background-color:!form_background_color;
+	padding:0.75em;
+	margin:0 0 1em 0;
+    border-radius:5px;
+    -moz-border-radius:5px;
+    -webkit-border-radius:5px;
+    overflow:hidden;
+}
+
+form fieldset fieldset {
+	border:none;
+	background-image:none;
+	margin:0;
+	padding:0;
+    border-radius:0;
+    -moz-border-radius:0;
+    -webkit-border-radius:0;
+}
+
+form fieldset p {
+	clear:both;
+	overflow:hidden;
+}
+
+form fieldset > fieldset.r legend span.m,
+form fieldset span.m {
+	color:#ff0000 !important;
+	font-weight:bold;
+}
+
+form fieldset p label {
+	width:12em;
+	float:left;
+	padding:0.25em 0;
+}
+
+form fieldset p.disabled {
+	color:#999;
+}
+
+form fieldset fieldset span.t {
+	position:relative;
+	top:3px;
+}
+

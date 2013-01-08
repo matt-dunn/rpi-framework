@@ -1,0 +1,92 @@
+/*body.component_js .component-editable {
+    border:1px dashed #f0f0f0;
+    position:relative;
+    border-radius:4px;
+    -moz-border-radius:4px;
+    -webkit-border-radius:4px;
+    overflow:hidden;
+}*/
+
+body.component_js .component-editmode {
+    color: #333;
+}
+
+body.component_js .component-editable div.editable {
+    padding:0.5em;
+    margin:0.5em 0;
+}
+
+body.component_js .component-editable .editable {
+    outline: none;
+    border:1px solid transparent;
+    padding:0.15em 0.5em;
+    
+    cursor:text !important;
+    background-color:#f9f9f9 !important;
+    border:1px solid !section_border_color !important;
+    border-radius:5px !important;
+}
+
+body.component_js .component-editmode div.editable {
+    border-radius:5px;
+}
+
+body.component_js .component-editable .editable:focus {
+	background-color: #E9F8CF !important;
+}
+
+body.component_js .component-editable select.editable {
+    padding:0;
+    border-radius: 0;
+}
+
+.component-editable ul.options {
+    display: none;
+}
+
+body.component_js .component-editable ul.options {
+    color: #333;
+    display: block;
+    float:right;
+/*    margin:-0.5em -0.5em 0 0;*/
+/*    border-bottom:1px solid !section_border_color;
+    border-left:1px solid !section_border_color;*/
+    border:1px solid !section_border_color;
+    border-radius:0 0 0 8px;
+    -moz-border-radius:0 0 0 8px;
+    -webkit-border-radius:0 0 0 8px;
+    overflow:hidden;
+    background-color: #fff;
+}
+
+body.component_js .component-editable ul.options li {
+    float:left;
+    padding:0.25em 0.5em;
+    border-right:1px solid !section_border_color;
+    cursor:pointer;
+}
+
+body.component_js .component-editable ul.options li.l {
+    border:none;
+}
+
+body.component_js .component-editable ul.options li.s,
+body.component_js .component-editable ul.options li:hover {
+    background-color:#eee;
+}
+
+body.component_js .component-editable ul.options li.d {
+    color:#ccc;
+    cursor:default;
+}
+
+body.component_js .component-editable ul.options li.d:hover {
+    background-color:transparent;
+}
+
+body.component_js .component-editable div.autosave-msg {
+    float:right;
+    color:#ccc;
+    font-size:0.85em;
+}
+

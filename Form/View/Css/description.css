@@ -1,0 +1,55 @@
+form fieldset div.desc div.desc-c {
+    border:1px solid #ccc;
+    background-color: #fff;
+    padding:0.25em 0.5em;
+    font-size:0.85em;
+    color:#999;
+    border-radius: 0 0 8px 8px;
+    margin:0 0 2em 0;
+}
+
+body.component_js form fieldset div.desc {
+    position:relative;
+}
+
+body.component_js form fieldset div.desc.f > p,
+body.component_js form fieldset div.desc.f > fieldset {
+    position:relative;
+    border:3px solid #333;
+    border-radius: 8px 8px 0 8px;
+    padding:0.25em 0.5em;
+    background-color:#f5f5f5;
+    z-index:4000;
+    box-shadow: 0 5px 5px #999;
+    padding:0.75em 0.5em;
+    margin:0;
+}
+
+body.component_js form fieldset div.desc div.desc-c {
+    display:none;
+    border:none;
+    background-color: inherit;
+    padding:0;
+    font-size:inherit;
+    border-radius: 0;;
+    margin:0;
+    color:#333;
+}
+
+body.component_js form fieldset div.desc.f div.desc-c {
+    border-radius: 0 0 8px 8px;
+    width:50%;
+    font-size:0.95em;
+    display:block;
+    position: absolute;
+    margin:-3px 0 0 -2px;
+    right:0;
+    padding:0 0.75em;
+    border-left:3px solid #333;
+    border-right:3px solid #333;
+    border-bottom:3px solid #333;
+    background-color:#f5f5f5;
+    z-index:4000;
+    box-shadow: 0 5px 5px #999;
+}
+

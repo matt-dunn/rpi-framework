@@ -1,0 +1,31 @@
+form button.b {
+	border:1px solid !form_button_border_color;
+	background-color:!form_button_background_color;
+	color:#fff;
+	font-family: !type_header_font_family;
+/*	font-size:1.1em;*/
+	padding:0.25em 0.5em;
+	line-height:1;
+	margin:0 0 0 0.5em;
+	letter-spacing:0.03em;
+	float:right;
+    cursor:pointer;
+}
+
+form a.b-cancel {
+	color:#fff;
+	font-family: !type_header_font_family;
+	font-size:1.1em;
+	margin-left:1em;
+	border:1px solid #333;
+	background-color:#666;
+	padding:0.15em 0.5em;
+	display:block;
+	float:right;
+	cursor: default;
+	text-decoration: none;
+}
+
+form a.b-cancel:hover {
+	color:#fff;
+}

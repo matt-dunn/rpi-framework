@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<test _class="stdClass" _type="object">
+	<test-property-1 _type="string">value 1</test-property-1>
+	<test-property-2 _type="integer">42</test-property-2>
+	<test-property-3 _type="boolean"/>
+	<test-property-4 _type="boolean">1</test-property-4>
+	<test-property-5 _type="array">
+		<item _type="integer">1</item>
+		<item _type="integer">2</item>
+		<item _type="integer">3</item>
+		<item _type="integer">4</item>
+		<item _type="integer">42</item>
+	</test-property-5>
+	<test-property-8 _type="array">
+		<prop1 _type="integer">42</prop1>
+		<prop2 _type="boolean"/>
+		<prop3 _type="boolean">1</prop3>
+		<prop4 _type="string">prop 4</prop4>
+		<prop5 _type="array">
+			<item _type="integer">1</item>
+			<item _type="integer">2</item>
+			<item _type="integer">3</item>
+		</prop5>
+		<prop6 _type="array">
+			<prop1_1 _type="integer">42</prop1_1>
+		</prop6>
+	</test-property-8>
+	<invalid_node_name_1 _type="string">value 2</invalid_node_name_1>
+	<test-propert-value-encoding _type="string">value &amp; ' " &#xA3; &lt; &gt;</test-propert-value-encoding>
+</test>

@@ -1,0 +1,128 @@
+/* -----------------
+BASIC STYLING
+(c) RPI Ltd.
+-------------------- */
+
+/* resets */
+
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, legend, input, textarea, p, blockquote, th, td { 
+	margin:0;
+	padding:0;
+}
+
+body {
+	line-height:1.6;
+	font-size:85%;
+	color:#000;
+	background:#fff;
+	font-family:Verdana, Arial, Tahoma, Helvetica, sans-serif;
+}
+
+ol, ul {
+	list-style:none;
+}
+
+table {
+	border-collapse:collapse;
+	border-spacing:0;
+}
+
+caption, th, td {
+	text-align:left;
+	font-weight:normal;
+}
+
+fieldset, iframe {
+	border:none;
+}
+
+abbr, acronym,
+img {
+	border:0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight:normal;
+	margin:0.25em 0 0.5em 0 0 0;
+}
+
+h1 {
+	font-size: 2.1em;
+}
+
+h2 {
+	font-size: 1.5em;
+}
+
+h3 {
+	font-size: 1.25em;
+}
+
+h4, h5, h6 {
+	font-size: 1.1em;
+}
+
+p {
+	margin:0.5em 0;
+}
+
+input,
+button,
+textarea {
+	font-size:1em;
+	font-family:Tahoma, Arial, Verdana, Helvetica, sans-serif; 
+}
+
+input.t {
+	padding:1px 0;
+}
+
+blockquote, q {
+	quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+
+address,caption,cite,code,dfn,th,var {
+	font-style:normal;
+	font-weight:normal;
+}
+
+sup,
+sub {
+	height: 0;
+	line-height: 1;
+	vertical-align: baseline;
+	_vertical-align: bottom;
+	position: relative;
+
+}
+
+sup {
+	bottom: 1ex;
+}
+
+sub {
+	top: .5ex;
+}
+
+/* end resets */
+
+.access {
+	position:absolute !important;
+	top:-500em !important;
+	left:0 !important;
+	height:1px !important;
+	width:1px !important;
+	margin:-500em !important;
+}
+
+th.access,
+td.access {
+	display:none;
+}

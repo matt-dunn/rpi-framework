@@ -1,0 +1,100 @@
+.h-messages .h,
+.c-messages .h {
+    font-size:1em;
+    font-weight: bold;
+    margin:0 0 0.75em 0;
+    padding:0;
+}
+
+.h-messages .error,
+.c-messages .error,
+.h-messages .warning,
+.c-messages .warning,
+.h-messages .info,
+.c-messages .info,
+.h-messages .custom,
+.c-messages .custom {
+    border-radius:8px;
+    -moz-border-radius:8px;
+    -webkit-border-radius:8px;
+	margin:0 0 0.5em 0;
+    padding:0.5em;
+}
+
+.h-messages .error,
+.c-messages .error {
+	border:2px solid #ff0000;
+	background-color:#FFF7F5;
+}
+
+.h-messages .warning,
+.c-messages .warning {
+	border:2px solid #ffff00;
+	background-color:#ffff00;
+    color:#333;
+}
+
+.h-messages .warning a,
+.c-messages .warning a {
+    color:#333;
+}
+
+.h-messages .info,
+.c-messages .info,
+.h-messages .custom,
+.c-messages .custom {
+	border:2px solid #444400;
+	background-color:green;
+    color:#fff;
+}
+
+.h-messages .info a,
+.c-messages .info a,
+.h-messages .custom a,
+.c-messages .custom a {
+    color:#fff;
+}
+
+
+
+
+div#h-errors .h {
+	margin:0;
+	padding:0.25em 0.5em;
+	background-color:#ff0000;
+	color:#fff;
+	font-size:1em;
+	font-weight:bold;
+}
+
+div#h-errors a {
+	color:#000 !important;
+}
+
+div#h-errors.information {
+	border-color:#5A9F59;
+	background-color:#EFFFEF;
+}
+
+div#h-errors.information .h {
+	background-color:#5A9F59;
+}
+
+div#h-errors ul {
+	margin:0.5em 2em;
+	padding:0;
+	list-style:square;
+}
+
+div#h-errors ul li {
+	line-height: 1.5;
+	margin:0;
+	padding:0;
+}
+
+div#h-errors p {
+	margin:0.5em 0.75em;
+	padding:0;
+	line-height: 1.5;
+}
+
