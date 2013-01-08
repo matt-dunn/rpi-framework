@@ -170,12 +170,15 @@ class View
         return self::getDataViews($componentId);
     }
 
-    public static function createComponentsByComponentId($componentId, array $options = null)
+    public static function createComponentsByComponentId($componentId, array $options = null, $type = null)
     {
         $componentsInfo = self::getDataViewByComponenId($componentId);
         if ($componentsInfo !== false) {
             $components = self::createComponentFromViewData(array($componentsInfo), null, null, $options);
             if ($components !== false && count($components) > 0) {
+                if (isset($type) && !$components[0] instanceof $type) {
+                    throw new \Exception("'".get_class($components[0])."' must be an instance of '$type'");
+                }
                 return $components[0];
             }
         }
