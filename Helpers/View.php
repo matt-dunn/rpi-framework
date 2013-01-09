@@ -339,6 +339,10 @@ class View
                                     $value = true;
                                 } elseif ($value == "false") {
                                     $value = false;
+                                } elseif (ctype_digit($value)) {
+                                    $value = (int) $value;
+                                } elseif (is_numeric($value)) {
+                                    $value = (double) $value;
                                 }
                                 $contentOptions[$contentChild->getAttribute("name")] = $value;
                             }
@@ -452,6 +456,10 @@ class View
                             $value = true;
                         } elseif ($value == "false") {
                             $value = false;
+                        } elseif (ctype_digit($value)) {
+                            $value = (int) $value;
+                        } elseif (is_numeric($value)) {
+                            $value = (double) $value;
                         }
                         $componentOptions[$componentChild->getAttribute("name")] = $value;
                     }
