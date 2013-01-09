@@ -4,6 +4,8 @@ namespace RPI\Framework;
 
 abstract class Component extends \RPI\Framework\Controller
 {
+    const COMPONENT_OPTIONS = "match,componentId,typeId,viewMode,viewType,componentView,editable,editMode,order";
+    
     public $componentId;
     
     /**
@@ -29,7 +31,9 @@ abstract class Component extends \RPI\Framework\Controller
     public $viewType = null;
     public $componentView = null;
     
-    public $controllerOptions = null;
+    public $componentOrder = null;
+    
+    public $componentOptions = null;
     
     protected $cacheKey = false;
     
@@ -37,14 +41,25 @@ abstract class Component extends \RPI\Framework\Controller
     
     public function __construct($id = null, array $options = null, \RPI\Framework\Views\IView $viewRendition = null)
     {
+        $componentOptions = explode(",", self::COMPONENT_OPTIONS);
+        $configOptions = array();
+        
         $this->type = get_called_class();
         $this->safeTypeName = str_replace("\\", "_", $this->type);
 
         $this->id = $id;
+        
         if (!isset($options)) {
             $options = array();
         }
-        $this->options = $options;
+        
+        foreach ($options as $name => $value) {
+            if (in_array($name, $componentOptions)) {
+                $this->options[$name] = $value;
+            } else {
+                $configOptions[$name] = $value;
+            }
+        }
 
         if (isset($this->options["match"])) {
             $match = eval($this->options["match"]);
@@ -55,7 +70,6 @@ abstract class Component extends \RPI\Framework\Controller
         
         if (isset($this->options["componentId"])) {
             $this->componentId = $this->options["componentId"];
-            unset($this->options["componentId"]);
         }
 
         if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
@@ -69,20 +83,38 @@ abstract class Component extends \RPI\Framework\Controller
         if (!isset($this->componentId)) {
             $this->componentId = $this->id;
         }
+        
         $this->typeId = (isset($this->options["typeId"]) ? $this->options["typeId"] : null);
+        
         $this->viewMode = (isset($this->options["viewMode"]) ? $this->options["viewMode"] : null);
+        
         $this->componentView = (isset($this->options["componentView"])
                 && $this->options["componentView"] != "" ? $this->options["componentView"] : "default");
+        
         $this->viewType = "component".(isset($this->id) && $this->id !== "" ? "_".$this->id : "");
 
         $this->editable = (\RPI\Framework\Helpers\Utils::getNamedValue($this->options, "editable", false));
         $this->editMode = (\RPI\Framework\Helpers\Utils::getNamedValue($this->options, "editMode", false));
 
+        $this->componentOrder = (\RPI\Framework\Helpers\Utils::getNamedValue($this->options, "order", null));
+        
         if (isset($viewRendition)) {
             $this->setView($viewRendition);
         }
 
+        $this->componentOptions = $this->getComponentOptions($configOptions);
+        if (!$this->componentOptions instanceof \RPI\Framework\Component\Options) {
+            throw new \Exception(
+                "Invalid type returned from Component::getOptions. Must be of type '\RPI\Framework\Component\Options'."
+            );
+        }
+        
         $this->init();
+    }
+    
+    protected function getComponentOptions(array $options)
+    {
+        return new \RPI\Framework\Component\Options(array(), $options);
     }
     
     public function show()
@@ -109,8 +141,8 @@ abstract class Component extends \RPI\Framework\Controller
     public function process()
     {
         $controller = $this->getController();
-        if (isset($controller) && isset($controller->options)) {
-            $this->controllerOptions = $controller->options;
+        if (isset($controller) && isset($controller->controllerOptions)) {
+            $this->controllerOptions = $controller->controllerOptions;
         }
 
         if ($this->cacheKey !== false && $this->isCacheable()) {

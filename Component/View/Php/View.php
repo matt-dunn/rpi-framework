@@ -10,7 +10,7 @@ abstract class View extends \RPI\Framework\View\Php\Message\View implements \RPI
         $sectionOptionsHTML = "";
         $className = trim(
             "component ".$controller->safeTypeName." "
-            .\RPI\Framework\Helpers\Utils::getNamedValue($controller->options, "className", "")
+            .$controller->componentOptions->get("className")
         );
 
         if ($controller instanceof \RPI\Framework\Component) {
