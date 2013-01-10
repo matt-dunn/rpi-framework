@@ -4,31 +4,75 @@ namespace RPI\Framework;
 
 abstract class Controller
 {
-    protected $type;
+    /**
+     *
+     * @var string
+     */
     public $safeTypeName;
 
-    private $parentController = null;
-
+    /**
+     *
+     * @var array RPI\Framework\Component
+     */
     public $components = null;
+    
+    /**
+     *
+     * @var object
+     */
     public $model = null;
+    
+    /**
+     *
+     * @var \RPI\Framework\Component\Options 
+     */
     public $options = null;
 
-    public $contentType;
+    /**
+     *
+     * @var string
+     */
     public $id = null;
-
+    
+    /**
+     *
+     * @var string
+     */
     public $viewType = null;
 
-    private $cacheKey = null;
-
+    /**
+     *
+     * @var string
+     */
+    protected $type;
+    
+    /**
+     *
+     * @var string
+     */
     protected $view = null;
 
+    /**
+     *
+     * @var array 
+     */
     protected $messages = null;
+
+    /**
+     *
+     * @var string
+     */
+    protected static $pageTitle = null;
+
+    /**
+     *
+     * @var string
+     */
+    protected $cacheKey = false;
 
     private static $controller = null;
 
-    protected static $pageTitle = null;
-
-    private static $authenticatedUser = null;
+    private $parentController = null;
 
     public function __construct($id = null, array $options = null)
     {
@@ -62,11 +106,10 @@ abstract class Controller
         if (!isset($options)) {
             $options = array();
         }
-        $this->options = $options;
 
         if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
             $this->cacheKey =
-                implode("_", $this->options)."_".$this->id."_".\RPI\Framework\Helpers\Utils::currentPageURI(true);
+                implode("_", $options)."_".$this->id."_".\RPI\Framework\Helpers\Utils::currentPageURI(true);
         }
 
         if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === false
@@ -74,7 +117,7 @@ abstract class Controller
             $this->type = get_called_class();
             $this->safeTypeName = str_replace("\\", "_", $this->type);
 
-            $viewData = $this->getDataView("layout", $this->type, $this->contentType, $this->id);
+            $viewData = $this->getDataView("layout", $this->type, null, $this->id);
             if (!isset($this->viewType) && $viewData !== false && isset($viewData["id"])) {
                 $viewType = $viewData["id"];
                 $this->viewType = $viewType;
@@ -89,21 +132,47 @@ abstract class Controller
             }
 
             if (isset($viewData["options"])) {
-                $this->options = array_merge($this->options, $viewData["options"]);
+                $options = array_merge($options, $viewData["options"]);
+            }
+
+            $this->options = $this->getComponentOptions($this->parseOptions($options));
+            if (!$this->options instanceof \RPI\Framework\Component\Options) {
+                throw new \Exception(
+                    "Invalid type returned from Component::getOptions. ".
+                    "Must be of type '\RPI\Framework\Component\Options'."
+                );
             }
 
             if (isset($viewData["viewRendition"])) {
                 $this->setView(\RPI\Framework\Helpers\Reflection::createObjectByTypeInfo($viewData["viewRendition"]));
             }
 
-            if (isset($this->options["pageTitle-localisationId"])) {
-                $this->setPageTitle(t($this->options["pageTitle-localisationId"]));
-            }
-
             $this->init();
 
             $this->createComponents();
         }
+    }
+    
+    protected function getComponentOptions(array $options)
+    {
+        return new \RPI\Framework\Component\Options(array(), $options);
+    }
+    
+    protected function parseOptions(array $options)
+    {
+        $controllerOptions = array();
+        $properties = array_keys(get_object_vars($this));
+        foreach ($options as $name => $value) {
+            if (isset($value)) {
+                if (in_array($name, $properties)) {
+                    $this->$name = $value;
+                } else {
+                    $controllerOptions[$name] = $value;
+                }
+            }
+        }
+
+        return $controllerOptions;
     }
 
     public function __sleep()
@@ -141,7 +210,7 @@ abstract class Controller
     public function createComponents()
     {
         $componentsCreated = false;
-        $viewData = \RPI\Framework\Helpers\View::getDataView("layout", $this->type, $this->contentType, $this->id);
+        $viewData = \RPI\Framework\Helpers\View::getDataView("layout", $this->type, null, $this->id);
 
         if ($viewData !== false && isset($viewData["data"]) && isset($viewData["data"]["components"])) {
             $components = \RPI\Framework\Helpers\View::createComponentFromViewData(
@@ -338,15 +407,6 @@ EOT;
                 self::$pageTitle
             );
         }
-    }
-
-    public function getAuthenticatedUser()
-    {
-        if (!isset(self::$authenticatedUser)) {
-            self::$authenticatedUser = \RPI\Framework\Services\Authentication\Service::getAuthenticatedUser();
-        }
-
-        return self::$authenticatedUser;
     }
 
     public function findComponents($componentClassName)

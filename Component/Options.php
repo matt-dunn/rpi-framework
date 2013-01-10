@@ -69,7 +69,7 @@ class Options
         }
     }
     
-    public function get($name)
+    public function __get($name)
     {
         if (isset($this->availableOptions[$name])) {
             $optionDetails = $this->availableOptions[$name];
@@ -81,5 +81,22 @@ class Options
         } else {
             return null;
         }
+    }
+    
+    public function __sleep()
+    {
+        return array(
+            "options"
+        );
+    }
+    
+    public function __invoke()
+    {
+        return $this->options;
+    }
+    
+    public function __isset($name)
+    {
+        return isset($this->availableOptions[$name]);
     }
 }

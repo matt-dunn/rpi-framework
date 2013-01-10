@@ -4,8 +4,10 @@ namespace RPI\Framework;
 
 abstract class Component extends \RPI\Framework\Controller
 {
-    const COMPONENT_OPTIONS = "match,componentId,typeId,viewMode,viewType,componentView,editable,editMode,order";
-    
+    /**
+     * Unique ID of the component
+     * @var UUID
+     */
     public $componentId;
     
     /**
@@ -25,96 +27,82 @@ abstract class Component extends \RPI\Framework\Controller
      * @var bool 
      */
     public $isDynamic = false;
-    
+
+    /**
+     *
+     * @var string
+     */
     public $typeId = null;
+    
+    /**
+     *
+     * @var string
+     */
     public $viewMode = null;
-    public $viewType = null;
-    public $componentView = null;
     
-    public $componentOrder = null;
+    /**
+     *
+     * @var string
+     */
+    public $componentView = "default";
+
+    /**
+     *
+     * @var int 
+     */
+    public $order = null;
     
-    public $componentOptions = null;
-    
-    protected $cacheKey = false;
+    /**
+     * Options set on the page controller
+     * @var array
+     */
+    public $controllerOptions = null;
     
     private $visible = true;
     
     public function __construct($id = null, array $options = null, \RPI\Framework\Views\IView $viewRendition = null)
     {
-        $componentOptions = explode(",", self::COMPONENT_OPTIONS);
-        $configOptions = array();
-        
         $this->type = get_called_class();
         $this->safeTypeName = str_replace("\\", "_", $this->type);
 
         $this->id = $id;
         
+        if (!isset($this->componentId)) {
+            $this->componentId = $this->id;
+        }
+        
         if (!isset($options)) {
             $options = array();
         }
-        
-        foreach ($options as $name => $value) {
-            if (in_array($name, $componentOptions)) {
-                $this->options[$name] = $value;
-            } else {
-                $configOptions[$name] = $value;
-            }
+        $this->options = $this->getComponentOptions($this->parseOptions($options));
+        if (!$this->options instanceof \RPI\Framework\Component\Options) {
+            throw new \Exception(
+                "Invalid type returned from Component::getOptions. Must be of type '\RPI\Framework\Component\Options'."
+            );
         }
-
-        if (isset($this->options["match"])) {
-            $match = eval($this->options["match"]);
+        
+        $this->viewType = "component".(isset($this->id) && $this->id !== "" ? "_".$this->id : "");
+        
+        if (isset($options["match"])) {
+            $match = eval($options["match"]);
             if ($match === false) {
                 $this->visible = false;
             }
-        }
-        
-        if (isset($this->options["componentId"])) {
-            $this->componentId = $this->options["componentId"];
         }
 
         if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
             $this->cacheKey =
                 implode(
                     "_",
-                    $this->options
+                    $options
                 )."_".$this->componentId."_".\RPI\Framework\Helpers\Utils::currentPageURI(true);
         }
-
-        if (!isset($this->componentId)) {
-            $this->componentId = $this->id;
-        }
-        
-        $this->typeId = (isset($this->options["typeId"]) ? $this->options["typeId"] : null);
-        
-        $this->viewMode = (isset($this->options["viewMode"]) ? $this->options["viewMode"] : null);
-        
-        $this->componentView = (isset($this->options["componentView"])
-                && $this->options["componentView"] != "" ? $this->options["componentView"] : "default");
-        
-        $this->viewType = "component".(isset($this->id) && $this->id !== "" ? "_".$this->id : "");
-
-        $this->editable = (\RPI\Framework\Helpers\Utils::getNamedValue($this->options, "editable", false));
-        $this->editMode = (\RPI\Framework\Helpers\Utils::getNamedValue($this->options, "editMode", false));
-
-        $this->componentOrder = (\RPI\Framework\Helpers\Utils::getNamedValue($this->options, "order", null));
         
         if (isset($viewRendition)) {
             $this->setView($viewRendition);
         }
-
-        $this->componentOptions = $this->getComponentOptions($configOptions);
-        if (!$this->componentOptions instanceof \RPI\Framework\Component\Options) {
-            throw new \Exception(
-                "Invalid type returned from Component::getOptions. Must be of type '\RPI\Framework\Component\Options'."
-            );
-        }
         
         $this->init();
-    }
-    
-    protected function getComponentOptions(array $options)
-    {
-        return new \RPI\Framework\Component\Options(array(), $options);
     }
     
     public function show()
@@ -141,8 +129,8 @@ abstract class Component extends \RPI\Framework\Controller
     public function process()
     {
         $controller = $this->getController();
-        if (isset($controller) && isset($controller->controllerOptions)) {
-            $this->controllerOptions = $controller->controllerOptions;
+        if (isset($controller) && isset($controller->options)) {
+            $this->controllerOptions = $controller->options;
         }
 
         if ($this->cacheKey !== false && $this->isCacheable()) {
