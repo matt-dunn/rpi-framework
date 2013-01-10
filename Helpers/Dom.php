@@ -151,7 +151,8 @@ class Dom
         $obj,
         &$xml,
         $endLine = null,
-        $namespace = null
+        $namespace = null,
+        $parentElementName = null
     ) {
         $tagOutput = false;
         
@@ -163,7 +164,7 @@ class Dom
             || $elementName == "") {
             $elementName = $defaultElementName;
         }
-        $elementName = str_replace(array(".", " "), "_", $elementName);
+        $elementName = str_replace(array(".", " ", "\\"), "_", $elementName);
         $elementNameClose = $elementName;
 
         if (isset($namespace)) {
@@ -176,7 +177,18 @@ class Dom
                 // TODO: if an array is returned it should only serialize the properties returned
                 $propertyList = $obj->__sleep();
             }
-            if ($obj instanceof \DOMDocument) {
+            if (method_exists($obj, '__invoke')) {
+                self::simpleSerialize(
+                    $elementName,
+                    $defaultElementName,
+                    $obj->__invoke(),
+                    $xml,
+                    $endLine,
+                    $namespace,
+                    $parentElementName
+                );
+                $tagOutput = false;
+            } elseif ($obj instanceof \DOMDocument) {
                 $xml .= '<'.$elementName.' _class="'.get_class($obj).'" _type="'.gettype($obj).'">'.
                         $obj->saveXML($obj->documentElement);
                 $tagOutput = true;
@@ -184,25 +196,49 @@ class Dom
                 $xml .= '<'.$elementName.' _class="'.get_class($obj).'" _type="'.gettype($obj).'">'.$endLine;
                 $tagOutput = true;
                 $reflect = new \ReflectionObject($obj);
-                foreach ($reflect->getProperties(\ReflectionProperty::IS_PUBLIC) as $prop) {
+                $propertyType = \ReflectionProperty::IS_PUBLIC;
+                if (isset($propertyList)) {
+                    $propertyType =
+                        \ReflectionProperty::IS_PUBLIC
+                        | \ReflectionProperty::IS_PRIVATE
+                        | \ReflectionProperty::IS_PROTECTED;
+                }
+                foreach ($reflect->getProperties($propertyType) as $prop) {
                     $name = $prop->getName();
                     if (!isset($propertyList) || in_array($name, $propertyList)) {
+                        $prop->setAccessible(true);
                         $value = $prop->getValue($obj);
-                        self::simpleSerialize($name, $defaultElementName, $value, $xml, $endLine);
+                        self::simpleSerialize(
+                            $name,
+                            $defaultElementName,
+                            $value,
+                            $xml,
+                            $endLine,
+                            $namespace,
+                            $elementName
+                        );
                     }
                 }
             }
         } elseif (is_array($obj)) {
-            $xml .= '<'.$elementName.' _type="'.gettype($obj).'">'.$endLine;
-            $tagOutput = true;
-            foreach ($obj as $key => $val) {
-                self::simpleSerialize($key, $defaultElementName, $val, $xml, $endLine);
-            }
-        } else {
-            if (isset($obj) && $obj !== null && $obj !== "") {
-                $xml .= '<'.$elementName.' _type="'.gettype($obj).'">'.htmlspecialchars($obj);
+            if (count($obj) > 0) {
+                $xml .= '<'.$elementName.' _type="'.gettype($obj).'">'.$endLine;
                 $tagOutput = true;
+                foreach ($obj as $key => $val) {
+                    self::simpleSerialize(
+                        $key,
+                        $defaultElementName,
+                        $val,
+                        $xml,
+                        $endLine,
+                        $namespace,
+                        $elementName
+                    );
+                }
             }
+        } elseif (isset($obj) && $obj !== null && $obj !== "") {
+            $xml .= '<'.$elementName.' _type="'.gettype($obj).'">'.htmlspecialchars($obj);
+            $tagOutput = true;
         }
 
         if ($tagOutput) {
