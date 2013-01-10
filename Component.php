@@ -95,10 +95,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
 
         if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
             $this->cacheKey =
-                implode(
-                    "_",
-                    $this->options->getAll()
-                )."_".$this->componentId."_".\RPI\Framework\Helpers\Utils::currentPageURI(true);
+                implode("_", $options)."_".$this->componentId."_".\RPI\Framework\Helpers\Utils::currentPageURI(true);
         }
         
         if (isset($viewRendition)) {

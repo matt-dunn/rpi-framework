@@ -35,11 +35,6 @@ class Options
         $this->validate($this->options);
     }
     
-    public function getAll()
-    {
-        return $this->options;
-    }
-    
     private function validate(array $options)
     {
         foreach ($this->availableOptions as $name => $value) {
