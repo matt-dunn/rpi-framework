@@ -1,6 +1,6 @@
 <?php
 
-namespace RPI\Framework\Component;
+namespace RPI\Framework\Controller;
 
 /**
  * Define available options for a component. If set, an array should be set as follows:
@@ -26,6 +26,18 @@ class Options
         $this->options = $options;
         
         $this->validate($this->options);
+    }
+    
+    public function add(array $options)
+    {
+        $this->options = array_merge($this->options, $options);
+        
+        $this->validate($this->options);
+    }
+    
+    public function getAll()
+    {
+        return $this->options;
     }
     
     private function validate(array $options)
@@ -97,6 +109,6 @@ class Options
     
     public function __isset($name)
     {
-        return isset($this->availableOptions[$name]);
+        return isset($this->options[$name]);
     }
 }

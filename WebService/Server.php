@@ -151,29 +151,6 @@ abstract class Server extends \RPI\Framework\Controller
         }
     }
 
-    public function renderView()
-    {
-    }
-
-    protected function isCacheable()
-    {
-        return false;
-    }
-    
-    protected function getView()
-    {
-    }
-
-    protected function getModel()
-    {
-        return null;
-    }
-    
-    public function prerender()
-    {
-    }
-    
-    
     
     
     private function callMethod(Request $requestData)

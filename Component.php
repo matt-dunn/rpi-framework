@@ -2,52 +2,55 @@
 
 namespace RPI\Framework;
 
-abstract class Component extends \RPI\Framework\Controller
+abstract class Component extends \RPI\Framework\Controller\HTML
 {
     /**
      * Unique ID of the component
+     * Set by viewdata
      * @var UUID
      */
     public $componentId;
     
     /**
      * The component can be edited
+     * Set by viewdata
      * @var bool 
      */
     public $editable = false;
     
     /**
      * The component is in an edit state
+     * Set by viewdata
      * @var bool 
      */
     public $editMode = false;
     
     /**
      * The component is dynamic and can be updated by the client. This is implied if $editable.
-     * @var bool 
+     * @var bool
      */
     public $isDynamic = false;
 
     /**
-     *
+     * Set by viewdata
      * @var string
      */
     public $typeId = null;
     
     /**
-     *
+     * Set by viewdata
      * @var string
      */
     public $viewMode = null;
     
     /**
-     *
+     * Set by viewdata
      * @var string
      */
     public $componentView = "default";
 
     /**
-     *
+     * Set by viewdata
      * @var int 
      */
     public $order = null;
@@ -74,10 +77,10 @@ abstract class Component extends \RPI\Framework\Controller
         if (!isset($options)) {
             $options = array();
         }
-        $this->options = $this->getComponentOptions($this->parseOptions($options));
-        if (!$this->options instanceof \RPI\Framework\Component\Options) {
+        $this->options = $this->getControllerOptions($this->parseOptions($options));
+        if (!$this->options instanceof \RPI\Framework\Controller\Options) {
             throw new \Exception(
-                "Invalid type returned from Component::getOptions. Must be of type '\RPI\Framework\Component\Options'."
+                "Invalid type returned from Component::getOptions. Must be of type '\RPI\Framework\Controller\Options'."
             );
         }
         
@@ -94,7 +97,7 @@ abstract class Component extends \RPI\Framework\Controller
             $this->cacheKey =
                 implode(
                     "_",
-                    $options
+                    $this->options->getAll()
                 )."_".$this->componentId."_".\RPI\Framework\Helpers\Utils::currentPageURI(true);
         }
         
@@ -103,6 +106,10 @@ abstract class Component extends \RPI\Framework\Controller
         }
         
         $this->init();
+    }
+    
+    protected function init()
+    {
     }
     
     public function show()

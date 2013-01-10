@@ -1,0 +1,213 @@
+<?php
+
+namespace RPI\Framework\Controller;
+
+abstract class HTML extends \RPI\Framework\Controller
+{
+    /**
+     *
+     * @var string
+     */
+    protected $view = null;
+
+    /**
+     *
+     * @var string
+     */
+    public $viewType = null;
+
+    /**
+     *
+     * @var array RPI\Framework\Component
+     */
+    public $components = null;
+    
+    /**
+     *
+     * @var object
+     */
+    public $model = null;
+    
+    /**
+     *
+     * @var array 
+     */
+    protected $messages = null;
+
+    /**
+     *
+     * @var string
+     */
+    protected $cacheKey = false;
+    
+    abstract protected function getModel();
+    
+    abstract public function prerender();
+    
+    abstract protected function renderViewFromCache();
+    
+    abstract public function renderView();
+
+    abstract protected function getView();
+
+    public function __construct($id = null, array $options = null)
+    {
+        parent::__construct($id, $options);
+        
+        if (!isset($id) || $id == "") {
+            if (isset($_GET["id"]) && $_GET["id"] !== "") {
+                $this->id = $_GET["id"];
+            } else {
+                $uri = (isset($_SERVER["REDIRECT_URL"]) ? $_SERVER["REDIRECT_URL"] : $_SERVER["REQUEST_URI"]);
+                $parts = pathinfo($uri);
+                $this->id = \RPI\Framework\Helpers\FileUtils::trimSlashes($parts["dirname"]);
+                if ($this->id !== "" && $this->id !== false) {
+                    $this->id.="_";
+                }
+                $this->id .=$parts["filename"];
+
+                $this->id = strtolower($this->id);
+
+                if (!isset($this->id) || $this->id == "") {
+                    $this->id = "default";
+                }
+            }
+        } else {
+            $this->id = $id;
+        }
+    }
+    
+    public function __sleep()
+    {
+        $serializeProperties = get_object_vars($this);
+        unset($serializeProperties["view"]);
+
+        return array_keys($serializeProperties);
+    }
+    
+    public function addComponent(\RPI\Framework\Component $component)
+    {
+        $component->setParent($this);
+
+        if (!isset($this->components)) {
+            $this->components = array();
+        }
+        $this->components[] = array("component" => $component);
+    }
+
+    public function process()
+    {
+        $this->model = $this->getModel();
+
+        if (isset($this->components)) {
+            foreach ($this->components as $component) {
+                if (isset($component)) {
+                    $component["component"]->process();
+                }
+            }
+        }
+    }
+    protected function canRenderViewFromCache()
+    {
+        return true;
+    }
+
+    protected function isCacheable()
+    {
+        return true;
+    }
+
+    public function setView(\RPI\Framework\Views\IView $view)
+    {
+        $this->view = $view;
+    }
+
+    protected function prerenderComponents()
+    {
+        $rendition = null;
+        if (isset($this->components)) {
+            foreach ($this->components as $component) {
+                $rendition .= $component["component"]->prerender();
+            }
+        }
+
+        return $rendition;
+    }
+
+    public function renderComponents($viewMode = null)
+    {
+        $rendition = null;
+        if (isset($this->components)) {
+            foreach ($this->components as $component) {
+                if (isset($viewMode)) {
+                    if ($component["component"]->viewMode == $viewMode) {
+                        $rendition .= $component["component"]->render();
+                    }
+                } else {
+                    $rendition .= $component["component"]->render();
+                }
+            }
+        }
+
+        return $rendition;
+    }
+
+    public function addMessage($message, $type = null, $id = null, $title = null)
+    {
+        if (!isset($this->messages)) {
+            $this->messages = array();
+        }
+
+        if (!isset($type)) {
+            $type = \RPI\Framework\Controller\Message\Type::ERROR;
+        }
+
+        if (!isset($title) || trim($title) == "") {
+            if ($type == \RPI\Framework\Controller\Message\Type::ERROR) {
+                $title = t("rpi.framework.heading.error");
+            }
+        }
+
+        if (!isset($this->messages[$type])) {
+            $this->messages[$type] = array();
+        }
+
+        if (!isset($this->messages[$type][$title])) {
+            $this->messages[$type][$title] = array();
+        }
+
+        $this->messages[$type][$title][] = new \RPI\Framework\Controller\Message($message, $type, $id);
+    }
+
+    public function addControllerMessage($message, $type = null, $id = null, $title = null)
+    {
+        $controller = $this->getController();
+        if (isset($controller)) {
+            $controller->addMessage($message, $type, $id, $title);
+        }
+    }
+
+    public function getMessages()
+    {
+        return $this->messages;
+    }
+    
+    public function findComponents($componentClassName)
+    {
+        $matchedComponents = array();
+        foreach ($this->components as $component) {
+            if ($component["component"] instanceof $componentClassName) {
+                $matchedComponents[] = &$component["component"];
+            }
+
+            if (isset($component["component"]->components) && count($component["component"]->components) > 0) {
+                $matchedComponents = array_merge(
+                    $matchedComponents,
+                    $component["component"]->findComponents($componentClassName)
+                );
+            }
+        }
+
+        return $matchedComponents;
+    }
+}
