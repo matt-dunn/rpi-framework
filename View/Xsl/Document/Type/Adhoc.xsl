@@ -39,7 +39,7 @@
             </xsl:if>
 
             <xsl:apply-templates select="commonDocument:summary/xhtml:body">
-                <xsl:with-param name="headingLevel" select="$headingLevel + 1"/>
+                <xsl:with-param name="headingLevel" select="$headingLevel"/>
             </xsl:apply-templates>
         </div>
     </xsl:if>
@@ -53,7 +53,7 @@
         </xsl:if>
         
         <xsl:apply-templates select="commonDocument:content/xhtml:body">
-            <xsl:with-param name="headingLevel" select="$headingLevel + 1"/>
+            <xsl:with-param name="headingLevel" select="$headingLevel"/>
         </xsl:apply-templates>
     </div>
 </xsl:template>

@@ -9,7 +9,7 @@
 >
 
 <xsl:template match="/component">
-    <xsl:param name="headingLevel" select="number(2)"/>
+    <xsl:param name="headingLevel" select="number(1)"/>
     
     <xsl:variable name="_headingLevel">
         <xsl:choose>
