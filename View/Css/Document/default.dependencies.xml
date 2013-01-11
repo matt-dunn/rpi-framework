@@ -2,4 +2,5 @@
 <dependencies>
 	<dependency name="table.css"/>
 	<dependency name="caption.css"/>
+	<dependency name="../../Js/Document/style.js"/>
 </dependencies>

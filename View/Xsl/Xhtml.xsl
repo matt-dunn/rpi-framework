@@ -391,49 +391,25 @@
 
 <!-- Insert image - allow simple alignment if required -->
 <xsl:template match="xhtml:img">
-	<xsl:choose>
-		<xsl:when test="string-length(normalize-space(@title)) &gt; 0">
-			<span class="c-caption">
-				<xsl:choose>
-					<xsl:when test="@align='left' or contains(translate(@style, '&#x20;&#x9;&#xD;&#xA;', ''), 'float:left')">
-						<xsl:attribute name="class">c-caption c-caption-left</xsl:attribute>
-					</xsl:when>
-					<xsl:when test="@align='right' or contains(translate(@style, '&#x20;&#x9;&#xD;&#xA;', ''), 'float:right')">
-						<xsl:attribute name="class">c-caption c-caption-right</xsl:attribute>
-					</xsl:when>
-				</xsl:choose>
-				<img src="{@src}" alt="{@alt}">
-                    <xsl:if test="@width">
-                        <xsl:attribute name="width"><xsl:value-of select="@width"/></xsl:attribute>
-                    </xsl:if>
-                    <xsl:if test="@height">
-                        <xsl:attribute name="height"><xsl:value-of select="@height"/></xsl:attribute>
-                    </xsl:if>
-                </img>
-				<span>
-					<xsl:value-of select="@title"/>
-				</span>
-			</span>
-		</xsl:when>
-		<xsl:otherwise>
-			<img src="{@src}" alt="{@alt}">
-				<xsl:choose>
-					<xsl:when test="@align='left' or contains(translate(@style, '&#x20;&#x9;&#xD;&#xA;', ''), 'float:left')">
-						<xsl:attribute name="class">left</xsl:attribute>
-					</xsl:when>
-					<xsl:when test="@align='right' or contains(translate(@style, '&#x20;&#x9;&#xD;&#xA;', ''), 'float:right')">
-						<xsl:attribute name="class">right</xsl:attribute>
-					</xsl:when>
-				</xsl:choose>
-                <xsl:if test="@width">
-                    <xsl:attribute name="width"><xsl:value-of select="@width"/></xsl:attribute>
-                </xsl:if>
-                <xsl:if test="@height">
-                    <xsl:attribute name="height"><xsl:value-of select="@height"/></xsl:attribute>
-                </xsl:if>
-			</img>
-		</xsl:otherwise>
-	</xsl:choose>
+    <img src="{@src}" alt="{@alt}">
+        <xsl:choose>
+            <xsl:when test="@align='left' or contains(translate(@style, '&#x20;&#x9;&#xD;&#xA;', ''), 'float:left')">
+                <xsl:attribute name="class">left</xsl:attribute>
+            </xsl:when>
+            <xsl:when test="@align='right' or contains(translate(@style, '&#x20;&#x9;&#xD;&#xA;', ''), 'float:right')">
+                <xsl:attribute name="class">right</xsl:attribute>
+            </xsl:when>
+        </xsl:choose>
+        <xsl:if test="@title">
+            <xsl:attribute name="title"><xsl:value-of select="@title"/></xsl:attribute>
+        </xsl:if>
+        <xsl:if test="@width">
+            <xsl:attribute name="width"><xsl:value-of select="@width"/></xsl:attribute>
+        </xsl:if>
+        <xsl:if test="@height">
+            <xsl:attribute name="height"><xsl:value-of select="@height"/></xsl:attribute>
+        </xsl:if>
+    </img>
 </xsl:template>
 
 <!-- = / SPECIFIC INLINE ELEMENTS =============================================================================== -->
