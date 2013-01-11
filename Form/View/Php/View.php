@@ -75,17 +75,7 @@ EOT;
                         {$stateFormItem}
                     </div>
                     {$validatorRendition}
-EOT;
 
-            if ($controller->hasError && strlen($controller->message) > 0) {
-                $rendition .= <<<EOT
-                    <p class="error" id="{$controller->id}-emsg">
-                        {$controller->message}
-                    </p>
-EOT;
-            }
-
-            $rendition .= <<<EOT
                     {$this->renderFormView($model, $controller, $options)}
                 </form>
 EOT;
