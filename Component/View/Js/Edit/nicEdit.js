@@ -1166,7 +1166,17 @@ var nicEditorFontFamilySelect = nicEditorSelect.extend({
 });
 
 var nicEditorFontFormatSelect = nicEditorSelect.extend({
-		sel : {'p' : 'Paragraph', 'h6' : 'Heading&nbsp;6', 'h5' : 'Heading&nbsp;5', 'h4' : 'Heading&nbsp;4', 'h3' : 'Heading&nbsp;3', 'h2' : 'Heading&nbsp;2', 'pre' : 'Pre'},
+    sel : {
+        'p' : 'Paragraph',
+        'h1' : 'Heading&nbsp;1',
+        'h2' : 'Heading&nbsp;2',
+        'h3' : 'Heading&nbsp;3',
+        'h4' : 'Heading&nbsp;4',
+        'h5' : 'Heading&nbsp;5',
+        'h6' : 'Heading&nbsp;6',
+        'blockquote' : 'Quote',
+        'pre' : 'Code block'
+    },
 		
 	init : function() {
 		this.setDisplay('Font&nbsp;Format...');
