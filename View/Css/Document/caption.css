@@ -1,0 +1,27 @@
+.document span.c-caption {
+	border:1px solid !section_border_color;
+	float:left;
+	margin:0.25em 0.75em 0.5em 0;
+}
+
+.document span.c-caption-left {
+	float:left;
+	clear:both;
+	margin:0.25em 0.75em 0.5em 0;
+}
+
+.document span.c-caption-right {
+	float:right;
+	clear:both;
+	margin:0.25em 0 0.5em 0.75em;
+}
+
+.document span.c-caption,
+.document span.c-caption span {
+	display:block;
+}
+
+.document span.c-caption span {
+	padding:0.5em;
+    font-size:0.9em;
+}
