@@ -5,7 +5,6 @@
         {block name="formRenditionPostback"}{/block}
     {else}
         {assign var=encodingType value=""}
-        {assign var=validatorRendition value=""}
         
         {if ($controller->hasFormItemType("RPI\Framework\Form\FormItem\File"))}
             {assign var=encodingType value=" enctype=\"multipart/form-data\""}
@@ -28,7 +27,33 @@
                     <input type="hidden" name="state" value="{$controller->state->formValue}" />
                 {/if}
             </div>
-            {$validatorRendition}
+            {capture name="validatorRendition"}
+                {foreach from=$controller->formItems item=formItem}
+                    <!-- If there are any validators of a default button has been defined make sure it is configured: -->
+                    {if (count($formItem->validators) > 0 || isset($formItem->defaultButton))}
+                        {
+                            n:"{$formItem->fullId}",v:[
+                            {foreach from=$formItem->validators item=validator}
+                                {$validator->render()},
+                            {/foreach}
+                            ]
+                            {if isset($formItem->defaultButton)}
+                                ,db:"{$formItem->defaultButton->id}"
+                            {/if}
+                        },
+                    {/if}
+                {/foreach}
+            {/capture}
+            
+            <script type="text/javascript">
+            //<![CDATA[
+                _(function(){
+                    RPI.validation.attachForm(
+                        "{$controller->id}", [{$smarty.capture.validatorRendition}]
+                    );
+                });
+            // ]]>
+            </script>
 
             {block name="formRendition"}{/block}
         </form>
