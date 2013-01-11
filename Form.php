@@ -13,7 +13,6 @@ abstract class Form extends \RPI\Framework\Component
     public $hasError = false;
     public $buttons = array();
     public $isPostBack = false;
-    public $message;
     public $state;
     public $title;
     public $focusFormItem = null;
@@ -207,16 +206,24 @@ abstract class Form extends \RPI\Framework\Component
         if (!isset($type)) {
             $type = \RPI\Framework\Controller\Message\Type::ERROR;
         }
+        
         $this->hasError = ($type == \RPI\Framework\Controller\Message\Type::ERROR);
+        
         parent::addMessage($message, $type, $id, $title);
     }
 
     public function addControllerMessage($message, $type = null, $id = null, $title = null)
     {
-        $this->hasError = true;
-        if (!isset($title)) {
+        if (!isset($type)) {
+            $type = \RPI\Framework\Controller\Message\Type::ERROR;
+        }
+        
+        $this->hasError = ($type == \RPI\Framework\Controller\Message\Type::ERROR);
+        
+        if ($type == \RPI\Framework\Controller\Message\Type::ERROR && !isset($title)) {
             $title = t("rpi.framework.forms.error.heading");
         }
+        
         parent::addControllerMessage($message, $type, $id, $title);
     }
 
