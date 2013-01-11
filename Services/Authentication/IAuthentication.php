@@ -67,7 +67,7 @@ interface IAuthentication
     public function logout($complete = true);
 
     /**
-     *
+     * @return \RPI\Framework\Model\User
      */
     public function getAuthenticatedUser();
 }

@@ -6,6 +6,10 @@ class Service extends \RPI\Framework\Services\Service
 {
     private static $instance;
 
+    /**
+     * 
+     * @return \RPI\Framework\Services\Authentication\IAuthentication
+     */
     public static function getInstance()
     {
         if (!isset(self::$instance)) {
