@@ -81,9 +81,11 @@ abstract class Form extends \RPI\Framework\Component
 
         $this->isDynamic = true;
 
-        $this->createFormItems();
-
         parent::__construct($this->id, $options, $viewRendition);
+        
+        if ($this->isVisible()) {
+            $this->createFormItems();
+        }
     }
 
     public function __get($key)

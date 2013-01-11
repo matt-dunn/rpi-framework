@@ -119,6 +119,11 @@ abstract class Component extends \RPI\Framework\Controller\HTML
         $this->visible = false;
     }
     
+    public function isVisible()
+    {
+        return $this->visible;
+    }
+    
     public function __sleep()
     {
         $this->canRenderViewFromCache = $this->canRenderViewFromCache();
@@ -132,22 +137,24 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     
     public function process()
     {
-        if (!isset($this->model)) {
-            $this->model = $this->getModel();
-        }
-        
-        $controller = $this->getController();
-        if (isset($controller) && isset($controller->options)) {
-            $this->controllerOptions = $controller->options;
-        }
+        if ($this->visible) {
+            if (!isset($this->model)) {
+                $this->model = $this->getModel();
+            }
 
-        if ($this->cacheKey !== false && $this->isCacheable()) {
-            if (!$this->canRenderViewFromCache()
-                || \RPI\Framework\Cache\Front\Store::fetch($this->cacheKey) === false) {
+            $controller = $this->getController();
+            if (isset($controller) && isset($controller->options)) {
+                $this->controllerOptions = $controller->options;
+            }
+
+            if ($this->cacheKey !== false && $this->isCacheable()) {
+                if (!$this->canRenderViewFromCache()
+                    || \RPI\Framework\Cache\Front\Store::fetch($this->cacheKey) === false) {
+                    parent::process();
+                }
+            } else {
                 parent::process();
             }
-        } else {
-            parent::process();
         }
     }
 
