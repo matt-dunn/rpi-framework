@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\Component\View\Php;
 
-abstract class View extends \RPI\Framework\View\Php\Message\View implements \RPI\Framework\Views\Php\IView
+abstract class View extends \RPI\Framework\Controller\Message\View\Php\View implements \RPI\Framework\Views\Php\IView
 {
     final public function render($model, \RPI\Framework\Controller $controller, array $options)
     {
