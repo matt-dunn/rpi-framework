@@ -40,6 +40,8 @@ abstract class HTML extends \RPI\Framework\Controller
      */
     protected $cacheKey = false;
     
+    abstract protected function isCacheable();
+
     abstract protected function getModel();
     
     abstract public function prerender();
@@ -97,7 +99,9 @@ abstract class HTML extends \RPI\Framework\Controller
 
     public function process()
     {
-        $this->model = $this->getModel();
+        if (!isset($this->model)) {
+            $this->model = $this->getModel();
+        }
 
         if (isset($this->components)) {
             foreach ($this->components as $component) {
@@ -108,11 +112,6 @@ abstract class HTML extends \RPI\Framework\Controller
         }
     }
     protected function canRenderViewFromCache()
-    {
-        return true;
-    }
-
-    protected function isCacheable()
     {
         return true;
     }

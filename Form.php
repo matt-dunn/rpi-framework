@@ -19,6 +19,8 @@ abstract class Form extends \RPI\Framework\Component
     public $focusFormItem = null;
     public $postBackButton = null;
     
+    private $isCachable;
+    
     /**
      * Set to true if all the defined validators have been run. Validators may
      * not run if they have been set to run against specific validators
@@ -291,8 +293,25 @@ abstract class Form extends \RPI\Framework\Component
 
     protected function isCacheable()
     {
-        // Do not cache postbacks
-        return !($this->isPostBack);
+        if (!isset($this->isCachable)) {
+            if (!$this->isPostBack && isset($this->model)) {
+                // If a model has been defined, check to see if any of the model values are mapped to
+                // any form items. If a model item is being used in the form then do not cache the
+                // form as it will display these form items globally from the cache.
+                $this->isCachable = true;
+                
+                foreach (array_keys($this->formItems) as $name) {
+                    if (isset($this->model->$name)) {
+                        $this->isCachable = false;
+                        break;
+                    }
+                }
+            } else {
+                $this->isCachable = !($this->isPostBack);
+            }
+        }
+        
+        return $this->isCachable;
     }
 
     abstract protected function createFormItems();

@@ -132,6 +132,10 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     
     public function process()
     {
+        if (!isset($this->model)) {
+            $this->model = $this->getModel();
+        }
+        
         $controller = $this->getController();
         if (isset($controller) && isset($controller->options)) {
             $this->controllerOptions = $controller->options;
@@ -272,5 +276,9 @@ EOT;
         foreach ($components as $component) {
             $this->addComponent($component, $controller);
         }
+    }
+
+    protected function isCacheable() {
+        return true;
     }
 }
