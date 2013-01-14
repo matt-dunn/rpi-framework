@@ -22,9 +22,13 @@ RPI._("component").edit = (function() {
     var _monitorDOMChangeEvents = true;
     
     function init() {
-        jQuery(".component-editable").each(
+        jQuery(document).ready(
             function() {
-                loadComponent(this, null, "load");
+                jQuery(".component-editable").each(
+                    function() {
+                        loadComponent(this, null, "load");
+                    }
+                );
             }
         );
         
