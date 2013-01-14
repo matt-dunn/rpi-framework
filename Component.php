@@ -149,7 +149,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
 
             if ($this->cacheKey !== false && $this->isCacheable()) {
                 if (!$this->canRenderViewFromCache()
-                    || \RPI\Framework\Cache\Front\Store::fetch($this->cacheKey) === false) {
+                    || \RPI\Framework\Cache\Front\Store::fetch($this->cacheKey, null, $this->type) === false) {
                     parent::process();
                 }
             } else {
@@ -226,7 +226,7 @@ EOT;
     {
         if ($this->visible) {
             if ($this->cacheKey !== false && !$this->canRenderViewFromCache() && $this->isCacheable()) {
-                $cacheContent = \RPI\Framework\Cache\Front\Store::fetchContent($this->cacheKey);
+                $cacheContent = \RPI\Framework\Cache\Front\Store::fetchContent($this->cacheKey, null, $this->type);
                 if ($cacheContent !== false) {
                     return $cacheContent;
                 }
@@ -235,7 +235,7 @@ EOT;
             $rendition = $this->getView()->render($this);
 
             if ($this->cacheKey !== false && !$this->canRenderViewFromCache() && $this->isCacheable()) {
-                \RPI\Framework\Cache\Front\Store::store($this->cacheKey, $rendition);
+                \RPI\Framework\Cache\Front\Store::store($this->cacheKey, $rendition, $this->type);
             }
 
             return $rendition;
@@ -249,10 +249,10 @@ EOT;
         $cacheFile = false;
         
         if ($this->isCacheable()) {
-            $cacheFile = \RPI\Framework\Cache\Front\Store::fetch($this->cacheKey);
+            $cacheFile = \RPI\Framework\Cache\Front\Store::fetch($this->cacheKey, null, $this->type);
             if ($cacheFile === false) {
                 $rendition = $this->renderView();
-                $cacheFile = \RPI\Framework\Cache\Front\Store::store($this->cacheKey, $rendition);
+                $cacheFile = \RPI\Framework\Cache\Front\Store::store($this->cacheKey, $rendition, $this->type);
             }
 
             if ($cacheFile === false) {

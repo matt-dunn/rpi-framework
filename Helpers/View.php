@@ -411,8 +411,6 @@ class View
 
                     self::$store->store("PHP_RPI_CONTENT_VIEWS-".$file, true, $file);
 
-                    // \RPI\Framework\Cache\Front\Store::clear();
-
                     \RPI\Framework\Helpers\Locking::release($seg);
                 } catch (Exception $ex) {
                     \RPI\Framework\Helpers\Locking::release($seg);
