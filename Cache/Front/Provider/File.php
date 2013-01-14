@@ -47,7 +47,7 @@ class File implements IProvider
         }
         if (file_exists($cacheFile)) {
             if (isset($timestamp) && $timestamp >= filemtime($cacheFile)) {
-                self::delete($key);
+                self::delete($key, $group);
 
                 return false;
             }
@@ -133,7 +133,7 @@ class File implements IProvider
         }
         if (file_exists($cacheFile)) {
             if (isset($timestamp) && $timestamp >= filectime($cacheFile)) {
-                self::delete($key);
+                self::delete($key, $group);
 
                 return false;
             }
