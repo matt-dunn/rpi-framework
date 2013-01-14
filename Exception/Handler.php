@@ -221,13 +221,12 @@ class Handler
                 }
                 break;
             case E_WARNING:
-                self::logMessage("WARNING: [$errNo] $errStr - $errfile#$errline", LOG_ERR);
+                throw new \ErrorException($errStr, $errNo);
                 break;
             case E_NOTICE:
                 self::logMessage("NOTICE: [$errNo] $errStr - $errfile#$errline", LOG_ERR);
                 break;
             default:
-                self::logMessage("ERROR: [$errNo] $errStr - $errfile#$errline", LOG_ERR);
                 throw new \ErrorException($errStr, $errNo);
                 break;
         }
