@@ -19,7 +19,15 @@ RPI._("component").edit = (function() {
     var _autoSaveEnabled = true;
     var _autoSaveTimeout = 10000;
     
+    var _monitorDOMChangeEvents = true;
+    
     function init() {
+        jQuery(".component-editable").each(
+            function() {
+                loadComponent(this, null, "load");
+            }
+        );
+        
         jQuery(".component-editable .options").live("click",
             function(e) {
                 var component = jQuery(this).parents(".component:first");
@@ -27,10 +35,12 @@ RPI._("component").edit = (function() {
                 
                 switch(target.data("option")) {
                     case "edit":
+                        beforeLoadComponent(component, target.data("option"));
+                        
                         RPI.webService.call("/ws/component/", "edit", {"id" : component.data("id")}, 
                             function(data, response, sourceData) {
-                                component.replaceWith(data.xhtml);
-                
+                                loadComponent(component, data.xhtml, target.data("option"));
+                                    
                                 var richEditElements = jQuery(document).find("[data-id='"+ component.data("id") + "'] .editable[data-rich-edit=true]");
                                 if(richEditElements.length > 0) {
                                     if(!document.nicEditor) {
@@ -61,18 +71,22 @@ RPI._("component").edit = (function() {
                         
                         component.find(".editable").each(
                             function() {
-                                var o = jQuery(this);
                                 if(this.isDirty) {
-                                    var content = o.attr("value");
-                                    if(!content) {
-                                        content = jQuery.htmlClean(o.html());
+                                    var o = jQuery(this).clone();
+                                    if(beforeSaveComponent(component, o, target.data("option"))) {
+                                        var content = o.attr("value");
+                                        if(!content) {
+                                            content = jQuery.htmlClean(o.html());
+                                        }
+                                        boundElements.push({bind: o.data("bind"), content: content});
                                     }
-                                    boundElements.push({bind: o.data("bind"), content: content});
                                 }
                             }
                         );
                         
                         if(boundElements.length > 0) {
+                            beforeLoadComponent(component, target.data("option"));
+
                             RPI.webService.call("/ws/component/", "save", {id : component.data("id"), boundElements: boundElements}, 
                                 function(data, response, sourceData) {
                                     removeEditorInstances(component);
@@ -85,7 +99,8 @@ RPI._("component").edit = (function() {
                                             }
                                         }
                                     );
-                                    component.replaceWith(data.xhtml);
+                                        
+                                    loadComponent(component, data.xhtml, target.data("option"));
                                 },
                                 function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
                                     component.find(".editable").each(
@@ -105,6 +120,8 @@ RPI._("component").edit = (function() {
                         break;
                         
                     case "cancel":
+                        beforeLoadComponent(component, target.data("option"));
+                        
                         RPI.webService.call("/ws/component/", "cancel", {id : component.data("id")}, 
                             function(data, response, sourceData) {
                                 removeEditorInstances(component);
@@ -117,14 +134,17 @@ RPI._("component").edit = (function() {
                                         }
                                     }
                                 );
-                                component.replaceWith(data.xhtml);
-                            },
+                                    
+                                loadComponent(component, data.xhtml, target.data("option"));
+                           },
                             function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
                             }
                         );
                         break;
                         
                     case "delete":
+                        beforeLoadComponent(component, target.data("option"));
+                        
                         RPI.webService.call("/ws/component/", "delete", {id : component.data("id"), bind : target.data("bind")}, 
                             function(data, response, sourceData) {
                                 removeEditorInstances(component);
@@ -137,7 +157,8 @@ RPI._("component").edit = (function() {
                                         }
                                     }
                                 );
-                                component.replaceWith(data.xhtml);
+                                    
+                                loadComponent(component, data.xhtml, target.data("option"));
                             },
                             function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
                             }
@@ -145,6 +166,8 @@ RPI._("component").edit = (function() {
                         break;
                         
                     case "add":
+                        beforeLoadComponent(component, target.data("option"));
+                        
                         RPI.webService.call("/ws/component/", "create", {id : component.data("id"), bind : target.data("bind"), data : {title : "", url : "/"}}, 
                             function(data, response, sourceData) {
                                 removeEditorInstances(component);
@@ -157,7 +180,8 @@ RPI._("component").edit = (function() {
                                         }
                                     }
                                 );
-                                component.replaceWith(data.xhtml);
+                                    
+                                loadComponent(component, data.xhtml, target.data("option"));
                             },
                             function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
                             }
@@ -173,66 +197,71 @@ RPI._("component").edit = (function() {
         // TODO: need to use something other than use DOMSubtreeModified as it's not supported by IE...
         jQuery(".component-editable .editable").live("change DOMCharacterDataModified DOMNodeInserted DOMNodeRemoved",
             function() {
-                var _self = this;
+                if(_monitorDOMChangeEvents) {
+                    var _self = this;
 
-                if(_self.isDirty !== true || _self.autosave === false) {
-                    var container = jQuery(this);
-                    var component = container.parents(".component:first");
+                    if(_self.isDirty !== true || _self.autosave === false) {
+                        var container = jQuery(this);
+                        var component = container.parents(".component:first");
 
-                    if(!_self.isDirty) {
-                        var count = jQuery(document.body).attr("isDirty-count");
-                        if(!count) {
-                            count = 0;
+                        if(!_self.isDirty) {
+                            var count = jQuery(document.body).attr("isDirty-count");
+                            if(!count) {
+                                count = 0;
+                            }
+                            jQuery(document.body).attr("isDirty-count", parseInt(count) + 1);
+
+                            var componentCount = component.attr("isDirty-count");
+                            if(!componentCount) {
+                                componentCount = 0;
+                            }
+                            component.attr("isDirty-count", parseInt(componentCount) + 1);
                         }
-                        jQuery(document.body).attr("isDirty-count", parseInt(count) + 1);
 
-                        var componentCount = component.attr("isDirty-count");
-                        if(!componentCount) {
-                            componentCount = 0;
-                        }
-                        component.attr("isDirty-count", parseInt(componentCount) + 1);
-                    }
+                        _self.isDirty = true;
+                        _self.autosave = true;
 
-                    _self.isDirty = true;
-                    _self.autosave = true;
+                        component.find(".options [data-option='save']").removeClass("d");
 
-                    component.find(".options [data-option='save']").removeClass("d");
+                        updateAutoSaveMessage(component, "Waiting to autosave...")
 
-                    updateAutoSaveMessage(component, "Waiting to autosave...")
-
-                    if(_autoSaveEnabled) {
-                        setTimeout(
-                            function() {
-                                if(_self.autosave) {
-                                    var content = container.attr("value");
-                                    if(!content) {
-                                        content = jQuery.htmlClean(container.html());
-                                    }
-                                    RPI.webService.call("/ws/component/", "autoSave", {id : component.data("id"), bind: container.data("bind"), content: content}, 
-                                        function(data, response, sourceData) {
-                                            if(_self.isDirty) {
-                                                _self.isDirty = false;
-                                                jQuery(document.body).attr("isDirty-count", parseInt(jQuery(document.body).attr("isDirty-count")) - 1);
-                                                component.attr("isDirty-count", parseInt(component.attr("isDirty-count")) - 1);
+                        if(_autoSaveEnabled) {
+                            setTimeout(
+                                function() {
+                                    if(_self.autosave) {
+                                        var o = container.clone();
+                                        if(beforeSaveComponent(component, o, "autosave")) {
+                                            var content = o.attr("value");
+                                            if(!content) {
+                                                content = jQuery.htmlClean(o.html());
                                             }
+                                            RPI.webService.call("/ws/component/", "autoSave", {id : component.data("id"), bind: container.data("bind"), content: content}, 
+                                                function(data, response, sourceData) {
+                                                    if(_self.isDirty) {
+                                                        _self.isDirty = false;
+                                                        jQuery(document.body).attr("isDirty-count", parseInt(jQuery(document.body).attr("isDirty-count")) - 1);
+                                                        component.attr("isDirty-count", parseInt(component.attr("isDirty-count")) - 1);
+                                                    }
 
-                                            if(parseInt(component.attr("isDirty-count")) == 0) {
-                                                component.find(".options [data-option='save']").addClass("d");
-                                                updateAutoSaveMessage(component)
-                                            }
-                                        },
-                                        function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
-                                            _self.autosave = false;
-                                            updateAutoSaveMessage(component, "There was a problem saving the document");
-                                            if(!isAuthenticationException) {
-                                                console.log("There was a problem saving the document");
-                                            }
+                                                    if(parseInt(component.attr("isDirty-count")) == 0) {
+                                                        component.find(".options [data-option='save']").addClass("d");
+                                                        updateAutoSaveMessage(component)
+                                                    }
+                                                },
+                                                function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
+                                                    _self.autosave = false;
+                                                    updateAutoSaveMessage(component, "There was a problem saving the document");
+                                                    if(!isAuthenticationException) {
+                                                        console.log("There was a problem saving the document");
+                                                    }
+                                                }
+                                            );
                                         }
-                                    );
-                                }
-                            },
-                            _autoSaveTimeout
-                        );
+                                    }
+                                },
+                                _autoSaveTimeout
+                            );
+                        }
                     }
                 }
             }
@@ -245,6 +274,67 @@ RPI._("component").edit = (function() {
                 }
             }
         );
+    }
+    
+    function beforeSaveComponent(component, contentElement, option) {
+        _monitorDOMChangeEvents = false;
+        
+        var event = jQuery.Event(
+            "beforesave.RPI.component.edit"
+        );
+
+        jQuery(document).trigger(
+            event,
+            [
+                component,
+                contentElement,
+                option
+            ]
+        );
+        
+        _monitorDOMChangeEvents = true;
+        
+        return !event.isDefaultPrevented();
+    }
+    
+    function beforeLoadComponent(component, option) {
+        _monitorDOMChangeEvents = false;
+        
+        jQuery.event.trigger(
+            "beforeload.RPI.component.edit",
+            [
+                component,
+                option
+            ]
+        );
+            
+        _monitorDOMChangeEvents = true;
+    }
+    
+    function loadComponent(component, content, option) {
+        _monitorDOMChangeEvents = false;
+        
+        if(content) {
+            component.replaceWith(content);
+
+            jQuery.event.trigger(
+                "load.RPI.component.edit",
+                [
+                    jQuery(document).find(".component[data-id='"+ component.data("id") + "']"),
+                    option
+                ]
+            );
+        } else {
+            jQuery.event.trigger(
+                "load.RPI.component.edit",
+                [
+                    component,
+                    option
+                ]
+            );
+        }
+            
+        _monitorDOMChangeEvents = true;
     }
     
     function updateAutoSaveMessage(component, message) {
