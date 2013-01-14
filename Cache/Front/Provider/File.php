@@ -39,9 +39,12 @@ class File implements IProvider
      * @param  string $key Unique key to identify a cache item
      * @return object or false				An object from the cache or false if cache item does not exist or has been invalidated
      */
-    public static function fetch($key, $timestamp = null)
+    public static function fetch($key, $timestamp = null, $group = null)
     {
         $cacheFile = self::getFileCachePath().md5($key);
+        if (isset($group)) {
+            $cacheFile = $cacheFile.".".self::normalizeName($group);
+        }
         if (file_exists($cacheFile)) {
             if (isset($timestamp) && $timestamp >= filemtime($cacheFile)) {
                 self::delete($key);
@@ -55,9 +58,9 @@ class File implements IProvider
         return false;
     }
 
-    public static function fetchContent($key, $timestamp = null)
+    public static function fetchContent($key, $timestamp = null, $group = null)
     {
-        $filePath = self::fetch($key, $timestamp);
+        $filePath = self::fetch($key, $timestamp, $group);
         if ($filePath !== false) {
             return file_get_contents($filePath);
         }
@@ -71,9 +74,12 @@ class File implements IProvider
      * @param  object  $value Object to store in the cache
      * @return boolean True if successful
      */
-    public static function store($key, $value)
+    public static function store($key, $value, $group = null)
     {
         $cacheFile = self::getFileCachePath().md5($key);
+        if (isset($group)) {
+            $cacheFile = $cacheFile.".".self::normalizeName($group);
+        }
         if (file_put_contents($cacheFile, $value, LOCK_EX) !== false) {
             // TODO: is this required?
             // clearstatcache(true, $cacheFile);
@@ -86,18 +92,25 @@ class File implements IProvider
     /**
      * Remove all item from the cache
      */
-    public static function clear()
+    public static function clear($group = null)
     {
         $cachePath = self::getFileCachePath();
-        \RPI\Framework\Helpers\FileUtils::deleteFiles($cachePath, "*");
+        $filePattern = "*";
+        if (isset($group)) {
+            $filePattern = "*.".self::normalizeName($group);
+        }
+        \RPI\Framework\Helpers\FileUtils::deleteFiles($cachePath, $filePattern);
     }
 
     /**
      * Remove an item from the cache
      */
-    public static function delete($key)
+    public static function delete($key, $group = null)
     {
         $cacheFile = self::getFileCachePath().md5($key);
+        if (isset($group)) {
+            $cacheFile = $cacheFile.".".self::normalizeName($group);
+        }
         if (file_exists($cacheFile)) {
             unlink($cacheFile);
 
@@ -112,9 +125,12 @@ class File implements IProvider
         return true;
     }
 
-    public static function validateCacheItem($key, $timestamp = null)
+    public static function validateCacheItem($key, $timestamp = null, $group = null)
     {
         $cacheFile = self::getFileCachePath().md5($key);
+        if (isset($group)) {
+            $cacheFile = $cacheFile.".".self::normalizeName($group);
+        }
         if (file_exists($cacheFile)) {
             if (isset($timestamp) && $timestamp >= filectime($cacheFile)) {
                 self::delete($key);
@@ -126,5 +142,10 @@ class File implements IProvider
         }
 
         return false;
+    }
+    
+    private static function normalizeName($name)
+    {
+        return str_replace("\\", ".", $name);
     }
 }

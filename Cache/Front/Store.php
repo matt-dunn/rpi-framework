@@ -45,63 +45,63 @@ class Store
         return $provider::setFileCachePath($cachePath);
     }
 
-    public static function validateCacheItem($key, $timestamp = null)
+    public static function validateCacheItem($key, $timestamp = null, $group = null)
     {
         $provider = self::getProvider();
         if (!isset($provider)) {
             return false;
         }
 
-        return $provider::validateCacheItem($key, $timestamp);
+        return $provider::validateCacheItem($key, $timestamp, $group);
     }
 
-    public static function fetch($key, $timestamp = null)
+    public static function fetch($key, $timestamp = null, $group = null)
     {
         $provider = self::getProvider();
         if (!isset($provider)) {
             return false;
         }
 
-        return $provider::fetch($key, $timestamp);
+        return $provider::fetch($key, $timestamp, $group);
     }
 
-    public static function fetchContent($key, $timestamp = null)
+    public static function fetchContent($key, $timestamp = null, $group = null)
     {
         $provider = self::getProvider();
         if (!isset($provider)) {
             return false;
         }
 
-        return $provider::fetchContent($key, $timestamp);
+        return $provider::fetchContent($key, $timestamp, $group);
     }
 
-    public static function store($key, $value)
+    public static function store($key, $value, $group = null)
     {
         $provider = self::getProvider();
         if (!isset($provider)) {
             return false;
         }
 
-        return $provider::store($key, $value);
+        return $provider::store($key, $value, $group);
     }
 
-    public static function clear()
+    public static function clear($group = null)
     {
         $provider = self::getProvider();
         if (!isset($provider)) {
             return false;
         }
 
-        return $provider::clear();
+        return $provider::clear($group);
     }
 
-    public static function delete($key)
+    public static function delete($key, $group = null)
     {
         $provider = self::getProvider();
         if (!isset($provider)) {
             return false;
         }
 
-        return $provider::delete($key);
+        return $provider::delete($key, $group);
     }
 }
