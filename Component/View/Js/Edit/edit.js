@@ -73,7 +73,7 @@ RPI._("component").edit = (function() {
                             function() {
                                 if(this.isDirty) {
                                     var o = jQuery(this).clone();
-                                    if(beforeSaveComponent(component, o, target.data("option"))) {
+                                    if(beforeSaveComponent(component, o, o.data("bind"), target.data("option"))) {
                                         var content = o.attr("value");
                                         if(!content) {
                                             content = jQuery.htmlClean(o.html());
@@ -143,49 +143,53 @@ RPI._("component").edit = (function() {
                         break;
                         
                     case "delete":
-                        beforeLoadComponent(component, target.data("option"));
-                        
-                        RPI.webService.call("/ws/component/", "delete", {id : component.data("id"), bind : target.data("bind")}, 
-                            function(data, response, sourceData) {
-                                removeEditorInstances(component);
-                                
-                                component.find(".editable").each(
-                                    function() {
-                                        if(this.isDirty) {
-                                            this.isDirty = false;
-                                            jQuery(document.body).attr("isDirty-count", parseInt(jQuery(document.body).attr("isDirty-count")) - 1);
+                        if(beforeDelete(component, target.data("bind"))) {
+                            beforeLoadComponent(component, target.data("option"));
+
+                            RPI.webService.call("/ws/component/", "delete", {id : component.data("id"), bind : target.data("bind")}, 
+                                function(data, response, sourceData) {
+                                    removeEditorInstances(component);
+
+                                    component.find(".editable").each(
+                                        function() {
+                                            if(this.isDirty) {
+                                                this.isDirty = false;
+                                                jQuery(document.body).attr("isDirty-count", parseInt(jQuery(document.body).attr("isDirty-count")) - 1);
+                                            }
                                         }
-                                    }
-                                );
-                                    
-                                loadComponent(component, data.xhtml, target.data("option"));
-                            },
-                            function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
-                            }
-                        );
+                                    );
+
+                                    loadComponent(component, data.xhtml, target.data("option"));
+                                },
+                                function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
+                                }
+                            );
+                        }
                         break;
                         
                     case "add":
-                        beforeLoadComponent(component, target.data("option"));
-                        
-                        RPI.webService.call("/ws/component/", "create", {id : component.data("id"), bind : target.data("bind"), data : {title : "", url : "/"}}, 
-                            function(data, response, sourceData) {
-                                removeEditorInstances(component);
-                                
-                                component.find(".editable").each(
-                                    function() {
-                                        if(this.isDirty) {
-                                            this.isDirty = false;
-                                            jQuery(document.body).attr("isDirty-count", parseInt(jQuery(document.body).attr("isDirty-count")) - 1);
+                        if(beforeAdd(component, target.data("bind"))) {
+                            beforeLoadComponent(component, target.data("option"));
+
+                            RPI.webService.call("/ws/component/", "create", {id : component.data("id"), bind : target.data("bind"), data : {title : "", url : "/"}}, 
+                                function(data, response, sourceData) {
+                                    removeEditorInstances(component);
+
+                                    component.find(".editable").each(
+                                        function() {
+                                            if(this.isDirty) {
+                                                this.isDirty = false;
+                                                jQuery(document.body).attr("isDirty-count", parseInt(jQuery(document.body).attr("isDirty-count")) - 1);
+                                            }
                                         }
-                                    }
-                                );
-                                    
-                                loadComponent(component, data.xhtml, target.data("option"));
-                            },
-                            function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
-                            }
-                        );
+                                    );
+
+                                    loadComponent(component, data.xhtml, target.data("option"));
+                                },
+                                function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
+                                }
+                            );
+                        }
                         break;
                         
 //                    default:
@@ -230,7 +234,7 @@ RPI._("component").edit = (function() {
                                 function() {
                                     if(_self.autosave) {
                                         var o = container.clone();
-                                        if(beforeSaveComponent(component, o, "autosave")) {
+                                        if(beforeSaveComponent(component, o, container.data("bind"), "autosave")) {
                                             var content = o.attr("value");
                                             if(!content) {
                                                 content = jQuery.htmlClean(o.html());
@@ -276,7 +280,7 @@ RPI._("component").edit = (function() {
         );
     }
     
-    function beforeSaveComponent(component, contentElement, option) {
+    function beforeSaveComponent(component, contentElement, bindName, option) {
         _monitorDOMChangeEvents = false;
         
         var event = jQuery.Event(
@@ -288,6 +292,7 @@ RPI._("component").edit = (function() {
             [
                 component,
                 contentElement,
+                bindName,
                 option
             ]
         );
@@ -335,6 +340,48 @@ RPI._("component").edit = (function() {
         }
             
         _monitorDOMChangeEvents = true;
+    }
+    
+    function beforeAdd(component, bindName) {
+        _monitorDOMChangeEvents = false;
+        
+        var event = jQuery.Event(
+            "beforeadd.RPI.component.edit"
+        );
+
+        jQuery(document).trigger(
+            event,
+            [
+                component,
+                bindName,
+                "add"
+            ]
+        );
+        
+        _monitorDOMChangeEvents = true;
+        
+        return !event.isDefaultPrevented();
+    }
+
+    function beforeDelete(component, bindName) {
+        _monitorDOMChangeEvents = false;
+        
+        var event = jQuery.Event(
+            "beforedelete.RPI.component.edit"
+        );
+
+        jQuery(document).trigger(
+            event,
+            [
+                component,
+                bindName,
+                "delete"
+            ]
+        );
+        
+        _monitorDOMChangeEvents = true;
+        
+        return !event.isDefaultPrevented();
     }
     
     function updateAutoSaveMessage(component, message) {

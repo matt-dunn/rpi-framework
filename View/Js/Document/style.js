@@ -11,22 +11,40 @@
 
 RPI._("framework.view.document").style = (function() {
 //    jQuery(document).live(
+//        "beforeadd.RPI.component.edit",
+//        function(e, component, bindName, option) {
+//            console.log(e.type + " - " + bindName + " - " + option)
+////            e.preventDefault();
+//        }
+//    );
+        
+//    jQuery(document).live(
+//        "beforedelete.RPI.component.edit",
+//        function(e, component, bindName, option) {
+//            console.log(e.type + " - " + bindName + " - " + option)
+//            e.preventDefault();
+//        }
+//    );
+        
+//    jQuery(document).live(
 //        "beforeload.RPI.component.edit",
 //        function(e, component, option) {
-//            console.log(e.type)
+//            console.log(e.type + " - " + option)
 //        }
 //    );
         
     jQuery(document).live(
         "load.RPI.component.edit",
         function(e, component, option) {
+//            console.log(e.type + " - " + option)
             insertCaptions(jQuery(component).find(".document img[title]"));
         }
     );
         
     jQuery(document).live(
         "beforesave.RPI.component.edit",
-        function(e, component, contentElement, option) {
+        function(e, component, contentElement, bindName, option) {
+//            console.log(e.type + " - " + bindName + " - " + option)
             removeCaptionsAndUpdateImageAttributes(contentElement.find("img[title]"));
 //            e.preventDefault();
         }
