@@ -94,6 +94,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
         }
 
         if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
+            // TODO: should this cache against the *component* and therefore not be unique for each page??
             $this->cacheKey =
                 implode("_", $options)."_".$this->componentId."_".\RPI\Framework\Helpers\Utils::currentPageURI(true);
         }
