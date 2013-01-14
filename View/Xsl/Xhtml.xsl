@@ -186,6 +186,21 @@
 	</xsl:if>
 </xsl:template>
 
+<xsl:template match="xhtml:address">
+	<xsl:param name="headingLevel" select="number(1)"/>
+            
+    <xsl:element name="{local-name()}">
+		<xsl:apply-templates select="@* | node()">
+			<xsl:with-param name="headingLevel" select="$headingLevel"/>
+		</xsl:apply-templates>
+	</xsl:element>
+</xsl:template>
+
+<xsl:template match="xhtml:address/xhtml:br">
+    <br/>
+</xsl:template>
+
+
 <!-- = / ADDRESS =============================================================================== -->
 
 <!-- = QUOTES =============================================================================== -->
