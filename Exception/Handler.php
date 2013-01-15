@@ -224,7 +224,8 @@ class Handler
                 throw new \ErrorException($errStr, $errNo);
                 break;
             case E_NOTICE:
-                self::logMessage("NOTICE: [$errNo] $errStr - $errfile#$errline", LOG_ERR);
+                throw new \ErrorException($errStr, $errNo);
+//                self::logMessage("NOTICE: [$errNo] $errStr - $errfile#$errline", LOG_ERR);
                 break;
             default:
                 throw new \ErrorException($errStr, $errNo);
