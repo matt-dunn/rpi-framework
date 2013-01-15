@@ -7,6 +7,47 @@ namespace RPI\Framework\Test;
  */
 abstract class Base extends \PHPUnit_Framework_TestCase
 {
+    protected function loadFixture($fixtureName)
+    {
+        $reflection = new \ReflectionClass($this);
+        $classPath = $reflection->getFileName();
+        $classPathParts =
+            explode(DIRECTORY_SEPARATOR, dirname($classPath).DIRECTORY_SEPARATOR.basename($classPath, ".php"));
+        
+        $testBasePath = "";
+        $testPath = "";
+        $getBasePath = true;
+        
+        foreach ($classPathParts as $part) {
+            if ($part !== "") {
+                if ($getBasePath) {
+                    $testBasePath .= DIRECTORY_SEPARATOR.$part;
+                } else {
+                    $testPath .= DIRECTORY_SEPARATOR.$part;
+                }
+                if (strtolower($part) == "test") {
+                    $getBasePath = false;
+                }
+            }
+        }
+        
+        $fixturePath = $testBasePath.DIRECTORY_SEPARATOR."fixtures".$testPath.DIRECTORY_SEPARATOR.$fixtureName;
+        
+        $fileType = pathinfo($fixturePath, PATHINFO_EXTENSION);
+        
+        $fixture = null;
+        
+        switch ($fileType) {
+            case "json":
+                $fixture = json_decode(file_get_contents($fixturePath), true);
+                break;
+            default:
+                $fixture = unserialize(file_get_contents($fixturePath));
+        }
+
+        return $fixture;
+    }
+    
     /**
      * Setup an empty database using the migration scripts
      */
