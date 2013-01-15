@@ -11,7 +11,12 @@ class ApplicationJson implements \RPI\Framework\WebService\Handler\IHandler
     {
         $requestData = null;
         try {
-            $requestData = new \RPI\Framework\WebService\Request(json_decode($content));
+            if (isset($content) && $content !== "") {
+                $data = json_decode($content);
+                if ($data !== false) {
+                    $requestData = new \RPI\Framework\WebService\Request($data);
+                }
+            }
         } catch (\Exception $ex) {
             throw new \RPI\Framework\WebService\Exceptions\InvalidRequest($content);
         }
