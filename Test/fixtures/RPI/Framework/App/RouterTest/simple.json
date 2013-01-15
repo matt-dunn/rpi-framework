@@ -1,0 +1,135 @@
+[
+    {
+        "match": "\/simple\/",
+        "controller": "\\RPI\\Controllers\\HTMLFront\\Controller",
+        "uuid": "010d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "action": "simpleaction"
+    },
+    {
+        "match": "\/simplenoaction\/:id",
+        "via": "post",
+        "controller": "\\RPI\\Controllers\\HTMLFront\\Controller",
+        "uuid": "110d5cc4-1233-480d-9618-3c3dfcdb2439"
+    },
+    {
+        "match": "\/methodpostget/:id",
+        "via": "post,get",
+        "controller": "\\RPI\\Controllers\\HTMLFront\\Controller",
+        "uuid": "210d5cc4-1233-480d-9618-3c3dfcdb2439"
+    },
+    {
+        "match": "\/test\/:id",
+        "via": "post",
+        "controller": "\\RPI\\Controllers\\HTMLFront\\Controller",
+        "uuid": "a10d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "action": "postaction"
+    },
+    {
+        "match": "\/test\/:id",
+        "via": "get",
+        "controller": "\\RPI\\Controllers\\HTMLFront\\Controller",
+        "uuid": "a10d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "action": "getaction"
+    },
+    {
+        "match": "\/test\/view\/:id\/",
+        "via": "get",
+        "controller": "\\RPI\\Controllers\\HTMLFront\\Controller",
+        "uuid": "a20d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "action": "view"
+    },
+    {
+        "match": "\/test\/view\/section\/:id\/",
+        "via": "get",
+        "controller": "\\RPI\\Controllers\\HTMLFront\\Controller",
+        "uuid": "a21d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "action": "viewsection"
+    },
+    {
+        "match": "\/test\/delete\/:id\/:option\/",
+        "via": "get",
+        "controller": "\\RPI\\Controllers\\HTMLFront\\Controller",
+        "uuid": "a30d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "action": "delete"
+    },
+    {
+        "match": "\/test2\/",
+        "via": "get",
+        "controller": "\\RPI\\Controllers\\HTMLFront\\Controller",
+        "uuid": "b10d5cc4-1233-480d-9618-3c3dfcdb2439"
+    },
+    {
+        "match": "\/",
+        "via": "get",
+        "controller": "\\RPI\\Controllers\\HTMLFront\\Controller",
+        "uuid": "c10d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "action": "actiondefault"
+    },
+    {
+        "match": "\/ws\/component\/:x\/:y\/:z\/",
+        "via": "get",
+        "controller": "\\RPI\\WebServices\\Component\\Service",
+        "uuid": "d10d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "action": "action1"
+    },
+    {
+        "match": "\/assets\/images\/:id\/:size",
+        "via": "get",
+        "controller": "\\RPI\\Controllers\\Image\\Controller",
+        "uuid": "e10d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "action": "display"
+    },
+    {
+        "match": "\/assets\/images\/:id\/:size",
+        "via": "put, post",
+        "controller": "\\RPI\\Controllers\\Image\\Controller",
+        "uuid": "e10d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "action": "uploadImage"
+    },
+    {
+        "match": "\/assets\/images\/:id\/:size",
+        "via": "delete",
+        "controller": "\\RPI\\Controllers\\Image\\Controller",
+        "uuid": "e10d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "action": "deleteImage"
+    },
+    {
+        "match": "\/assets\/:size/:id",
+        "via": "get",
+        "mimetype": "image/jpeg",
+        "fileExtension": "jpeg",
+        "controller": "\\RPI\\Controllers\\Image\\Controller",
+        "uuid": "g10d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "action": "getjpegimage"
+    },
+    {
+        "match": "\/assets\/:size/:id",
+        "via": "get",
+        "mimetype": "image/png",
+        "fileExtension": "png",
+        "controller": "\\RPI\\Controllers\\Image\\Controller",
+        "uuid": "g10d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "action": "getpngimage"
+    },
+    {
+        "match": "\/testdefault\/:id|mydefault",
+        "via": "get",
+        "controller": "\\RPI\\Controllers\\HTMLFront\\Controller",
+        "uuid": "f97d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "action": "getactionwithdefault"
+    },
+    {
+        "match": "\/testdefault2\/:id|mydefault/:size|sizedefault",
+        "via": "get",
+        "controller": "\\RPI\\Controllers\\HTMLFront\\Controller",
+        "uuid": "f98d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "action": "getactionwithdefault"
+    },
+    {
+        "match": "\/testdefault3\/:id/:size|mysizedefault",
+        "via": "get",
+        "controller": "\\RPI\\Controllers\\HTMLFront\\Controller",
+        "uuid": "f99d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "action": "getactionwithdefault"
+    }
+]

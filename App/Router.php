@@ -28,10 +28,12 @@ class Router
      * @return bool     Returns true on success
      * @throws \Exception
      */
-    public function loadMap($map)
+    public function loadMap(array $map)
     {
         foreach ($map as $details) {
-            $methodParts = array("get");
+            $methodParts = array("all");
+            $mimetype = "text/html";
+            $fileExtension = "";
             
             if (!isset($details["match"])) {
                 throw new \Exception("Router map missing 'match' value");
@@ -48,8 +50,16 @@ class Router
             
             \RPI\Framework\Helpers\Utils::validateOption(
                 $methodParts,
-                array("get", "post", "delete", "put")
+                array("all", "get", "post", "delete", "put")
             );
+            
+            if (isset($details["mimetype"])) {
+                $mimetype = $details["mimetype"];
+            }
+            
+            if (isset($details["fileExtension"])) {
+                $fileExtension = $details["fileExtension"];
+            }
             
             $path = $details["match"];
             if (substr($path, 0, 1) == "/") {
@@ -62,8 +72,16 @@ class Router
             $details["match"] = $path;
 
             $pathParts = explode("/", $path);
+            
+            if (!isset($this->map["mimetype:".$mimetype])) {
+                $this->map["mimetype:".$mimetype] = array();
+            }
 
-            $m = &$this->map;
+            if (!isset($this->map["mimetype:".$mimetype]["fileExtension:".$fileExtension])) {
+                $this->map["mimetype:".$mimetype]["fileExtension:".$fileExtension] = array();
+            }
+            
+            $m = &$this->map["mimetype:".$mimetype]["fileExtension:".$fileExtension];
             $items = count($pathParts);
             foreach ($pathParts as $index => $pathPart) {
                 foreach ($methodParts as $method) {
@@ -122,9 +140,10 @@ class Router
      * Map a path to a route
      * @param string $path      URI
      * @param string $method    HTTP method verb: one of "put", "get", "post", "delete"
+     * @param string $mimetype  Request mime type
      * @return \RPI\Framework\App\Router\Route|null
      */
-    public function route($path, $method)
+    public function route($path, $method, $mimetype)
     {
         if (substr($path, 0, 1) == "/") {
             $path = substr($path, 1);
@@ -137,54 +156,106 @@ class Router
             $path = "";
         }
 
+        \RPI\Framework\Helpers\Utils::validateOption(
+            $method,
+            array("get", "post", "delete", "put")
+        );
+        
+        if (!isset($mimetype) || trim($mimetype) == "") {
+            throw new \RPI\Framework\Exceptions\InvalidParameter($mimetype);
+        }
+            
         $pathParts = explode("/", $path);
         
         $method = strtolower($method);
+        
+        $fileExtension = pathinfo($path, PATHINFO_EXTENSION);
 
-        // Locate a match for the path:
-        $pathPosition = 0;
-        $m = &$this->map;
-        foreach ($pathParts as $pathPart) {
-            if (isset($m[$pathPart])) {
-                $m = &$m[$pathPart];
-                $pathPosition++;
-            } else {
-                break;
+        $m = null;
+        if (isset($this->map["mimetype:".$mimetype])) {
+            $m = &$this->map["mimetype:".$mimetype];
+            
+            if (isset($m["fileExtension:".$fileExtension])) {
+                $m = &$m["fileExtension:".$fileExtension];
             }
         }
-
-        // If there is a match, set the controller details
-        if (isset($m["#"][$method])) {
-            $action = null;
-            $details = new \RPI\Framework\App\Router\Route(
-                $method,
-                $path,
-                $m["#"][$method]["controller"],
-                $m["#"][$method]["uuid"]
-            );
-
-            $params = array_splice($pathParts, $pathPosition);
-
-            // If there are defined params then set the values from the path parts
-            if (isset($m["#"][$method]["action"])) {
-                $action = new \RPI\Framework\App\Router\Action($m["#"][$method]["action"]);
-                $details->action = $action;
-
-                if (isset($m["#"][$method]["params"])) {
-                    $index = 0;
-                    foreach ($m["#"][$method]["params"] as $name => $param) {
-                        if (isset($params[$index])) {
-                            if (!isset($action->params)) {
-                                $action->params = array();
-                            }
-                            $action->params[$name] = $params[$index];
-                        }
-                        $index++;
-                    }
+        
+        if (isset($m)) {
+            // Locate a match for the path:
+            $pathPosition = 0;
+            foreach ($pathParts as $pathPart) {
+                if (isset($m[$pathPart])) {
+                    $m = &$m[$pathPart];
+                    $pathPosition++;
+                } else {
+                    break;
                 }
             }
-            
-            return $details;
+
+            if (isset($m["#"])) {
+                if (isset($m["#"][$method])) {
+                    $match = $m["#"][$method];
+                } elseif (isset($m["#"]["all"])) {
+                    $match = $m["#"]["all"];
+                }
+            }
+
+            // If there is a match, set the controller details
+            if (isset($match)) {
+                $params = array_splice($pathParts, $pathPosition);
+                $matchPath = implode("/", array_slice($pathParts, 0, $pathPosition));
+
+                $details = null;
+
+                $details = new \RPI\Framework\App\Router\Route(
+                    $method,
+                    $matchPath,
+                    $match["controller"],
+                    $match["uuid"]
+                );
+
+                if (isset($match["action"]) || isset($match["params"])) {
+                    $action = new \RPI\Framework\App\Router\Action();
+                    $details->action = $action;
+
+                    // If there are defined params then set the values from the path parts
+                    if (isset($match["action"])) {
+                        $action->method = $match["action"];
+                    }
+
+                    if (isset($match["params"])) {
+                        $index = 0;
+                        foreach ($match["params"] as $name => $param) {
+                            $paramName = $name;
+                            $paramDefault = null;
+
+                            $paramParts = explode("|", $name);
+                            if (count($paramParts) == 2) {
+                                $paramName = $paramParts[0];
+                                $paramDefault = $paramParts[1];
+                            }
+
+                            if (isset($params[$index])) {
+                                if (!isset($action->params)) {
+                                    $action->params = array();
+                                }
+                                $action->params[$paramName] = basename($params[$index], $fileExtension);
+                            } else {
+                                if (isset($paramDefault)) {
+                                    $action->params[$paramName] = basename($paramDefault, $fileExtension);
+                                } else {
+                                    $details = null;
+                                    break;
+                                }
+                            }
+
+                            $index++;
+                        }
+                    }
+                }
+
+                return $details;
+            }
         }
         
         return null;

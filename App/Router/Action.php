@@ -16,7 +16,7 @@ class Action
      */
     public $params = null;
     
-    public function __construct($method, array $params = null)
+    public function __construct($method = null, array $params = null)
     {
         $this->method = $method;
         $this->params = $params;
