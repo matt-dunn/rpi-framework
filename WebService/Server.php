@@ -24,7 +24,7 @@ abstract class Server extends \RPI\Framework\Controller
      */
     private $alwaysIncludeExceptionMessage = false;
 
-    public function __construct(array $options = null)
+    public function __construct($id = null, array $options = null)
     {
         if (\RPI\Framework\App\Config::getValue("config/debug/@enabled", false) === true) {
             $this->alwaysIncludeExceptionMessage = true;
@@ -81,6 +81,15 @@ abstract class Server extends \RPI\Framework\Controller
                     $request = new Request();
                 }
                 $format = "xml";	// Default the format if it's unavailable (e.g. if the request was invalid)
+                if (isset($_SERVER["CONTENT_TYPE"])) {
+                    $contentType = explode(";", $_SERVER["CONTENT_TYPE"]);
+                    if (count($contentType) > 0) {
+                        $mimeType = explode("/", strtolower($contentType[0]));
+                        if (count($mimeType) > 0) {
+                            $format = $mimeType[1];
+                        }
+                    }
+                }
                 if (isset($request->method)) {
                     $format = $request->method->format;
                 }

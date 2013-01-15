@@ -36,12 +36,12 @@ abstract class Component extends \RPI\Framework\Controller\HTML
      * @var string
      */
     public $typeId = null;
-    
+
     /**
      * Set by viewdata
      * @var string
      */
-    public $viewMode = null;
+    public $match = null;
     
     /**
      * Set by viewdata
@@ -86,9 +86,8 @@ abstract class Component extends \RPI\Framework\Controller\HTML
         
         $this->viewType = "component".(isset($this->id) && $this->id !== "" ? "_".$this->id : "");
         
-        if (isset($options["match"])) {
-            $match = eval($options["match"]);
-            if ($match === false) {
+        if (isset($this->match)) {
+            if(eval($this->match) === false) {
                 $this->visible = false;
             }
         }
@@ -167,7 +166,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
 <?php
 // Component: {$this->type}
 \$GLOBALS["RPI_Components"]["{$this->componentId}"]
-    = \RPI\Framework\Helpers\View::createComponentsByComponentId("{$this->componentId}");
+    = \RPI\Framework\Helpers\View2::createControllerByUUID("{$this->componentId}");
 \$GLOBALS["RPI_Components"]["{$this->componentId}"]->process();
 ?>
 EOT;
@@ -272,17 +271,6 @@ EOT;
             return <<<EOT
                 <?php require("$cacheFile"); ?>
 EOT;
-        }
-    }
-
-    /**
-    * Creates a hierarchy of components from view config
-    */
-    public function createComponentFromViewData($componentsInfo, $controller)
-    {
-        $components = \RPI\Framework\Helpers\View::createComponentFromViewData($componentsInfo, $controller, $this);
-        foreach ($components as $component) {
-            $this->addComponent($component, $controller);
         }
     }
 

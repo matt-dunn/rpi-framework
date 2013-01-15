@@ -4,6 +4,12 @@ namespace RPI\Framework;
 
 class App
 {
+    /**
+     *
+     * @var \RPI\Framework\App\Router 
+     */
+    private static $router = null;
+    
     protected static function autoload($className)
     {
         $classPath = __DIR__."/../../".str_replace("\\", DIRECTORY_SEPARATOR, $className).".php";
@@ -19,10 +25,6 @@ class App
 
         \RPI\Framework\Exception\Handler::set();
 
-        $dataStore = new \RPI\Framework\Cache\Data\Store(
-            new \RPI\Framework\Cache\Data\Provider\Apc()
-        );
-        
         // =====================================================================
         // Event listeners:
 
@@ -38,6 +40,10 @@ class App
 
         mb_internal_encoding("UTF-8");
         
+        $dataStore = new \RPI\Framework\Cache\Data\Store(
+            new \RPI\Framework\Cache\Data\Provider\Apc()
+        );
+        
         if ($GLOBALS["RPI_FRAMEWORK_CONFIG_FILEPATH"] !== false) {
             \RPI\Framework\App\Config::init($dataStore, $GLOBALS["RPI_FRAMEWORK_CONFIG_FILEPATH"]);
         }
@@ -46,8 +52,11 @@ class App
         
         \RPI\Framework\App\Session::init();
 
-        \RPI\Framework\Helpers\View::init($dataStore);
-
+        self::$router = \RPI\Framework\Helpers\View2::init(
+            $dataStore,
+            realpath($_SERVER["DOCUMENT_ROOT"]."/../View/Config2.xml")
+        );
+        
         if (\RPI\Framework\App\Config::getValue("config/debug/@enabled", false) === true) {
             require_once(__DIR__.'/../Vendor/FirePHPCore/FirePHP.class.php');
             $GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] = false;
@@ -56,8 +65,25 @@ class App
 
     public static function run()
     {
-        $controller = new \RPI\Controllers\HTMLFront\Controller();
-        $controller->process();
-        $controller->render();
+        $route = self::$router->route(
+            \RPI\Framework\Helpers\Utils::currentPageURI(true),
+            $_SERVER['REQUEST_METHOD'],
+            "text/html"
+        );
+        
+        if (isset($route)) {
+            $controller = \RPI\Framework\Helpers\View2::createControllerByUUID(
+                $route->uuid,
+                null,
+                "\RPI\Framework\Controller"
+            );
+            if (isset($controller)) {
+                $controller->process();
+                $controller->render();
+            }
+        } else {
+            echo "NOPE";
+            // throw 404
+        }
     }
 }

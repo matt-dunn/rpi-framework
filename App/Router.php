@@ -39,6 +39,10 @@ class Router
                 throw new \Exception("Router map missing 'match' value");
             }
             
+            if (!isset($details["controller"])) {
+                throw new \Exception("Router map '{$details["match"]}' missing 'controller' value");
+            }
+            
             if (isset($details["via"])) {
                 $methodParts = array_map(
                     function ($s) {
@@ -68,6 +72,9 @@ class Router
             if (substr($path, -1, 1) == "/") {
                 $path = substr($path, 0, -1);
             }
+            if ($path === false) {
+                $path = "";
+            }
             
             $details["match"] = $path;
 
@@ -95,15 +102,14 @@ class Router
                         $m["#"][$method]["params"][substr($pathPart, 1)] = null;
                     } else {
                         if (!isset($m[$pathPart])) {
-                            if ($index == $items - 1) {
-                                $m[$pathPart] = array(
-                                    "#" => array(
-                                        $method => $details
-                                    )
-                                );
-                            } else {
-                                $m[$pathPart] = array();
+                            $m[$pathPart] = array();
+                        }
+                        
+                        if ($index == $items - 1) {
+                            if (!isset($m[$pathPart]["#"])) {
+                                $m[$pathPart]["#"] = array();
                             }
+                            $m[$pathPart]["#"][$method] = $details;
                         }
                     }
                 }
@@ -156,6 +162,7 @@ class Router
             $path = "";
         }
 
+        $method = strtolower($method);
         \RPI\Framework\Helpers\Utils::validateOption(
             $method,
             array("get", "post", "delete", "put")

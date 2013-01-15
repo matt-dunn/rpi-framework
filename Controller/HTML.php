@@ -15,6 +15,12 @@ abstract class HTML extends \RPI\Framework\Controller
      * @var string
      */
     public $viewType = null;
+    
+    /**
+     * Set by viewdata
+     * @var string
+     */
+    public $viewMode = null;
 
     /**
      *
@@ -52,7 +58,7 @@ abstract class HTML extends \RPI\Framework\Controller
 
     abstract protected function getView();
 
-    public function __construct($id = null, array $options = null)
+    public function __construct($id = null, array $options = null, \RPI\Framework\Views\IView $viewRendition = null)
     {
         parent::__construct($id, $options);
         
@@ -76,6 +82,10 @@ abstract class HTML extends \RPI\Framework\Controller
             }
         } else {
             $this->id = $id;
+        }
+        
+        if (isset($viewRendition)) {
+            $this->setView($viewRendition);
         }
     }
     
