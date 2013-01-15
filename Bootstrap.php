@@ -29,7 +29,7 @@ if (!isset($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"])) {
 // ================================================================================================================
 // Application initialisation
 
+require("Functions.php");
+
 require(__DIR__."/App.php");
 \RPI\Framework\App::init();
-
-require("Functions.php");
