@@ -61,7 +61,7 @@ abstract class Controller
      */
     abstract public function render();
     
-    public function __construct($id, array $options = null, \RPI\Framework\App\Router\Action $action = null)
+    public function __construct($id = null, array $options = null, \RPI\Framework\App\Router\Action $action = null)
     {
         $this->id = $id;
         $this->controllerAction = $action;
