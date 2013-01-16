@@ -30,15 +30,19 @@ class View2
         return self::parseViewConfig();
     }
 
-    public static function createControllerByUUID($uuid, \RPI\Framework\App\Router\Action $action = null, $type = null)
-    {
+    public static function createControllerByUUID(
+        $uuid,
+        \RPI\Framework\App\Router\Action $action = null,
+        $type = null,
+        $controllerOptions = null
+    ) {
         if (!isset(self::$file)) {
             throw new \Exception(__CLASS__."::init must be called before '".__METHOD__."' can be called.");
         }
         
         $controllerData = self::$store->fetch("PHP_RPI_CONTENT_VIEWS2-".self::$file."-controller-$uuid");
         if ($controllerData !== false) {
-            return self::createComponentFromViewData($controllerData, $action);
+            return self::createComponentFromViewData($controllerData, $action, $controllerOptions);
         }
 
         return false;
@@ -69,6 +73,9 @@ class View2
         }
         if (isset($controllerData["match"])) {
             $componentOptions["match"] = $controllerData["match"];
+        }
+        if (isset($controllerOptions)) {
+            $componentOptions= array_merge($controllerData, $componentOptions);
         }
 
         $viewRendition = null;
