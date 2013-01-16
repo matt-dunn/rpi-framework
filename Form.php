@@ -26,67 +26,49 @@ abstract class Form extends \RPI\Framework\Component
      */
     public $hasAllRunValidators = true;
 
-    /**
-     *
-     * @param string $id     id
-     * @param string $action Override form action
-     * @param string $method "post" or "get". If not specified, method defaults
-     * to "post" if no action is specified or "get" if action is set
-     */
-    public function __construct(
-        $id = null,
-        array $options = null,
-        \RPI\Framework\Views\IView $viewRendition = null,
-        $action = null,
-        $method = null,
-        $title = null
-    ) {
-        if (isset($options["componentId"])) {
-            $this->componentId = $options["componentId"];
-            unset($options["componentId"]);
-        }
-
-        if (!isset($id)) {
-            $this->id = "f-".$this->componentId;
-        } else {
-            $this->id = $id;
-        }
-
-        // TODO: why is this???
-        if (strpos($this->id, "_") !== false) {
-            throw new Exception("ID '$id' cannot contain '_'. This is a reserved character.");
-        }
-
-        if ($action === null) {
-            $action = \RPI\Framework\Helpers\Utils::currentPageRedirectURI();
-        } elseif ($method === null) {
-            $method = "get";
-        }
-        $this->action = $action;
+    protected function initController(array $options)
+    {
+        $this->method = $this->options->method;
+        $this->action = $this->options->action;
         $this->pageName = $this->action;
 
         $this->name = get_class($this);
         $this->state = new \RPI\Framework\Form\State($this);
-        if ($method !== null) {
-            $this->method = strtolower($method);
-        }
-        $this->title = $title;
-
-        $this->options = $options;
-
-        if (!in_array($this->method, array("get", "post"))) {
-            throw new \InvalidArgumentException("Method '".$this->method."' must be either 'post' or 'get'.");
-        }
+        $this->title = $this->options->title;
 
         $this->isDynamic = true;
 
-        parent::__construct($this->id, $options, $viewRendition);
-        
         if ($this->isVisible()) {
             $this->createFormItems();
         }
     }
 
+    protected function getControllerOptions(array $options)
+    {
+        return parent::getControllerOptions($options)->add(
+            new \RPI\Framework\Controller\Options(
+                array(
+                    "method" => array(
+                        "type" => "string",
+                        "description" => "Form method",
+                        "values" => array("get", "post"),
+                        "default" => "post"
+                    ),
+                    "action" => array(
+                        "type" => "string",
+                        "description" => "Form action",
+                        "default" => \RPI\Framework\Helpers\Utils::currentPageRedirectURI()
+                    ),
+                    "title" => array(
+                        "type" => "string",
+                        "description" => "Form title"
+                    )
+                ),
+                $options
+            )
+        );
+    }
+    
     public function __get($key)
     {
         if ($key == "isValidPostBack") {

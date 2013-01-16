@@ -5,13 +5,6 @@ namespace RPI\Framework;
 abstract class Component extends \RPI\Framework\Controller\HTML
 {
     /**
-     * Unique ID of the component
-     * Set by viewdata
-     * @var UUID
-     */
-    public $componentId;
-    
-    /**
      * The component can be edited
      * Set by viewdata
      * @var bool 
@@ -63,31 +56,12 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     
     private $visible = true;
     
-    public function __construct($id = null, array $options = null, \RPI\Framework\Views\IView $viewRendition = null)
+    protected function initController(array $options)
     {
-        $this->type = get_called_class();
-        $this->safeTypeName = str_replace("\\", "_", $this->type);
-
-        $this->id = $id;
-        
-        if (!isset($this->componentId)) {
-            $this->componentId = $this->id;
-        }
-        
-        if (!isset($options)) {
-            $options = array();
-        }
-        $this->options = $this->getControllerOptions($this->parseOptions($options));
-        if (!$this->options instanceof \RPI\Framework\Controller\Options) {
-            throw new \Exception(
-                "Invalid type returned from Component::getOptions. Must be of type '\RPI\Framework\Controller\Options'."
-            );
-        }
-        
         $this->viewType = "component".(isset($this->id) && $this->id !== "" ? "_".$this->id : "");
         
         if (isset($this->match)) {
-            if(eval($this->match) === false) {
+            if (eval($this->match) === false) {
                 $this->visible = false;
             }
         }
@@ -95,14 +69,23 @@ abstract class Component extends \RPI\Framework\Controller\HTML
         if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
             // TODO: should this cache against the *component* and therefore not be unique for each page??
             $this->cacheKey =
-                implode("_", $options)."_".$this->componentId."_".\RPI\Framework\Helpers\Utils::currentPageURI(true);
+                implode("_", $options)."_".$this->id."_".\RPI\Framework\Helpers\Utils::currentPageURI(true);
         }
-        
-        if (isset($viewRendition)) {
-            $this->setView($viewRendition);
-        }
-        
-        $this->init();
+    }
+    
+    protected function getControllerOptions(array $options)
+    {
+        return parent::getControllerOptions($options)->add(
+            new \RPI\Framework\Controller\Options(
+                array(
+                    "className" => array(
+                        "type" => "string",
+                        "description" => "Component CSS class name"
+                    )
+                ),
+                $options
+            )
+        );
     }
     
     protected function init()
@@ -138,6 +121,8 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     public function process()
     {
         if ($this->visible) {
+            $this->processAction();
+            
             if (!isset($this->model)) {
                 $this->model = $this->getModel();
             }
@@ -165,9 +150,9 @@ abstract class Component extends \RPI\Framework\Controller\HTML
             $rendition .= <<<EOT
 <?php
 // Component: {$this->type}
-\$GLOBALS["RPI_Components"]["{$this->componentId}"]
-    = \RPI\Framework\Helpers\View2::createControllerByUUID("{$this->componentId}");
-\$GLOBALS["RPI_Components"]["{$this->componentId}"]->process();
+\$GLOBALS["RPI_Components"]["{$this->id}"]
+    = \RPI\Framework\Helpers\View2::createControllerByUUID("{$this->id}");
+\$GLOBALS["RPI_Components"]["{$this->id}"]->process();
 ?>
 EOT;
         }
@@ -197,7 +182,7 @@ EOT;
                     $rendition = <<<EOT
 <?php
 // Component: {$this->type}
-\RPI\Framework\Helpers\Utils::processPHP(\$GLOBALS["RPI_Components"]["{$this->componentId}"]->renderView());
+\RPI\Framework\Helpers\Utils::processPHP(\$GLOBALS["RPI_Components"]["{$this->id}"]->renderView());
 ?>
 EOT;
                 }
@@ -274,7 +259,8 @@ EOT;
         }
     }
 
-    protected function isCacheable() {
+    protected function isCacheable()
+    {
         return true;
     }
 }

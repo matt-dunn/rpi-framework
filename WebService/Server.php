@@ -24,26 +24,15 @@ abstract class Server extends \RPI\Framework\Controller
      */
     private $alwaysIncludeExceptionMessage = false;
 
-    public function __construct($id = null, array $options = null)
+    protected function initController(array $options)
     {
         if (\RPI\Framework\App\Config::getValue("config/debug/@enabled", false) === true) {
             $this->alwaysIncludeExceptionMessage = true;
-            if (class_exists("FirePHP")) {
-                $this->firephp = \FirePHP::getInstance(true);
-            }
         }
 
         if (isset($_SERVER["HTTP_REFERER"])) {
             $_SERVER["REDIRECT_URL"] = parse_url($_SERVER["HTTP_REFERER"], PHP_URL_PATH);
         }
-
-        if (isset($options)) {
-            if (isset($options["alwaysIncludeExceptionMessage"])) {
-                $this->alwaysIncludeExceptionMessage = ($options["alwaysIncludeExceptionMessage"] === true);
-            }
-        }
-        
-        $this->init();
     }
 
     /**
@@ -133,8 +122,8 @@ abstract class Server extends \RPI\Framework\Controller
         if (\RPI\Framework\App\Config::getValue("config/debug/@enabled", false) === true
             && $buffer !== false
             && $buffer != ""
-            && class_exists("FirePHP")) {
-            $this->firephp->log($buffer, "Output buffer");
+            && isset($GLOBALS["RPI_FRAMEWORK_FIREPHP"])) {
+            $GLOBALS["RPI_FRAMEWORK_FIREPHP"]->log($buffer, "Output buffer");
         }
 
         $contentType = "application_{$this->response->format}";

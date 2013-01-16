@@ -30,7 +30,7 @@ class View2
         return self::parseViewConfig();
     }
 
-    public static function createControllerByUUID($uuid, array $options = null, $type = null)
+    public static function createControllerByUUID($uuid, \RPI\Framework\App\Router\Action $action = null, $type = null)
     {
         if (!isset(self::$file)) {
             throw new \Exception(__CLASS__."::init must be called before '".__METHOD__."' can be called.");
@@ -38,7 +38,7 @@ class View2
         
         $controllerData = self::$store->fetch("PHP_RPI_CONTENT_VIEWS2-".self::$file."-controller-$uuid");
         if ($controllerData !== false) {
-            return self::createComponentFromViewData($controllerData, $options);
+            return self::createComponentFromViewData($controllerData, $action);
         }
 
         return false;
@@ -48,16 +48,12 @@ class View2
 
     private static function createComponentFromViewData(
         $controllerData,
-        $additionalOptions = null,
-        $parentController = null
+        \RPI\Framework\App\Router\Action $action = null
     ) {
         if (isset($controllerData["options"])) {
             $componentOptions = $controllerData["options"];
         } else {
             $componentOptions = array();
-        }
-        if (isset($additionalOptions)) {
-            $componentOptions = array_merge($componentOptions, $additionalOptions);
         }
         if (isset($controllerData["viewMode"])) {
             $componentOptions["viewMode"] = $controllerData["viewMode"];
@@ -87,6 +83,7 @@ class View2
             array(
                 (isset($controllerData["id"]) && $controllerData["id"] !== "" ? $controllerData["id"] : null),
                 $componentOptions,
+                $action,
                 $viewRendition
             )
         );
@@ -100,7 +97,7 @@ class View2
                     $controller->addComponent(
                         self::createControllerByUUID(
                             $childControllerUUID,
-                            $additionalOptions
+                            $action
                         )
                     );
                 }
@@ -158,11 +155,11 @@ class View2
                         $viewConfig["routeMap"]
                     );
                     
-                    foreach($viewConfig["controllerMap"] as $id => $controller) {
+                    foreach ($viewConfig["controllerMap"] as $id => $controller) {
                         self::$store->store("PHP_RPI_CONTENT_VIEWS2-$file-controller-$id", $controller);
                     }
 
-                    foreach($viewConfig["components"] as $id => $controller) {
+                    foreach ($viewConfig["components"] as $id => $controller) {
                         self::$store->store("PHP_RPI_CONTENT_VIEWS2-$file-controller-$id", $controller);
                     }
                     
@@ -219,6 +216,23 @@ class View2
                 }
             } else {
                 $controller = $parentController;
+            }
+
+            $controllerOptionsElements = $xpath->query("RPI:controllerOption", $route);
+            foreach ($controllerOptionsElements as $controllerOptionsElement) {
+                $value = $controllerOptionsElement->getAttribute("value");
+                if ($value == "null") {
+                    $value = null;
+                } elseif ($value == "true") {
+                    $value = true;
+                } elseif ($value == "false") {
+                    $value = false;
+                } elseif (ctype_digit($value)) {
+                    $value = (int) $value;
+                } elseif (is_numeric($value)) {
+                    $value = (double) $value;
+                }
+                $controller["options"][$controllerOptionsElement->getAttribute("name")] = $value;
             }
 
             $componentElements = $xpath->query("RPI:component", $route);
@@ -369,23 +383,28 @@ class View2
                         switch (strtolower($matches[2])) {
                             case "querystring":
                                 if ($value == "*") {
-                                    $expression = "(isset(\$_GET['".$name."']) && strtolower(\$_GET['".$name."']) != '') ";
+                                    $expression =
+                                        "(isset(\$_GET['".$name."']) && strtolower(\$_GET['".$name."']) != '') ";
                                 } else {
-                                    $expression = $negate."(isset(\$_GET['".$name."']) && strtolower(\$_GET['".$name."']) == '".
+                                    $expression =
+                                        $negate."(isset(\$_GET['".$name."']) && strtolower(\$_GET['".$name."']) == '".
                                         strtolower($value)."') ";
                                 }
                                 break;
                             case "post":
                                 if ($value == "*") {
-                                    $expression = "(isset(\$_POST['".$name."']) && strtolower(\$_POST['".$name."']) != '') ";
+                                    $expression =
+                                        "(isset(\$_POST['".$name."']) && strtolower(\$_POST['".$name."']) != '') ";
                                 } else {
-                                    $expression = $negate."(isset(\$_POST['".$name."']) && strtolower(\$_POST['".$name."']) == '".
+                                    $expression =
+                                        $negate."(isset(\$_POST['".$name."']) && strtolower(\$_POST['".$name."']) == '".
                                         strtolower($value)."') ";
                                 }
                                 break;
                             case "user":
                                 $expression = $negate.
-                                    "((string) (\RPI\Framework\Services\Authentication\Service::getAuthenticatedUser()->".$name.")
+                                    "((string) (\RPI\Framework\Services\Authentication\Service::".
+                                    "getAuthenticatedUser()->{$name})
                                     == '".strtolower($value)."') ";
                                 break;
                             default:

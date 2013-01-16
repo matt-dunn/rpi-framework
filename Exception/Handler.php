@@ -222,14 +222,10 @@ class Handler
                 break;
             case E_WARNING:
                 throw new \ErrorException($errStr, $errNo);
-                break;
             case E_NOTICE:
                 throw new \ErrorException($errStr, $errNo);
-//                self::logMessage("NOTICE: [$errNo] $errStr - $errfile#$errline", LOG_ERR);
-                break;
             default:
                 throw new \ErrorException($errStr, $errNo);
-                break;
         }
     }
 

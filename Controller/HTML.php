@@ -6,7 +6,7 @@ abstract class HTML extends \RPI\Framework\Controller
 {
     /**
      *
-     * @var string
+     * @var \RPI\Framework\Views\IView
      */
     protected $view = null;
 
@@ -41,7 +41,7 @@ abstract class HTML extends \RPI\Framework\Controller
     protected $messages = null;
 
     /**
-     *
+     * TODO: move to component?
      * @var string
      */
     protected $cacheKey = false;
@@ -58,31 +58,13 @@ abstract class HTML extends \RPI\Framework\Controller
 
     abstract protected function getView();
 
-    public function __construct($id = null, array $options = null, \RPI\Framework\Views\IView $viewRendition = null)
-    {
-        parent::__construct($id, $options);
-        
-        if (!isset($id) || $id == "") {
-            if (isset($_GET["id"]) && $_GET["id"] !== "") {
-                $this->id = $_GET["id"];
-            } else {
-                $uri = (isset($_SERVER["REDIRECT_URL"]) ? $_SERVER["REDIRECT_URL"] : $_SERVER["REQUEST_URI"]);
-                $parts = pathinfo($uri);
-                $this->id = \RPI\Framework\Helpers\FileUtils::trimSlashes($parts["dirname"]);
-                if ($this->id !== "" && $this->id !== false) {
-                    $this->id.="_";
-                }
-                $this->id .=$parts["filename"];
-
-                $this->id = strtolower($this->id);
-
-                if (!isset($this->id) || $this->id == "") {
-                    $this->id = "default";
-                }
-            }
-        } else {
-            $this->id = $id;
-        }
+    public function __construct(
+        $id,
+        array $options = null,
+        \RPI\Framework\App\Router\Action $action = null,
+        \RPI\Framework\Views\IView $viewRendition = null
+    ) {
+        parent::__construct($id, $options, $action);
         
         if (isset($viewRendition)) {
             $this->setView($viewRendition);
@@ -109,6 +91,8 @@ abstract class HTML extends \RPI\Framework\Controller
 
     public function process()
     {
+        $this->processAction();
+            
         if (!isset($this->model)) {
             $this->model = $this->getModel();
         }
@@ -191,7 +175,7 @@ abstract class HTML extends \RPI\Framework\Controller
     public function addControllerMessage($message, $type = null, $id = null, $title = null)
     {
         $controller = $this->getController();
-        if (isset($controller)) {
+        if (isset($controller) && $controller instanceof \RPI\Framework\Controller\HTML) {
             $controller->addMessage($message, $type, $id, $title);
         }
     }

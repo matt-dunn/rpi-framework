@@ -8,7 +8,7 @@ namespace RPI\Framework\Controller;
  *                "<option name>" => array(
  *                    "type" => "*<string|bool|int|float>,
  *                    "description" => "*<description text>",
- *                    "values" => array(<list of typed values>),
+ *                    "values" => array(<array list of typed values>),
  *                    "default" => <default typed value>,
  *                    "required" => <true|false(default)>
  *                ),
@@ -24,26 +24,27 @@ class Options
     {
         $this->availableOptions = $availableOptions;
         $this->options = $options;
-        
-        $this->validate($this->options);
     }
     
-    public function add(array $options)
+    public function add(\RPI\Framework\Controller\Options $options)
     {
-        $this->options = array_merge($this->options, $options);
+        $this->availableOptions = array_merge($this->availableOptions, $options->availableOptions);
+        $this->options = array_merge($this->options, $options->options);
         
-        $this->validate($this->options);
+        return $this;
     }
     
-    private function validate(array $options)
+    public function validate()
     {
+        $options = $this->options;
+        
         foreach ($this->availableOptions as $name => $value) {
             if (!isset($value["type"]) || !isset($value["description"])) {
-                throw new \Exception(
+                throw new \InvalidArgumentException(
                     "Component options must define a minimum of 'type' and 'description' for '$name'."
                 );
             } elseif (isset($value["required"]) && $value["required"] == true && !isset($options[$name])) {
-                throw new \Exception("'$name' is a required option and must be supplied.");
+                throw new \InvalidArgumentException("'$name' is a required option and must be supplied.");
             }
         }
         
@@ -55,20 +56,20 @@ class Options
                     if (call_user_func("is_".$optionDetails["type"], $value)) {
                         if (isset($optionDetails["values"])
                             && !in_array($value, $optionDetails["values"], true)) {
-                            throw new \Exception(
+                            throw new \InvalidArgumentException(
                                 "Invalid value '$value'. Must be one of [".
                                 implode(", ", array_keys($optionDetails["values"]))."]"
                             );
                         }
                     } else {
-                        throw new \Exception(
+                        throw new \InvalidArgumentException(
                             "Invalid type '".gettype($value)."' for '$name'. Must be of type '".
                             $optionDetails["type"]."'"
                         );
                     }
                 }
             } else {
-                throw new \Exception(
+                throw new \InvalidArgumentException(
                     "Invalid option '$name'. Available options are: [".
                     implode(", ", array_keys($this->availableOptions))."]"
                 );
@@ -86,7 +87,10 @@ class Options
             }
             return \RPI\Framework\Helpers\Utils::getNamedValue($this->options, $name, $default);
         } else {
-            return null;
+            throw new \InvalidArgumentException(
+                "Invalid property '$name'. Must be one of [".
+                implode(", ", array_keys($this->availableOptions))."]"
+            );
         }
     }
     

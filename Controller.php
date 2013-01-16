@@ -28,6 +28,12 @@ abstract class Controller
      */
     protected $type;
     
+    /**
+     *
+     * @var type \RPI\Framework\App\Router\Action
+     */
+    private $controllerAction = null;
+    
     private static $controller = null;
 
     private $parentController = null;
@@ -35,6 +41,12 @@ abstract class Controller
     
     /**
      * Initialise the controller
+     * @return bool Boolean to indicate if processing should continue. Return FALSE to stop processing
+     */
+    abstract protected function initController(array $options);
+    
+    /**
+     * Initialise the controller instance
      */
     abstract protected function init();
     
@@ -43,14 +55,16 @@ abstract class Controller
      */
     abstract public function process();
     
+    // TODO: move to HTML? not needed for restful controllers?
     /**
      * Render a response
      */
     abstract public function render();
     
-    public function __construct($id = null, array $options = null)
+    public function __construct($id, array $options = null, \RPI\Framework\App\Router\Action $action = null)
     {
         $this->id = $id;
+        $this->controllerAction = $action;
         $this->type = get_called_class();
         $this->safeTypeName = str_replace("\\", "_", $this->type);
         
@@ -65,15 +79,24 @@ abstract class Controller
                 "Must be of type '\RPI\Framework\Controller\Options'."
             );
         }
+        $this->options->validate();
 
         if (!isset(self::$controller)) {
             self::$controller = $this;
+        }
+        
+        if ($this->initController($options) !== false) {
+            $this->init();
         }
     }
     
     protected function getControllerOptions(array $options)
     {
-        return new \RPI\Framework\Controller\Options(array(), $options);
+        return new \RPI\Framework\Controller\Options(
+            array(
+            ),
+            $options
+        );
     }
     
     protected function parseOptions(array $options)
@@ -93,6 +116,23 @@ abstract class Controller
         return $controllerOptions;
     }
 
+    public function processAction()
+    {
+        if (isset($this->controllerAction)) {
+            $methodName = $this->controllerAction->method."Action";
+            if (method_exists($this, $methodName)) {
+                call_user_method_array($methodName, $this, $this->controllerAction->params);
+            } else {
+                throw new \Exception(
+                    "Action '{$this->controllerAction->method}' ({$this->type}::{$methodName}) ".
+                    "has not been implemented in '".$this->type."'."
+                );
+            }
+            
+            $this->controllerAction = null;
+        }
+    }
+    
     public function getParent()
     {
         return $this->parentController;

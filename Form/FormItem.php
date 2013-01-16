@@ -30,9 +30,9 @@ abstract class FormItem
 
     public function __construct($id, $displayText, array $args = null, Button $defaultButton = null)
     {
-        if (strpos($id, "_") !== false) {
-            throw new \Exception("Formitem ID '$id' cannot contain '_'. This is a reserved character.");
-        }
+        //if (strpos($id, "_") !== false) {
+        //    throw new \Exception("Formitem ID '$id' cannot contain '_'. This is a reserved character.");
+        //}
         $this->id = $id;
         $this->displayText = $displayText;
         $this->defaultButton = $defaultButton;

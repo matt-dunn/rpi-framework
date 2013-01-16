@@ -32,8 +32,8 @@ class Router
     {
         foreach ($map as $details) {
             $methodParts = array("all");
-            $mimetype = "text/html";
-            $fileExtension = "";
+            $mimetype = null;
+            $fileExtension = null;
             
             if (!isset($details["match"])) {
                 throw new \Exception("Router map missing 'match' value");
@@ -58,11 +58,11 @@ class Router
             );
             
             if (isset($details["mimetype"])) {
-                $mimetype = $details["mimetype"];
+                $mimetype = strtolower($details["mimetype"]);
             }
             
             if (isset($details["fileExtension"])) {
-                $fileExtension = $details["fileExtension"];
+                $fileExtension = strtolower($details["fileExtension"]);
             }
             
             $path = $details["match"];
@@ -80,26 +80,37 @@ class Router
 
             $pathParts = explode("/", $path);
             
-            if (!isset($this->map["mimetype:".$mimetype])) {
-                $this->map["mimetype:".$mimetype] = array();
-            }
-
-            if (!isset($this->map["mimetype:".$mimetype]["fileExtension:".$fileExtension])) {
-                $this->map["mimetype:".$mimetype]["fileExtension:".$fileExtension] = array();
-            }
+            $m = &$this->map;
             
-            $m = &$this->map["mimetype:".$mimetype]["fileExtension:".$fileExtension];
             $items = count($pathParts);
             foreach ($pathParts as $index => $pathPart) {
+                $pathPart = strtolower($pathPart);
                 foreach ($methodParts as $method) {
                     if (substr($pathPart, 0, 1) == ":") {
                         if (!isset($m["#"])) {
                             $m["#"] = array();
                         }
-                        if (!isset($m["#"][$method])) {
-                            $m["#"][$method] = $details;
+                        
+                        $item = &$m["#"][$method];
+                        
+                        if (isset($mimetype)) {
+                            if (!isset($item["#mimetype:$mimetype"])) {
+                                $item["#mimetype:$mimetype"] = array();
+                            }
+                            $item = &$item["#mimetype:$mimetype"];
                         }
-                        $m["#"][$method]["params"][substr($pathPart, 1)] = null;
+                        
+                        if (isset($fileExtension)) {
+                            if (!isset($item["#fileExtension:$fileExtension"])) {
+                                $item["#fileExtension:$fileExtension"] = array();
+                            }
+                            $item = &$item["#fileExtension:$fileExtension"];
+                        }
+
+                        if (!isset($item["#"])) {
+                            $item["#"] = $details;
+                        }
+                        $item["#"]["params"][substr($pathPart, 1)] = null;
                     } else {
                         if (!isset($m[$pathPart])) {
                             $m[$pathPart] = array();
@@ -109,7 +120,24 @@ class Router
                             if (!isset($m[$pathPart]["#"])) {
                                 $m[$pathPart]["#"] = array();
                             }
-                            $m[$pathPart]["#"][$method] = $details;
+                            
+                            $item = &$m[$pathPart]["#"][$method];
+                            
+                            if (isset($mimetype)) {
+                                if (!isset($item["#mimetype:$mimetype"])) {
+                                    $item["#mimetype:$mimetype"] = array();
+                                }
+                                $item = &$item["#mimetype:$mimetype"];
+                            }
+                            
+                            if (isset($fileExtension)) {
+                                if (!isset($item["#fileExtension:$fileExtension"])) {
+                                    $item["#fileExtension:$fileExtension"] = array();
+                                }
+                                $item = &$item["#fileExtension:$fileExtension"];
+                            }
+                            
+                            $item["#"] = $details;
                         }
                     }
                 }
@@ -149,7 +177,7 @@ class Router
      * @param string $mimetype  Request mime type
      * @return \RPI\Framework\App\Router\Route|null
      */
-    public function route($path, $method, $mimetype)
+    public function route($path, $method, $mimetype = null)
     {
         if (substr($path, 0, 1) == "/") {
             $path = substr($path, 1);
@@ -168,29 +196,19 @@ class Router
             array("get", "post", "delete", "put")
         );
         
-        if (!isset($mimetype) || trim($mimetype) == "") {
-            throw new \RPI\Framework\Exceptions\InvalidParameter($mimetype);
+        if (isset($mimetype)) {
+            $mimetype = strtolower($mimetype);
         }
-            
+        
         $pathParts = explode("/", $path);
         
-        $method = strtolower($method);
-        
-        $fileExtension = pathinfo($path, PATHINFO_EXTENSION);
+        $m = &$this->map;
 
-        $m = null;
-        if (isset($this->map["mimetype:".$mimetype])) {
-            $m = &$this->map["mimetype:".$mimetype];
-            
-            if (isset($m["fileExtension:".$fileExtension])) {
-                $m = &$m["fileExtension:".$fileExtension];
-            }
-        }
-        
         if (isset($m)) {
             // Locate a match for the path:
             $pathPosition = 0;
             foreach ($pathParts as $pathPart) {
+                $pathPart = strtolower($pathPart);
                 if (isset($m[$pathPart])) {
                     $m = &$m[$pathPart];
                     $pathPosition++;
@@ -199,11 +217,30 @@ class Router
                 }
             }
 
+            $match = null;
+            
             if (isset($m["#"])) {
                 if (isset($m["#"][$method])) {
                     $match = $m["#"][$method];
                 } elseif (isset($m["#"]["all"])) {
                     $match = $m["#"]["all"];
+                }
+                
+                if (isset($mimetype) && $mimetype != "") {
+                    if (isset($match["#mimetype:$mimetype"])) {
+                        $match = $match["#mimetype:$mimetype"];
+                    }
+                }
+                
+                $fileExtension = pathinfo($path, PATHINFO_EXTENSION);
+                if (isset($fileExtension) && $fileExtension != "") {
+                    if (isset($match["#fileExtension:$fileExtension"])) {
+                        $match = $match["#fileExtension:$fileExtension"];
+                    }
+                }
+                
+                if (isset($match["#"])) {
+                    $match = $match["#"];
                 }
             }
 
@@ -213,50 +250,59 @@ class Router
                 $matchPath = implode("/", array_slice($pathParts, 0, $pathPosition));
 
                 $details = null;
+                if (!isset($match["params"]) || count($params) <= count($match["params"])) {
+                    $details = new \RPI\Framework\App\Router\Route(
+                        $method,
+                        $matchPath,
+                        $match["controller"],
+                        $match["uuid"]
+                    );
 
-                $details = new \RPI\Framework\App\Router\Route(
-                    $method,
-                    $matchPath,
-                    $match["controller"],
-                    $match["uuid"]
-                );
+                    if (isset($match["action"]) || isset($match["params"])) {
+                        $action = new \RPI\Framework\App\Router\Action();
+                        $details->action = $action;
 
-                if (isset($match["action"]) || isset($match["params"])) {
-                    $action = new \RPI\Framework\App\Router\Action();
-                    $details->action = $action;
+                        // If there are defined params then set the values from the path parts
+                        if (isset($match["action"])) {
+                            $action->method = $match["action"];
+                        }
 
-                    // If there are defined params then set the values from the path parts
-                    if (isset($match["action"])) {
-                        $action->method = $match["action"];
-                    }
+                        if (isset($match["params"])) {
+                            $index = 0;
+                            foreach ($match["params"] as $name => $param) {
+                                $paramName = $name;
+                                $paramDefault = null;
 
-                    if (isset($match["params"])) {
-                        $index = 0;
-                        foreach ($match["params"] as $name => $param) {
-                            $paramName = $name;
-                            $paramDefault = null;
-
-                            $paramParts = explode("|", $name);
-                            if (count($paramParts) == 2) {
-                                $paramName = $paramParts[0];
-                                $paramDefault = $paramParts[1];
-                            }
-
-                            if (isset($params[$index])) {
-                                if (!isset($action->params)) {
-                                    $action->params = array();
+                                $paramParts = explode("|", $name);
+                                if (count($paramParts) == 2) {
+                                    $paramName = $paramParts[0];
+                                    $paramDefault = $paramParts[1];
                                 }
-                                $action->params[$paramName] = basename($params[$index], $fileExtension);
-                            } else {
-                                if (isset($paramDefault)) {
-                                    $action->params[$paramName] = basename($paramDefault, $fileExtension);
+
+                                if (isset($params[$index])) {
+                                    if (!isset($action->params)) {
+                                        $action->params = array();
+                                    }
+                                    $action->params[$paramName] =
+                                        basename(
+                                            $params[$index],
+                                            (isset($match["fileExtension"]) ? $match["fileExtension"] : null)
+                                        );
                                 } else {
-                                    $details = null;
-                                    break;
+                                    if (isset($paramDefault)) {
+                                        $action->params[$paramName]=
+                                            basename(
+                                                $paramDefault,
+                                                (isset($match["fileExtension"]) ? $match["fileExtension"] : null)
+                                            );
+                                    } else {
+                                        $details = null;
+                                        break;
+                                    }
                                 }
-                            }
 
-                            $index++;
+                                $index++;
+                            }
                         }
                     }
                 }

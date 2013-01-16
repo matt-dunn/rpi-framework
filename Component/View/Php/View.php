@@ -15,7 +15,7 @@ abstract class View extends \RPI\Framework\Controller\Message\View\Php\View impl
 
         if ($controller instanceof \RPI\Framework\Component) {
             if ($controller->isDynamic || $controller->editable) {
-                $sectionAttributes .= " data-type=\"{$controller->getType()}\" data-id=\"{$controller->componentId}\"";
+                $sectionAttributes .= " data-type=\"{$controller->getType()}\" data-id=\"{$controller->id}\"";
             }
             if ($controller->editable) {
                 $sectionOptionsHTML = "<ul class=\"options\">";

@@ -59,30 +59,6 @@ class RouterTest extends \RPI\Framework\Test\Base
      * @covers RPI\Framework\App\Router::route
      * @expectedException RPI\Framework\Exceptions\InvalidParameter
      */
-    public function testRouteInvalidMimetypeNull()
-    {
-        $this->object->loadMap(
-            $this->loadFixture("simple.json")
-        );
-        $this->assertNull($this->object->route("/methodpostget/", "get", null));
-    }
-
-    /**
-     * @covers RPI\Framework\App\Router::route
-     * @expectedException RPI\Framework\Exceptions\InvalidParameter
-     */
-    public function testRouteInvalidMimetypeEmpty()
-    {
-        $this->object->loadMap(
-            $this->loadFixture("simple.json")
-        );
-        $this->assertNull($this->object->route("/methodpostget/", "get", ""));
-    }
-
-    /**
-     * @covers RPI\Framework\App\Router::route
-     * @expectedException RPI\Framework\Exceptions\InvalidParameter
-     */
     public function testRouteInvalidMethodNull()
     {
         $this->object->loadMap(
@@ -132,6 +108,27 @@ class RouterTest extends \RPI\Framework\Test\Base
             )
         );
         $this->assertEquals($route, $this->object->route("/methodpostget/42", "get", $defaultMimetype));
+        
+        $this->assertNull(
+            $this->object->route("/methodpostget/42/additionalparam1", $defaultMethod, $defaultMimetype)
+        );
+        $this->assertNull(
+            $this->object->route("/methodpostget/42/additionalparam1/", $defaultMethod, $defaultMimetype)
+        );
+        $this->assertNull(
+            $this->object->route(
+                "/methodpostget/42/additionalparam1/additionalparam2",
+                $defaultMethod,
+                $defaultMimetype
+            )
+        );
+        $this->assertNull(
+            $this->object->route(
+                "/methodpostget/42/additionalparam1/additionalparam2/",
+                $defaultMethod,
+                $defaultMimetype
+            )
+        );
         
         $route = new \RPI\Framework\App\Router\Route(
             "post",
@@ -337,7 +334,13 @@ class RouterTest extends \RPI\Framework\Test\Base
         );
         $this->assertEquals($route, $this->object->route("/ws/component/1/2/3", $defaultMethod, $defaultMimetype));
         
-        $this->assertNull($this->object->route("/assets/images/f267b896-2b58-4fa5-aa06-f681b7e28a89/", $defaultMethod, $defaultMimetype));
+        $this->assertNull(
+            $this->object->route(
+                "/assets/images/f267b896-2b58-4fa5-aa06-f681b7e28a89/",
+                $defaultMethod,
+                $defaultMimetype
+            )
+        );
         
         $route = new \RPI\Framework\App\Router\Route(
             "get",
@@ -352,7 +355,14 @@ class RouterTest extends \RPI\Framework\Test\Base
                 )
             )
         );
-        $this->assertEquals($route, $this->object->route("/assets/images/f267b896-2b58-4fa5-aa06-f681b7e28a89/medium/", $defaultMethod, $defaultMimetype));
+        $this->assertEquals(
+            $route,
+            $this->object->route(
+                "/assets/images/f267b896-2b58-4fa5-aa06-f681b7e28a89/medium/",
+                $defaultMethod,
+                $defaultMimetype
+            )
+        );
         
         $route = new \RPI\Framework\App\Router\Route(
             "post",
@@ -367,7 +377,14 @@ class RouterTest extends \RPI\Framework\Test\Base
                 )
             )
         );
-        $this->assertEquals($route, $this->object->route("/assets/images/f267b896-2b58-4fa5-aa06-f681b7e28a89/medium/", "post", $defaultMimetype));
+        $this->assertEquals(
+            $route,
+            $this->object->route(
+                "/assets/images/f267b896-2b58-4fa5-aa06-f681b7e28a89/medium/",
+                "post",
+                $defaultMimetype
+            )
+        );
         
         $route = new \RPI\Framework\App\Router\Route(
             "delete",
@@ -382,13 +399,18 @@ class RouterTest extends \RPI\Framework\Test\Base
                 )
             )
         );
-        $this->assertEquals($route, $this->object->route("/assets/images/f267b896-2b58-4fa5-aa06-f681b7e28a89/medium/", "delete", $defaultMimetype));
+        $this->assertEquals(
+            $route,
+            $this->object->route(
+                "/assets/images/f267b896-2b58-4fa5-aa06-f681b7e28a89/medium/",
+                "delete",
+                $defaultMimetype
+            )
+        );
         
         $this->assertNull($this->object->route("/testdefault/", "post", $defaultMimetype));
         
         $this->assertNull($this->object->route("/assets/1", "get", $defaultMimetype));
-        
-        $this->assertNull($this->object->route("/assets/medium/1.gif", "get", "image/gif"));
         
         $route = new \RPI\Framework\App\Router\Route(
             "get",
@@ -396,7 +418,22 @@ class RouterTest extends \RPI\Framework\Test\Base
             "\RPI\Controllers\Image\Controller",
             "g10d5cc4-1233-480d-9618-3c3dfcdb2439",
             new \RPI\Framework\App\Router\Action(
-                "getjpegimage",
+                "getanyimage",
+                array(
+                    "id" => "1.gif",
+                    "size" => "medium"
+                )
+            )
+        );
+        $this->assertEquals($route, $this->object->route("/assets/medium/1.gif", "get", "image/gif"));
+        
+        $route = new \RPI\Framework\App\Router\Route(
+            "get",
+            "assets",
+            "\RPI\Controllers\Image\Controller",
+            "g10d5cc4-1233-480d-9618-3c3dfcdb2439",
+            new \RPI\Framework\App\Router\Action(
+                "getjpegimagewithextensionandmime",
                 array(
                     "size" => "medium",
                     "id" => "1"
@@ -411,14 +448,29 @@ class RouterTest extends \RPI\Framework\Test\Base
             "\RPI\Controllers\Image\Controller",
             "g10d5cc4-1233-480d-9618-3c3dfcdb2439",
             new \RPI\Framework\App\Router\Action(
-                "getpngimage",
+                "getjpegimagewithextensionandmime",
+                array(
+                    "size" => "medium",
+                    "id" => "1"
+                )
+            )
+        );
+        $this->assertEquals($route, $this->object->route("/assets/medium/1.jpeg", "get", "image/jpeg"));
+        
+        $route = new \RPI\Framework\App\Router\Route(
+            "get",
+            "assets",
+            "\RPI\Controllers\Image\Controller",
+            "g10d5cc4-1233-480d-9618-3c3dfcdb2439",
+            new \RPI\Framework\App\Router\Action(
+                "getpngimageextension",
                 array(
                     "size" => "medium",
                     "id" => "2"
                 )
             )
         );
-        $this->assertEquals($route, $this->object->route("/assets/medium/2.png", "get", "image/png"));
+        $this->assertEquals($route, $this->object->route("/assets/medium/2.png", "get"));
         
         $route = new \RPI\Framework\App\Router\Route(
             "get",
@@ -524,5 +576,113 @@ class RouterTest extends \RPI\Framework\Test\Base
             )
         );
         $this->assertEquals($route, $this->object->route("/testdefault3/42/medium", "get", $defaultMimetype));
+        
+        $route = new \RPI\Framework\App\Router\Route(
+            "get",
+            "thumb/Assets/Images",
+            "\RPI\Controllers\Image\Controller",
+            "f99d5cc4-1233-480d-9618-3c3dfcdb2439",
+            new \RPI\Framework\App\Router\Action(
+                "get",
+                array(
+                    "id" => "ec632ea6-d332-42d3-a53d-6bd3d6ff04b2",
+                    "size" => "medium"
+                )
+            )
+        );
+        $this->assertEquals(
+            $route,
+            $this->object->route("/thumb/Assets/Images/ec632ea6-d332-42d3-a53d-6bd3d6ff04b2", "get", $defaultMimetype)
+        );
+        $this->assertEquals(
+            $route,
+            $this->object->route(
+                "/thumb/Assets/Images/ec632ea6-d332-42d3-a53d-6bd3d6ff04b2/medium",
+                "get",
+                $defaultMimetype
+            )
+        );
+        
+        $route = new \RPI\Framework\App\Router\Route(
+            "get",
+            "thumb/Assets/Images",
+            "\RPI\Controllers\Image\Controller",
+            "f99d5cc4-1233-480d-9618-3c3dfcdb2439",
+            new \RPI\Framework\App\Router\Action(
+                "get",
+                array(
+                    "id" => "fc632ea6-d332-42d3-a53d-6bd3d6ff04b2",
+                    "size" => "large"
+                )
+            )
+        );
+        $this->assertEquals(
+            $route,
+            $this->object->route(
+                "/thumb/Assets/Images/fc632ea6-d332-42d3-a53d-6bd3d6ff04b2/large",
+                "get",
+                $defaultMimetype
+            )
+        );
+        
+        $route = new \RPI\Framework\App\Router\Route(
+            "get",
+            "thumb/Assets/Images",
+            "\RPI\Controllers\Image\Controller",
+            "f99d5cc4-1233-480d-9618-3c3dfcdb2439",
+            new \RPI\Framework\App\Router\Action(
+                "get",
+                array(
+                    "id" => "ec632ea6-d332-42d3-a53d-6bd3d6ff04b2.jpeg",
+                    "size" => "medium"
+                )
+            )
+        );
+        $this->assertEquals(
+            $route,
+            $this->object->route(
+                "/thumb/Assets/Images/ec632ea6-d332-42d3-a53d-6bd3d6ff04b2.jpeg",
+                "get",
+                $defaultMimetype
+            )
+        );
+        $this->assertEquals(
+            $route,
+            $this->object->route(
+                "/thumb/Assets/Images/ec632ea6-d332-42d3-a53d-6bd3d6ff04b2.jpeg/",
+                "get",
+                $defaultMimetype
+            )
+        );
+        $this->assertEquals(
+            $route,
+            $this->object->route(
+                "/thumb/Assets/Images/ec632ea6-d332-42d3-a53d-6bd3d6ff04b2.jpeg/medium",
+                "get",
+                $defaultMimetype
+            )
+        );
+        
+        $route = new \RPI\Framework\App\Router\Route(
+            "get",
+            "thumb/Assets/Images",
+            "\RPI\Controllers\Image\Controller",
+            "f99d5cc4-1233-480d-9618-3c3dfcdb2439",
+            new \RPI\Framework\App\Router\Action(
+                "get",
+                array(
+                    "id" => "ec632ea6-d332-42d3-a53d-6bd3d6ff04b2.jpeg",
+                    "size" => "large"
+                )
+            )
+        );
+        $this->assertEquals(
+            $route,
+            $this->object->route(
+                "/thumb/Assets/Images/ec632ea6-d332-42d3-a53d-6bd3d6ff04b2.jpeg/large",
+                "get",
+                $defaultMimetype
+            )
+        );
     }
 }
