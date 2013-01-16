@@ -42,7 +42,12 @@ class View2
         
         $controllerData = self::$store->fetch("PHP_RPI_CONTENT_VIEWS2-".self::$file."-controller-$uuid");
         if ($controllerData !== false) {
-            return self::createComponentFromViewData($controllerData, $action, $controllerOptions);
+            $controller = self::createComponentFromViewData($controllerData, $action, $controllerOptions);
+            if (isset($type) && !$controller instanceof $type) {
+                throw new \Exception("Component '$uuid' (".get_class($controller).") must be an instance of '$type'.");
+            }
+            
+            return $controller;
         }
 
         return false;
@@ -52,7 +57,8 @@ class View2
 
     private static function createComponentFromViewData(
         $controllerData,
-        \RPI\Framework\App\Router\Action $action = null
+        \RPI\Framework\App\Router\Action $action = null,
+        array $additionalControllerOptions = null
     ) {
         if (isset($controllerData["options"])) {
             $componentOptions = $controllerData["options"];
@@ -68,14 +74,11 @@ class View2
         if (isset($controllerData["componentView"])) {
             $componentOptions["componentView"] = $controllerData["componentView"];
         }
-        if (isset($controllerData["componentId"])) {
-            $componentOptions["componentId"] = $controllerData["componentId"];
-        }
         if (isset($controllerData["match"])) {
             $componentOptions["match"] = $controllerData["match"];
         }
-        if (isset($controllerOptions)) {
-            $componentOptions= array_merge($controllerData, $componentOptions);
+        if (isset($additionalControllerOptions)) {
+            $componentOptions = array_merge($componentOptions, $additionalControllerOptions);
         }
 
         $viewRendition = null;
