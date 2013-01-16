@@ -42,7 +42,7 @@
         
         <xsl:if test="boolean(number(editable)) or boolean(number(isDynamic))">
             <xsl:attribute name="data-type"><xsl:value-of select="@_class"/></xsl:attribute>
-            <xsl:attribute name="data-id"><xsl:value-of select="componentId"/></xsl:attribute>
+            <xsl:attribute name="data-id"><xsl:value-of select="id"/></xsl:attribute>
         </xsl:if>
         
         <xsl:if test="boolean(number(editable))">

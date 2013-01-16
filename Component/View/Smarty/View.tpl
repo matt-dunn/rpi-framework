@@ -1,7 +1,7 @@
 {assign var=className value="component {$controller->safeTypeName} {$controller->options->className}"|trim}
 
 {if ($controller->isDynamic || $controller->editable) }
-    {assign var=sectionAttributes value=" data-type=\"{$controller->getType()}\" data-id=\"{$controller->componentId}\""}
+    {assign var=sectionAttributes value=" data-type=\"{$controller->getType()}\" data-id=\"{$controller->id}\""}
 {/if}
 
 {if ($controller->editable)}

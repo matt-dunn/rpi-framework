@@ -29,13 +29,13 @@
 <!-- If the component cannot be rendered from cache, use the pre-rendered component -->
 <xsl:template match="components/item/component">
     <xsl:text disable-output-escaping="yes">&lt;</xsl:text>?php
-    \RPI\Framework\Helpers\Utils::processPHP($GLOBALS["RPI_Components"]["<xsl:value-of select="componentId"/>"]-<xsl:text disable-output-escaping="yes">&gt;</xsl:text>renderView());
+    \RPI\Framework\Helpers\Utils::processPHP($GLOBALS["RPI_Components"]["<xsl:value-of select="id"/>"]-<xsl:text disable-output-escaping="yes">&gt;</xsl:text>renderView());
     ?<xsl:text disable-output-escaping="yes">&gt;</xsl:text>
 </xsl:template>
 
 <xsl:template match="components/item/component[ancestor::component[1][boolean(number(canRenderViewFromCache)) = true() and boolean(number(cacheEnabled)) = false()]] | controller/components/item/component">
     <xsl:text disable-output-escaping="yes">&lt;</xsl:text>?php
-    $component = \RPI\Framework\Helpers\View2::createControllerByUUID("<xsl:value-of select="componentId"/>");
+    $component = \RPI\Framework\Helpers\View2::createControllerByUUID("<xsl:value-of select="id"/>");
     $component-<xsl:text disable-output-escaping="yes">&gt;</xsl:text>process();
     \RPI\Framework\Helpers\Utils::processPHP($component-<xsl:text disable-output-escaping="yes">&gt;</xsl:text>renderView());
     ?<xsl:text disable-output-escaping="yes">&gt;</xsl:text>
