@@ -284,6 +284,22 @@ class View
                 if (trim($route->getAttribute("mimetype")) != "") {
                     $mimetype = $route->getAttribute("mimetype");
                 }
+                $defaultParams = null;
+                if (trim($route->getAttribute("defaultParams")) != "") {
+                    $defaultParamsParts = explode("," ,$route->getAttribute("defaultParams"));
+                    foreach ($defaultParamsParts as $defaultParamsPart) {
+                        $defaultParamPart = explode("=", $defaultParamsPart);
+                        if(count($defaultParamPart) == 2) {
+                            if (!isset($defaultParams)) {
+                                $defaultParams = array();
+                            }
+                            
+                            $defaultParams[trim($defaultParamPart[0])] = $defaultParamPart[1];
+                        } else {
+                            throw new \Exception("Invalid syntax '$defaultParamsPart'. Must be '<name>=<value>'.");
+                        }
+                    }
+                }
 
                 $controllerType = null;
                 if (isset($controller["type"])) {
@@ -296,7 +312,8 @@ class View
                     "uuid" => $controllerUUID,
                     "action" => $action,
                     "fileExtension" => $fileExtension,
-                    "mimetype" => $mimetype
+                    "mimetype" => $mimetype,
+                    "defaultParams" => $defaultParams
                 );
                 
                 $controllerMap[$controllerUUID] = $controller;
