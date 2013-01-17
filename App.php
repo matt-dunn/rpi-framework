@@ -8,33 +8,12 @@ class App
      *
      * @var \RPI\Framework\App\Router 
      */
-    private static $router = null;
-    
-    protected static function autoload($className)
-    {
-        $classPath = __DIR__."/../../".str_replace("\\", DIRECTORY_SEPARATOR, $className).".php";
-        // Do nothing if the file does not exist to allow class_exists etc. to work as expected
-        if (file_exists($classPath)) {
-            require($classPath);
-        }
-    }
+    private $router = null;
 
-    public static function init()
-    {
-        spl_autoload_register(array(self, "autoload"));
-
-        \RPI\Framework\Exception\Handler::set();
-
-        // =====================================================================
-        // Event listeners:
-
-        // Listen for ViewUpdated event to see if the front cache needs to be emptied
-        \RPI\Framework\Event\ViewUpdated::addEventListener(
-            function ($event, $params) {
-                \RPI\Framework\Cache\Front\Store::clear();
-            }
-        );
-
+    public function __construct(
+        $webConfig,
+        $viewConfig
+    ) {
         // =====================================================================
         // Configure the application:
 
@@ -44,17 +23,18 @@ class App
             new \RPI\Framework\Cache\Data\Provider\Apc()
         );
         
-        if ($GLOBALS["RPI_FRAMEWORK_CONFIG_FILEPATH"] !== false) {
-            \RPI\Framework\App\Config::init($dataStore, $GLOBALS["RPI_FRAMEWORK_CONFIG_FILEPATH"]);
-        }
+        \RPI\Framework\App\Config::init(
+            $dataStore,
+            $webConfig
+        );
 
         \RPI\Framework\App\Locale::init();
         
         \RPI\Framework\App\Session::init();
 
-        self::$router = \RPI\Framework\Helpers\View::init(
+        $this->router = \RPI\Framework\Helpers\View::init(
             $dataStore,
-            realpath($_SERVER["DOCUMENT_ROOT"]."/../View/Config2.xml")
+            $viewConfig
         );
         
         if (\RPI\Framework\App\Config::getValue("config/debug/@enabled", false) === true) {
@@ -66,9 +46,9 @@ class App
         }
     }
 
-    public static function run()
+    public function run()
     {
-        $route = self::$router->route(
+        $route = $this->router->route(
             \RPI\Framework\Helpers\Utils::currentPageURI(true),
             $_SERVER['REQUEST_METHOD'],
             "text/html"
