@@ -81,6 +81,11 @@ abstract class Component extends \RPI\Framework\Controller\HTML
                     "className" => array(
                         "type" => "string",
                         "description" => "Component CSS class name"
+                    ),
+                    "service" => array(
+                        "type" => "string",
+                        "description" => "Web service details",
+                        "optionType" => "data"
                     )
                 ),
                 $options

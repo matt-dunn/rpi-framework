@@ -41,7 +41,7 @@ RPI._("component").edit = (function() {
                     case "edit":
                         beforeLoadComponent(component, target.data("option"));
                         
-                        RPI.webService.call("/ws/component/", "edit", {"id" : component.data("id")}, 
+                        RPI.webService.call(getServiceUrl(component), "edit", {"id" : component.data("id")}, 
                             function(data, response, sourceData) {
                                 loadComponent(component, data.xhtml, target.data("option"));
                                     
@@ -91,7 +91,7 @@ RPI._("component").edit = (function() {
                         if(boundElements.length > 0) {
                             beforeLoadComponent(component, target.data("option"));
 
-                            RPI.webService.call("/ws/component/", "save", {id : component.data("id"), boundElements: boundElements}, 
+                            RPI.webService.call(getServiceUrl(component), "save", {id : component.data("id"), boundElements: boundElements}, 
                                 function(data, response, sourceData) {
                                     removeEditorInstances(component);
                                     
@@ -126,7 +126,7 @@ RPI._("component").edit = (function() {
                     case "cancel":
                         beforeLoadComponent(component, target.data("option"));
                         
-                        RPI.webService.call("/ws/component/", "cancel", {id : component.data("id")}, 
+                        RPI.webService.call(getServiceUrl(component), "cancel", {id : component.data("id")}, 
                             function(data, response, sourceData) {
                                 removeEditorInstances(component);
                                 
@@ -150,7 +150,7 @@ RPI._("component").edit = (function() {
                         if(beforeDelete(component, target.data("bind"))) {
                             beforeLoadComponent(component, target.data("option"));
 
-                            RPI.webService.call("/ws/component/", "delete", {id : component.data("id"), bind : target.data("bind")}, 
+                            RPI.webService.call(getServiceUrl(component), "delete", {id : component.data("id"), bind : target.data("bind")}, 
                                 function(data, response, sourceData) {
                                     removeEditorInstances(component);
 
@@ -175,7 +175,7 @@ RPI._("component").edit = (function() {
                         if(beforeAdd(component, target.data("bind"))) {
                             beforeLoadComponent(component, target.data("option"));
 
-                            RPI.webService.call("/ws/component/", "create", {id : component.data("id"), bind : target.data("bind"), data : {title : "", url : "/"}}, 
+                            RPI.webService.call(getServiceUrl(component), "create", {id : component.data("id"), bind : target.data("bind"), data : {title : "", url : "/"}}, 
                                 function(data, response, sourceData) {
                                     removeEditorInstances(component);
 
@@ -243,7 +243,7 @@ RPI._("component").edit = (function() {
                                             if(!content) {
                                                 content = jQuery.htmlClean(o.html());
                                             }
-                                            RPI.webService.call("/ws/component/", "autoSave", {id : component.data("id"), bind: container.data("bind"), content: content}, 
+                                            RPI.webService.call(getServiceUrl(component), "autoSave", {id : component.data("id"), bind: container.data("bind"), content: content}, 
                                                 function(data, response, sourceData) {
                                                     if(_self.isDirty) {
                                                         _self.isDirty = false;
@@ -410,6 +410,16 @@ RPI._("component").edit = (function() {
 //                console.log(document.nicEditor.nicInstances.length);
             }
         )
+    }
+    
+    function getServiceUrl(component) {
+        var serviceUrl = "/ws/component/";
+        
+        if (component && component.data("service")) {
+            serviceUrl += (component.data("service") + "/");
+        }
+        
+        return serviceUrl;
     }
     
     init();
