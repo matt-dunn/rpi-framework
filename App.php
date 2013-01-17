@@ -11,8 +11,8 @@ class App
     private $router = null;
 
     public function __construct(
-        $webConfig,
-        $viewConfig
+        $webConfigFile,
+        $viewConfigFile
     ) {
         // =====================================================================
         // Configure the application:
@@ -25,7 +25,7 @@ class App
         
         \RPI\Framework\App\Config::init(
             $dataStore,
-            $webConfig
+            $webConfigFile
         );
 
         \RPI\Framework\App\Locale::init();
@@ -34,7 +34,7 @@ class App
 
         $this->router = \RPI\Framework\Helpers\View::init(
             $dataStore,
-            $viewConfig
+            $viewConfigFile
         );
         
         if (\RPI\Framework\App\Config::getValue("config/debug/@enabled", false) === true) {
