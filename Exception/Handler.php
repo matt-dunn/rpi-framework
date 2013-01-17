@@ -147,6 +147,8 @@ class Handler
      */
     public static function handleExceptions($exception)
     {
+        ob_clean();
+
         try {
             try {
                 if ($exception instanceof \RPI\Framework\Exceptions\PageNotFound) {
