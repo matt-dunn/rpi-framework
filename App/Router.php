@@ -87,7 +87,6 @@ class Router
             
             $items = count($pathParts);
             foreach ($pathParts as $index => $pathPart) {
-                $pathPart = strtolower($pathPart);
                 foreach ($methodParts as $method) {
                     if (substr($pathPart, 0, 1) == ":") {
                         $matchingParameters = true;
@@ -125,6 +124,7 @@ class Router
                         }
                         $item["#"]["params"][substr($pathPart, 1)] = null;
                     } else {
+                        $pathPart = strtolower($pathPart);
                         if ($matchingParameters) {
                             throw new \RPI\Framework\App\Router\Exceptions\InvalidRoute("Invalid route '{$details["match"]}' detected. There must be no path defined after any parameter(s).");
                         }
@@ -325,6 +325,18 @@ class Router
 
                                     $index++;
                                 }
+                            }
+                        }
+                        
+                        if (isset($details) && isset($match["defaultParams"])) {
+                            if (!isset($details->action)) {
+                                $details->action = new \RPI\Framework\App\Router\Action();
+                            }
+                            
+                            if (isset($details->action->params)) {
+                                $details->action->params = array_merge($details->action->params, $match["defaultParams"]);
+                            } else {
+                                $details->action->params = $match["defaultParams"];
                             }
                         }
                     }
