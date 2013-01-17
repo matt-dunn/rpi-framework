@@ -44,9 +44,8 @@ class Options
             }
         } else {
             $this->options = array_merge($this->options, $options);
+            $this->validate();
         }
-        
-        $this->validate();
         
         return $this;
     }

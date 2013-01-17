@@ -79,7 +79,6 @@ abstract class Controller
                 "Must be of type '\RPI\Framework\Controller\Options'."
             );
         }
-        $this->options->validate();
 
         if (!isset(self::$controller)) {
             self::$controller = $this;
@@ -119,6 +118,10 @@ abstract class Controller
     public function processAction()
     {
         if (isset($this->controllerAction)) {
+            if (isset($this->controllerAction->params)) {
+                $this->options->addOptionsByArray($this->controllerAction->params);
+            }
+            
             if (isset($this->controllerAction->method)) {
                 $methodName = $this->controllerAction->method."Action";
                 if (method_exists($this, $methodName)) {
@@ -129,12 +132,12 @@ abstract class Controller
                         "has not been implemented in '".$this->type."'."
                     );
                 }
-            } elseif (isset($this->controllerAction->params)) {
-                $this->options->addOptionsByArray($this->controllerAction->params);
             }
             
             $this->controllerAction = null;
         }
+        
+        $this->options->validate();
     }
     
     public function getParent()
