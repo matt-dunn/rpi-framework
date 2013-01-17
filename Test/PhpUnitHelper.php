@@ -40,6 +40,9 @@ abstract class Base extends \PHPUnit_Framework_TestCase
         switch ($fileType) {
             case "json":
                 $fixture = json_decode(file_get_contents($fixturePath), true);
+                if (!isset($fixture)) {
+                    throw new \Exception("Invalid json fixure '$fixturePath'");
+                }
                 break;
             default:
                 $fixture = unserialize(file_get_contents($fixturePath));
