@@ -119,14 +119,18 @@ abstract class Controller
     public function processAction()
     {
         if (isset($this->controllerAction)) {
-            $methodName = $this->controllerAction->method."Action";
-            if (method_exists($this, $methodName)) {
-                call_user_method_array($methodName, $this, $this->controllerAction->params);
-            } else {
-                throw new \Exception(
-                    "Action '{$this->controllerAction->method}' ({$this->type}::{$methodName}) ".
-                    "has not been implemented in '".$this->type."'."
-                );
+            if (isset($this->controllerAction->method)) {
+                $methodName = $this->controllerAction->method."Action";
+                if (method_exists($this, $methodName)) {
+                    call_user_method_array($methodName, $this, $this->controllerAction->params);
+                } else {
+                    throw new \Exception(
+                        "Action '{$this->controllerAction->method}' ({$this->type}::{$methodName}) ".
+                        "has not been implemented in '".$this->type."'."
+                    );
+                }
+            } elseif (isset($this->controllerAction->params)) {
+                $this->options->addOptionsByArray($this->controllerAction->params);
             }
             
             $this->controllerAction = null;

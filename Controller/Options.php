@@ -34,6 +34,23 @@ class Options
         return $this;
     }
     
+    public function addOptionsByArray(array $options, $addOnlyValidOptions = true)
+    {
+        if ($addOnlyValidOptions) {
+            foreach ($options as $name => $value) {
+                if (isset($this->availableOptions[$name])) {
+                    $this->options[$name] = $value;
+                }
+            }
+        } else {
+            $this->options = array_merge($this->options, $options);
+        }
+        
+        $this->validate();
+        
+        return $this;
+    }
+    
     public function validate()
     {
         $options = $this->options;
