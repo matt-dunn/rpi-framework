@@ -40,7 +40,7 @@ class View
             throw new \Exception(__CLASS__."::init must be called before '".__METHOD__."' can be called.");
         }
         
-        $controllerData = self::$store->fetch("PHP_RPI_CONTENT_VIEWS2-".self::$file."-controller-$uuid");
+        $controllerData = self::$store->fetch("PHP_RPI_CONTENT_VIEWS-".self::$file."-controller-$uuid");
         if ($controllerData !== false) {
             $controller = self::createComponentFromViewData($controllerData, $action, $controllerOptions);
             if (isset($type) && !$controller instanceof $type) {
@@ -53,8 +53,33 @@ class View
         return false;
     }
     
+    public static function getDecoratorView(\stdClass $decoratorDetails)
+    {
+        if (!isset(self::$file)) {
+            throw new \Exception(__CLASS__."::init must be called before '".__METHOD__."' can be called.");
+        }
+        
+        $decoratorData = self::$store->fetch("PHP_RPI_CONTENT_VIEWS-".self::$file."-decorators");
+        if ($decoratorData !== false) {
+            foreach ($decoratorData as $decorator) {
+                if (self::testDecorator($decoratorDetails, $decorator["match"]) === true) {
+                    return $decorator["view"];
+                }
+            }
+        }
+
+        return false;
+    }
+    
     // ------------------------------------------------------------------------------------------------------------
 
+    private static function testDecorator(\stdClass $decoratorDetails, $match)
+    {
+        // $o is used in evaluation
+        $o = $decoratorDetails;
+        return eval($match);
+    }
+    
     private static function createComponentFromViewData(
         $controllerData,
         \RPI\Framework\App\Router\Action $action = null,
@@ -126,8 +151,8 @@ class View
         $router = new \RPI\Framework\App\Router();
 
         $file = self::$file;
-
-        $routerMap = self::$store->fetch("PHP_RPI_CONTENT_VIEWS2-".$file."-routermap");
+        
+        $routerMap = self::$store->fetch("PHP_RPI_CONTENT_VIEWS-".$file."-routermap");
         
         if ($routerMap !== false) {
             $router->setMap($routerMap);
@@ -137,7 +162,7 @@ class View
 
                 try {
                     if (!file_exists($file)) {
-                        throw new \Exception("Unable to locate '".$GLOBALS["RPI_FRAMEWORK_VIEW_FILEPATH"]."'");
+                        throw new \Exception("Unable to locate '$file'");
                     }
 
                     $domDataViews = new \DOMDocument();
@@ -151,7 +176,7 @@ class View
                     }
 
                     // Clear the view keys in the store
-                    if (self::$store->clear(null, "PHP_RPI_CONTENT_VIEWS2-".$file) === false) {
+                    if (self::$store->clear(null, "PHP_RPI_CONTENT_VIEWS-".$file) === false) {
                         \RPI\Framework\Exception\Handler::logMessage("Unable to clear data store", LOG_WARNING);
                     }
 
@@ -166,15 +191,18 @@ class View
                     );
                     
                     foreach ($viewConfig["controllerMap"] as $id => $controller) {
-                        self::$store->store("PHP_RPI_CONTENT_VIEWS2-$file-controller-$id", $controller);
+                        self::$store->store("PHP_RPI_CONTENT_VIEWS-$file-controller-$id", $controller);
                     }
 
                     foreach ($viewConfig["components"] as $id => $controller) {
-                        self::$store->store("PHP_RPI_CONTENT_VIEWS2-$file-controller-$id", $controller);
+                        self::$store->store("PHP_RPI_CONTENT_VIEWS-$file-controller-$id", $controller);
                     }
                     
-                    self::$store->store("PHP_RPI_CONTENT_VIEWS2-".$file."-routermap", $router->getMap(), $file);
+                    self::$store->store("PHP_RPI_CONTENT_VIEWS-".$file."-routermap", $router->getMap(), $file);
 
+                    $decorators = self::parseDecorators($xpath, $xpath->query("/RPI:views/RPI:decorator"));
+                    self::$store->store("PHP_RPI_CONTENT_VIEWS-".$file."-decorators", $decorators, $file);
+                    
                     \RPI\Framework\Helpers\Locking::release($seg);
                 } catch (Exception $ex) {
                     \RPI\Framework\Helpers\Locking::release($seg);
@@ -196,8 +224,12 @@ class View
         return $router;
     }
     
-    private static function parseRoutes($xpath, $routes, $matchPath = null, $parentController = null)
-    {
+    private static function parseRoutes(
+        \DOMXPath $xpath,
+        \DOMNodeList $routes,
+        $matchPath = null,
+        $parentController = null
+    ) {
         $routeMap = array();
         $controllerMap = array();
         $components = array();
@@ -286,10 +318,10 @@ class View
                 }
                 $defaultParams = null;
                 if (trim($route->getAttribute("defaultParams")) != "") {
-                    $defaultParamsParts = explode("," ,$route->getAttribute("defaultParams"));
+                    $defaultParamsParts = explode(",", $route->getAttribute("defaultParams"));
                     foreach ($defaultParamsParts as $defaultParamsPart) {
                         $defaultParamPart = explode("=", $defaultParamsPart);
-                        if(count($defaultParamPart) == 2) {
+                        if (count($defaultParamPart) == 2) {
                             if (!isset($defaultParams)) {
                                 $defaultParams = array();
                             }
@@ -338,7 +370,7 @@ class View
         );
     }
     
-    private static function parseController($controllerUUID, $xpath, $controllerElement)
+    private static function parseController($controllerUUID, \DOMXPath $xpath, \DOMNode $controllerElement)
     {
         if (!isset($controllerUUID)) {
             $controllerUUID = \RPI\Framework\Helpers\Uuid::v4();
@@ -481,5 +513,42 @@ class View
             "controller" => $controller,
             "components" => $components
         );
+    }
+    
+    private static function parseDecorators(\DOMXPath $xpath, \DOMNodeList $decoratorElementss)
+    {
+        $decorators = array();
+        
+        foreach ($decoratorElementss as $decorator) {
+            $matchPhrase = "";
+            $match = $decorator->getAttribute("match");
+            
+            $matchParts = explode("+", $match);
+            asort($matchParts);
+            
+            $index = 0;
+            $matchPartsCount = count($matchParts);
+            foreach ($matchParts as $matchPart) {
+                $matchSectionParts = explode("=", $matchPart);
+                
+                $matchPhrase .= "\$o->$matchSectionParts[0] == \"$matchSectionParts[1]\"";
+                if ($index < $matchPartsCount - 1) {
+                    $matchPhrase .= " && ";
+                }
+                
+                $index++;
+            }
+            
+            if ($matchPhrase != "") {
+                $matchPhrase = "return ($matchPhrase);";
+            }
+            
+            $decorators[] = array(
+                "match" => $matchPhrase,
+                "view" => $decorator->getAttribute("view")
+            );
+        }
+        
+        return $decorators;
     }
 }
