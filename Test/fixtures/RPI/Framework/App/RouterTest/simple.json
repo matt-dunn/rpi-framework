@@ -6,6 +6,12 @@
         "action": "simpleaction"
     },
     {
+        "match": "\/simple\/test\/",
+        "controller": "\\RPI\\Controllers\\HTMLFront\\Controller",
+        "uuid": "010d5cc4-2233-480d-9618-3c3dfcdb2439",
+        "action": "simpletestaction"
+    },
+    {
         "match": "\/simplenoaction\/:id",
         "via": "post",
         "controller": "\\RPI\\Controllers\\HTMLFront\\Controller",

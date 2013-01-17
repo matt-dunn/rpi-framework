@@ -82,11 +82,24 @@ class Router
             
             $m = &$this->map;
             
+            $matchingParameters = false;
+            $parametersHaveDefinedDefaultValue = false;
+            
             $items = count($pathParts);
             foreach ($pathParts as $index => $pathPart) {
                 $pathPart = strtolower($pathPart);
                 foreach ($methodParts as $method) {
                     if (substr($pathPart, 0, 1) == ":") {
+                        $matchingParameters = true;
+                        
+                        if ($parametersHaveDefinedDefaultValue && strstr($pathPart, "|") === false) {
+                            throw new \RPI\Framework\App\Router\Exceptions\InvalidRoute("Invalid route '{$details["match"]}' detected. Default.");
+                        }
+                        
+                        if (!$parametersHaveDefinedDefaultValue && strstr($pathPart, "|") !== false) {
+                            $parametersHaveDefinedDefaultValue = true;
+                        }
+                        
                         if (!isset($m["#"])) {
                             $m["#"] = array();
                         }
@@ -112,6 +125,10 @@ class Router
                         }
                         $item["#"]["params"][substr($pathPart, 1)] = null;
                     } else {
+                        if ($matchingParameters) {
+                            throw new \RPI\Framework\App\Router\Exceptions\InvalidRoute("Invalid route '{$details["match"]}' detected. There must be no path defined after any parameter(s).");
+                        }
+                        
                         if (!isset($m[$pathPart])) {
                             $m[$pathPart] = array();
                         }
@@ -217,97 +234,103 @@ class Router
                 }
             }
 
-            $match = null;
-            
-            if (isset($m["#"])) {
-                if (isset($m["#"][$method])) {
-                    $match = $m["#"][$method];
-                } elseif (isset($m["#"]["all"])) {
-                    $match = $m["#"]["all"];
-                }
-                
-                if (isset($mimetype) && $mimetype != "") {
-                    if (isset($match["#mimetype:$mimetype"])) {
-                        $match = $match["#mimetype:$mimetype"];
+            if (isset($m)) {
+                $match = null;
+
+                if (isset($m["#"])) {
+                    if (isset($m["#"][$method])) {
+                        $match = $m["#"][$method];
+                    } elseif (isset($m["#"]["all"])) {
+                        $match = $m["#"]["all"];
                     }
-                }
-                
-                $fileExtension = pathinfo($path, PATHINFO_EXTENSION);
-                if (isset($fileExtension) && $fileExtension != "") {
-                    if (isset($match["#fileExtension:$fileExtension"])) {
-                        $match = $match["#fileExtension:$fileExtension"];
-                    }
-                }
-                
-                if (isset($match["#"])) {
-                    $match = $match["#"];
-                }
-            }
 
-            // If there is a match, set the controller details
-            if (isset($match)) {
-                $params = array_splice($pathParts, $pathPosition);
-                $matchPath = implode("/", array_slice($pathParts, 0, $pathPosition));
-
-                $details = null;
-                if (!isset($match["params"]) || count($params) <= count($match["params"])) {
-                    $details = new \RPI\Framework\App\Router\Route(
-                        $method,
-                        $matchPath,
-                        $match["controller"],
-                        $match["uuid"]
-                    );
-
-                    if (isset($match["action"]) || isset($match["params"])) {
-                        $action = new \RPI\Framework\App\Router\Action();
-                        $details->action = $action;
-
-                        // If there are defined params then set the values from the path parts
-                        if (isset($match["action"])) {
-                            $action->method = $match["action"];
+                    if (isset($mimetype) && $mimetype != "") {
+                        if (isset($match["#mimetype:$mimetype"])) {
+                            $match = $match["#mimetype:$mimetype"];
                         }
+                    }
 
-                        if (isset($match["params"])) {
-                            $index = 0;
-                            foreach ($match["params"] as $name => $param) {
-                                $paramName = $name;
-                                $paramDefault = null;
+                    $fileExtension = pathinfo($path, PATHINFO_EXTENSION);
+                    if (isset($fileExtension) && $fileExtension != "") {
+                        if (isset($match["#fileExtension:$fileExtension"])) {
+                            $match = $match["#fileExtension:$fileExtension"];
+                        }
+                    }
 
-                                $paramParts = explode("|", $name);
-                                if (count($paramParts) == 2) {
-                                    $paramName = $paramParts[0];
-                                    $paramDefault = $paramParts[1];
-                                }
+                    if (isset($match["#"])) {
+                        $match = $match["#"];
+                    }
+                }
 
-                                if (isset($params[$index])) {
-                                    if (!isset($action->params)) {
-                                        $action->params = array();
+                // If there is a match, set the controller details
+                if (isset($match)) {
+                    $params = array_splice($pathParts, $pathPosition);
+                    $matchPath = implode("/", array_slice($pathParts, 0, $pathPosition));
+
+                    $details = null;
+                    if ((isset($match["params"]) && count($params) > count($match["params"]))
+                            || (!isset($match["params"]) && count($params) > 0)
+                    ) {
+                        // Invalid params have been passed
+                    } elseif (!isset($match["params"]) || count($params) <= count($match["params"])) {
+                        $details = new \RPI\Framework\App\Router\Route(
+                            $method,
+                            $matchPath,
+                            $match["controller"],
+                            $match["uuid"]
+                        );
+
+                        if (isset($match["action"]) || isset($match["params"])) {
+                            $action = new \RPI\Framework\App\Router\Action();
+                            $details->action = $action;
+
+                            // If there are defined params then set the values from the path parts
+                            if (isset($match["action"])) {
+                                $action->method = $match["action"];
+                            }
+
+                            if (isset($match["params"])) {
+                                $index = 0;
+                                foreach ($match["params"] as $name => $param) {
+                                    $paramName = $name;
+                                    $paramDefault = null;
+
+                                    $paramParts = explode("|", $name);
+                                    if (count($paramParts) == 2) {
+                                        $paramName = $paramParts[0];
+                                        $paramDefault = $paramParts[1];
                                     }
-                                    $action->params[$paramName] =
-                                        basename(
-                                            $params[$index],
-                                            (isset($match["fileExtension"]) ? $match["fileExtension"] : null)
-                                        );
-                                } else {
-                                    if (isset($paramDefault)) {
-                                        $action->params[$paramName]=
+
+                                    if (isset($params[$index])) {
+                                        if (!isset($action->params)) {
+                                            $action->params = array();
+                                        }
+                                        $action->params[$paramName] =
                                             basename(
-                                                $paramDefault,
+                                                $params[$index],
                                                 (isset($match["fileExtension"]) ? $match["fileExtension"] : null)
                                             );
                                     } else {
-                                        $details = null;
-                                        break;
+                                        if (isset($paramDefault)) {
+                                            $action->params[$paramName]=
+                                                basename(
+                                                    $paramDefault,
+                                                    (isset($match["fileExtension"]) ? $match["fileExtension"] : null)
+                                                );
+                                        } else {
+                                            $details = null;
+                                            break;
+                                        }
                                     }
-                                }
 
-                                $index++;
+                                    $index++;
+                                }
                             }
                         }
                     }
-                }
 
-                return $details;
+                    return $details;
+                }
             }
         }
         

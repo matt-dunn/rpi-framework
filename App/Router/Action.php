@@ -18,7 +18,7 @@ class Action
     
     public function __construct($method = null, array $params = null)
     {
-        $this->method = $method;
-        $this->params = $params;
+        $this->method = (isset($method) && trim($method) != "" ? $method : null);
+        $this->params = (isset($params) && count($params) > 0 ? $params : null);
     }
 }

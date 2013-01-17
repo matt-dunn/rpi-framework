@@ -81,6 +81,39 @@ class RouterTest extends \RPI\Framework\Test\Base
     
     /**
      * @covers RPI\Framework\App\Router::route
+     * @expectedException RPI\Framework\App\Router\Exceptions\InvalidRoute
+     */
+    public function testRouteInvalidRoute()
+    {
+        $this->object->loadMap(
+            $this->loadFixture("invalidpath.json")
+        );
+    }
+    
+    
+    /**
+     * @covers RPI\Framework\App\Router::route
+     * @expectedException RPI\Framework\App\Router\Exceptions\InvalidRoute
+     */
+    public function testRouteInvalidPathDefaults()
+    {
+        $this->object->loadMap(
+            $this->loadFixture("invalidpathdefaults.json")
+        );
+    }
+    
+    /**
+     * @covers RPI\Framework\App\Router::route
+     */
+    public function testRouteValidPathDefaults()
+    {
+        $this->object->loadMap(
+            $this->loadFixture("validpathdefaults.json")
+        );
+    }
+    
+    /**
+     * @covers RPI\Framework\App\Router::route
      */
     public function testRoute()
     {
@@ -176,6 +209,23 @@ class RouterTest extends \RPI\Framework\Test\Base
             )
         );
         $this->assertEquals($route, $this->object->route("/simple/", "get", $defaultMimetype));
+        
+        $route = new \RPI\Framework\App\Router\Route(
+            "get",
+            "simple/test",
+            "\RPI\Controllers\HTMLFront\Controller",
+            "010d5cc4-2233-480d-9618-3c3dfcdb2439",
+            new \RPI\Framework\App\Router\Action(
+                "simpletestaction",
+                null
+            )
+        );
+        $this->assertEquals($route, $this->object->route("/simple/test/", "get", $defaultMimetype));
+        
+        $this->assertNull($this->object->route("/simple/test/invalid/path/", "get", $defaultMimetype));
+        $this->assertNull($this->object->route("/simple/test/invalid", "get", $defaultMimetype));
+        $this->assertNull($this->object->route("/simple/test/invalid/", "get", $defaultMimetype));
+        $this->assertNull($this->object->route("/simple/test2/invalid/path", "get", $defaultMimetype));
         
         $route = new \RPI\Framework\App\Router\Route(
             "put",

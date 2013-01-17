@@ -1,0 +1,8 @@
+[
+    {
+        "match": "\/simple\/:test2|defaultvalue\/:path\/",
+        "controller": "\\RPI\\Controllers\\HTMLFront\\Controller",
+        "uuid": "010d5cc4-2233-480d-9618-3c3dfcdb2439",
+        "action": "simpletestaction"
+    }
+]
