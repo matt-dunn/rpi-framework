@@ -26,6 +26,8 @@ abstract class Server extends \RPI\Framework\Controller
 
     protected function initController(array $options)
     {
+        ob_start();
+        
         if (\RPI\Framework\App\Config::getValue("config/debug/@enabled", false) === true) {
             $this->alwaysIncludeExceptionMessage = true;
         }
@@ -44,8 +46,6 @@ abstract class Server extends \RPI\Framework\Controller
 
     public function process()
     {
-        ob_start();
-
         $this->processAction();
         
         $request = null;
