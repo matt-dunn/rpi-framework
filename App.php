@@ -52,7 +52,7 @@ class App
         
         \RPI\Framework\App\Session::init();
 
-        self::$router = \RPI\Framework\Helpers\View2::init(
+        self::$router = \RPI\Framework\Helpers\View::init(
             $dataStore,
             realpath($_SERVER["DOCUMENT_ROOT"]."/../View/Config2.xml")
         );
@@ -75,7 +75,7 @@ class App
         );
         
         if (isset($route)) {
-            $controller = \RPI\Framework\Helpers\View2::createControllerByUUID(
+            $controller = \RPI\Framework\Helpers\View::createControllerByUUID(
                 $route->uuid,
                 $route->action,
                 "\RPI\Framework\Controller"
