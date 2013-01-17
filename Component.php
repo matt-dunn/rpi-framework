@@ -127,7 +127,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
                 $this->model = $this->getModel();
             }
 
-            $controller = $this->getController();
+            $controller = $this->getRootController();
             if (isset($controller) && isset($controller->options)) {
                 $this->controllerOptions = $controller->options;
             }
@@ -175,8 +175,8 @@ EOT;
             if ($this->canRenderViewFromCache()) {
                 $rendition = $this->renderViewFromCache();
             } else {
-                $controller = $this->getController();
-                if (!isset($controller)) {
+                $controller = $this->getRootController();
+                if (!isset($controller) || !$controller instanceof \RPI\Framework\Controller\HTML\Front) {
                     $rendition = \RPI\Framework\Helpers\Utils::processPHP($this->renderView(), true);
                 } else {
                     $rendition = <<<EOT

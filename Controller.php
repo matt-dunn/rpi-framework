@@ -148,7 +148,7 @@ abstract class Controller
         return $this->type;
     }
 
-    public function getController()
+    public function getRootController()
     {
         return self::$controller;
     }

@@ -174,7 +174,7 @@ abstract class HTML extends \RPI\Framework\Controller
 
     public function addControllerMessage($message, $type = null, $id = null, $title = null)
     {
-        $controller = $this->getController();
+        $controller = $this->getRootController();
         if (isset($controller) && $controller instanceof \RPI\Framework\Controller\HTML) {
             $controller->addMessage($message, $type, $id, $title);
         }
