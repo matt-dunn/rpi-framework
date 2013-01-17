@@ -62,7 +62,7 @@ class RouterTest extends \RPI\Framework\Test\Base
     public function testRouteInvalidMethodNull()
     {
         $this->object->loadMap(
-            $this->loadFixture("simple.json")
+            $this->loadFixture("routes.json")
         );
         $this->assertNull($this->object->route("/methodpostget/", null, "text/html"));
     }
@@ -74,7 +74,7 @@ class RouterTest extends \RPI\Framework\Test\Base
     public function testRouteInvalidMethod()
     {
         $this->object->loadMap(
-            $this->loadFixture("simple.json")
+            $this->loadFixture("routes.json")
         );
         $this->assertNull($this->object->route("/methodpostget/", "invalidmethod", "text/html"));
     }
@@ -118,7 +118,7 @@ class RouterTest extends \RPI\Framework\Test\Base
     public function testRoute()
     {
         $this->object->loadMap(
-            $this->loadFixture("simple.json")
+            $this->loadFixture("routes.json")
         );
         print_r($this->object->getMap());
         ob_flush();
@@ -217,7 +217,11 @@ class RouterTest extends \RPI\Framework\Test\Base
             "010d5cc4-2233-480d-9618-3c3dfcdb2439",
             new \RPI\Framework\App\Router\Action(
                 "simpletestaction",
-                null
+                array(
+                    "param1" => "value1",
+                    "param2" => "value2",
+                    "param3" => "value3"
+                )
             )
         );
         $this->assertEquals($route, $this->object->route("/simple/test/", "get", $defaultMimetype));
