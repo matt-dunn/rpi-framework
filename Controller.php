@@ -33,6 +33,7 @@ abstract class Controller
      * @var type \RPI\Framework\App\Router\Action
      */
     private $controllerAction = null;
+    private $controllerActionProcessed = false;
     
     private static $controller = null;
 
@@ -117,7 +118,7 @@ abstract class Controller
 
     public function processAction()
     {
-        if (isset($this->controllerAction)) {
+        if ($this->controllerActionProcessed === false) {
             if (isset($this->controllerAction->params)) {
                 $this->options->addOptionsByArray($this->controllerAction->params);
             }
@@ -134,10 +135,19 @@ abstract class Controller
                 }
             }
             
-            $this->controllerAction = null;
+            $this->controllerActionProcessed = true;
+            
+            $this->options->validate();
         }
-        
-        $this->options->validate();
+    }
+    
+    /**
+     * 
+     * @return \RPI\Framework\App\Router\Action
+     */
+    public function getAction()
+    {
+            return $this->controllerAction;
     }
     
     public function getParent()
