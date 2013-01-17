@@ -12,13 +12,7 @@ ini_set("include_path", __DIR__."/../../Vendor/PEAR".PATH_SEPARATOR.ini_get("inc
 // ================================================================================================================
 // Global config:
 
-$_SERVER["DOCUMENT_ROOT"] = dirname(__FILE__) . "/Runtime/ROOT-TEST";
-$_SERVER["REQUEST_URI"] = "/";
-$_SERVER["HTTP_HOST"] = "phpunit";
-
 $GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] = false;
-$GLOBALS["RPI_FRAMEWORK_CONFIG_FILEPATH"] = false;
-$GLOBALS["RPI_FRAMEWORK_VIEW_FILEPATH"] = false;
 
 // ================================================================================================================
 

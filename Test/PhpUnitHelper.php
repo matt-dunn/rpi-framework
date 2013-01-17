@@ -7,6 +7,28 @@ namespace RPI\Framework\Test;
  */
 abstract class Base extends \PHPUnit_Framework_TestCase
 {
+    public function __construct($name = null)
+    {
+        parent::__construct($name);
+        
+        $reflector = new \ReflectionClass($this);
+        $filename = implode(
+            DIRECTORY_SEPARATOR,
+            array_slice(
+                explode(
+                    DIRECTORY_SEPARATOR,
+                    $reflector->getFileName()
+                ),
+                0,
+                -1
+            )
+        );
+
+        $_SERVER["DOCUMENT_ROOT"] = $filename."/Mocks";
+        
+        $_SERVER["REQUEST_URI"] = "/";
+        $_SERVER["HTTP_HOST"] = "phpunit";
+    }
     protected function loadFixture($fixtureName)
     {
         $reflection = new \ReflectionClass($this);
