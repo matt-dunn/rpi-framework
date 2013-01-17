@@ -28,12 +28,6 @@ abstract class Component extends \RPI\Framework\Controller\HTML
      * Set by viewdata
      * @var string
      */
-    public $typeId = null;
-
-    /**
-     * Set by viewdata
-     * @var string
-     */
     public $match = null;
     
     /**
