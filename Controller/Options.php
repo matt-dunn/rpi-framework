@@ -3,29 +3,40 @@
 namespace RPI\Framework\Controller;
 
 /**
- * Define available options for a component. If set, an array should be set as follows:
- *            array(
- *                "<option name>" => array(
- *                    "type" => "*<string|bool|int|float>,
- *                    "description" => "*<description text>",
- *                    "values" => array(<array list of typed values>),
- *                    "default" => <default typed value>,
- *                    "required" => <true|false(default)>
- *                ),
+ * Define available options for a controller
  * 
- *            where * are required values
  */
 class Options
 {
     private $availableOptions;
     private $options;
     
+    /**
+     * 
+    * @param array $availableOptions
+    *            array(
+    *                "<option name>" => array(
+    *                    "type" => "*<string|bool|int|float>,
+    *                    "description" => "*<description text>",
+    *                    "values" => array(<array list of typed values>),
+    *                    "default" => <default typed value>,
+    *                    "required" => <true|false(default)>
+    *                    "optionType" => <type descriptor - used when calling ::get()>
+    *                ),
+    *            where * are required values
+    * @param array $options
+    */
     public function __construct(array $availableOptions, array $options)
     {
         $this->availableOptions = $availableOptions;
         $this->options = $options;
     }
     
+    /**
+     * 
+     * @param \RPI\Framework\Controller\Options $options
+     * @return \RPI\Framework\Controller\Options
+     */
     public function add(\RPI\Framework\Controller\Options $options)
     {
         $this->availableOptions = array_merge($this->availableOptions, $options->availableOptions);
@@ -34,6 +45,13 @@ class Options
         return $this;
     }
     
+    /**
+     * Add an associative array of options
+     * @param array $options                Associative array of options
+     * @param type $addOnlyValidOptions     If true, add only valid options from $availableOptions
+     *                                      to the controller options
+     * @return \RPI\Framework\Controller\Options
+     */
     public function addOptionsByArray(array $options, $addOnlyValidOptions = true)
     {
         if ($addOnlyValidOptions) {
@@ -50,6 +68,10 @@ class Options
         return $this;
     }
     
+    /**
+     * Validate the options against the $availableOptions
+     * @throws \InvalidArgumentException
+     */
     public function validate()
     {
         $options = $this->options;
@@ -93,6 +115,21 @@ class Options
         }
     }
     
+    public function get($optionType = null)
+    {
+        $options = array();
+        
+        foreach ($this->options as $name => $value) {
+            if (isset($value) && trim($value) != "") {
+                if (!isset($optionType) || (isset($this->availableOptions[$name]["optionType"]) && $this->availableOptions[$name]["optionType"] = $optionType)) {
+                    $options[$name] = $value;
+                }
+            }
+        }
+        
+        return $options;
+    }
+
     public function __get($name)
     {
         if (isset($this->availableOptions[$name])) {
@@ -119,7 +156,14 @@ class Options
     
     public function __invoke()
     {
-        return $this->options;
+        $options = array();
+        foreach ($this->options as $name => $value) {
+            $options[$name] = array(
+                "value" => $value,
+                "optionType" => (isset($this->availableOptions[$name]["optionType"]) ? $this->availableOptions[$name]["optionType"] : null)
+            );
+        }
+        return $options;
     }
     
     public function __isset($name)
