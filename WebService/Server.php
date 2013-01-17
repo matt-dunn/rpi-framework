@@ -46,6 +46,8 @@ abstract class Server extends \RPI\Framework\Controller
     {
         ob_start();
 
+        $this->processAction();
+        
         $request = null;
 
         try {
