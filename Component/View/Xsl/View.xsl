@@ -5,7 +5,10 @@
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 
-	exclude-result-prefixes="xsi"
+    xmlns:php="http://php.net/xsl"
+    xsl:extension-element-prefixes="php"
+
+	exclude-result-prefixes="xsi php"
 >
 
 <xsl:template match="/component">
@@ -45,6 +48,8 @@
             <xsl:attribute name="data-id"><xsl:value-of select="id"/></xsl:attribute>
         </xsl:if>
         
+        <xsl:apply-templates select="options/node()[optionType='data']" mode="component-componentAttributes"/>
+        
         <xsl:if test="boolean(number(editable))">
             <ul class="options">
                 <xsl:choose>
@@ -69,6 +74,12 @@
             <xsl:with-param name="headingLevel" select="number($_headingLevel)"/>
         </xsl:apply-templates>
     </section>
+</xsl:template>
+
+<xsl:template match="*" mode="component-componentAttributes">
+    <xsl:attribute name="data-{php:functionString('strtolower', name())}">
+        <xsl:value-of select="value"/>
+    </xsl:attribute>
 </xsl:template>
 
 </xsl:stylesheet>

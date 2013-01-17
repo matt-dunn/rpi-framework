@@ -2,6 +2,9 @@
 
 {if ($controller->isDynamic || $controller->editable) }
     {assign var=sectionAttributes value=" data-type=\"{$controller->getType()}\" data-id=\"{$controller->id}\""}
+    {foreach from=$controller->options->get("data") key=name item=value)}
+        {assign var=sectionAttributes value="$sectionAttributes data-$name|lower=\"$value\""}
+    {/foreach}
 {/if}
 
 {if ($controller->editable)}

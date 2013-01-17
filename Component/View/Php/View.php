@@ -17,6 +17,11 @@ abstract class View extends \RPI\Framework\Controller\Message\View\Php\View impl
             if ($controller->isDynamic || $controller->editable) {
                 $sectionAttributes .= " data-type=\"{$controller->getType()}\" data-id=\"{$controller->id}\"";
             }
+            
+            foreach ($controller->options->get("data") as $name => $value) {
+                $sectionAttributes .= " data-".strtolower($name)."\"=\"{$value}\"";
+            }
+            
             if ($controller->editable) {
                 $sectionOptionsHTML = "<ul class=\"options\">";
                 $className .= " component-editable";
