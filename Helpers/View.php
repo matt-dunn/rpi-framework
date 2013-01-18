@@ -208,7 +208,11 @@ class View
                     $xpath = new \DomXPath($domDataViews);
                     $xpath->registerNamespace("RPI", "http://www.rpi.co.uk/presentation/config/");
                     
-                    $viewConfig = self::parseRoutes($xpath, $xpath->query("/RPI:views/RPI:route"));
+                    $viewConfig = self::parseRoutes(
+                        $xpath,
+                        $xpath->query("/RPI:views/RPI:route | /RPI:views/RPI:errorDocument")
+                    );
+                    
                     $router->loadMap(
                         $viewConfig["routeMap"]
                     );
@@ -260,6 +264,9 @@ class View
         
         foreach ($routes as $route) {
             $match = $route->getAttribute("match");
+            if ($match == "") {
+                $match = null;
+            }
             if (substr($match, 0, 1) == "/") {
                 $match = substr($match, 1);
             }
@@ -315,70 +322,82 @@ class View
             }
 
             if ($match != "*") {
-                if (isset($matchPath) && $matchPath != "") {
-                    $match = $matchPath.($match == "" ? "" : "/".$match);
-                }
-
-                $matchFullPath = "/".$match.($match == "" ? "" : "/");
-                if (isset($routeMap[$matchFullPath])) {
-                    throw new \Exception(
-                        "Duplicate pattern match '$matchFullPath' found in ".
-                        "{$route->ownerDocument->documentURI}".
-                        "#{$route->getLineNo()}."
-                    );
-                }
-
-                $via = null;
-                if (trim($route->getAttribute("via")) != "") {
-                    $via = implode(",", explode(" ", $route->getAttribute("via")));
-                }
-                $action = null;
-                if (trim($route->getAttribute("action")) != "") {
-                    $action = $route->getAttribute("action");
-                }
-                $fileExtension = null;
-                if (trim($route->getAttribute("fileExtension")) != "") {
-                    $fileExtension = $route->getAttribute("fileExtension");
-                }
-                $mimetype = null;
-                if (trim($route->getAttribute("mimetype")) != "") {
-                    $mimetype = $route->getAttribute("mimetype");
-                }
-                $defaultParams = null;
-                if (trim($route->getAttribute("defaultParams")) != "") {
-                    $defaultParamsParts = explode(",", $route->getAttribute("defaultParams"));
-                    foreach ($defaultParamsParts as $defaultParamsPart) {
-                        $defaultParamPart = explode("=", $defaultParamsPart);
-                        if (count($defaultParamPart) == 2) {
-                            if (!isset($defaultParams)) {
-                                $defaultParams = array();
-                            }
-                            
-                            $defaultParams[trim($defaultParamPart[0])] = $defaultParamPart[1];
-                        } else {
-                            throw new \Exception(
-                                "Invalid syntax '$defaultParamsPart'. Must be '<name>=<value>' in".
-                                "{$route->ownerDocument->documentURI}".
-                                "#{$route->getLineNo()}."
-                            );
-                        }
-                    }
-                }
-
                 $controllerType = null;
                 if (isset($controller["type"])) {
                     $controllerType = $controller["type"];
                 }
-                $routeMap[$matchFullPath] = array(
-                    "match" => $matchFullPath,
-                    "controller" => $controllerType,
-                    "via" => $via,
-                    "uuid" => $controllerUUID,
-                    "action" => $action,
-                    "fileExtension" => $fileExtension,
-                    "mimetype" => $mimetype,
-                    "defaultParams" => $defaultParams
-                );
+                
+                if (isset($match)) {
+                    if (isset($matchPath) && $matchPath != "") {
+                        $match = $matchPath.($match == "" ? "" : "/".$match);
+                    }
+
+                    $matchFullPath = "/".$match.($match == "" ? "" : "/");
+                    if (isset($routeMap[$matchFullPath])) {
+                        throw new \Exception(
+                            "Duplicate pattern match '$matchFullPath' found in ".
+                            "{$route->ownerDocument->documentURI}".
+                            "#{$route->getLineNo()}."
+                        );
+                    }
+
+                    $via = null;
+                    if (trim($route->getAttribute("via")) != "") {
+                        $via = implode(",", explode(" ", $route->getAttribute("via")));
+                    }
+                    $action = null;
+                    if (trim($route->getAttribute("action")) != "") {
+                        $action = $route->getAttribute("action");
+                    }
+                    $fileExtension = null;
+                    if (trim($route->getAttribute("fileExtension")) != "") {
+                        $fileExtension = $route->getAttribute("fileExtension");
+                    }
+                    $mimetype = null;
+                    if (trim($route->getAttribute("mimetype")) != "") {
+                        $mimetype = $route->getAttribute("mimetype");
+                    }
+                    $defaultParams = null;
+                    if (trim($route->getAttribute("defaultParams")) != "") {
+                        $defaultParamsParts = explode(",", $route->getAttribute("defaultParams"));
+                        foreach ($defaultParamsParts as $defaultParamsPart) {
+                            $defaultParamPart = explode("=", $defaultParamsPart);
+                            if (count($defaultParamPart) == 2) {
+                                if (!isset($defaultParams)) {
+                                    $defaultParams = array();
+                                }
+
+                                $defaultParams[trim($defaultParamPart[0])] = $defaultParamPart[1];
+                            } else {
+                                throw new \Exception(
+                                    "Invalid syntax '$defaultParamsPart'. Must be '<name>=<value>' in".
+                                    "{$route->ownerDocument->documentURI}".
+                                    "#{$route->getLineNo()}."
+                                );
+                            }
+                        }
+                    }
+
+                    $routeMap[$matchFullPath] = array(
+                        "match" => $matchFullPath,
+                        "controller" => $controllerType,
+                        "via" => $via,
+                        "uuid" => $controllerUUID,
+                        "action" => $action,
+                        "fileExtension" => $fileExtension,
+                        "mimetype" => $mimetype,
+                        "defaultParams" => $defaultParams
+                    );
+                } else {
+                    $statusCode = $route->getAttribute("status");
+                    if ($statusCode != "") {
+                        $routeMap["#httpStatus:$statusCode"] = array(
+                            "statusCode" => $statusCode,
+                            "controller" => $controllerType,
+                            "uuid" => $controllerUUID
+                        );
+                    }
+                }
                 
                 $controllerMap[$controllerUUID] = $controller;
             } else {

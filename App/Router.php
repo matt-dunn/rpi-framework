@@ -35,8 +35,8 @@ class Router
             $mimetype = null;
             $fileExtension = null;
             
-            if (!isset($details["match"])) {
-                throw new \Exception("Router map missing 'match' value");
+            if (!isset($details["match"]) && !isset($details["statusCode"])) {
+                throw new \Exception("Router map missing 'match' or 'statusCode' value");
             }
             
             if (!isset($details["controller"])) {
@@ -65,107 +65,114 @@ class Router
                 $fileExtension = strtolower($details["fileExtension"]);
             }
             
-            $path = $details["match"];
-            if (substr($path, 0, 1) == "/") {
-                $path = substr($path, 1);
-            }
-            if (substr($path, -1, 1) == "/") {
-                $path = substr($path, 0, -1);
-            }
-            if ($path === false) {
-                $path = "";
-            }
-            
-            $details["match"] = $path;
+            if (isset($details["statusCode"])) {
+                if (!isset($this->map["#errorDocuments"])) {
+                    $this->map["#errorDocuments"] = array();
+                }
+                $this->map["#errorDocuments"][$details["statusCode"]] = $details;
+            } elseif (isset($details["match"])) {
+                $path = $details["match"];
+                if (substr($path, 0, 1) == "/") {
+                    $path = substr($path, 1);
+                }
+                if (substr($path, -1, 1) == "/") {
+                    $path = substr($path, 0, -1);
+                }
+                if ($path === false) {
+                    $path = "";
+                }
 
-            $pathParts = explode("/", $path);
-            
-            $m = &$this->map;
-            
-            $matchingParameters = false;
-            $parametersHaveDefinedDefaultValue = false;
-            
-            $items = count($pathParts);
-            foreach ($pathParts as $index => $pathPart) {
-                foreach ($methodParts as $method) {
-                    if (substr($pathPart, 0, 1) == ":") {
-                        $matchingParameters = true;
-                        
-                        if ($parametersHaveDefinedDefaultValue && strstr($pathPart, "|") === false) {
-                            throw new \RPI\Framework\App\Router\Exceptions\InvalidRoute(
-                                "Invalid route '{$details["match"]}' detected. Default."
-                            );
-                        }
-                        
-                        if (!$parametersHaveDefinedDefaultValue && strstr($pathPart, "|") !== false) {
-                            $parametersHaveDefinedDefaultValue = true;
-                        }
-                        
-                        if (!isset($m["#"])) {
-                            $m["#"] = array();
-                        }
-                        
-                        $item = &$m["#"][$method];
-                        
-                        if (isset($mimetype)) {
-                            if (!isset($item["#mimetype:$mimetype"])) {
-                                $item["#mimetype:$mimetype"] = array();
-                            }
-                            $item = &$item["#mimetype:$mimetype"];
-                        }
-                        
-                        if (isset($fileExtension)) {
-                            if (!isset($item["#fileExtension:$fileExtension"])) {
-                                $item["#fileExtension:$fileExtension"] = array();
-                            }
-                            $item = &$item["#fileExtension:$fileExtension"];
-                        }
+                $details["match"] = $path;
 
-                        if (!isset($item["#"])) {
-                            $item["#"] = $details;
-                        }
-                        $item["#"]["params"][substr($pathPart, 1)] = null;
-                    } else {
-                        $pathPart = strtolower($pathPart);
-                        if ($matchingParameters) {
-                            throw new \RPI\Framework\App\Router\Exceptions\InvalidRoute(
-                                "Invalid route '{$details["match"]}' detected. ".
-                                "There must be no path defined after any parameter(s)."
-                            );
-                        }
-                        
-                        if (!isset($m[$pathPart])) {
-                            $m[$pathPart] = array();
-                        }
-                        
-                        if ($index == $items - 1) {
-                            if (!isset($m[$pathPart]["#"])) {
-                                $m[$pathPart]["#"] = array();
+                $pathParts = explode("/", $path);
+
+                $m = &$this->map;
+
+                $matchingParameters = false;
+                $parametersHaveDefinedDefaultValue = false;
+
+                $items = count($pathParts);
+                foreach ($pathParts as $index => $pathPart) {
+                    foreach ($methodParts as $method) {
+                        if (substr($pathPart, 0, 1) == ":") {
+                            $matchingParameters = true;
+
+                            if ($parametersHaveDefinedDefaultValue && strstr($pathPart, "|") === false) {
+                                throw new \RPI\Framework\App\Router\Exceptions\InvalidRoute(
+                                    "Invalid route '{$details["match"]}' detected. Default."
+                                );
                             }
-                            
-                            $item = &$m[$pathPart]["#"][$method];
-                            
+
+                            if (!$parametersHaveDefinedDefaultValue && strstr($pathPart, "|") !== false) {
+                                $parametersHaveDefinedDefaultValue = true;
+                            }
+
+                            if (!isset($m["#"])) {
+                                $m["#"] = array();
+                            }
+
+                            $item = &$m["#"][$method];
+
                             if (isset($mimetype)) {
                                 if (!isset($item["#mimetype:$mimetype"])) {
                                     $item["#mimetype:$mimetype"] = array();
                                 }
                                 $item = &$item["#mimetype:$mimetype"];
                             }
-                            
+
                             if (isset($fileExtension)) {
                                 if (!isset($item["#fileExtension:$fileExtension"])) {
                                     $item["#fileExtension:$fileExtension"] = array();
                                 }
                                 $item = &$item["#fileExtension:$fileExtension"];
                             }
-                            
-                            $item["#"] = $details;
+
+                            if (!isset($item["#"])) {
+                                $item["#"] = $details;
+                            }
+                            $item["#"]["params"][substr($pathPart, 1)] = null;
+                        } else {
+                            $pathPart = strtolower($pathPart);
+                            if ($matchingParameters) {
+                                throw new \RPI\Framework\App\Router\Exceptions\InvalidRoute(
+                                    "Invalid route '{$details["match"]}' detected. ".
+                                    "There must be no path defined after any parameter(s)."
+                                );
+                            }
+
+                            if (!isset($m[$pathPart])) {
+                                $m[$pathPart] = array();
+                            }
+
+                            if ($index == $items - 1) {
+                                if (!isset($m[$pathPart]["#"])) {
+                                    $m[$pathPart]["#"] = array();
+                                }
+
+                                $item = &$m[$pathPart]["#"][$method];
+
+                                if (isset($mimetype)) {
+                                    if (!isset($item["#mimetype:$mimetype"])) {
+                                        $item["#mimetype:$mimetype"] = array();
+                                    }
+                                    $item = &$item["#mimetype:$mimetype"];
+                                }
+
+                                if (isset($fileExtension)) {
+                                    if (!isset($item["#fileExtension:$fileExtension"])) {
+                                        $item["#fileExtension:$fileExtension"] = array();
+                                    }
+                                    $item = &$item["#fileExtension:$fileExtension"];
+                                }
+
+                                $item["#"] = $details;
+                            }
                         }
                     }
-                }
-                
-                if (substr($pathPart, 0, 1) != ":") {
-                    $m = &$m[$pathPart];
+
+                    if (substr($pathPart, 0, 1) != ":") {
+                        $m = &$m[$pathPart];
+                    }
                 }
             }
         }
@@ -190,6 +197,23 @@ class Router
     public function getMap()
     {
         return $this->map;
+    }
+    
+    public function routeStatusCode($statusCode)
+    {
+        $details = null;
+        if (isset($this->map["#errorDocuments"]) && isset($this->map["#errorDocuments"][$statusCode])) {
+            $match = $this->map["#errorDocuments"][$statusCode];
+            
+            $details = new \RPI\Framework\App\Router\Route(
+                $_SERVER['REQUEST_METHOD'],
+                "status:$statusCode",
+                $match["controller"],
+                $match["uuid"]
+            );
+        }
+        
+        return $details;
     }
     
     /**

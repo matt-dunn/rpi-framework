@@ -37,7 +37,7 @@ class Route
     public function __construct($method, $route, $controller, $uuid, \RPI\Framework\App\Router\Action $action = null)
     {
         \RPI\Framework\Helpers\Utils::validateOption(
-            $method,
+            strtolower($method),
             array("get", "post", "delete", "put")
         );
         

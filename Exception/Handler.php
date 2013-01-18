@@ -2,11 +2,6 @@
 
 namespace RPI\Framework\Exception;
 
-// E_DEPRECATED is only defined from PHP 5.3.0 onwards
-if ( ! defined('E_DEPRECATED')) {
-    define('E_DEPRECATED', 8192);
-}
-
 function isCli()
 {
     if (php_sapi_name() == 'cli' && empty($_SERVER['REMOTE_ADDR'])) {
@@ -140,6 +135,19 @@ class Handler
             }
         }
     }
+    
+    private static function runErrorController($statusCode)
+    {
+        if (!isCli()) {
+            \RPI\Framework\Helpers\HTTP::setResponseCode($statusCode);
+            $controller = \RPI\Framework\App::runStatusCode($statusCode);
+            if (!isset($controller)) {
+                throw new \Exception("Error document handler not found for status code $statusCode");
+            }
+
+            return $controller;
+        }
+    }
 
     /**
      * Handle unhandled exceptions
@@ -150,56 +158,38 @@ class Handler
         ob_clean();
 
         try {
-            try {
-                if ($exception instanceof \RPI\Framework\Exceptions\PageNotFound) {
-                    self::log($exception, LOG_ERR, "404", false);
-                    if (!isCli()) {
-                        header("HTTP/1.1 404", true);
-                    }
-                    require($_SERVER["DOCUMENT_ROOT"]."/Error/404.php");
-                    exit();
-                } elseif ($exception instanceof \RPI\Framework\Exceptions\Authentication) {
-                    self::log($exception, LOG_ERR, "authentication", false);
-                    if (isset($exception->from)) {
-                        $from = $exception->from;
-                    } else {
-                        $from = \RPI\Framework\Helpers\Utils::currentPageURI();
-                    }
-                    \RPI\Framework\Helpers\Utils::redirect("/account/login/?from=".urlencode($from));
-                } elseif ($exception instanceof \RPI\Framework\Exceptions\Authorization) {
-                    self::log($exception, LOG_ERR, "authentication");
-                    header("HTTP/1.1 401", true);
-                    require($_SERVER["DOCUMENT_ROOT"]."/Error/401.php");
-                    exit();
-                } elseif ($exception instanceof \RPI\Framework\Exceptions\Forbidden) {
-                    self::log($exception, LOG_ERR, "authentication");
-                    header("HTTP/1.1 403", true);
-                    require($_SERVER["DOCUMENT_ROOT"]."/Error/403.php");
-                    exit();
-                } else {
-                    self::log($exception, LOG_CRIT);
+            if ($exception instanceof \RPI\Framework\Exceptions\PageNotFound) {
+                self::log($exception, LOG_ERR, "404", false);
 
-                    if (!isCli()) {
-                        header("HTTP/1.1 500", true);
-                    }
-                    if (file_exists($_SERVER["DOCUMENT_ROOT"]."/Error/500.php")) {
-                        require($_SERVER["DOCUMENT_ROOT"]."/Error/500.php");
-                    } else {
-                        self::displayFailsafe();
-                    }
-                }
-            } catch (Exception $ex) {
-                self::log($ex, LOG_CRIT);
-                if (file_exists($_SERVER["DOCUMENT_ROOT"]."/Error/500.php")) {
-                    require($_SERVER["DOCUMENT_ROOT"]."/Error/500.php");
+                self::runErrorController(404);
+            } elseif ($exception instanceof \RPI\Framework\Exceptions\Authentication) {
+                self::log($exception, LOG_ERR, "authentication", false);
+                if (isset($exception->from)) {
+                    $from = $exception->from;
                 } else {
-                    self::displayFailsafe();
+                    $from = \RPI\Framework\Helpers\Utils::currentPageURI();
                 }
+                // TODO: remove hard coded url:
+                \RPI\Framework\Helpers\Utils::redirect("/account/login/?from=".urlencode($from));
+            } elseif ($exception instanceof \RPI\Framework\Exceptions\Authorization) {
+                self::log($exception, LOG_ERR, "authentication");
+                
+                self::runErrorController(401);
+            } elseif ($exception instanceof \RPI\Framework\Exceptions\Forbidden) {
+                self::log($exception, LOG_ERR, "authentication");
+                
+                self::runErrorController(403);
+            } else {
+                self::log($exception, LOG_CRIT);
+
+                self::runErrorController(500);
             }
         } catch (Exception $ex) {
             self::log($ex, LOG_CRIT);
             self::displayFailsafe();
         }
+        
+        exit();
     }
 
     /**
@@ -282,7 +272,7 @@ class Handler
         if (self::$showFailSafeMessage && !isCli()) {
             try {
                 ob_start();
-                header("HTTP/1.1 500", true);
+                \RPI\Framework\Helpers\HTTP::setResponseCode(500);
                 require(pathinfo(__FILE__, PATHINFO_DIRNAME)."/Static/FailSafe.html");
                 $buffer = ob_get_contents();
                 ob_end_clean();

@@ -8,7 +8,7 @@ class App
      *
      * @var \RPI\Framework\App\Router 
      */
-    private $router = null;
+    private static $router = null;
 
     public function __construct(
         $webConfigFile,
@@ -32,7 +32,7 @@ class App
         
         \RPI\Framework\App\Session::init();
 
-        $this->router = \RPI\Framework\Helpers\View::init(
+        self::$router = \RPI\Framework\Helpers\View::init(
             $dataStore,
             $viewConfigFile
         );
@@ -48,24 +48,58 @@ class App
 
     public function run()
     {
-        $route = $this->router->route(
+        if (self::runRouteControllerPath(
             \RPI\Framework\Helpers\Utils::currentPageURI(true),
-            $_SERVER['REQUEST_METHOD'],
-            "text/html"
-        );
-        
-        if (isset($route)) {
-            $controller = \RPI\Framework\Helpers\View::createControllerByUUID(
-                $route->uuid,
-                $route->action,
-                "\RPI\Framework\Controller"
-            );
-            if (isset($controller)) {
-                $controller->process();
-                $controller->render();
+            $_SERVER['REQUEST_METHOD']
+        ) === null) {
+            throw new \RPI\Framework\Exceptions\PageNotFound();
+        }
+    }
+    
+    public static function runStatusCode($statusCode)
+    {
+        if (isset(self::$router)) {
+            $route = self::$router->routeStatusCode($statusCode);
+
+            if (isset($route)) {
+                return self::runRouteController($route);
             }
         } else {
-            throw new \RPI\Framework\Exceptions\PageNotFound();
+            throw new \Exception("Router not initialised");
+        }
+        
+        return null;
+    }
+    
+    private static function runRouteControllerPath($path, $method)
+    {
+        if (isset(self::$router)) {
+            $route = self::$router->route($path, $method);
+
+            if (isset($route)) {
+                return self::runRouteController($route);
+            }
+        } else {
+            throw new \Exception("Router not initialised");
+        }
+        
+        return null;
+    }
+    
+    private static function runRouteController(\RPI\Framework\App\Router\Route $route)
+    {
+        $controller = \RPI\Framework\Helpers\View::createControllerByUUID(
+            $route->uuid,
+            $route->action,
+            "\RPI\Framework\Controller"
+        );
+        
+        if ($controller !== false) {
+            $controller->process();
+            $controller->render();
+            return $controller;
+        } else {
+            return null;
         }
     }
 }
