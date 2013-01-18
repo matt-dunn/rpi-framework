@@ -121,7 +121,11 @@ class Options
         
         foreach ($this->options as $name => $value) {
             if (isset($value) && trim($value) != "") {
-                if (!isset($optionType) || (isset($this->availableOptions[$name]["optionType"]) && $this->availableOptions[$name]["optionType"] = $optionType)) {
+                if (!isset($optionType)
+                    || (
+                        isset($this->availableOptions[$name]["optionType"])
+                            && $this->availableOptions[$name]["optionType"] = $optionType)
+                ) {
                     $options[$name] = $value;
                 }
             }
@@ -160,7 +164,12 @@ class Options
         foreach ($this->options as $name => $value) {
             $options[$name] = array(
                 "value" => $value,
-                "optionType" => (isset($this->availableOptions[$name]["optionType"]) ? $this->availableOptions[$name]["optionType"] : null)
+                "optionType" =>
+                    (
+                        isset($this->availableOptions[$name]["optionType"])
+                            ? $this->availableOptions[$name]["optionType"]
+                            : null
+                    )
             );
         }
         return $options;

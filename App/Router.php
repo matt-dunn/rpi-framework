@@ -92,7 +92,9 @@ class Router
                         $matchingParameters = true;
                         
                         if ($parametersHaveDefinedDefaultValue && strstr($pathPart, "|") === false) {
-                            throw new \RPI\Framework\App\Router\Exceptions\InvalidRoute("Invalid route '{$details["match"]}' detected. Default.");
+                            throw new \RPI\Framework\App\Router\Exceptions\InvalidRoute(
+                                "Invalid route '{$details["match"]}' detected. Default."
+                            );
                         }
                         
                         if (!$parametersHaveDefinedDefaultValue && strstr($pathPart, "|") !== false) {
@@ -126,7 +128,10 @@ class Router
                     } else {
                         $pathPart = strtolower($pathPart);
                         if ($matchingParameters) {
-                            throw new \RPI\Framework\App\Router\Exceptions\InvalidRoute("Invalid route '{$details["match"]}' detected. There must be no path defined after any parameter(s).");
+                            throw new \RPI\Framework\App\Router\Exceptions\InvalidRoute(
+                                "Invalid route '{$details["match"]}' detected. ".
+                                "There must be no path defined after any parameter(s)."
+                            );
                         }
                         
                         if (!isset($m[$pathPart])) {
@@ -334,7 +339,10 @@ class Router
                             }
                             
                             if (isset($details->action->params)) {
-                                $details->action->params = array_merge($details->action->params, $match["defaultParams"]);
+                                $details->action->params = array_merge(
+                                    $details->action->params,
+                                    $match["defaultParams"]
+                                );
                             } else {
                                 $details->action->params = $match["defaultParams"];
                             }
