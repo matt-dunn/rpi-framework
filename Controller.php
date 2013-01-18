@@ -35,7 +35,7 @@ abstract class Controller
     private $controllerAction = null;
     private $controllerActionProcessed = false;
     
-    private static $controller = null;
+    private $rootController = null;
 
     private $parentController = null;
 
@@ -81,15 +81,16 @@ abstract class Controller
             );
         }
 
-        if (!isset(self::$controller)) {
-            self::$controller = $this;
-        }
-        
         if ($this->initController($options) !== false) {
             $this->init();
         }
     }
     
+    /**
+     * 
+     * @param array $options
+     * @return \RPI\Framework\Controller\Options
+     */
     protected function getControllerOptions(array $options)
     {
         return new \RPI\Framework\Controller\Options(
@@ -150,6 +151,10 @@ abstract class Controller
             return $this->controllerAction;
     }
     
+    /**
+     * 
+     * @return \RPI\Framework\Controller
+     */
     public function getParent()
     {
         return $this->parentController;
@@ -165,8 +170,25 @@ abstract class Controller
         return $this->type;
     }
 
+    /**
+     * 
+     * @return \RPI\Framework\Controller
+     */
     public function getRootController()
     {
-        return self::$controller;
+        if (!isset($this->rootController)) {
+            $this->rootController = false;
+            $parentController = $this;
+
+            while (isset($parentController)) {
+                if (isset($parentController)) {
+                    $this->rootController = $parentController;
+                }
+                
+                $parentController = $parentController->getParent();
+            }
+        }
+        
+        return $this->rootController;
     }
 }

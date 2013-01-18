@@ -62,6 +62,10 @@ abstract class HTML extends \RPI\Framework\Controller
     
     abstract public function renderView();
 
+    /**
+     * 
+     * @return \RPI\Framework\Views\IView
+     */
     abstract protected function getView();
 
     public function __construct(
