@@ -22,6 +22,7 @@
 				width:40em;
 				padding:0;
 				margin:3em auto 0 auto;
+                overflow:auto;
 			}
 			
 			div#msg div.content {
@@ -37,8 +38,12 @@
 			}
 			
 			div#msg p.l {
-				text-align:right;
+                float:right;
 			}
+            
+            div#msg p.l img {
+                max-height: 20em;
+            }
         </style>
         <title>Server Error</title>
     </head>
@@ -48,6 +53,9 @@
 	            SERVER ERROR
 			</h1>
 			<div class="content">
+				<p class="l">
+					<img src="/i/logo.png" alt="" />
+				</p>
 				<p>
 					There has been an error on our server and we are trying to rectify the problem.
 				</p>
@@ -61,9 +69,6 @@
 				</ul>
 				<p>
 					Thank you for your patience.
-				</p>
-				<p class="l">
-					<img src="/i/logo.gif" alt="" />
 				</p>
 			</div>
         </div>
