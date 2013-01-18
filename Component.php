@@ -59,12 +59,6 @@ abstract class Component extends \RPI\Framework\Controller\HTML
                 $this->visible = false;
             }
         }
-
-        if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
-            // TODO: should this cache against the *component* and therefore not be unique for each page??
-            $this->cacheKey =
-                implode("_", $options)."_".$this->id."_".\RPI\Framework\Helpers\Utils::currentPageURI(true);
-        }
     }
     
     protected function getControllerOptions(array $options)
@@ -109,7 +103,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     public function __sleep()
     {
         $this->canRenderViewFromCache = $this->canRenderViewFromCache();
-        $this->cacheEnabled = ($this->cacheKey !== false);
+        $this->cacheEnabled = ($this->getCacheKey() !== false);
 
         $serializeProperties = get_object_vars($this);
         unset($serializeProperties["components"]);
@@ -131,9 +125,9 @@ abstract class Component extends \RPI\Framework\Controller\HTML
                 $this->controllerOptions = $controller->options;
             }
 
-            if ($this->cacheKey !== false && $this->isCacheable()) {
+            if ($this->getCacheKey() !== false && $this->isCacheable()) {
                 if (!$this->canRenderViewFromCache()
-                    || \RPI\Framework\Cache\Front\Store::fetch($this->cacheKey, null, $this->type) === false) {
+                    || \RPI\Framework\Cache\Front\Store::fetch($this->getCacheKey(), null, $this->type) === false) {
                     parent::process();
                 }
             } else {
@@ -145,7 +139,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     public function prerender()
     {
         $rendition = "";
-        if ($this->cacheKey !== false && !$this->canRenderViewFromCache()) {
+        if ($this->getCacheKey() !== false && !$this->canRenderViewFromCache()) {
             $rendition .= <<<EOT
 <?php
 // Component: {$this->type}
@@ -168,7 +162,7 @@ EOT;
     
     final public function render()
     {
-        if ($this->cacheKey !== false) {
+        if ($this->getCacheKey() !== false) {
             $rendition = "";
             
             if ($this->canRenderViewFromCache()) {
@@ -209,8 +203,8 @@ EOT;
     public function renderView()
     {
         if ($this->visible) {
-            if ($this->cacheKey !== false && !$this->canRenderViewFromCache() && $this->isCacheable()) {
-                $cacheContent = \RPI\Framework\Cache\Front\Store::fetchContent($this->cacheKey, null, $this->type);
+            if ($this->getCacheKey() !== false && !$this->canRenderViewFromCache() && $this->isCacheable()) {
+                $cacheContent = \RPI\Framework\Cache\Front\Store::fetchContent($this->getCacheKey(), null, $this->type);
                 if ($cacheContent !== false) {
                     return $cacheContent;
                 }
@@ -218,8 +212,8 @@ EOT;
 
             $rendition = $this->getView()->render($this);
 
-            if ($this->cacheKey !== false && !$this->canRenderViewFromCache() && $this->isCacheable()) {
-                \RPI\Framework\Cache\Front\Store::store($this->cacheKey, $rendition, $this->type);
+            if ($this->getCacheKey() !== false && !$this->canRenderViewFromCache() && $this->isCacheable()) {
+                \RPI\Framework\Cache\Front\Store::store($this->getCacheKey(), $rendition, $this->type);
             }
 
             return $rendition;
@@ -233,10 +227,10 @@ EOT;
         $cacheFile = false;
         
         if ($this->isCacheable()) {
-            $cacheFile = \RPI\Framework\Cache\Front\Store::fetch($this->cacheKey, null, $this->type);
+            $cacheFile = \RPI\Framework\Cache\Front\Store::fetch($this->getCacheKey(), null, $this->type);
             if ($cacheFile === false) {
                 $rendition = $this->renderView();
-                $cacheFile = \RPI\Framework\Cache\Front\Store::store($this->cacheKey, $rendition, $this->type);
+                $cacheFile = \RPI\Framework\Cache\Front\Store::store($this->getCacheKey(), $rendition, $this->type);
             }
 
             if ($cacheFile === false) {

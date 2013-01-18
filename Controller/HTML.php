@@ -41,10 +41,16 @@ abstract class HTML extends \RPI\Framework\Controller
     protected $messages = null;
 
     /**
-     * TODO: move to component?
      * @var string
      */
-    protected $cacheKey = false;
+    private $cacheKey = false;
+    
+    /**
+     *
+     * @var string
+     */
+    private static $pageTitle = null;
+    private static $pageTitleOverridden = false;
     
     abstract protected function isCacheable();
 
@@ -64,6 +70,27 @@ abstract class HTML extends \RPI\Framework\Controller
         \RPI\Framework\App\Router\Action $action = null,
         \RPI\Framework\Views\IView $viewRendition = null
     ) {
+        if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
+            if (!isset($options)) {
+                $options = array();
+            }
+            
+            if (!isset(self::$pageTitle)) {
+                $pageTitle = \RPI\Framework\Cache\Front\Store::fetchContent(
+                    \RPI\Framework\Helpers\Utils::currentPageRedirectURI()."-title",
+                    null,
+                    "title"
+                );
+
+                self::$pageTitle = $pageTitle;
+            }
+
+            // TODO: should this use $this->options->get()? This will create a new cache
+            //       instance for any component placed into a different viewMode for example
+            $this->cacheKey =
+                $this->type."_".implode("_o:", $options);
+        }
+        
         parent::__construct($id, $options, $action);
         
         if (isset($viewRendition)) {
@@ -202,5 +229,49 @@ abstract class HTML extends \RPI\Framework\Controller
         }
 
         return $matchedComponents;
+    }
+    
+    public function getCacheKey()
+    {
+        return $this->cacheKey;
+    }
+    
+    public function addCacheKey($key)
+    {
+        if ($this->cacheKey !== false) {
+            $this->cacheKey .= "_".$key;
+        }
+        
+        return $this->cacheKey;
+    }
+    
+    public function getPageTitle()
+    {
+        return (self::$pageTitle === false ? null : self::$pageTitle);
+    }
+
+    public function setPageTitle($title, $override = false)
+    {
+        if (!$override && self::$pageTitleOverridden) {
+            return false;
+            
+        }
+        
+        if (self::$pageTitle != $title) {
+            self::$pageTitle = $title;
+            self::$pageTitleOverridden = true;
+
+            if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
+                \RPI\Framework\Cache\Front\Store::store(
+                    \RPI\Framework\Helpers\Utils::currentPageRedirectURI()."-title",
+                    self::$pageTitle,
+                    "title"
+                );
+            }
+            
+            return true;
+        }
+        
+        return false;
     }
 }
