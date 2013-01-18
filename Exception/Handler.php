@@ -212,20 +212,14 @@ class Handler
     public static function handle($errNo, $errStr = null, $errfile = null, $errline = null)
     {
         switch ($errNo) {
-            case E_DEPRECATED:
-                self::logMessage("DEPRECATED WARNING: [$errNo] $errStr - $errfile#$errline", LOG_WARNING);
-                break;
             case E_STRICT:
+            case E_DEPRECATED:
                 if (strpos($errfile, "PEAR") === false) { // Don't log any PEAR errors
-                    self::logMessage("STRICT WARNING: [$errNo] $errStr - $errfile#$errline", LOG_WARNING);
+                    self::logMessage("STRICT/DEPRECATED WARNING: [$errNo] $errStr - $errfile#$errline", LOG_WARNING);
                 } else {
                     self::$unloggedStrictErrorCount++;
                 }
                 break;
-            case E_WARNING:
-                throw new \ErrorException($errStr, $errNo);
-            case E_NOTICE:
-                throw new \ErrorException($errStr, $errNo);
             default:
                 throw new \ErrorException($errStr, $errNo);
         }
@@ -270,8 +264,8 @@ class Handler
         // TODO: force error logging - always override the ini config?
         ini_set("log_errors", 1);
 
-        // TODO: use php.ini setting for this as it should be per environment
-        error_reporting((E_ALL | E_STRICT) ^ E_DEPRECATED);
+        // Report ALL errors
+        error_reporting(-1);
 
         set_exception_handler(array(__CLASS__ , "handleExceptions"));
         set_error_handler(array(__CLASS__ , "handle"), ini_get("error_reporting"));
