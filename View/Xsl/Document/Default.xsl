@@ -18,7 +18,12 @@
     <xsl:param name="component"/>
     <xsl:param name="headingLevel"/>
 
-    <article data-type="{metadata:view}">
+    <article>
+        <xsl:if test="string-length(normalize-space(metadata:view)) &gt; 0">
+            <xsl:attribute name="data-type">
+                <xsl:value-of select="metadata:view"/>
+            </xsl:attribute>
+        </xsl:if>
         <xsl:apply-templates select="." mode="common_document_type">
             <xsl:with-param name="component" select="$component"/>
             <xsl:with-param name="headingLevel" select="$headingLevel"/>

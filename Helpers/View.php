@@ -61,11 +61,15 @@ class View
         
         $decoratorData = self::$store->fetch("PHP_RPI_CONTENT_VIEWS-".self::$file."-decorators");
         if ($decoratorData !== false) {
-            foreach ($decoratorData as $decorator) {
-                if (self::testDecorator($decoratorDetails, $decorator["match"]) === true) {
-                    return $decorator["view"];
-                }
+            $properties = get_object_vars($decoratorDetails);
+
+            // TODO: Optimise this...
+            $normalizedProperties = array();
+            foreach ($properties as $name => $value) {
+                $normalizedProperties[$name.":".$value] = true;
             }
+            
+            return self::testDecorators($decoratorData, $normalizedProperties);
         }
 
         return false;
@@ -73,11 +77,30 @@ class View
     
     // ------------------------------------------------------------------------------------------------------------
 
-    private static function testDecorator(\stdClass $decoratorDetails, $match)
+    // TODO: Optimise this...
+    private static function testDecorators(array $decoratorData, array $properties)
     {
-        // $o is used in evaluation
-        $o = $decoratorDetails;
-        return eval($match);
+        $view = false;
+
+        foreach ($decoratorData as $name => $value) {
+            if ($name != "#") {
+                if (isset($properties[$name])) {
+                    if (is_array($decoratorData[$name])) {
+                        $view = self::testDecorators($decoratorData[$name], $properties);
+                    } else {
+                        $view = $value;
+                    }
+                }
+            } else {
+                $view = $value;
+            }
+            
+            if ($view !== false) {
+                break;
+            }
+        }
+        
+        return $view;
     }
     
     private static function createComponentFromViewData(
@@ -200,7 +223,8 @@ class View
                     
                     self::$store->store("PHP_RPI_CONTENT_VIEWS-".$file."-routermap", $router->getMap(), $file);
 
-                    $decorators = self::parseDecorators($xpath, $xpath->query("/RPI:views/RPI:decorator"));
+                    $decorators = self::parseDecorators($xpath->query("/RPI:views/RPI:decorator"));
+
                     self::$store->store("PHP_RPI_CONTENT_VIEWS-".$file."-decorators", $decorators, $file);
                     
                     \RPI\Framework\Helpers\Locking::release($seg);
@@ -297,7 +321,11 @@ class View
 
                 $matchFullPath = "/".$match.($match == "" ? "" : "/");
                 if (isset($routeMap[$matchFullPath])) {
-                    throw new \Exception("Duplicate pattern match '$matchFullPath' found");
+                    throw new \Exception(
+                        "Duplicate pattern match '$matchFullPath' found in ".
+                        "{$route->ownerDocument->documentURI}".
+                        "#{$route->getLineNo()}."
+                    );
                 }
 
                 $via = null;
@@ -328,7 +356,11 @@ class View
                             
                             $defaultParams[trim($defaultParamPart[0])] = $defaultParamPart[1];
                         } else {
-                            throw new \Exception("Invalid syntax '$defaultParamsPart'. Must be '<name>=<value>'.");
+                            throw new \Exception(
+                                "Invalid syntax '$defaultParamsPart'. Must be '<name>=<value>' in".
+                                "{$route->ownerDocument->documentURI}".
+                                "#{$route->getLineNo()}."
+                            );
                         }
                     }
                 }
@@ -515,38 +547,37 @@ class View
         );
     }
     
-    private static function parseDecorators(\DOMXPath $xpath, \DOMNodeList $decoratorElementss)
+    private static function parseDecorators(\DOMNodeList $decoratorElements)
     {
         $decorators = array();
         
-        foreach ($decoratorElementss as $decorator) {
-            $matchPhrase = "";
+        foreach ($decoratorElements as $decorator) {
             $match = $decorator->getAttribute("match");
             
             $matchParts = explode("+", $match);
             asort($matchParts);
             
-            $index = 0;
-            $matchPartsCount = count($matchParts);
+            $d = &$decorators;
             foreach ($matchParts as $matchPart) {
                 $matchSectionParts = explode("=", $matchPart);
-                
-                $matchPhrase .= "\$o->$matchSectionParts[0] == \"$matchSectionParts[1]\"";
-                if ($index < $matchPartsCount - 1) {
-                    $matchPhrase .= " && ";
+                if (count($matchSectionParts) == 2) {
+                    $name = $matchSectionParts[0].":".$matchSectionParts[1];
+
+                    if (!isset($d[$name])) {
+                        $d[$name] = array();
+                    }
+
+                    $d = &$d[$name];
+                } else {
+                    throw new \Exception(
+                        "Invalid decorator syntax '$matchPart' in ".
+                        "{$decorator->ownerDocument->documentURI}".
+                        "#{$decorator->getLineNo()}. Must be <name>=<value>"
+                    );
                 }
-                
-                $index++;
             }
             
-            if ($matchPhrase != "") {
-                $matchPhrase = "return ($matchPhrase);";
-            }
-            
-            $decorators[] = array(
-                "match" => $matchPhrase,
-                "view" => $decorator->getAttribute("view")
-            );
+            $d["#"] = $decorator->getAttribute("view");
         }
         
         return $decorators;
