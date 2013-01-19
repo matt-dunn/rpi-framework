@@ -163,59 +163,6 @@ class FileUtils
      */
     public static function getMimeType($filename)
     {
-        $checkMethod = strtolower(\RPI\Framework\App\Config::getValue('config/mimeTypeCheck/method'));
-        if ($checkMethod=='shellcommand') {
-            return self::getMimeTypeFromShellCommand($filename);
-        } else {
-            return self::getMimeTypeFromPhpCommand($filename);
-        }
-    }
-
-    public static function getImageFileExtension($filename, $includeDot = true)
-    {
-        $image_info = getimagesize($filename);
-        if (!$image_info || empty($image_info[2])) {
-            return false;
-        }
-
-        return image_type_to_extension($image_info[2], $includeDot);
-    }
-
-    /**
-     * Return the mime type of a file, using command run from shell
-     * @param  string $filename file name
-     * @return string mime type of the file or false if unable to determine
-     */
-    public static function getMimeTypeFromShellCommand($filename)
-    {
-        $cachedMimeType = $filename . ".mime";
-        $mimeType = '';
-
-        if (file_exists($cachedMimeType)) {
-            $fileHandle = fopen($cachedMimeType, "rb");
-            while (!feof($fileHandle) ) {
-                $mimeType .= fgets($fileHandle);
-            }
-
-            return $mimeType;
-        } else {
-            $shellPath = \RPI\Framework\App\Config::getValue('config/mimeTypeCheck/shellpath');
-            $finfo = @shell_exec("$shellPath \"$filename\"");
-            $fileHandle = fopen($cachedMimeType, 'w') or die("can't open file.. fileUtils.php");
-            fwrite($fileHandle, $finfo);
-            fclose($fileHandle);
-
-            return $finfo;
-        }
-    }
-
-    /**
-     * Return the mime type of a file, using PHP methods
-     * @param  string $filename file name
-     * @return string mime type of the file or false if unable to determine
-     */
-    public static function getMimeTypeFromPhpCommand($filename)
-    {
         if (class_exists("finfo")) {
             $mimeMagicFile = get_cfg_var("mime_magic.magicfile");
             if ($mimeMagicFile !== false) {
@@ -238,6 +185,16 @@ class FileUtils
         }
 
         return false;
+    }
+
+    public static function getImageFileExtension($filename, $includeDot = true)
+    {
+        $image_info = getimagesize($filename);
+        if (!$image_info || empty($image_info[2])) {
+            return false;
+        }
+
+        return image_type_to_extension($image_info[2], $includeDot);
     }
 
     /**

@@ -26,12 +26,6 @@ class View implements \RPI\Framework\Views\IView
             $this->stream = $this->options["stream"];
         }
 
-        if (isset($this->options["debug"])) {
-            $this->debug = ($this->options["debug"] === true);
-        } else {
-            $this->debug = (\RPI\Framework\App\Config::getValue("config/debug/@enabled", false) === true);
-        }
-
         $this->xslOptions["DEBUG"] = $this->debug;
 
         $xsltFilename = \RPI\Framework\Helpers\Utils::buildFullPath($xsltFilename);
@@ -44,6 +38,12 @@ class View implements \RPI\Framework\Views\IView
 
     public function render(\RPI\Framework\Controller $controller)
     {
+        if (isset($this->options["debug"])) {
+            $this->debug = ($this->options["debug"] === true);
+        } else {
+            $this->debug = ($controller->getConfig()->getValue("config/debug/@enabled", false) === true);
+        }
+        
         $rootName = null;
         $defaultTagName = null;
 

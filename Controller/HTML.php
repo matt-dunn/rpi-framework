@@ -70,8 +70,8 @@ abstract class HTML extends \RPI\Framework\Controller
 
     public function __construct(
         $id,
+        \RPI\Framework\App $app,
         array $options = null,
-        \RPI\Framework\App\Router\Action $action = null,
         \RPI\Framework\Views\IView $viewRendition = null
     ) {
         if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
@@ -95,7 +95,7 @@ abstract class HTML extends \RPI\Framework\Controller
                 $this->type."_".implode("_o:", $options);
         }
         
-        parent::__construct($id, $options, $action);
+        parent::__construct($id, $app, $options);
         
         if (isset($viewRendition)) {
             $this->setView($viewRendition);

@@ -140,7 +140,7 @@ class Handler
     {
         if (!isCli()) {
             \RPI\Framework\Helpers\HTTP::setResponseCode($statusCode);
-            $controller = \RPI\Framework\App::runStatusCode($statusCode);
+            $controller = $GLOBALS["RPI_APP"]->runStatusCode($statusCode);
             if (!isset($controller)) {
                 throw new \Exception("Error document handler not found for status code $statusCode");
             }

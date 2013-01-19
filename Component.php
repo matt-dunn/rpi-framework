@@ -144,7 +144,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
 <?php
 // Component: {$this->type}
 \$GLOBALS["RPI_Components"]["{$this->id}"]
-    = \RPI\Framework\Helpers\View::createControllerByUUID("{$this->id}");
+    = \$GLOBALS["RPI_APP"]->getView()->createControllerByUUID("{$this->id}", \$GLOBALS["RPI_APP"]);
 \$GLOBALS["RPI_Components"]["{$this->id}"]->process();
 ?>
 EOT;

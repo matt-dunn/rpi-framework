@@ -1,6 +1,6 @@
 <?php
 
-namespace RPI\Framework\Helpers;
+namespace RPI\Framework\App;
 
 /**
  * Helper functions to work with view config file
@@ -9,12 +9,9 @@ namespace RPI\Framework\Helpers;
  */
 class View
 {
-    private function __construct()
-    {
-    }
-    
-    private static $store = null;
-    private static $file = null;
+    private $store = null;
+    private $file = null;
+    private $router = null;
     
     /**
      * 
@@ -22,27 +19,32 @@ class View
      * @param type $configFile
      * @return \RPI\Framework\App\Router
      */
-    public static function init(\RPI\Framework\Cache\Data\IStore $store, $configFile)
+    public function __construct(\RPI\Framework\Cache\Data\IStore $store, $configFile)
     {
-        self::$store = $store;
-        self::$file = $configFile;
+        $this->store = $store;
+        $this->file = $configFile;
         
-        return self::parseViewConfig();
+        return $this->parseViewConfig();
+    }
+    
+    public function getRouter()
+    {
+        return $this->router;
     }
 
-    public static function createControllerByUUID(
+    public function createControllerByUUID(
         $uuid,
-        \RPI\Framework\App\Router\Action $action = null,
+        \RPI\Framework\App $app = null,
         $type = null,
         $controllerOptions = null
     ) {
-        if (!isset(self::$file)) {
+        if (!isset($this->file)) {
             throw new \Exception(__CLASS__."::init must be called before '".__METHOD__."' can be called.");
         }
         
-        $controllerData = self::$store->fetch("PHP_RPI_CONTENT_VIEWS-".self::$file."-controller-$uuid");
+        $controllerData = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-".$this->file."-controller-$uuid");
         if ($controllerData !== false) {
-            $controller = self::createComponentFromViewData($controllerData, $action, $controllerOptions);
+            $controller = self::createComponentFromViewData($controllerData, $app, $controllerOptions);
             if (isset($type) && !$controller instanceof $type) {
                 throw new \Exception("Component '$uuid' (".get_class($controller).") must be an instance of '$type'.");
             }
@@ -53,13 +55,13 @@ class View
         return false;
     }
     
-    public static function getDecoratorView(\stdClass $decoratorDetails)
+    public function getDecoratorView(\stdClass $decoratorDetails)
     {
-        if (!isset(self::$file)) {
+        if (!isset($this->file)) {
             throw new \Exception(__CLASS__."::init must be called before '".__METHOD__."' can be called.");
         }
         
-        $decoratorData = self::$store->fetch("PHP_RPI_CONTENT_VIEWS-".self::$file."-decorators");
+        $decoratorData = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-".$this->file."-decorators");
         if ($decoratorData !== false) {
             $properties = get_object_vars($decoratorDetails);
 
@@ -78,7 +80,7 @@ class View
     // ------------------------------------------------------------------------------------------------------------
 
     // TODO: Optimise this...
-    private static function testDecorators(array $decoratorData, array $properties)
+    private function testDecorators(array $decoratorData, array $properties)
     {
         $view = false;
 
@@ -103,9 +105,9 @@ class View
         return $view;
     }
     
-    private static function createComponentFromViewData(
+    private function createComponentFromViewData(
         $controllerData,
-        \RPI\Framework\App\Router\Action $action = null,
+        \RPI\Framework\App $app = null,
         array $additionalControllerOptions = null
     ) {
         if (isset($controllerData["options"])) {
@@ -140,8 +142,8 @@ class View
             $controllerData["type"],
             array(
                 (isset($controllerData["id"]) && $controllerData["id"] !== "" ? $controllerData["id"] : null),
+                $app,
                 $componentOptions,
-                $action,
                 $viewRendition
             )
         );
@@ -153,9 +155,9 @@ class View
 
                 foreach ($controllerData["components"] as $childControllerUUID) {
                     $controller->addComponent(
-                        self::createControllerByUUID(
+                        $this->createControllerByUUID(
                             $childControllerUUID,
-                            $action
+                            $app
                         )
                     );
                 }
@@ -169,13 +171,13 @@ class View
         return $controller;
     }
     
-    private static function parseViewConfig()
+    private function parseViewConfig()
     {
         $router = new \RPI\Framework\App\Router();
 
-        $file = self::$file;
+        $file = $this->file;
         
-        $routerMap = self::$store->fetch("PHP_RPI_CONTENT_VIEWS-".$file."-routermap");
+        $routerMap = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-".$file."-routermap");
         
         if ($routerMap !== false) {
             $router->setMap($routerMap);
@@ -199,7 +201,7 @@ class View
                     }
 
                     // Clear the view keys in the store
-                    if (self::$store->clear(null, "PHP_RPI_CONTENT_VIEWS-".$file) === false) {
+                    if ($this->store->clear(null, "PHP_RPI_CONTENT_VIEWS-".$file) === false) {
                         \RPI\Framework\Exception\Handler::logMessage("Unable to clear data store", LOG_WARNING);
                     }
 
@@ -208,7 +210,7 @@ class View
                     $xpath = new \DomXPath($domDataViews);
                     $xpath->registerNamespace("RPI", "http://www.rpi.co.uk/presentation/config/");
                     
-                    $viewConfig = self::parseRoutes(
+                    $viewConfig = $this->parseRoutes(
                         $xpath,
                         $xpath->query("/RPI:views/RPI:route | /RPI:views/RPI:errorDocument")
                     );
@@ -218,18 +220,18 @@ class View
                     );
                     
                     foreach ($viewConfig["controllerMap"] as $id => $controller) {
-                        self::$store->store("PHP_RPI_CONTENT_VIEWS-$file-controller-$id", $controller);
+                        $this->store->store("PHP_RPI_CONTENT_VIEWS-$file-controller-$id", $controller);
                     }
 
                     foreach ($viewConfig["components"] as $id => $controller) {
-                        self::$store->store("PHP_RPI_CONTENT_VIEWS-$file-controller-$id", $controller);
+                        $this->store->store("PHP_RPI_CONTENT_VIEWS-$file-controller-$id", $controller);
                     }
                     
-                    self::$store->store("PHP_RPI_CONTENT_VIEWS-".$file."-routermap", $router->getMap(), $file);
+                    $this->store->store("PHP_RPI_CONTENT_VIEWS-".$file."-routermap", $router->getMap(), $file);
 
-                    $decorators = self::parseDecorators($xpath->query("/RPI:views/RPI:decorator"));
+                    $decorators = $this->parseDecorators($xpath->query("/RPI:views/RPI:decorator"));
 
-                    self::$store->store("PHP_RPI_CONTENT_VIEWS-".$file."-decorators", $decorators, $file);
+                    $this->store->store("PHP_RPI_CONTENT_VIEWS-".$file."-decorators", $decorators, $file);
                     
                     \RPI\Framework\Helpers\Locking::release($seg);
                 } catch (Exception $ex) {
@@ -238,7 +240,7 @@ class View
                     throw $ex;
                 }
 
-                if (self::$store->isAvailable()) {
+                if ($this->store->isAvailable()) {
                     \RPI\Framework\Exception\Handler::logMessage(
                         __CLASS__."::parseViewConfig - View data read from '".$file."'",
                         LOG_NOTICE
@@ -249,10 +251,10 @@ class View
             }
         }
 
-        return $router;
+        $this->router = $router;
     }
     
-    private static function parseRoutes(
+    private function parseRoutes(
         \DOMXPath $xpath,
         \DOMNodeList $routes,
         $matchPath = null,
@@ -282,7 +284,7 @@ class View
             
             $controllerElement = $xpath->query("RPI:controller", $route);
             if ($controllerElement->length > 0) {
-                $controllers = self::parseController($controllerUUID, $xpath, $controllerElement->item(0));
+                $controllers = $this->parseController($controllerUUID, $xpath, $controllerElement->item(0));
                 $controller = $controllers["controller"];
                 if (isset($parentController)) {
                     $controller = array_merge($parentController, $controller);
@@ -311,7 +313,7 @@ class View
             $componentElements = $xpath->query("RPI:component", $route);
             if ($componentElements->length > 0) {
                 foreach ($componentElements as $componentElement) {
-                    $childController = self::parseController(null, $xpath, $componentElement);
+                    $childController = $this->parseController(null, $xpath, $componentElement);
                     
                     $controller["components"][] = $childController["controller"]["id"];
   
@@ -406,7 +408,7 @@ class View
             
             $routes = $xpath->query("RPI:route", $route);
             if ($routes->length > 0) {
-                $viewConfig = self::parseRoutes($xpath, $routes, $match, $controller);
+                $viewConfig = $this->parseRoutes($xpath, $routes, $match, $controller);
                 
                 $routeMap = array_merge($routeMap, $viewConfig["routeMap"]);
                 $controllerMap = array_merge($controllerMap, $viewConfig["controllerMap"]);
@@ -421,7 +423,7 @@ class View
         );
     }
     
-    private static function parseController($controllerUUID, \DOMXPath $xpath, \DOMNode $controllerElement)
+    private function parseController($controllerUUID, \DOMXPath $xpath, \DOMNode $controllerElement)
     {
         if (!isset($controllerUUID)) {
             $controllerUUID = \RPI\Framework\Helpers\Uuid::v4();
@@ -550,7 +552,7 @@ class View
         if ($childComponentElements->length > 0) {
             $controller["components"] = array();
             foreach ($childComponentElements as $childComponentElement) {
-                $childController = self::parseController(null, $xpath, $childComponentElement);
+                $childController = $this->parseController(null, $xpath, $childComponentElement);
 
                 $controller["components"][] = $childController["controller"]["id"];
 
@@ -566,7 +568,7 @@ class View
         );
     }
     
-    private static function parseDecorators(\DOMNodeList $decoratorElements)
+    private function parseDecorators(\DOMNodeList $decoratorElements)
     {
         $decorators = array();
         

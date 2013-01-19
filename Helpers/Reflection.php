@@ -12,20 +12,6 @@ class Reflection
     {
     }
 
-    private static function evaluateParams(&$values, $className)
-    {
-        foreach ($values as $valueName => $valueItem) {
-            if (substr($valueName, 0, 1) == "_") {
-                $values[substr($valueName, 1)] = $valueItem;
-                unset($values[$valueName]);
-            }
-
-            if (Utils::isAssoc($valueItem)) {
-                self::evaluateParams($values[$valueName], $className);
-            }
-        }
-    }
-
     public static function createObject($className, array $params = null, $type = null)
     {
         $instance = new \ReflectionClass($className);
@@ -86,7 +72,9 @@ class Reflection
                 }
 
                 foreach ($values as $name => $value) {
-                    if (isset($value["@"]) && isset($value["@"]["type"])) {
+                    if (is_object($value)) {
+                        array_push($params, $value);
+                    } elseif (isset($value["@"]) && isset($value["@"]["type"])) {
                         array_push($params, self::createObjectByClassInfo($value));
                     } else {
                         $items = array();
@@ -108,13 +96,9 @@ class Reflection
                 }
             }
 
-            self::evaluateParams($params, $className);
-
             return self::createObject($className, $params, $type);
         } else {
-            \RPI\Framework\Exception\Handler::logMessage("Invalid class information");
-
-            return false;
+            throw new \Exception("Invalid class information");
         }
     }
 }

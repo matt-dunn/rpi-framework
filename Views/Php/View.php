@@ -17,16 +17,16 @@ class View implements \RPI\Framework\Views\IView
         if (!isset($this->options["useCacheIfAvailable"])) {
             $this->options["useCacheIfAvailable"] = true;
         }
-
-        if (isset($this->options["debug"])) {
-            $this->debug = ($this->options["debug"] === true);
-        } else {
-            $this->debug = (\RPI\Framework\App\Config::getValue("config/debug/@enabled", false) === true);
-        }
     }
 
     public function render(\RPI\Framework\Controller $controller)
     {
+        if (isset($this->options["debug"])) {
+            $this->debug = ($this->options["debug"] === true);
+        } else {
+            $this->debug = ($controller->getConfig()->getValue("config/debug/@enabled", false) === true);
+        }
+        
         return $this->template->render($controller->model, $controller, $this->options);
     }
 

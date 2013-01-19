@@ -28,7 +28,7 @@ abstract class Server extends \RPI\Framework\Controller
     {
         ob_start();
         
-        if (\RPI\Framework\App\Config::getValue("config/debug/@enabled", false) === true) {
+        if ($this->getConfig()->getValue("config/debug/@enabled", false) === true) {
             $this->alwaysIncludeExceptionMessage = true;
         }
 
@@ -121,7 +121,7 @@ abstract class Server extends \RPI\Framework\Controller
     {
         $buffer = ob_get_clean();
         
-        if (\RPI\Framework\App\Config::getValue("config/debug/@enabled", false) === true
+        if ($this->getConfig()->getValue("config/debug/@enabled", false) === true
             && $buffer !== false
             && $buffer != ""
             && isset($GLOBALS["RPI_FRAMEWORK_FIREPHP"])) {

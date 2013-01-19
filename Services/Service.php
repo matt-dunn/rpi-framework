@@ -4,16 +4,45 @@ namespace RPI\Framework\Services;
 
 abstract class Service implements \RPI\Framework\Services\IService
 {
+    /**
+     *
+     * @var \RPI\Framework\App
+     */
+    protected static $app = null;
+    
     private function __construct()
     {
+    }
+    
+    public static function init(\RPI\Framework\App $app)
+    {
+        self::$app = $app;
     }
 
     protected static function getClassInstance($__CLASS__)
     {
         try {
-            $classInfo = \RPI\Framework\App\Config::getValue(
+            if (!isset(self::$app)) {
+                throw new \Exception(__CLASS__."::init has not been called");
+            }
+            
+            $config = self::$app->getConfig();
+            
+            $classInfo = $config->getValue(
                 "config/services/".str_replace("\\", "_", $__CLASS__)."/class"
             );
+            
+            if (!isset($classInfo["value"])) {
+                $classInfo["value"] = array(self::$app);
+            } elseif (\RPI\Framework\Helpers\Utils::isAssoc($classInfo["value"])) {
+                $classInfo["value"] = array(self::$app, $classInfo["value"]);
+            } else {
+                $classInfo["value"] = array_merge(
+                    array(self::$app),
+                    $classInfo["value"]
+                );
+            }
+            
             if ($classInfo !== false) {
                 return \RPI\Framework\Helpers\Reflection::createObjectByClassInfo($classInfo);
             } else {

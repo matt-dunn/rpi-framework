@@ -30,9 +30,10 @@ abstract class Controller
     
     /**
      *
-     * @var type \RPI\Framework\App\Router\Action
+     * @var \RPI\Framework\App
      */
-    private $controllerAction = null;
+    protected $app = null;
+    
     private $controllerActionProcessed = false;
     
     private $rootController = null;
@@ -62,10 +63,10 @@ abstract class Controller
      */
     abstract public function render();
     
-    public function __construct($id = null, array $options = null, \RPI\Framework\App\Router\Action $action = null)
+    public function __construct($id, \RPI\Framework\App $app, array $options = null)
     {
         $this->id = $id;
-        $this->controllerAction = $action;
+        $this->app = $app;
         $this->type = get_called_class();
         $this->safeTypeName = str_replace("\\", "_", $this->type);
         
@@ -120,17 +121,19 @@ abstract class Controller
     public function processAction()
     {
         if ($this->controllerActionProcessed === false) {
-            if (isset($this->controllerAction->params)) {
-                $this->options->addOptionsByArray($this->controllerAction->params);
+            $controllerAction = $this->app->getAction();
+            
+            if (isset($controllerAction->params)) {
+                $this->options->addOptionsByArray($controllerAction->params);
             }
             
-            if (isset($this->controllerAction->method)) {
-                $methodName = $this->controllerAction->method."Action";
+            if (isset($controllerAction->method)) {
+                $methodName = $controllerAction->method."Action";
                 if (method_exists($this, $methodName)) {
-                    call_user_method_array($methodName, $this, $this->controllerAction->params);
+                    call_user_method_array($methodName, $this, $controllerAction->params);
                 } else {
                     throw new \Exception(
-                        "Action '{$this->controllerAction->method}' ({$this->type}::{$methodName}) ".
+                        "Action '{$controllerAction->method}' ({$this->type}::{$methodName}) ".
                         "has not been implemented in '".$this->type."'."
                     );
                 }
@@ -148,8 +151,26 @@ abstract class Controller
      */
     public function getAction()
     {
-            return $this->controllerAction;
+            return $this->app->getAction();
     }
+    
+    /**
+     * 
+     * @return \RPI\Framework\App
+     */
+    public function getApp()
+    {
+            return $this->app;
+    }
+    
+    /**
+     * 
+     * @return \RPI\Framework\App\Config
+     */
+    public function getConfig()
+    {
+            return $this->app->getConfig();
+    }    
     
     /**
      * 

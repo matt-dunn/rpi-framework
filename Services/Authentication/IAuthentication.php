@@ -7,6 +7,8 @@ namespace RPI\Framework\Services\Authentication;
  */
 interface IAuthentication
 {
+    public function __construct(\RPI\Framework\App $app, array $options);
+    
     /**
      * Register a new user
      * @param  string            $firstName
