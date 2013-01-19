@@ -170,7 +170,7 @@ abstract class Controller
     public function getConfig()
     {
             return $this->app->getConfig();
-    }    
+    }
     
     /**
      * 
