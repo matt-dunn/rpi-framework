@@ -8,11 +8,6 @@ require_once 'PHPUnit/Autoload.php';
 ini_set("include_path", __DIR__."/../../Vendor/PEAR".PATH_SEPARATOR.ini_get("include_path"));
 
 // ================================================================================================================
-// Global config:
-
-$GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] = false;
-
-// ================================================================================================================
 
 require_once(__DIR__."/Autoload.php");
 spl_autoload_register("rpiFrameworkPhpUnitAutoload");

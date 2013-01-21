@@ -14,6 +14,8 @@ abstract class Base extends \PHPUnit_Framework_TestCase
     
     protected function setUpGlobals()
     {
+        $GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] = false;
+        
         $reflector = new \ReflectionClass($this);
         $filename = implode(
             DIRECTORY_SEPARATOR,
