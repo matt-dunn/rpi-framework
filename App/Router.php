@@ -69,7 +69,9 @@ class Router
                 if (!isset($this->map["#errorDocuments"])) {
                     $this->map["#errorDocuments"] = array();
                 }
-                $this->map["#errorDocuments"][$details["statusCode"]] = $details;
+                $statusCode = $details["statusCode"];
+                unset($details["statusCode"]);
+                $this->map["#errorDocuments"][$statusCode] = $details;
             } elseif (isset($details["match"])) {
                 $path = $details["match"];
                 if (substr($path, 0, 1) == "/") {
@@ -83,6 +85,20 @@ class Router
                 }
 
                 $details["match"] = $path;
+                
+                unset($details["via"]);
+                if (!isset($details["action"])) {
+                    unset($details["action"]);
+                }
+                if (!isset($details["fileExtension"])) {
+                    unset($details["fileExtension"]);
+                }
+                if (!isset($details["mimetype"])) {
+                    unset($details["mimetype"]);
+                }
+                if (!isset($details["defaultParams"])) {
+                    unset($details["defaultParams"]);
+                }
 
                 $pathParts = explode("/", $path);
 
