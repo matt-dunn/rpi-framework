@@ -4,8 +4,8 @@
 	stopOnIncomplete="false"
 	stopOnSkipped="false"
 	syntaxCheck="true"
-	backupGlobals="true"
-	processIsolation="true"
+	backupGlobals="false"
+	processIsolation="false"
 	bootstrap="bootstrap.php"
 
 	strict="false"
