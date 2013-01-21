@@ -28,11 +28,16 @@ class FileUtils
     public static function find(
         $path,
         $pattern,
-        array &$files,
+        array &$files = null,
         $recursive = true,
         $allowCache = true
     ) {
         $cacheId = false;
+        
+        if (!isset($files)) {
+            $files = array();
+        }
+        
         if (self::$cacheEnabled && $allowCache) {
             $args = func_get_args();
             $cacheId = \RPI\Framework\Cache\File::getCacheId(__CLASS__, __FUNCTION__, $args);
