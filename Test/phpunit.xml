@@ -1,54 +1,54 @@
 <phpunit
-	stopOnError="false"
-	stopOnFailure="false"
-	stopOnIncomplete="false"
-	stopOnSkipped="false"
-	syntaxCheck="true"
-	backupGlobals="false"
-	processIsolation="false"
-	bootstrap="bootstrap.php"
+    stopOnError="false"
+    stopOnFailure="false"
+    stopOnIncomplete="false"
+    stopOnSkipped="false"
+    syntaxCheck="true"
+    backupGlobals="false"
+    processIsolation="false"
+    bootstrap="bootstrap.php"
 
-	strict="false"
-	verbose="true">
+    strict="false"
+    verbose="true">
 
-<!--    <testsuites>
-		<testsuite name="RPI_Framework-components">
-			<file>AllTests.php</file>
-		</testsuite>
-	</testsuites>-->
+    <testsuites>
+        <testsuite name="RPI Framework">
+            <directory>RPI/Framework</directory>
+        </testsuite>
+    </testsuites>
 
-	<logging>
-		<!-- NOTE: xdebug extension MUST be enabled to build code coverage report -->
-		<log
-			type="coverage-html"
-			target="logs/coverage"
-			charset="UTF-8"
-			yui="true"
-			highlight="true"
-			lowUpperBound="35"
-			highLowerBound="70"
+    <logging>
+        <!-- NOTE: xdebug extension MUST be enabled to build code coverage report -->
+        <log
+            type="coverage-html"
+            target="logs/coverage"
+            charset="UTF-8"
+            yui="true"
+            highlight="true"
+            lowUpperBound="35"
+            highLowerBound="70"
 		/>
 
-		<!--
-		<log
-			type="coverage-clover"
-			target="logs/clover.xml"
-		/>
-		-->
+        <!--
+      		<log
+         			type="coverage-clover"
+         			target="logs/clover.xml"
+      		/>
+      		-->
 
-		<log
-			type="testdox-html"
-			target="logs/testdox.html"
+        <log
+            type="testdox-html"
+            target="logs/testdox.html"
 		/>
 
-		<log
-			type="junit"
-			target="logs/testresults.xml"
-			logIncompleteSkipped="true"
+        <log
+            type="junit"
+            target="logs/testresults.xml"
+            logIncompleteSkipped="true"
 		/>
-	</logging>
+    </logging>
 
-<!--    <filter>
+    <!--    <filter>
         <blacklist>
             <directory suffix=".php">/not/even/looked/at/</directory>
         </blacklist>
