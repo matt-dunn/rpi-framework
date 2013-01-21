@@ -19,13 +19,14 @@ if (!isset($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"])) {
 
 require("Functions.php");
 
+require(__DIR__."/Exception/Handler.php");
+\RPI\Framework\Exception\Handler::set();
+
 require(__DIR__."/Autoload.php");
 \RPI\Framework\Autoload::init();
 
 // Configure the application:
 mb_internal_encoding("UTF-8");
-
-\RPI\Framework\Exception\Handler::set();
 
 \RPI\Framework\App\Locale::init();
 
