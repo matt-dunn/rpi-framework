@@ -122,7 +122,7 @@ abstract class Server extends \RPI\Framework\Controller
         $buffer = ob_get_clean();
         
         if ($this->getConfig()->getValue("config/debug/@enabled", false) === true) {
-            if($buffer !== false && $buffer != "") {
+            if ($buffer !== false && $buffer != "") {
                 $this->app->getDebug()->log($buffer, "Output buffer");
             }
         }
