@@ -204,10 +204,10 @@ class Handler
         switch ($errNo) {
             case E_STRICT:
             case E_DEPRECATED:
-                if (strpos($errfile, "PEAR") === false) { // Don't log any PEAR errors
-                    self::logMessage("STRICT/DEPRECATED WARNING: [$errNo] $errStr - $errfile#$errline", LOG_WARNING);
-                } else {
+                if (strpos($errfile, "PEAR") !== false) { // Don't log any PEAR errors
                     self::$unloggedStrictErrorCount++;
+                } else {
+                    self::logMessage("STRICT/DEPRECATED WARNING: [$errNo] $errStr - $errfile#$errline", LOG_WARNING);
                 }
                 break;
             default:
@@ -220,28 +220,10 @@ class Handler
      */
     public static function shutdown()
     {
-        $hasError = false;
         $error = error_get_last();
-        if ($error) {
-            switch ($error["type"]) {
-                case E_ERROR:
-                case E_CORE_ERROR:
-                case E_COMPILE_ERROR:
-                case E_USER_ERROR:
-                    $hasError = true;
-                    break;
-            }
-        }
-        if ($hasError) {
+        if (isset($error)) {
             self::logMessage("ERROR (shutdown): ".$error["message"]." - ".$error["file"]."#".$error["line"]);
-            self::displayFailsafe();
         }
-
-        // TODO: log this?
-        // if (self::$unloggedStrictErrorCount > 0) {
-        //     self::logMessage("*** WARNING: UNLOGGED PEAR STRICT ERROR COUNT:
-        //     ".self::$unloggedStrictErrorCount, LOG_NOTICE);
-        // }
     }
 
     /**
