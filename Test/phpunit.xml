@@ -11,27 +11,9 @@
 	strict="false"
 	verbose="true">
 
-    <!--
-
-    NOTES:
-
-        processIsolation="true" *MUST* be set to true as all unit tests must ensure that static variables have been
-                                setup correctly for the unit test (e.g. service configuration must be loaded for the
-                                specific unit test and not kept from a previous unit test).
-
-    -->
-
-
-<!--    <php>
-        <ini name="apc.enable_cli" value="1"/>
-        <ini name="apc.lazy_functions" value="0"/>
-        <ini name="apc.lazy_classes" value="0"/>
-    </php>-->
-
 <!--    <testsuites>
 		<testsuite name="RPI_Framework-components">
-			<directory suffix="Test.php">/Users/matt/Sites/projects/rpi/WebServer/RPI/Framework/Components/Carousel/Test/</directory>
-			<file>/Users/matt/Sites/projects/rpi/WebServer/RPI/Framework/Components/Carousel/Test/ComponentTest.php</file>
+			<file>AllTests.php</file>
 		</testsuite>
 	</testsuites>-->
 
@@ -61,8 +43,8 @@
 
 		<log
 			type="junit"
-			target="logs/junit_php_testresults.xml"
-			logIncompleteSkipped="false"
+			target="logs/testresults.xml"
+			logIncompleteSkipped="true"
 		/>
 	</logging>
 
