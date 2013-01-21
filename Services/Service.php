@@ -10,6 +10,13 @@ abstract class Service implements \RPI\Framework\Services\IService
      */
     protected static $app = null;
     
+    abstract public static function getInstance();
+    
+    /**
+     * Clear the service instance - used for unit testing only
+     */
+    abstract public static function clearInstance();
+    
     private function __construct()
     {
     }

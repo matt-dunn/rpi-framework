@@ -18,4 +18,8 @@ class Service extends \RPI\Framework\Services\Service
 
         return self::$instance;
     }
+
+    public static function clearInstance() {
+        self::$instance = null;
+    }
 }
