@@ -19,6 +19,8 @@ class StoreTest extends \RPI\Framework\Test\Base
      */
     protected function setUp()
     {
+        parent::setUp();
+        
         \RPI\Framework\Helpers\FileUtils::delTree(__DIR__."/.cache");
         \RPI\Framework\Cache\Front\Store::setFileCachePath(__DIR__."/.cache");
     }

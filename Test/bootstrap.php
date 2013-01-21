@@ -5,8 +5,6 @@ ob_start();
 
 require_once 'PHPUnit/Autoload.php';
 
-require_once dirname(__FILE__) . '/PhpUnitHelper.php';
-
 ini_set("include_path", __DIR__."/../../Vendor/PEAR".PATH_SEPARATOR.ini_get("include_path"));
 
 // ================================================================================================================
@@ -23,6 +21,7 @@ spl_autoload_register("rpiFrameworkPhpUnitAutoload");
 // Configure the tests:
 
 \RPI\Framework\Exception\Handler::set();
+
 \RPI\Framework\App\Locale::init();
 
 mb_internal_encoding("UTF-8");

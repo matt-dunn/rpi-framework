@@ -19,6 +19,7 @@ class ControllerTest extends \RPI\Framework\Test\Base
      */
     protected function setUp()
     {
+        parent::setUp();
         // TODO: create concreate class to test this:
         //$this->object = new \RPI\Framework\Controller;
     }

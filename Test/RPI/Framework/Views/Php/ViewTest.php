@@ -19,6 +19,8 @@ class ViewTest extends \RPI\Framework\Test\Base
      */
     protected function setUp()
     {
+        parent::setUp();
+        
         // TODO: need to create a PHP view class to test this
         //$this->object = new \RPI\Framework\Views\Php\View(
         //);

@@ -19,6 +19,8 @@ class OptionTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        parent::setUp();
+        
         $this->object = new \RPI\Framework\Form\FormItem\Radio\Option;
     }
 

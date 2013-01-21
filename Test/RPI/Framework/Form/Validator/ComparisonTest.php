@@ -19,6 +19,7 @@ class ComparisonTest extends \RPI\Framework\Test\Base
      */
     protected function setUp()
     {
+        parent::setUp();
     }
 
     /**

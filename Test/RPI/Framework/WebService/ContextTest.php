@@ -19,6 +19,8 @@ class ContextTest extends \RPI\Framework\Test\Base
      */
     protected function setUp()
     {
+        parent::setUp();
+        
         $this->object = new \RPI\Framework\WebService\Context;
     }
 

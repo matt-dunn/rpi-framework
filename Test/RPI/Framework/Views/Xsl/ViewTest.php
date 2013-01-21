@@ -19,6 +19,8 @@ class ViewTest extends \RPI\Framework\Test\Base
      */
     protected function setUp()
     {
+        parent::setUp();
+        
         // TODO: need to create a XSL view to test this
         //$this->object = new \RPI\Framework\Views\Xsl\View(
         //    null

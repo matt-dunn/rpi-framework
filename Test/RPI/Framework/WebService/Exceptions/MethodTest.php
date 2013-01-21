@@ -19,6 +19,8 @@ class MethodTest extends \RPI\Framework\Test\Base
      */
     protected function setUp()
     {
+        parent::setUp();
+        
         $this->object = new \RPI\Framework\WebService\Exceptions\Method;
     }
 

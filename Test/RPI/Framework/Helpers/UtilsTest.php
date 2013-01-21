@@ -19,6 +19,8 @@ class UtilsTest extends \RPI\Framework\Test\Base
      */
     protected function setUp()
     {
+        parent::setUp();
+        
         $_POST["testString"] = "stringValue";
         $_POST["testNumber"] = 45;
         $_POST["testUnsafeString"] = "<script type=\"text/javascript\">alert('unsafe');</script>";

@@ -19,6 +19,8 @@ class FormTest extends \RPI\Framework\Test\Base
      */
     protected function setUp()
     {
+        parent::setUp();
+        
         //$this->object = \RPI\Framework\Form;
     }
 

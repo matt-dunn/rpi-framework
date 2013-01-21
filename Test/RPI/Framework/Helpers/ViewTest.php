@@ -19,6 +19,7 @@ class ViewTest extends \RPI\Framework\Test\Base
      */
     protected function setUp()
     {
+        parent::setUp();
     }
 
     /**

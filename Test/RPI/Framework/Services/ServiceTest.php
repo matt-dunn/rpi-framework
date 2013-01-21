@@ -19,6 +19,8 @@ class ServiceTest extends \RPI\Framework\Test\Base
      */
     protected function setUp()
     {
+        parent::setUp();
+        
         // TODO: need to create test concreate object to test
         //$this->object = new \RPI\Framework\Services\Service;
     }

@@ -7,10 +7,13 @@ namespace RPI\Framework\Test;
  */
 abstract class Base extends \PHPUnit_Framework_TestCase
 {
-    public function __construct($name = null)
+    protected function setUp()
     {
-        parent::__construct($name);
-        
+        $this->setUpGlobals();
+    }
+    
+    protected function setUpGlobals()
+    {
         $reflector = new \ReflectionClass($this);
         $filename = implode(
             DIRECTORY_SEPARATOR,
@@ -29,6 +32,7 @@ abstract class Base extends \PHPUnit_Framework_TestCase
         $_SERVER["REQUEST_URI"] = "/";
         $_SERVER["HTTP_HOST"] = "phpunit";
     }
+    
     protected function loadFixture($fixtureName)
     {
         $reflection = new \ReflectionClass($this);

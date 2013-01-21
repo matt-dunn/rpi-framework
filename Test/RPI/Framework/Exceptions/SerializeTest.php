@@ -19,6 +19,8 @@ class SerializeTest extends \RPI\Framework\Test\Base
      */
     protected function setUp()
     {
+        parent::setUp();
+        
         $this->object = new \RPI\Framework\Exceptions\Serialize;
     }
 
