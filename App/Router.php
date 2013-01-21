@@ -99,7 +99,9 @@ class Router
 
                             if ($parametersHaveDefinedDefaultValue && strstr($pathPart, "|") === false) {
                                 throw new \RPI\Framework\App\Router\Exceptions\InvalidRoute(
-                                    "Invalid route '{$details["match"]}' detected. Default."
+                                    "Invalid route '{$details["match"]}'. ".
+                                    "There can not be non-default parameters after a ".
+                                    "default parameter."
                                 );
                             }
 
@@ -135,7 +137,7 @@ class Router
                             $pathPart = strtolower($pathPart);
                             if ($matchingParameters) {
                                 throw new \RPI\Framework\App\Router\Exceptions\InvalidRoute(
-                                    "Invalid route '{$details["match"]}' detected. ".
+                                    "Invalid route '{$details["match"]}'. ".
                                     "There must be no path defined after any parameter(s)."
                                 );
                             }
