@@ -504,6 +504,7 @@ class Utils
     {
         if ($returnRendition) {
             ob_start();
+            
             if (eval("?>".$rendition) === false) {
                 $lastError = error_get_last();
                 if (isset($lastError) && isset($lastError["message"])) {
@@ -514,8 +515,11 @@ class Utils
                     throw new \Exception("There was a problem parsing in processPHP");
                 }
             }
+            
             $buffer = ob_get_contents();
-            ob_end_clean();
+            if ($buffer !== false) {
+                ob_clean();
+            }
 
             return $buffer;
         } else {
