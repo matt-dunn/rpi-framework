@@ -158,7 +158,7 @@ class Utils
             }
             rewind($fp);
             $result = stream_get_contents($fp);
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             fclose($fp);
             throw $ex;
         }

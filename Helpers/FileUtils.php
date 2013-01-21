@@ -66,11 +66,11 @@ class FileUtils
                     );
                 } else {
                     ftp_close($connect);
-                    throw new Exception("Unable to connect to ftp server '".$parts["host"]."' (invalid credentials)");
+                    throw new \Exception("Unable to connect to ftp server '".$parts["host"]."' (invalid credentials)");
                 }
                 ftp_close($connect);
             } else {
-                throw new Exception("Unable to connect to ftp server '".$parts["host"]."'");
+                throw new \Exception("Unable to connect to ftp server '".$parts["host"]."'");
             }
         } else {
             self::findFiles(realpath($path), $pattern, $searchArray, $recursive);
@@ -127,7 +127,7 @@ class FileUtils
             } else {
                 return false;
             }
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             return false;
         }
     }
@@ -259,17 +259,17 @@ class FileUtils
                             if (ftp_chdir($connect, $parts["path"])) {
                                 $fileExists = true;
                             }
-                        } catch (Exception $ex) {
+                        } catch (\Exception $ex) {
                             // Ignore
                         }
                     }
                 } else {
                     ftp_close($connect);
-                    throw new Exception("Unable to connect to ftp server '".$parts["host"]."' (invalid credentials)");
+                    throw new \Exception("Unable to connect to ftp server '".$parts["host"]."' (invalid credentials)");
                 }
                 ftp_close($connect);
             } else {
-                throw new Exception("Unable to connect to ftp server '".$parts["host"]."'");
+                throw new \Exception("Unable to connect to ftp server '".$parts["host"]."'");
             }
 
             return $fileExists;

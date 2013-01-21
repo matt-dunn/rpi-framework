@@ -82,7 +82,7 @@ class Handler
                     }
                     $traceMessage .= " - ".$args."\n ";
                 }
-            } catch (Exception $ex) {
+            } catch (\Exception $ex) {
             }
         }
 
@@ -184,7 +184,7 @@ class Handler
 
                 self::runErrorController(500);
             }
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             self::log($ex, LOG_CRIT);
             self::displayFailsafe();
         }
@@ -260,7 +260,7 @@ class Handler
                 $buffer = ob_get_contents();
                 ob_end_clean();
                 echo $buffer;
-            } catch (Exception $ex) {
+            } catch (\Exception $ex) {
             }
             exit();
         }

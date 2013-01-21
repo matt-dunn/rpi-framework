@@ -48,7 +48,7 @@ abstract class Service implements \RPI\Framework\Services\IService
             } else {
                 return false;
             }
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             \RPI\Framework\Exception\Handler::log($ex);
 
             return false;

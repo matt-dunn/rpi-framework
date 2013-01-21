@@ -18,7 +18,7 @@ class Serialize
     /**
      * @param Exception $exception Exception to serialize
      */
-    public function __construct(Exception $exception)
+    public function __construct(\Exception $exception)
     {
         $this->exception = $exception;
 

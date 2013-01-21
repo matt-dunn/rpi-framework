@@ -255,7 +255,7 @@ class View
                     $this->store->store("PHP_RPI_CONTENT_VIEWS-".$file."-decorators", $decorators, $file);
                     
                     \RPI\Framework\Helpers\Locking::release($seg);
-                } catch (Exception $ex) {
+                } catch (\Exception $ex) {
                     \RPI\Framework\Helpers\Locking::release($seg);
 
                     throw $ex;
@@ -267,7 +267,7 @@ class View
                         LOG_NOTICE
                     );
                 }
-            } catch (Exception $ex) {
+            } catch (\Exception $ex) {
                 throw $ex;
             }
         }

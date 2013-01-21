@@ -39,7 +39,7 @@ class Locking
         if (function_exists("sem_release") && $resourceId !== false) {
             try {
                 sem_release($resourceId);
-            } catch (Exception $ex) {
+            } catch (\Exception $ex) {
                 // Do nothing. An exception will be thrown if a semaphore has already been released...
             }
         } else {

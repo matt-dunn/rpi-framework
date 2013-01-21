@@ -165,7 +165,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
                 return false;
             }
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $this->logout(true);
             throw $ex;
         }
