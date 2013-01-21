@@ -110,6 +110,11 @@ abstract class HTML extends \RPI\Framework\Controller
         return array_keys($serializeProperties);
     }
     
+    /**
+     * 
+     * @param \RPI\Framework\Component $component
+     * @return \RPI\Framework\Component
+     */
     public function addComponent(\RPI\Framework\Component $component)
     {
         $component->setParent($this);
@@ -117,7 +122,11 @@ abstract class HTML extends \RPI\Framework\Controller
         if (!isset($this->components)) {
             $this->components = array();
         }
+        
+        // TODO: remove array...?
         $this->components[] = array("component" => $component);
+        
+        return $component;
     }
 
     public function process()

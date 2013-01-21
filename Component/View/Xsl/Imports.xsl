@@ -29,7 +29,7 @@
 <!-- If the component cannot be rendered from cache, use the pre-rendered component -->
 <xsl:template match="components/item/component">
     <xsl:text disable-output-escaping="yes">&lt;</xsl:text>?php
-    \RPI\Framework\Helpers\Utils::processPHP($GLOBALS["RPI_Components"]["<xsl:value-of select="id"/>"]-<xsl:text disable-output-escaping="yes">&gt;</xsl:text>renderView());
+    \RPI\Framework\Helpers\Utils::processPHP($GLOBALS["RPI_COMPONENTS"]["<xsl:value-of select="id"/>"]-<xsl:text disable-output-escaping="yes">&gt;</xsl:text>renderView());
     ?<xsl:text disable-output-escaping="yes">&gt;</xsl:text>
 </xsl:template>
 

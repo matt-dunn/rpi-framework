@@ -1,7 +1,5 @@
 <?php
 
-require("Constants.php");
-
 /**
  * Start output buffering to allow components to set headers (e.g. cookies)
  */
@@ -24,7 +22,14 @@ require("Functions.php");
 require(__DIR__."/Autoload.php");
 \RPI\Framework\Autoload::init();
 
+// Configure the application:
+mb_internal_encoding("UTF-8");
+
 \RPI\Framework\Exception\Handler::set();
+
+\RPI\Framework\App\Locale::init();
+
+\RPI\Framework\App\Session::init();
 
 // =====================================================================
 // Event listeners:

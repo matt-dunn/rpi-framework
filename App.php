@@ -6,10 +6,32 @@ class App
 {
     /**
      *
+     * @var string
+     */
+    private $webConfigFile;
+    
+    /**
+     *
+     * @var string
+     */
+    private $viewConfigFile;
+    
+    /**
+     *
+     * @var \RPI\Framework\Cache\Data\IStore 
+     */
+    private $dataStore;
+    
+    /**
+     *
      * @var \RPI\Framework\App\Router 
      */
     private $router = null;
     
+    /**
+     *
+     * @var \RPI\Framework\App\Config 
+     */
     private $config = null;
     
     /**
@@ -23,48 +45,45 @@ class App
      * @var \RPI\Framework\App\Router\Action 
      */
     private $action = null;
+    
+    /**
+     *
+     * @var \RPI\Framework\App\Debug
+     */
+    private $debug = null;
 
+    /**
+     * 
+     * @param string $webConfigFile
+     * @param string $viewConfigFile
+     * @param \RPI\Framework\Cache\Data\IStore $dataStore
+     */
     public function __construct(
         $webConfigFile,
         $viewConfigFile,
         \RPI\Framework\Cache\Data\IStore $dataStore = null
     ) {
         $GLOBALS["RPI_APP"] = $this;
+        \RPI\Framework\Services\Service::init($this);
         
-        // Configure the application:
-        mb_internal_encoding("UTF-8");
-        
-        \RPI\Framework\App\Locale::init();
-        
-        \RPI\Framework\App\Session::init();
-
-        if (!isset($dataStore)) {
-            $dataStore = new \RPI\Framework\Cache\Data\Store(
+        $this->webConfigFile = $webConfigFile;
+        $this->viewConfigFile = $viewConfigFile;
+        $this->dataStore = $dataStore;
+    }
+    
+    /**
+     * 
+     * @return \RPI\Framework\Cache\Data\IStore
+     */
+    private function getDataStore()
+    {
+        if (!isset($this->dataStore)) {
+            $this->dataStore = new \RPI\Framework\Cache\Data\Store(
                 new \RPI\Framework\Cache\Data\Provider\Apc()
             );
         }
         
-        $this->config = new \RPI\Framework\App\Config(
-            $dataStore,
-            $webConfigFile
-        );
-
-        $this->view = new \RPI\Framework\App\View(
-            $dataStore,
-            $viewConfigFile
-        );
-        
-        $this->router = $this->view->getRouter();
-        
-        if ($this->config->getValue("config/debug/@enabled", false) === true) {
-            require_once(__DIR__.'/../Vendor/FirePHPCore/FirePHP.class.php');
-            $GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] = false;
-            if (class_exists("FirePHP")) {
-                $GLOBALS["RPI_FRAMEWORK_FIREPHP"] = \FirePHP::getInstance(true);
-            }
-        }
-        
-        \RPI\Framework\Services\Service::init($this);
+        return $this->dataStore;
     }
     
     /**
@@ -73,6 +92,12 @@ class App
      */
     public function getConfig()
     {
+        if (!isset($this->config)) {
+            $this->config = new \RPI\Framework\App\Config(
+                $this->getDataStore(),
+                $this->webConfigFile
+            );
+        }
         return $this->config;
     }
     
@@ -82,6 +107,12 @@ class App
      */
     public function getView()
     {
+        if (!isset($this->view)) {
+            $this->view = new \RPI\Framework\App\View(
+                $this->getDataStore(),
+                $this->viewConfigFile
+            );
+        }
         return $this->view;
     }
     
@@ -92,6 +123,32 @@ class App
     public function getAction()
     {
         return $this->action;
+    }
+    
+    /**
+     * 
+     * @return \RPI\Framework\App\Router
+     */
+    private function getRouter()
+    {
+        if (!isset($this->router)) {
+            $this->router = $this->getView()->getRouter();
+        }
+        
+        return $this->router;
+    }
+    
+    /**
+     * 
+     * @return \RPI\Framework\App\Debug
+     */
+    public function getDebug()
+    {
+        if (!isset($this->debug)) {
+            $this->debug = new \RPI\Framework\App\Debug($this);
+        }
+        
+        return $this->debug;
     }
 
     public function run()
@@ -106,8 +163,10 @@ class App
     
     public function runStatusCode($statusCode)
     {
-        if (isset($this->router)) {
-            $route = $this->router->routeStatusCode($statusCode);
+        $router = $this->getRouter();
+        
+        if (isset($router)) {
+            $route = $router->routeStatusCode($statusCode);
 
             if (isset($route)) {
                 return $this->runRouteController($route);
@@ -121,8 +180,10 @@ class App
     
     private function runRouteControllerPath($path, $method)
     {
-        if (isset($this->router)) {
-            $route = $this->router->route($path, $method);
+        $router = $this->getRouter();
+        
+        if (isset($router)) {
+            $route = $router->route($path, $method);
 
             if (isset($route)) {
                 return $this->runRouteController($route);

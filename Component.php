@@ -143,9 +143,9 @@ abstract class Component extends \RPI\Framework\Controller\HTML
             $rendition .= <<<EOT
 <?php
 // Component: {$this->type}
-\$GLOBALS["RPI_Components"]["{$this->id}"]
+\$GLOBALS["RPI_COMPONENTS"]["{$this->id}"]
     = \$GLOBALS["RPI_APP"]->getView()->createControllerByUUID("{$this->id}", \$GLOBALS["RPI_APP"]);
-\$GLOBALS["RPI_Components"]["{$this->id}"]->process();
+\$GLOBALS["RPI_COMPONENTS"]["{$this->id}"]->process();
 ?>
 EOT;
         }
@@ -175,7 +175,7 @@ EOT;
                     $rendition = <<<EOT
 <?php
 // Component: {$this->type}
-\RPI\Framework\Helpers\Utils::processPHP(\$GLOBALS["RPI_Components"]["{$this->id}"]->renderView());
+\RPI\Framework\Helpers\Utils::processPHP(\$GLOBALS["RPI_COMPONENTS"]["{$this->id}"]->renderView());
 ?>
 EOT;
                 }

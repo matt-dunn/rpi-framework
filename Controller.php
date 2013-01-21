@@ -36,7 +36,7 @@ abstract class Controller
     
     private $controllerActionProcessed = false;
     
-    private $rootController = null;
+    private $rootController = false;
 
     private $parentController = null;
 
@@ -118,6 +118,10 @@ abstract class Controller
         return $controllerOptions;
     }
 
+    /**
+     * Process the router action
+     * @throws \Exception
+     */
     public function processAction()
     {
         if ($this->controllerActionProcessed === false) {
@@ -149,9 +153,9 @@ abstract class Controller
      * 
      * @return \RPI\Framework\App\Router\Action
      */
-    public function getAction()
+    protected function getAction()
     {
-            return $this->app->getAction();
+        return $this->app->getAction();
     }
     
     /**
@@ -160,7 +164,7 @@ abstract class Controller
      */
     public function getApp()
     {
-            return $this->app;
+        return $this->app;
     }
     
     /**
@@ -169,7 +173,7 @@ abstract class Controller
      */
     public function getConfig()
     {
-            return $this->app->getConfig();
+        return $this->app->getConfig();
     }
     
     /**
@@ -181,11 +185,19 @@ abstract class Controller
         return $this->parentController;
     }
 
+    /**
+     * 
+     * @param \RPI\Framework\Controller $controller
+     */
     public function setParent(\RPI\Framework\Controller $controller)
     {
         $this->parentController = $controller;
     }
 
+    /**
+     * 
+     * @return string
+     */
     public function getType()
     {
         return $this->type;
@@ -197,19 +209,15 @@ abstract class Controller
      */
     public function getRootController()
     {
-        if (!isset($this->rootController)) {
-            $this->rootController = false;
-            $parentController = $this;
-
-            while (isset($parentController)) {
-                if (isset($parentController)) {
-                    $this->rootController = $parentController;
-                }
-                
-                $parentController = $parentController->getParent();
+        if ($this->rootController === false) {
+            $parent = $this->getParent();
+            if (isset($parent)) {
+                $this->rootController = $parent->getRootController();
+            } else {
+                $this->rootController = $this;
             }
         }
-        
-        return $this->rootController;
+
+         return $this->rootController;
     }
 }

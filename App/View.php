@@ -24,19 +24,32 @@ class View
         $this->store = $store;
         $this->file = $configFile;
         
-        return $this->parseViewConfig();
+        $this->parseViewConfig();
     }
     
+    /**
+     * 
+     * @return \RPI\Framework\App\Router
+     */
     public function getRouter()
     {
         return $this->router;
     }
 
+    /**
+     * 
+     * @param string $uuid
+     * @param \RPI\Framework\App $app
+     * @param string $type
+     * @param array $controllerOptions
+     * @return \RPI\Framework\Controller|boolean
+     * @throws \Exception
+     */
     public function createControllerByUUID(
         $uuid,
         \RPI\Framework\App $app = null,
         $type = null,
-        $controllerOptions = null
+        array $controllerOptions = null
     ) {
         if (!isset($this->file)) {
             throw new \Exception(__CLASS__."::init must be called before '".__METHOD__."' can be called.");
@@ -105,8 +118,16 @@ class View
         return $view;
     }
     
+    /**
+     * 
+     * @param array $controllerData
+     * @param \RPI\Framework\App $app
+     * @param array $additionalControllerOptions
+     * @return \RPI\Framework\Controller
+     * @throws \Exception
+     */
     private function createComponentFromViewData(
-        $controllerData,
+        array $controllerData,
         \RPI\Framework\App $app = null,
         array $additionalControllerOptions = null
     ) {
@@ -148,11 +169,11 @@ class View
             )
         );
 
-        if ($controller instanceof \RPI\Framework\Controller) {
-            if (isset($controllerData["components"])
-                && is_array($controllerData["components"])
-                && count($controllerData["components"]) > 0) {
-
+        if (isset($controllerData["components"])
+            && is_array($controllerData["components"])
+            && count($controllerData["components"]) > 0) {
+            
+            if ($controller instanceof \RPI\Framework\Controller\HTML) {
                 foreach ($controllerData["components"] as $childControllerUUID) {
                     $controller->addComponent(
                         $this->createControllerByUUID(
@@ -161,11 +182,11 @@ class View
                         )
                     );
                 }
+            } else {
+                throw new \Exception(
+                    "'".$controllerData["type"]."' is not a valid type. Must be of type '\RPI\Framework\Component'"
+                );
             }
-        } else {
-            throw new \Exception(
-                "'".$controllerData["type"]."' is not a valid type. Must be of type '\RPI\Framework\Component'"
-            );
         }
 
         return $controller;
