@@ -91,8 +91,7 @@ abstract class HTML extends \RPI\Framework\Controller
 
             // TODO: should this use $this->options->get()? This will create a new cache
             //       instance for any component placed into a different viewMode for example
-            $this->cacheKey =
-                $this->type."_".implode("_o:", $options);
+            $this->cacheKey = $id."_".implode("_o:", $options);
         }
         
         parent::__construct($id, $app, $options);
