@@ -2,6 +2,10 @@
 
 namespace RPI\Framework;
 
+/**
+ * Base class for all components
+ * @package RPI\Framework
+ */
 abstract class Component extends \RPI\Framework\Controller\HTML
 {
     /**
@@ -48,6 +52,10 @@ abstract class Component extends \RPI\Framework\Controller\HTML
      */
     public $controllerOptions = null;
     
+    /**
+     * Indicates if the component is visible. Invisible components are not processed or rendered.
+     * @var bool 
+     */
     private $visible = true;
     
     protected function initController(array $options)
@@ -85,16 +93,26 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     {
     }
     
+    /**
+     * Set the visibility to visible
+     */
     public function show()
     {
         $this->visible = true;
     }
     
+    /**
+     * Set the visibility to invisible
+     */
     public function hide()
     {
         $this->visible = false;
     }
     
+    /**
+     * Check the controller visibility status
+     * @return bool
+     */
     public function isVisible()
     {
         return $this->visible;

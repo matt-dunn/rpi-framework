@@ -2,6 +2,10 @@
 
 namespace RPI\Framework;
 
+/**
+ * Base class for all controllers
+ * @package RPI\Framework
+ */
 abstract class Controller
 {
     /**
@@ -88,7 +92,7 @@ abstract class Controller
     }
     
     /**
-     * 
+     * Define the available options for a controller
      * @param array $options
      * @return \RPI\Framework\Controller\Options
      */
@@ -101,6 +105,12 @@ abstract class Controller
         );
     }
     
+    /**
+     * Parse options passed to the controller and set controller public properties
+     * if found or if not found place into an asociative array.
+     * @param array $options
+     * @return array
+     */
     protected function parseOptions(array $options)
     {
         $controllerOptions = array();
