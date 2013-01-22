@@ -151,16 +151,37 @@ class App
         return $this->debug;
     }
 
+    /**
+     * 
+     * @return bool
+     * @throws \RPI\Framework\Exceptions\PageNotFound|\Exception
+     */
     public function run()
     {
-        if ($this->runRouteControllerPath(
+        if (isset($_SERVER["REDIRECT_STATUS"]) && $_SERVER["REDIRECT_STATUS"] != 200) {
+            $statusCode = $_SERVER["REDIRECT_STATUS"];
+            
+            \RPI\Framework\Helpers\HTTP::setResponseCode($statusCode);
+            
+            if($this->runStatusCode($statusCode) === null) {
+                throw new \Exception("Error document handler not found for status code $statusCode");
+            }
+        } elseif ($this->runRouteControllerPath(
             \RPI\Framework\Helpers\Utils::currentPageRedirectURI(),
             $_SERVER['REQUEST_METHOD']
         ) === null) {
             throw new \RPI\Framework\Exceptions\PageNotFound();
         }
+        
+        return true;
     }
-    
+
+    /**
+     * 
+     * @param type $statusCode
+     * @return \RPI\Framework\Controller|null
+     * @throws \Exception
+     */
     public function runStatusCode($statusCode)
     {
         $router = $this->getRouter();
@@ -178,6 +199,13 @@ class App
         return null;
     }
     
+    /**
+     * 
+     * @param type $path
+     * @param type $method
+     * @return \RPI\Framework\Controller|null
+     * @throws \Exception
+     */
     private function runRouteControllerPath($path, $method)
     {
         $router = $this->getRouter();
@@ -195,6 +223,12 @@ class App
         return null;
     }
     
+    /**
+     * 
+     * @param \RPI\Framework\App\Router\Route $route
+     * @param type $method
+     * @return \RPI\Framework\Controller|null
+     */
     private function runRouteController(\RPI\Framework\App\Router\Route $route, $method = null)
     {
         $this->action = $route->action;
