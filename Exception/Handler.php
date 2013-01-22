@@ -155,7 +155,9 @@ class Handler
      */
     public static function handleExceptions($exception)
     {
-        ob_clean();
+        if (ob_get_level() > 0) {
+            ob_clean();
+        }
 
         try {
             if ($exception instanceof \RPI\Framework\Exceptions\PageNotFound) {
@@ -204,6 +206,7 @@ class Handler
         switch ($errNo) {
             case E_STRICT:
             case E_DEPRECATED:
+            case E_NOTICE:
                 if (strpos($errfile, "PEAR") !== false) { // Don't log any PEAR errors
                     self::$unloggedStrictErrorCount++;
                 } else {
@@ -211,7 +214,7 @@ class Handler
                 }
                 break;
             default:
-                throw new \ErrorException($errStr, $errNo);
+                throw new \ErrorException("[$errNo] $errStr ($errfile#$errline)", $errNo);
         }
     }
 
@@ -284,9 +287,6 @@ class Handler
                 $host = "php";
             }
             $msg = "[".$host."] ".$msg;
-            if (isCli()) {
-                echo $originalMessage."\n";
-            }
 
             if (self::$logErrorsToSysLog) {
                 $maxMessageLength = 500;
@@ -336,7 +336,7 @@ class Handler
                 closelog();
 
                 if (isset(self::$logMessageCallback)) {
-                    call_user_func(self::$logMessageCallback, $msg, $priority, $ident);
+                    call_user_func(self::$logMessageCallback, $originalMessage, $priority, $ident);
                 }
             } else {
                 error_log($msg);
