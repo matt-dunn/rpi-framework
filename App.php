@@ -154,7 +154,7 @@ class App
     public function run()
     {
         if ($this->runRouteControllerPath(
-            \RPI\Framework\Helpers\Utils::currentPageURI(true),
+            \RPI\Framework\Helpers\Utils::currentPageRedirectURI(),
             $_SERVER['REQUEST_METHOD']
         ) === null) {
             throw new \RPI\Framework\Exceptions\PageNotFound();
@@ -186,7 +186,7 @@ class App
             $route = $router->route($path, $method);
 
             if (isset($route)) {
-                return $this->runRouteController($route);
+                return $this->runRouteController($route, $method);
             }
         } else {
             throw new \Exception("Router not initialised");
@@ -195,7 +195,7 @@ class App
         return null;
     }
     
-    private function runRouteController(\RPI\Framework\App\Router\Route $route)
+    private function runRouteController(\RPI\Framework\App\Router\Route $route, $method = null)
     {
         $this->action = $route->action;
         
@@ -207,7 +207,11 @@ class App
         
         if ($controller !== false) {
             $controller->process();
-            $controller->render();
+            
+            if (!isset($method) || strtolower($method) != "head") {
+                $controller->render();
+            }
+            
             return $controller;
         } else {
             return null;

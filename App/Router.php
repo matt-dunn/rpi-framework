@@ -54,7 +54,7 @@ class Router
             
             \RPI\Framework\Helpers\Utils::validateOption(
                 $methodParts,
-                array("all", "get", "post", "delete", "put")
+                array("all", "get", "post", "delete", "put", "head")
             );
             
             if (isset($details["mimetype"])) {
@@ -257,7 +257,7 @@ class Router
         $method = strtolower($method);
         \RPI\Framework\Helpers\Utils::validateOption(
             $method,
-            array("get", "post", "delete", "put")
+            array("get", "post", "delete", "put", "head")
         );
         
         if (isset($mimetype)) {

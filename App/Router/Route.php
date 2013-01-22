@@ -38,7 +38,7 @@ class Route
     {
         \RPI\Framework\Helpers\Utils::validateOption(
             strtolower($method),
-            array("get", "post", "delete", "put")
+            array("get", "post", "delete", "put", "head")
         );
         
         $this->method = strtolower($method);
