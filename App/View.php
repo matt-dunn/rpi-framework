@@ -235,7 +235,7 @@ class View
                         $xpath,
                         $xpath->query("/RPI:views/RPI:route | /RPI:views/RPI:errorDocument")
                     );
-                    
+
                     $router->loadMap(
                         $viewConfig["routeMap"]
                     );
@@ -336,12 +336,22 @@ class View
                 foreach ($componentElements as $componentElement) {
                     $childController = $this->parseController(null, $xpath, $componentElement);
                     
-                    $controller["components"][] = $childController["controller"]["id"];
+                    $order = 1;
+                    if (isset($childController["controller"]["order"])) {
+                        $order = $childController["controller"]["order"];
+                    }
+                    
+                    $controller["components"]
+                        [sprintf("%04s", $order)."_".$childController["controller"]["id"]]
+                            = $childController["controller"]["id"];
   
                     $components = array_merge($components, $childController["components"]);
                     
                     $components[$childController["controller"]["id"]] = $childController["controller"];
                 }
+                
+                ksort($controller["components"]);
+                $controller["components"] = array_values($controller["components"]);
             }
 
             if ($match != "*") {
@@ -429,6 +439,19 @@ class View
             
             $routes = $xpath->query("RPI:route", $route);
             if ($routes->length > 0) {
+                // Only pass the parent path (not params) to the next level
+                $matchParts = explode("/", $match);
+                $marchPath = array();
+                foreach ($matchParts as $matchPart) {
+                    if (substr($matchPart, 0, 1) !== ":") {
+                        $marchPath[] = $matchPart;
+                    } else {
+                        break;
+                    }
+                }
+                
+                $match = implode("/", $marchPath);
+                        
                 $viewConfig = $this->parseRoutes($xpath, $routes, $match, $controller);
                 
                 $routeMap = array_merge($routeMap, $viewConfig["routeMap"]);
@@ -574,13 +597,23 @@ class View
             $controller["components"] = array();
             foreach ($childComponentElements as $childComponentElement) {
                 $childController = $this->parseController(null, $xpath, $childComponentElement);
+                
+                $order = 1;
+                if (isset($childController["controller"]["order"])) {
+                    $order = $childController["controller"]["order"];
+                }
 
-                $controller["components"][] = $childController["controller"]["id"];
+                $controller["components"]
+                    [sprintf("%04s", $order)."_".$childController["controller"]["id"]]
+                        = $childController["controller"]["id"];
 
                 $components = array_merge($components, $childController["components"]);
 
                 $components[$childController["controller"]["id"]] = $childController["controller"];
             }
+            
+            ksort($controller["components"]);
+            $controller["components"] = array_values($controller["components"]);
         }
         
         return array(
