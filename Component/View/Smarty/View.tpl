@@ -2,11 +2,16 @@
 
 {if ($controller->isDynamic || $controller->editable) }
     {assign var=sectionAttributes value=" data-type=\"{$controller->getType()}\" data-id=\"{$controller->id}\""}
-    {foreach from=$controller->options->get("data") key=name item=value)}
-        {assign var=sectionAttributes value="$sectionAttributes data-$name|lower=\"$value\""}
-    {/foreach}
 {/if}
 
+{if isset($controller->service)}
+    {assign var=sectionAttributes value= "$sectionAttributes data-service=\"$controller->service\""}
+{/if}
+            
+{foreach from=$controller->options->get("data") key=name item=value)}
+    {assign var=sectionAttributes value="$sectionAttributes data-$name|lower=\"$value\""}
+{/foreach}
+    
 {if ($controller->editable)}
     {assign var=className value="{$className} component-editable"}
     {if ($controller->editMode)}

@@ -4,6 +4,13 @@ namespace RPI\Framework\Component\View\Php;
 
 abstract class View extends \RPI\Framework\Controller\Message\View\Php\View implements \RPI\Framework\Views\Php\IView
 {
+    /**
+     * 
+     * @param type $model
+     * @param \RPI\Framework\Component $controller
+     * @param array $options
+     * @return type
+     */
     final public function render($model, \RPI\Framework\Controller $controller, array $options)
     {
         $sectionAttributes = "";
@@ -16,6 +23,10 @@ abstract class View extends \RPI\Framework\Controller\Message\View\Php\View impl
         if ($controller instanceof \RPI\Framework\Component) {
             if ($controller->isDynamic || $controller->editable) {
                 $sectionAttributes .= " data-type=\"{$controller->getType()}\" data-id=\"{$controller->id}\"";
+            }
+            
+            if (isset($controller->service)) {
+                $sectionAttributes .= " data-service=\"{$controller->service}\"";
             }
             
             foreach ($controller->options->get("data") as $name => $value) {

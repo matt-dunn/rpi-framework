@@ -53,6 +53,12 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     public $controllerOptions = null;
     
     /**
+     * Web service details
+     * @var string
+     */
+    public $service = null;
+    
+    /**
      * Indicates if the component is visible. Invisible components are not processed or rendered.
      * @var bool 
      */
@@ -77,11 +83,6 @@ abstract class Component extends \RPI\Framework\Controller\HTML
                     "className" => array(
                         "type" => "string",
                         "description" => "Component CSS class name"
-                    ),
-                    "service" => array(
-                        "type" => "string",
-                        "description" => "Web service details",
-                        "optionType" => "data"
                     )
                 ),
                 $options

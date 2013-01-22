@@ -416,7 +416,7 @@ RPI._("component").edit = (function() {
         var serviceUrl = "/ws/component/";
         
         if (component && component.data("service")) {
-            serviceUrl += (component.data("service") + "/");
+            serviceUrl += component.data("service");
         }
         
         return serviceUrl;

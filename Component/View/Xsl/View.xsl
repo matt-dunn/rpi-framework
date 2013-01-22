@@ -48,6 +48,10 @@
             <xsl:attribute name="data-id"><xsl:value-of select="id"/></xsl:attribute>
         </xsl:if>
         
+        <xsl:if test="string-length(normalize-space(service)) &gt; 0">
+            <xsl:attribute name="data-service"><xsl:value-of select="service"/></xsl:attribute>
+        </xsl:if>
+            
         <xsl:apply-templates select="options/node()[optionType='data']" mode="component-componentAttributes"/>
         
         <xsl:if test="boolean(number(editable))">
