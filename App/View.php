@@ -235,6 +235,9 @@ class View
                         $xpath,
                         $xpath->query("/RPI:views/RPI:route | /RPI:views/RPI:errorDocument")
                     );
+                    
+                    $viewConfig["controllerMap"] = $this->normalizeComponentList($viewConfig["controllerMap"]);
+                    $viewConfig["components"] = $this->normalizeComponentList($viewConfig["components"]);
 
                     $router->loadMap(
                         $viewConfig["routeMap"]
@@ -273,6 +276,31 @@ class View
         }
 
         $this->router = $router;
+    }
+    
+    /**
+     * Normalize all order information in ["components"] collections
+     * @param array $componentList
+     * @return array
+     */
+    private function normalizeComponentList(array $componentList)
+    {
+        foreach ($componentList as &$controller) {
+            if (isset($controller["components"])) {
+                ksort($controller["components"]);
+
+                $normalisedComponentCollection = array();
+                foreach ($controller["components"] as $componentCollection) {
+                    foreach ($componentCollection as $componentUUID) {
+                        $normalisedComponentCollection[] = $componentUUID;
+                    }
+                }
+
+                $controller["components"] = $normalisedComponentCollection;
+            }
+        }
+        
+        return $componentList;
     }
     
     private function parseRoutes(
@@ -341,17 +369,12 @@ class View
                         $order = $childController["controller"]["order"];
                     }
                     
-                    $controller["components"]
-                        [sprintf("%04s", $order)."_".$childController["controller"]["id"]]
-                            = $childController["controller"]["id"];
+                    $controller["components"][$order][] = $childController["controller"]["id"];
   
                     $components = array_merge($components, $childController["components"]);
                     
                     $components[$childController["controller"]["id"]] = $childController["controller"];
                 }
-                
-                ksort($controller["components"]);
-                $controller["components"] = array_values($controller["components"]);
             }
 
             if ($match != "*") {
@@ -459,7 +482,7 @@ class View
                 $components = array_merge($components, $viewConfig["components"]);
             }
         }
-        
+                
         return array(
             "routeMap" => $routeMap,
             "controllerMap" => $controllerMap,
@@ -603,17 +626,12 @@ class View
                     $order = $childController["controller"]["order"];
                 }
 
-                $controller["components"]
-                    [sprintf("%04s", $order)."_".$childController["controller"]["id"]]
-                        = $childController["controller"]["id"];
+                $controller["components"][$order][] = $childController["controller"]["id"];
 
                 $components = array_merge($components, $childController["components"]);
 
                 $components[$childController["controller"]["id"]] = $childController["controller"];
             }
-            
-            ksort($controller["components"]);
-            $controller["components"] = array_values($controller["components"]);
         }
         
         return array(
