@@ -1,6 +1,6 @@
 <?php
 
-namespace RPI\Framework\Event;
+namespace RPI\Framework\Events;
 
 class ViewUpdated extends \RPI\Framework\Event
 {

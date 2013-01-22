@@ -36,7 +36,7 @@ mb_internal_encoding("UTF-8");
 // Event listeners:
 
 // Listen for ViewUpdated event to see if the front cache needs to be emptied
-\RPI\Framework\Event\ViewUpdated::addEventListener(
+\RPI\Framework\Events\ViewUpdated::addEventListener(
     function ($event, $params) {
         \RPI\Framework\Cache\Front\Store::clear();
     }
