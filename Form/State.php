@@ -17,8 +17,9 @@ class State
     {
         $this->form = $form;
 
-        $state = \RPI\Framework\Helpers\Utils::getPostValue("state");
-        if ($state !== null && (\RPI\Framework\Helpers\Utils::getFormValue("formName") == $this->form->id)) {
+        $state = $this->form->getApp()->getRequest()->getParameter("state");
+        $formName = $this->form->getApp()->getRequest()->getParameter("formName");
+        if ($state !== null && $formName == $this->form->id) {
             try {
                 $stateString = base64_decode($state);
                 if ($stateString !== false) {

@@ -12,8 +12,6 @@ class Utils
     {
     }
 
-    private static $actionIdSalt = "Y1g@1^a>";
-
     /**
      * Test if an object is an associative array
      * @param  object  $array
@@ -22,50 +20,6 @@ class Utils
     public static function isAssoc($array)
     {
         return (is_array($array) && 0 !== count(array_diff_key($array, array_keys(array_keys($array)))));
-    }
-
-    /**
-     * Get POST/GET form value
-     * @param  string $name Posted name
-     * @return string value or null if it does not exist
-     */
-    public static function getFormValue($name, $default = null)
-    {
-        if (array_key_exists($name, $_POST)) {
-            return $_POST[$name];
-        } elseif (array_key_exists($name, $_GET)) {
-            return $_GET[$name];
-        } else {
-            return $default;
-        }
-    }
-
-    /**
-     * Get POST only form value
-     * @param  string $name Posted name
-     * @return string value or null if it does not exist
-     */
-    public static function getPostValue($name, $default = null)
-    {
-        if (array_key_exists($name, $_POST)) {
-            return $_POST[$name];
-        } else {
-            return $default;
-        }
-    }
-
-    /**
-     * Get GET only form value
-     * @param  string $name Posted name
-     * @return string value or null if it does not exist
-     */
-    public static function getGetValue($name, $default = null)
-    {
-        if (array_key_exists($name, $_GET)) {
-            return $_GET[$name];
-        } else {
-            return $default;
-        }
     }
 
     public static function rimplode($glue, $pieces, $includeKey = false)
@@ -167,54 +121,6 @@ class Utils
         return $result;
     }
 
-    public static function redirect($url, $movedPermanently = false)
-    {
-        // Debug code:
-        // RPI_Framework_Exception_Handler::logMessage("REDIRECT: \nFROM: [".self::currentPageURI()."] \n
-        // TO:   [$url] [$movedPermanently]", LOG_ERR, null, false);
-
-        if ($movedPermanently) {
-            header("HTTP/1.1 301", true);
-        }
-        header("Location: ".$url, true);
-        exit();
-    }
-
-    public static function currentPageRedirectURI()
-    {
-        if (isset($_SERVER["REDIRECT_URL"])) {
-            return $_SERVER["REDIRECT_URL"];
-        } else {
-            return parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-        }
-    }
-
-    public static function currentPageURI($pathOnly = false)
-    {
-        if (isset($_SERVER["SERVER_NAME"]) && isset($_SERVER["REQUEST_URI"])) {
-            $port = "80";
-
-            $pageURL = 'http';
-            if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {
-                $port = "443";
-                $pageURL .= "s";
-            }
-            $pageURL .= "://";
-            if (isset($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != $port) {
-                $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-            } else {
-                $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
-            }
-            if ($pathOnly) {
-                return parse_url($pageURL, PHP_URL_PATH);
-            } else {
-                return $pageURL;
-            }
-        }
-
-        return null;
-    }
-
     /**
      * Build a lucene style query from a url style syntax
      * @param  string      $query
@@ -304,36 +210,6 @@ class Utils
     private static function normalizeStringTest($string)
     {
         return ($string !== "");
-    }
-
-    /**
-     * Can be used to check if a GET action is valid - helps reduce CSRF attacks.
-     * Expects an actionId querystring parameter where the value
-     * is set by getActionId
-     * @return boolean True is valid
-     */
-    public static function isValidActionId($actionName)
-    {
-        if (isset($_GET["actionId"]) && $_GET["actionId"] != "") {
-            return ($_GET["actionId"] == self::getActionId($actionName));
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns a valid action ID which can be used when calling isValidActionId
-     * @return string Action ID or false if there was a problem
-     */
-    public static function getActionId($actionName)
-    {
-        if (isset($actionName) && $actionName != "") {
-            $user = RPI_Framework_Services_Authentication_Service::getInstance()->getAuthenticatedUser();
-            // TODO: this should really be a nonce...
-            return hash("sha256", $user->uuid.$actionName.self::$actionIdSalt);
-        }
-
-        return false;
     }
 
     /**
@@ -517,9 +393,7 @@ class Utils
             }
             
             $buffer = ob_get_contents();
-            if ($buffer !== false) {
-                ob_clean();
-            }
+            ob_end_clean();
 
             return $buffer;
         } else {

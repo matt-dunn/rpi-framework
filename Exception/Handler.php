@@ -139,13 +139,8 @@ class Handler
     private static function runErrorController($statusCode)
     {
         if (!isCli()) {
-            \RPI\Framework\Helpers\HTTP::setResponseCode($statusCode);
-            $controller = $GLOBALS["RPI_APP"]->runStatusCode($statusCode);
-            if (!isset($controller)) {
-                throw new \Exception("Error document handler not found for status code $statusCode");
-            }
-
-            return $controller;
+            $GLOBALS["RPI_APP"]->getRequest()->setStatusCode($statusCode);
+            $GLOBALS["RPI_APP"]->run();
         }
     }
 
@@ -168,11 +163,9 @@ class Handler
                 self::log($exception, LOG_ERR, "authentication", false);
                 if (isset($exception->from)) {
                     $from = $exception->from;
-                } else {
-                    $from = \RPI\Framework\Helpers\Utils::currentPageURI();
                 }
                 // TODO: remove hard coded url:
-                \RPI\Framework\Helpers\Utils::redirect("/account/login/?from=".urlencode($from));
+                $GLOBALS["RPI_APP"]->getResponse()->redirect("/account/login/?from=".urlencode($from));
             } elseif ($exception instanceof \RPI\Framework\Exceptions\Authorization) {
                 self::log($exception, LOG_ERR, "authentication");
                 
@@ -258,7 +251,10 @@ class Handler
         if (self::$showFailSafeMessage && !isCli()) {
             try {
                 ob_start();
-                \RPI\Framework\Helpers\HTTP::setResponseCode(500);
+                $GLOBALS["RPI_APP"]->getResponse()->setMimeType("text/html");
+                $GLOBALS["RPI_APP"]->getResponse()->getHeaders()->clear();
+                $GLOBALS["RPI_APP"]->getResponse()->setStatusCode(500);
+                $GLOBALS["RPI_APP"]->getResponse()->dispatch();
                 require(pathinfo(__FILE__, PATHINFO_DIRNAME)."/Static/FailSafe.html");
                 $buffer = ob_get_contents();
                 ob_end_clean();

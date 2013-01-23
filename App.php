@@ -8,6 +8,12 @@ class App
      *
      * @var string
      */
+    private $characterEncoding = "utf-8";
+    
+    /**
+     *
+     * @var string
+     */
     private $webConfigFile;
     
     /**
@@ -53,6 +59,18 @@ class App
     private $debug = null;
 
     /**
+     *
+     * @var \RPI\Framework\HTTP\IRequest
+     */
+    private $request = null;
+    
+    /**
+     *
+     * @var \RPI\Framework\HTTP\IResponse 
+     */
+    private $response = null;
+    
+    /**
      * 
      * @param string $webConfigFile
      * @param string $viewConfigFile
@@ -61,14 +79,21 @@ class App
     public function __construct(
         $webConfigFile,
         $viewConfigFile,
-        \RPI\Framework\Cache\Data\IStore $dataStore = null
+        \RPI\Framework\Cache\Data\IStore $dataStore = null,
+        $characterEncoding = null
     ) {
         $GLOBALS["RPI_APP"] = $this;
+        
         \RPI\Framework\Services\Service::init($this);
         
         $this->webConfigFile = $webConfigFile;
         $this->viewConfigFile = $viewConfigFile;
         $this->dataStore = $dataStore;
+        if (isset($characterEncoding)) {
+            $this->characterEncoding = $characterEncoding;
+        }
+        
+        mb_internal_encoding($this->characterEncoding);
     }
     
     /**
@@ -84,6 +109,11 @@ class App
         }
         
         return $this->dataStore;
+    }
+    
+    public function getCharacterEncoding()
+    {
+        return $this->characterEncoding;
     }
     
     /**
@@ -150,30 +180,61 @@ class App
         
         return $this->debug;
     }
+    
+    /**
+     * @return \RPI\Framework\HTTP\IRequest
+     */
+    public function getRequest()
+    {
+        if (!isset($this->request)) {
+            $this->request = new \RPI\Framework\HTTP\Request();
+        }
+        
+        return $this->request;
+    }
+    
+    /**
+     * 
+     * @return \RPI\Framework\HTTP\IResponse
+     */
+    public function getResponse()
+    {
+        if (!isset($this->response)) {
+            $this->response = new \RPI\Framework\HTTP\Response();
+            $this->response->setContentEncoding($this->characterEncoding);
+        }
+        
+        return $this->response;
+    }
 
     /**
      * 
-     * @return bool
+     * @return \RPI\Framework\HTTP\IResponse
      * @throws \RPI\Framework\Exceptions\PageNotFound|\Exception
      */
     public function run()
     {
-        if (isset($_SERVER["REDIRECT_STATUS"]) && $_SERVER["REDIRECT_STATUS"] != 200) {
-            $statusCode = $_SERVER["REDIRECT_STATUS"];
+        $statusCode = $this->getRequest()->getStatusCode();
+        if ($statusCode != "200") {
+            $this->getResponse()->setStatusCode($statusCode);
             
-            \RPI\Framework\Helpers\HTTP::setResponseCode($statusCode);
+            $controller = $this->runStatusCode($statusCode);
             
-            if($this->runStatusCode($statusCode) === null) {
+            if (!isset($controller)) {
                 throw new \Exception("Error document handler not found for status code $statusCode");
             }
-        } elseif ($this->runRouteControllerPath(
-            \RPI\Framework\Helpers\Utils::currentPageRedirectURI(),
-            $_SERVER['REQUEST_METHOD']
-        ) === null) {
-            throw new \RPI\Framework\Exceptions\PageNotFound();
+        } else {
+            $controller = $this->runRouteControllerPath(
+                $this->getRequest()->getUrlPath(),
+                $this->getRequest()->getMethod()
+            );
+
+            if (!isset($controller)) {
+                throw new \RPI\Framework\Exceptions\PageNotFound();
+            }
         }
         
-        return true;
+        $this->getResponse()->dispatch();
     }
 
     /**
@@ -182,7 +243,7 @@ class App
      * @return \RPI\Framework\Controller|null
      * @throws \Exception
      */
-    public function runStatusCode($statusCode)
+    private function runStatusCode($statusCode)
     {
         $router = $this->getRouter();
         
@@ -243,7 +304,7 @@ class App
             $controller->process();
             
             if (!isset($method) || strtolower($method) != "head") {
-                echo $controller->render();
+                $this->getResponse()->setBody($controller->render());
             }
             
             return $controller;

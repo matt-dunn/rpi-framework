@@ -12,6 +12,16 @@ class Image
     {
     }
 
+    public static function getMimeType($filename)
+    {
+        if (file_exists($filename)) {
+            $info = getimagesize($filename);
+            return $info["mime"];
+        }
+        
+        return false;
+    }
+    
     /**
      * Resize and convert an image to GIF, JPEG or PNG
      * @param  string  $filename          Filename of image to convert
@@ -126,7 +136,7 @@ class Image
                     imagedestroy($imageSrc);
 
                     return (object) array(
-                        "mime" => "image/".$format,
+                        "mime" => $mime,
                         "image" => $buffer,
                         "fileExtension" => $extension,
                         "savedFilename" => $outputFilename

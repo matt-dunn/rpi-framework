@@ -81,7 +81,7 @@ abstract class HTML extends \RPI\Framework\Controller
             
             if (!isset(self::$pageTitle)) {
                 $pageTitle = \RPI\Framework\Cache\Front\Store::fetchContent(
-                    \RPI\Framework\Helpers\Utils::currentPageRedirectURI()."-title",
+                    $app->getRequest()->getUrlPath()."-title",
                     null,
                     "title"
                 );
@@ -275,7 +275,7 @@ abstract class HTML extends \RPI\Framework\Controller
 
             if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
                 \RPI\Framework\Cache\Front\Store::store(
-                    \RPI\Framework\Helpers\Utils::currentPageRedirectURI()."-title",
+                    $this->app->getRequest()->getUrlPath()."-title",
                     self::$pageTitle,
                     "title"
                 );

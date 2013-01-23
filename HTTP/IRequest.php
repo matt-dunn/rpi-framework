@@ -56,6 +56,7 @@ interface IRequest extends IMessage
      * Set the request GET/POST parameters
      * 
      * @param array $params
+     * @return \RPI\Framework\HTTP\IRequest
      */
     public function setParameters(array $parameters);
     
@@ -73,6 +74,7 @@ interface IRequest extends IMessage
      * Set the request POST parameters
      * 
      * @param array $params
+     * @return \RPI\Framework\HTTP\IRequest
      */
     public function setPostParameters(array $parameters);
     

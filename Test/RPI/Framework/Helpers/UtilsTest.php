@@ -56,16 +56,6 @@ class UtilsTest extends \RPI\Framework\Test\Base
         );
     }
 
-    public function testGetPostValueReturnsString()
-    {
-        $this->assertEquals("stringValue", \RPI\Framework\Helpers\Utils::getPostValue("testString"));
-    }
-
-    public function testGetPostValueReturnsNumber()
-    {
-        $this->assertEquals(45, \RPI\Framework\Helpers\Utils::getPostValue("testNumber"));
-    }
-
     /**
      * @todo Implement testGetGetValue().
      */

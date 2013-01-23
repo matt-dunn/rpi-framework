@@ -57,7 +57,7 @@ abstract class Form extends \RPI\Framework\Component
                     "action" => array(
                         "type" => "string",
                         "description" => "Form action",
-                        "default" => \RPI\Framework\Helpers\Utils::currentPageRedirectURI()
+                        "default" => $this->app->getRequest()->getUrlPath()
                     ),
                     "title" => array(
                         "type" => "string",
@@ -211,11 +211,11 @@ abstract class Form extends \RPI\Framework\Component
 
     protected function init()
     {
+        $formName = $this->app->getRequest()->getParameter("formName");
+        
         $this->isPostBack = (
-            \RPI\Framework\Helpers\Utils::getFormValue("pageName") != ""
-            && \RPI\Framework\Helpers\Utils::getFormValue("pageName") == $this->pageName
-            && \RPI\Framework\Helpers\Utils::getFormValue("formName") != ""
-            && \RPI\Framework\Helpers\Utils::getFormValue("formName") == $this->id
+            isset($formName)
+            && $formName == $this->id
         );
 
         foreach ($this->formItems as $formItem) {
@@ -223,7 +223,7 @@ abstract class Form extends \RPI\Framework\Component
         }
 
         if ($this->isPostBack) {
-            $postbackButtonId = \RPI\Framework\Helpers\Utils::getFormValue("confirm", "default");
+            $postbackButtonId = $this->app->getRequest()->getParameter("confirm", "default");
             foreach ($this->buttons as $button) {
                 if ($button->id == $postbackButtonId) {
                     $this->postBackButton = $button;

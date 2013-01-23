@@ -104,6 +104,10 @@ abstract class FormItem
         $this->form = $form;
     }
 
+    /**
+     * 
+     * @return \RPI\Framework\Form
+     */
     public function getParent()
     {
         return $this->form;
@@ -129,9 +133,9 @@ abstract class FormItem
         $value = null;
 
         if ($this->form->method == "post") {
-            $value = \RPI\Framework\Helpers\Utils::getPostValue($this->id);
+            $value = $this->getParent()->getApp()->getRequest()->getPostParameter($this->id);
         } elseif ($this->form->method == "get") {
-            $value = \RPI\Framework\Helpers\Utils::getGetValue($this->id);
+            $value = $this->getParent()->getApp()->getRequest()->getParameter($this->id);
         }
 
         return $value;

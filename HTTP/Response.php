@@ -137,8 +137,8 @@ class Response implements \RPI\Framework\HTTP\IResponse
         $this->getHeaders()->dispatch();
         
         $this->getCookies()->dispatch();
-        
-        return $this->getBody();
+
+        echo $this->getBody();
     }
     
     public function redirect($url, $movedPermanently = false)

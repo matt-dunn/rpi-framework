@@ -241,7 +241,6 @@ EOT;
     
     final protected function renderViewFromCache()
     {
-        // TODO: should this include any other information such as options/$_GET etc.
         $rendition = null;
         $cacheFile = false;
         

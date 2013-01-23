@@ -50,8 +50,8 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
         // "cd" cookie detection. Set the cookie every time here and check on service methods that
         // are called on postback (e.g. registerUser, authenticateUser)
-        if ($this->cookieDetectionEnabled && ((!isset($_COOKIE) || count($_COOKIE) == 0) || !isset($_COOKIE["cd"]))) {
-            setcookie("cd", true, null, "/", \RPI\Framework\App\Cookie::$cookieDomain, false, true);
+        if ($this->cookieDetectionEnabled && $this->app->getRequest()->getCookies()->get("cd") == null) {
+            $this->app->getResponse()->getCookies()->set("cd", true);
         }
     }
 
@@ -70,7 +70,6 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
             if ($requiresSecure && (!$isSecureConnection
                 || ($secureDomain !== false && $secureDomain != $_SERVER["SERVER_NAME"]))) {
                 $this->getAuthenticatedUser();	// Force a re-issue of the user token
-                header("HTTP/1.1 301", true);
                 $sslPort = "";
                 if ($this->sslPort != "443") {
                     $sslPort = ":".$this->sslPort;
@@ -78,15 +77,14 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
                 if ($secureDomain === false) {
                     $secureDomain = $_SERVER["SERVER_NAME"];
                 }
-                \RPI\Framework\Helpers\Utils::redirect("https://".$secureDomain.$sslPort.$_SERVER["REQUEST_URI"]);
+                $this->app->getResponse()->redirect("https://".$secureDomain.$sslPort.$_SERVER["REQUEST_URI"]);
             } elseif (!$requiresSecure && ($isSecureConnection
                 || ($websiteDomain !== false && $websiteDomain != $_SERVER["SERVER_NAME"]))) {
                 $this->getAuthenticatedUser();	// Force a re-issue of the user token
-                header("HTTP/1.1 301", true);
                 if ($websiteDomain === false) {
                     $websiteDomain = $_SERVER["SERVER_NAME"];
                 }
-                \RPI\Framework\Helpers\Utils::redirect("http://".$websiteDomain.$_SERVER["REQUEST_URI"]);
+                $this->app->getResponse()->redirect("http://".$websiteDomain.$_SERVER["REQUEST_URI"]);
             }
         }
     }
@@ -104,7 +102,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         $disabled = false,
         $roleType = "user"
     ) {
-        if ($this->cookieDetectionEnabled && ((!isset($_COOKIE) || count($_COOKIE) == 0) || !isset($_COOKIE["cd"]))) {
+        if ($this->cookieDetectionEnabled && $this->app->getRequest()->getCookies()->get("cd") == null) {
             throw new \RPI\Framework\Exceptions\Cookie();
         }
 
@@ -144,8 +142,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
     public function authenticateUser($email, $password)
     {
         try {
-            if ($this->cookieDetectionEnabled
-                && ((!isset($_COOKIE) || count($_COOKIE) == 0) || !isset($_COOKIE["cd"]))) {
+            if ($this->cookieDetectionEnabled && $this->app->getRequest()->getCookies()->get("cd") == null) {
                 throw new \RPI\Framework\Exceptions\Cookie();
             }
 
@@ -173,11 +170,9 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     public function logout($complete = true)
     {
-        $_COOKIE["a"] = null;
-        setcookie("a", null, -1, "/", \RPI\Framework\App\Cookie::$cookieDomain, false, true);
+        $this->app->getResponse()->getCookies()->set("a", null, -1);
         if ($complete) {
-            $_COOKIE["u"] = $this->authenticatedUser = $_SESSION[__CLASS__."-authenticatedUser"] = null;
-            setcookie("u", null, -1, "/", \RPI\Framework\App\Cookie::$cookieDomain, false, true);
+            $this->app->getResponse()->getCookies()->set("u", null, -1);
         }
     }
 
@@ -261,10 +256,10 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
         if (isset($this->authenticatedUser)) {
             $user = $this->authenticatedUser;
-        } elseif (isset($_COOKIE["u"])) {
+        } elseif ($this->app->getRequest()->getCookies()->get("u") !== null) {
             $token = \RPI\Framework\Helpers\Crypt::decrypt(
                 $this->app->getConfig()->getValue("config/keys/userTokenSession"),
-                $_COOKIE["u"]
+                $this->app->getRequest()->getCookies()->getValue("u")
             );
             if ($this->validateUserToken($token, $tokenParts)) {
                 if (isset($_SESSION[__CLASS__."-authenticatedUser"])) {
@@ -343,10 +338,10 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
      */
     private function checkAuthenticationState()
     {
-        if (isset($_COOKIE["a"])) {
+        if ($this->app->getRequest()->getCookies()->get("a") != null) {
             $token = \RPI\Framework\Helpers\Crypt::decrypt(
                 $this->app->getConfig()->getValue("config/keys/authenticationTokenSession"),
-                $_COOKIE["a"]
+                $this->app->getRequest()->getCookies()->getValue("a")
             );
             $expiry = null;
             if ($this->validateAuthenticationToken($token, $expiry)) {
@@ -378,16 +373,12 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
                 $this->app->getConfig()->getValue("config/keys/userTokenSession"),
                 $userToken
             );
-            $_COOKIE["u"] = $encryptedUserToken;	// Ensure the cookie collection is updated for this response
-            // Expire the user identification cookie to a far reaching date
-            setcookie(
+
+            // Expire the user identification cookie with a far reaching date
+            $this->app->getResponse()->getCookies()->set(
                 "u",
                 $encryptedUserToken,
-                time() + (60 * 60 * 24 * 365 * 5),
-                "/",
-                \RPI\Framework\App\Cookie::$cookieDomain,
-                false,
-                true
+                time() + (60 * 60 * 24 * 365 * 5)
             );
         }
 
@@ -396,17 +387,13 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
                 $this->app->getConfig()->getValue("config/keys/authenticationTokenSession"),
                 $authenticationToken
             );
-            $_COOKIE["a"] = $encryptedAuthenticationToken;	// Ensure the cookie collection is updated for this response
+
             // Add an hour (3600) to the expiry to ensure cookies do not expire unexpectedly
             // (Safari has some problems with this...)
-            setcookie(
+            $this->app->getResponse()->getCookies()->set(
                 "a",
                 $encryptedAuthenticationToken,
-                time() + $this->authenticationExpiryOffset + 3600,
-                "/",
-                \RPI\Framework\App\Cookie::$cookieDomain,
-                $this->forceSecureAuthenticationToken,
-                true
+                time() + $this->authenticationExpiryOffset + 3600
             );
         }
 

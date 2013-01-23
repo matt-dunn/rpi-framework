@@ -26,8 +26,6 @@ require(__DIR__."/Autoload.php");
 \RPI\Framework\Autoload::init();
 
 // Configure the application:
-mb_internal_encoding("UTF-8");
-
 \RPI\Framework\App\Locale::init();
 
 \RPI\Framework\App\Session::init();

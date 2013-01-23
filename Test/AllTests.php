@@ -23,7 +23,11 @@ class AllTests
                 $suites[$suiteName] = $suite;
             }
             
-            $testClassName = $suiteName.str_replace(".php", "", str_replace("/", "\\", substr($file, strlen($basePath))));
+            $testClassName = $suiteName.str_replace(
+                ".php",
+                "",
+                str_replace("/", "\\", substr($file, strlen($basePath)))
+            );
             echo "Found test '$testClassName' (suite: '$suiteName')\n";
             $suite->addTestSuite($testClassName);
         }

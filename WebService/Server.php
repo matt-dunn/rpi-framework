@@ -7,8 +7,6 @@ namespace RPI\Framework\WebService;
  */
 abstract class Server extends \RPI\Framework\Controller
 {
-    protected $firephp;
-    
     protected $context;
     
     private $response;
@@ -54,13 +52,16 @@ abstract class Server extends \RPI\Framework\Controller
             try {
                 $startTime = microtime(true);
 
-                $request = $this->getRequest(file_get_contents("php://input"), $_GET);
+                $request = $this->getRequest(
+                    file_get_contents("php://input"),
+                    $this->app->getRequest()->getParameters()
+                );
                 $this->context = new Context($request->timestamp, $request->method->format);
 
                 $response = $this->callMethod($request);
                 $response->executionTime = (microtime(true) - $startTime) * 1000;
 
-                header("Execution-Time:".$response->executionTime, true);
+                $this->app->getResponse()->getHeaders()->set("Execution-Time", $response->executionTime);
 
                 $this->response = $response;
             } catch (\Exception $ex) {
@@ -94,22 +95,22 @@ abstract class Server extends \RPI\Framework\Controller
                             "type" => get_class($ex),
                             "message" => $ex->getLocalizedMessage()
                         ));
-                    header("HTTP/1.1 ".$ex->httpCode, true);
+                    $this->app->getResponse()->setStatusCode($ex->httpCode);
                 } elseif ($ex instanceof \RPI\Framework\Exceptions\InvalidParameter
                     || $this->alwaysIncludeExceptionMessage) {
                     $response->error =
                         (object)(array("code" => -32602, "type" => get_class($ex), "message" => $ex->getMessage()));
-                    header("HTTP/1.1 500", true);
+                    $this->app->getResponse()->setStatusCode(500);
                 } else {
                     $response->error =
                         (object)(array("code" => -32400, "type" => get_class($ex), "message" => "Server error"));
-                    header("HTTP/1.1 500", true);
+                    $this->app->getResponse()->setStatusCode(500);
                 }
                 
                 $this->response = $response;
             }
         } catch (\Exception $ex) {
-            header("HTTP/1.1 500", true);
+            $this->app->getResponse()->setStatusCode(500);
         }
     }
     
@@ -132,14 +133,15 @@ abstract class Server extends \RPI\Framework\Controller
 
         if (class_exists($className)) {
             // charset=".mb_detect_encoding($responseString, "UTF-8, ISO-8859-1"));
-            header("Content-type: application/{$this->response->format}; charset=UTF-8", true);
+            $this->app->getResponse()->setMimeType("application/{$this->response->format}");
 
             $params = $this->response->params;
             unset($this->response->params);
             
             return call_user_func_array($className."::render", array($this->response, $params));
         } else {
-            header("Content-type: text/plain", true);
+            $this->app->getResponse()->setMimeType("text/plain");
+            
             if (isset($this->response->data)) {
                 echo $this->response->data;
             }

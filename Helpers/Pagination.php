@@ -19,9 +19,13 @@ class Pagination
      * @param integer $offset       Zero based offset of first item
      * @param void
      */
-    public static function getPaginationData($totalCount, $itemsPerPage, $offset, $maxPages = 10)
+    public static function getPaginationData($totalCount, $itemsPerPage, $offset, $maxPages = null, $parameters = null)
     {
         $data = null;
+        
+        if (!isset($maxPages)) {
+            $maxPages = 10;
+        }
 
         if ($itemsPerPage > 0 && $totalCount > $itemsPerPage) {
             $data = array();
@@ -42,9 +46,11 @@ class Pagination
             $querystring = "";
 
             // Safely remove the 'page' qs value:
-            foreach ($_GET as $name => $value) {
-                if (strtolower($name) !== "page" && strtolower($name) !== "id" && strtolower($name) !== "type") {
-                    $querystring .= "&".$name."=".urlencode($value);
+            if (isset($parameters)) {
+                foreach ($parameters as $name => $value) {
+                    if (strtolower($name) !== "page" && strtolower($name) !== "id" && strtolower($name) !== "type") {
+                        $querystring .= "&".$name."=".urlencode($value);
+                    }
                 }
             }
 
