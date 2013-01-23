@@ -220,11 +220,15 @@ abstract class Controller
     public function getRootController()
     {
         if ($this->rootController === false) {
-            $parent = $this->getParent();
-            if (isset($parent)) {
-                $this->rootController = $parent->getRootController();
+            if (isset($GLOBALS["RPI_FRAMEWORK_CONTROLLER"])) {
+                $this->rootController = $GLOBALS["RPI_FRAMEWORK_CONTROLLER"];
             } else {
-                $this->rootController = $this;
+                $parent = $this->getParent();
+                if (isset($parent)) {
+                    $this->rootController = $parent->getRootController();
+                } else {
+                    $this->rootController = $this;
+                }
             }
         }
 
