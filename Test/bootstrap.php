@@ -1,6 +1,6 @@
 <?php
 // Force session and output buffering before PHPUnit and any unit tests to avoid headers already sent exception
-session_start();
+//session_start();
 ob_start();
 
 require_once 'PHPUnit/Autoload.php';
