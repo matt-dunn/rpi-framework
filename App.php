@@ -243,7 +243,7 @@ class App
             $controller->process();
             
             if (!isset($method) || strtolower($method) != "head") {
-                $controller->render();
+                echo $controller->render();
             }
             
             return $controller;
