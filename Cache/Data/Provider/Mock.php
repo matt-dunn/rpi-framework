@@ -46,4 +46,9 @@ class Mock implements \RPI\Framework\Cache\Data\IStore
         
         return false;
     }
+    
+    public function getData()
+    {
+        return $this->data;
+    }
 }
