@@ -6,6 +6,7 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
 {
     private $method = null;
     private $url = null;
+    private $urlPath = null;
     private $parameters = null;
     private $postParameters = null;
     private $contentType = null;
@@ -60,13 +61,9 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
         if (!isset($this->url)) {
             $requestUri = null;
             
-            if (isset($_SERVER["REDIRECT_URL"])) {
-                $requestUri = $_SERVER["REDIRECT_URL"];
-            } elseif (isset($_SERVER["REQUEST_URI"])) {
-                $requestUri = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
-            }
-            
-            if (isset($_SERVER["SERVER_NAME"]) && isset($requestUri)) {
+            if (isset($_SERVER["SERVER_NAME"])) {
+                $requestUri = $this->getUrlPath();
+
                 $port = "80";
 
                 $pageURL = 'http';
@@ -92,20 +89,27 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
 
     public function getUrlPath()
     {
-        if (isset($_SERVER["REDIRECT_URL"])) {
-            return $_SERVER["REDIRECT_URL"];
-        } elseif (isset($_SERVER["REQUEST_URI"])) {
-            return parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+        if (!isset($this->urlPath)) {
+            if (isset($_SERVER["REDIRECT_URL"])) {
+                $this->urlPath = $_SERVER["REDIRECT_URL"];
+            } elseif (isset($_SERVER["REQUEST_URI"])) {
+                $this->urlPath = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+            } else {
+                $this->urlPath = false;
+            }
         }
-        return parse_url($this->getUrl(), PHP_URL_PATH);
+        
+        return $this->urlPath;
     }
 
     public function setUrl($url)
     {
-        if (parse_url($url) === false) {
-            throw new \InvalidArgumentException();
+        if (!\RPI\Framework\Helpers\HTTP::isValidUrl($url)) {
+            throw new \InvalidArgumentException("Url '$url' is not valid");
         }
+        
         $this->url = $url;
+        $this->urlPath = parse_url($url, PHP_URL_PATH);
         
         return $this;
     }
