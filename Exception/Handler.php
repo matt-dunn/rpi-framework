@@ -87,13 +87,6 @@ class Handler
         }
 
         $msg = $ex->getMessage();
-        if (method_exists($ex, "getPrevious")) {	// Exception::getPrevious only supported PHP => 5.3.0
-            $topLevelException = $ex->getPrevious();
-            while (isset($topLevelException)) {
-                $msg .= " => ".$topLevelException->getMessage();
-                $topLevelException = $topLevelException->getPrevious();
-            }
-        }
 
         self::writeToLog(
             "[".$ex->getCode()."] ".$msg." in ".$ex->getFile()."#".$ex->getLine().": \n".$traceMessage,
@@ -102,6 +95,10 @@ class Handler
             $includeDebugInformation,
             $ex->getMessage()
         );
+        
+        if ($ex->getPrevious() !== null) {
+            self::log($ex->getPrevious(), $priority, $ident, $includeDebugInformation);
+        }
     }
 
     private static function getArgs(array $args, &$argsText)
@@ -192,23 +189,23 @@ class Handler
      * Handle PHP errors and warnings
      * @param integer $errNo
      * @param string  $errStr
-     * @param string  $errfile
-     * @param integer $errline
+     * @param string  $errFile
+     * @param integer $errLine
      */
-    public static function handle($errNo, $errStr = null, $errfile = null, $errline = null)
+    public static function handle($errNo, $errStr = null, $errFile = null, $errLine = null)
     {
         switch ($errNo) {
             case E_STRICT:
             case E_DEPRECATED:
             case E_NOTICE:
-                if (strpos($errfile, "PEAR") !== false) { // Don't log any PEAR errors
+                if (strpos($errFile, "PEAR") !== false) { // Don't log any PEAR errors
                     self::$unloggedStrictErrorCount++;
                 } else {
-                    self::logMessage("STRICT/DEPRECATED WARNING: [$errNo] $errStr - $errfile#$errline", LOG_WARNING);
+                    self::logMessage("STRICT/DEPRECATED WARNING: [$errNo] $errStr - $errFile#$errLine", LOG_WARNING);
                 }
                 break;
             default:
-                throw new \ErrorException("[$errNo] $errStr ($errfile#$errline)", $errNo);
+                throw new \ErrorException($errStr, $errNo, 0, $errFile, $errLine);
         }
     }
 
