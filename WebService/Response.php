@@ -7,14 +7,58 @@ namespace RPI\Framework\WebService;
  */
 class Response
 {
+    /**
+     *
+     * @var long
+     */
     public $timestamp = 0;
+    
+    /**
+     *
+     * @var string
+     */
     public $id;
+    
+    /**
+     *
+     * @var string
+     */
     public $methodName;
+    
+    /**
+     *
+     * @var string
+     */
     public $format;
+    
+    /**
+     *
+     * @var mixed|null
+     */
     public $result;
+    
+    /**
+     *
+     * @var string
+     */
     public $status;
+    
+    /**
+     *
+     * @var \RPI\Framework\WebService\Error 
+     */
     public $error = null;
+    
+    /**
+     *
+     * @var long
+     */
     public $executionTime = null;
+    
+    /**
+     *
+     * @var array|null
+     */
     public $params = null;
 
     /**

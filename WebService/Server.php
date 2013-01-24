@@ -46,64 +46,58 @@ abstract class Server extends \RPI\Framework\Controller
     {
         $this->processAction();
         
-        $request = null;
+        $contentType = $this->getApp()->getRequest()->getContentType();
+        $format = $contentType["contenttype"]["subtype"];
 
         try {
             try {
                 $startTime = microtime(true);
-
+                
                 $request = $this->getRequest(
-                    file_get_contents("php://input"),
-                    $this->app->getRequest()->getParameters()
+                    $this->app->getRequest()->getBody(),
+                    $contentType["contenttype"]["mimetype"]
                 );
+                
+                $this->app->getDebug()->log($request);
+                
                 $this->context = new Context($request->timestamp, $request->method->format);
 
-                $response = $this->callMethod($request);
-                $response->executionTime = (microtime(true) - $startTime) * 1000;
-
-                $this->app->getResponse()->getHeaders()->set("Execution-Time", $response->executionTime);
-
-                $this->response = $response;
+                $this->response = $this->callMethod($request);
+                
+                $this->response->executionTime = (microtime(true) - $startTime) * 1000;
+                $this->app->getResponse()->getHeaders()->set("Execution-Time", $this->response->executionTime);
             } catch (\Exception $ex) {
                 \RPI\Framework\Exception\Handler::log($ex);
 
                 ob_clean();
 
-                if (!isset($request)) {
-                    $request = new Request();
-                }
-                $format = "xml";	// Default the format if it's unavailable (e.g. if the request was invalid)
-                if (isset($_SERVER["CONTENT_TYPE"])) {
-                    $contentType = explode(";", $_SERVER["CONTENT_TYPE"]);
-                    if (count($contentType) > 0) {
-                        $mimeType = explode("/", strtolower($contentType[0]));
-                        if (count($mimeType) > 0) {
-                            $format = $mimeType[1];
-                        }
-                    }
-                }
-                if (isset($request->method)) {
-                    $format = $request->method->format;
-                }
-                $response = new Response($request, ResponseStatus::ERROR, $format);
+                $response = new Response(new Request(), ResponseStatus::ERROR, $format);
                 unset($response->result);
 
                 if ($ex instanceof \RPI\Framework\WebService\Exceptions\WebService) {
-                    $response->error =
-                        (object)(array(
-                            "code" => $ex->getCode(),
-                            "type" => get_class($ex),
-                            "message" => $ex->getLocalizedMessage()
-                        ));
+                    $response->error = new \RPI\Framework\WebService\Error(
+                        $ex->getCode(),
+                        get_class($ex),
+                        $ex->getLocalizedMessage()
+                    );
+                    
                     $this->app->getResponse()->setStatusCode($ex->httpCode);
                 } elseif ($ex instanceof \RPI\Framework\Exceptions\InvalidParameter
                     || $this->alwaysIncludeExceptionMessage) {
-                    $response->error =
-                        (object)(array("code" => -32602, "type" => get_class($ex), "message" => $ex->getMessage()));
+                    $response->error = new \RPI\Framework\WebService\Error(
+                        -32602,
+                        get_class($ex),
+                        $ex->getMessage()
+                    );
+
                     $this->app->getResponse()->setStatusCode(500);
                 } else {
-                    $response->error =
-                        (object)(array("code" => -32400, "type" => get_class($ex), "message" => "Server error"));
+                    $response->error = new \RPI\Framework\WebService\Error(
+                        -32400,
+                        get_class($ex),
+                        "Server error"
+                    );
+
                     $this->app->getResponse()->setStatusCode(500);
                 }
                 
@@ -120,9 +114,9 @@ abstract class Server extends \RPI\Framework\Controller
      */
     public function render()
     {
-        $buffer = ob_get_clean();
-        
         if ($this->getConfig()->getValue("config/debug/@enabled", false) === true) {
+            $buffer = ob_get_clean();
+        
             if ($buffer !== false && $buffer != "") {
                 $this->app->getDebug()->log($buffer, "Output buffer");
             }
@@ -138,38 +132,48 @@ abstract class Server extends \RPI\Framework\Controller
             $params = $this->response->params;
             unset($this->response->params);
             
-            return call_user_func_array($className."::render", array($this->response, $params));
+            $handler = new $className();
+            return $handler->render($this->response, $params);
         } else {
-            $this->app->getResponse()->setMimeType("text/plain");
-            
-            if (isset($this->response->data)) {
-                echo $this->response->data;
-            }
-            
-            if ($buffer !== false) {
-                echo $buffer;
-            }
+            throw new \RPI\Framework\WebService\Exceptions\InvalidMimeType("application/{$this->response->format}");
         }
     }
 
     
     
-    private function callMethod(Request $requestData)
+    /**
+     * 
+     * @param \RPI\Framework\WebService\Request $request
+     * 
+     * @return \RPI\Framework\WebService\Response
+     * 
+     * @throws \RPI\Framework\WebService\Exceptions\Authentication
+     * @throws \RPI\Framework\WebService\Exceptions\Authorization
+     * @throws \RPI\Framework\WebService\Exceptions\Forbidden
+     * @throws \RPI\Framework\WebService\Authentication
+     * @throws \RPI\Framework\WebService\Exceptions\Method
+     * @throws \RPI\Framework\WebService\Exceptions\UnsupportedFormat
+     * @throws \Exception
+     * @throws \RPI\Framework\WebService\Exceptions\MissingMethod
+     */
+    private function callMethod(Request $request)
     {
-        if (isset($requestData->method)
-            && $requestData->method->name
-            && method_exists($this, $requestData->method->name)) {
-            $data = null;
+        if (isset($request->method)
+            && $request->method->name
+            && method_exists($this, $request->method->name)) {
+            
+            $responseMethod = null;
+            
             try {
-                if (isset($requestData->method->params)) {
-                    $params = $requestData->method->params;
+                if (isset($request->method->params)) {
+                    $params = $request->method->params;
                 } else {
                     $params = array();
                 }
 
                 // Check to see if the method has enough params passed - this avoids the general
                 // RuntimeException exception...
-                $reflect = new \ReflectionMethod($this, $requestData->method->name);
+                $reflect = new \ReflectionMethod($this, $request->method->name);
                 $paramCount = 0;
                 foreach ($reflect->getParameters() as $param) {
                     if (!$param->isDefaultValueAvailable()) {
@@ -179,11 +183,11 @@ abstract class Server extends \RPI\Framework\Controller
 
                 if (count($params) < $paramCount) {
                     throw new \RPI\Framework\WebService\Exceptions\Method(
-                        "Missing argument $paramCount for ".$requestData->method->name
+                        "Missing argument $paramCount for ".$request->method->name
                     );
                 }
 
-                $data = call_user_func_array(array($this, $requestData->method->name), $params);
+                $responseMethod = call_user_func_array(array($this, $request->method->name), $params);
             } catch (\RPI\Framework\Exceptions\Authentication $ex) {
                 throw new \RPI\Framework\WebService\Exceptions\Authentication();
             } catch (\RPI\Framework\Exceptions\Authorization $ex) {
@@ -194,110 +198,40 @@ abstract class Server extends \RPI\Framework\Controller
                 throw $ex;
             }
 
-            if (!isset($data)) {
+            if (!isset($responseMethod)) {
                 // If the webservice method does not return anything then create a new ResponseMethod
-                $data = new ResponseMethod();
-            } elseif (!$data instanceof ResponseMethod) {
+                $responseMethod = new ResponseMethod();
+            } elseif (!$responseMethod instanceof ResponseMethod) {
                 // Wrap the webservice method result if not type of ResponseMethod
-                $data = new ResponseMethod($data);
+                $responseMethod = new ResponseMethod($responseMethod);
             }
 
-            if ($data->format != $requestData->method->format) {
-                // Attempt to convert the response data into the requested format...
-                // TODO: call a convert method on the handler for this to support any handler format
-                try {
-                    if ($data->format == "json" && $requestData->method->format == "xml") {
-                        //require_once(__DIR__."/../../Vendor/PEAR/XML/Serializer.php");
-                        //$serializer = new \XML_Serializer(
-                        //    array(
-                        //        "addDecl" => false,
-                        //        "defaultTagName" => "value"
-                        //        XML_SERIALIZER_OPTION_TYPEHINTS => true
-                        //    )
-                        //);
-                        //$status = $serializer->serialize($data->data);
-                        //$data->data = $serializer->getSerializedData();
-                        
-                        $data->format = $requestData->method->format;
-                    } elseif ($data->format == "xml" && $requestData->method->format == "json") {
-                        require_once(__DIR__."/../../Vendor/PEAR/XML/Unserializer.php");
-                        $serializer = new \XML_Unserializer(
-                            array(
-                                "addDecl" => false,
-                                "defaultTagName" => "value",
-                                XML_UNSERIALIZER_OPTION_ATTRIBUTES_PARSE => true
-                            )
-                        );
-                        
-                        if ($serializer->unserialize($data->data) !== false) {
-                            $data->data = json_encode($serializer->getUnserializedData());
-                            $data->format = $requestData->method->format;
-                        } else {
-                            throw new \Exception("Unable to unserialize XML to JSON");
-                        }
-                    } else {
-                        throw new \RPI\Framework\WebService\Exceptions\UnsupportedFormat();
-                    }
-                } catch (\Exception $ex) {
-                    throw new \RPI\Framework\WebService\Exceptions\UnsupportedFormat($ex);
-                }
+            if ($responseMethod->format != $request->method->format) {
+                // TODO: add conversion methods to the handlers to allow conversion
+                throw new \RPI\Framework\WebService\Exceptions\UnsupportedFormat("'{$responseMethod->format}' cannot be converted to '{$request->method->format}'.");
             }
 
-            return new Response($requestData, ResponseStatus::SUCCESS, $data->format, $data->data, $data->params);
+            return new Response($request, ResponseStatus::SUCCESS, $responseMethod->format, $responseMethod->data, $responseMethod->params);
         } else {
-            throw new \RPI\Framework\WebService\Exceptions\MissingMethod($requestData);
+            throw new \RPI\Framework\WebService\Exceptions\MissingMethod($request);
         }
     }
     
     /**
      * Process the request
      * @param string $content Request body
-     * @param array  $request Request GET parameters
+     * 
+     * @return \RPI\Framework\WebService\Request
      */
-    private function getRequest($content, $request)
+    private function getRequest($content, $mimetype)
     {
-        $contentType = null;
-        if (isset($_SERVER["CONTENT_TYPE"])) {
-            $contentType = explode(";", $_SERVER["CONTENT_TYPE"]);
-            $contentType = strtolower(str_replace("/", "_", $contentType[0]));
-        }
-
-        $className = "\\RPI\Framework\\WebService\\Handler\\".\RPI\Framework\Helpers\Utils::toCamelCase($contentType);
+        $className = "\\RPI\Framework\\WebService\\Handler\\".\RPI\Framework\Helpers\Utils::toCamelCase(strtolower(str_replace("/", "_", $mimetype)));
 
         if (class_exists($className)) {
-            return call_user_func_array($className."::getRequest", array($content, $request));
+            $handler = new $className();
+            return $handler->getRequest($content);
         } else {
-            // If there is content sent in the request and no handler throw an exception
-            if (isset($content) && strlen($content) > 0) {
-                throw new \RPI\Framework\WebService\Exceptions\InvalidMimeType(str_replace("_", "/", $contentType));
-            }
-
-            $requestData = new Request();
-            if (isset($request["timestamp"])) {
-                $requestData->timestamp = $request["timestamp"];
-            }
-
-            $method = null;
-            $params = null;
-
-            if (isset($request["method"])) {
-                $method = $request["method"];
-            }
-
-            if (isset($request["format"])) {
-                $format = $request["format"];
-            } else {
-                $format = null;
-            }
-
-            if (isset($request["params"])) {
-                $params = explode(",", $request["params"]);
-            } else {
-                $params = null;
-            }
-
-            $requestData->method = new RequestMethod($method, $format, $params);
-            return $requestData;
+            throw new \RPI\Framework\WebService\Exceptions\InvalidMimeType($mimetype);
         }
     }
 }

@@ -7,8 +7,22 @@ namespace RPI\Framework\WebService;
  */
 class RequestMethod
 {
+    /**
+     *
+     * @var string
+     */
     public $name;
+    
+    /**
+     *
+     * @var string
+     */
     public $format;
+    
+    /**
+     *
+     * @var array
+     */
     public $params;
 
     /**
@@ -18,15 +32,18 @@ class RequestMethod
      */
     public function __construct($name = null, $format = null, array $params = null)
     {
-        if (!isset($name)) {
-            $name = "defaultMethod";
+        if (isset($name)) {
+            $this->name = $name;
+        } else {
+            $this->name = "defaultMethod";
         }
-        if (!isset($format)) {
-            $format = "json";
+        
+        if (isset($format)) {
+            $this->format = $format;
+        } else {
+            $this->format = "json";
         }
-        $this->name = $name;
-        \RPI\Framework\Helpers\Utils::validateOption($format, array("xml", "json"));
-        $this->format = $format;
+
         $this->params = $params;
     }
 }

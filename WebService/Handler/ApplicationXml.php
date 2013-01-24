@@ -7,44 +7,41 @@ namespace RPI\Framework\WebService\Handler;
  */
 class ApplicationXml implements \RPI\Framework\WebService\Handler\IHandler
 {
-    public static function getRequest($content, $request)
+    public function getRequest($content)
     {
-        $requestData = null;
+        $request = null;
         try {
-            $serializer = new \XML_Unserializer(
-                array(
-                    "addDecl" => false,
-                    "rootName" => "request",
-                    "defaultTagName" => "item",
-                    XML_SERIALIZER_OPTION_TYPEHINTS => true
-                )
-            );
-            $status = $serializer->unserialize($content);
-            $request = $serializer->getUnserializedData();
-            $requestData = new \RPI\Framework\WebService\Request((object) array("request" =>$request));
+            if (isset($content) && $content !== "") {
+                $serializer = new \XML_Unserializer(
+                    array(
+                        "addDecl" => false,
+                        "rootName" => "request",
+                        "defaultTagName" => "item",
+                        XML_SERIALIZER_OPTION_TYPEHINTS => true
+                    )
+                );
+                if ($serializer->unserialize($content) === true) {
+                    $data = (object)$serializer->getUnserializedData();
+                
+                    $request = new \RPI\Framework\WebService\Request(
+                        $data->request->timestamp,
+                        new \RPI\Framework\WebService\RequestMethod(
+                            $data->request->method->name,
+                            $data->request->method->format,
+                            (isset($data->request->method->params) ? (array)$data->request->method->params : null)
+                        ),
+                        (isset($data->request->id) ? $data->request->id : null)
+                    );
+                }
+            }
         } catch (\Exception $ex) {
-            throw new \RPI\Framework\WebService\Exceptions\InvalidRequest($content);
+            throw new \RPI\Framework\WebService\Exceptions\InvalidRequest($content, $ex);
         }
 
-        return $requestData;
-
-        // TODO: deserialize xml into request object (currently using restful qs)
-        //$requestData = new Request();
-        //if (isset($request["timestamp"])) {
-        //    $requestData->timestamp = $request["timestamp"];
-        //}
-        //$method = null;
-        //$params = $request;
-        //
-        //if (isset($request["method"])) {
-        //    $method = $request["method"];
-        //}
-        //
-        //$requestData->method = new RequestMethod($method, "xml", array($params));
-        //return $requestData;
+        return $request;
     }
 
-    public static function render(\RPI\Framework\WebService\Response $response, array $params = null)
+    public function render(\RPI\Framework\WebService\Response $response, array $params = null)
     {
         $data = \RPI\Framework\Helpers\Dom::serializeToDom(
             $response,
@@ -55,12 +52,11 @@ class ApplicationXml implements \RPI\Framework\WebService\Handler\IHandler
             )
         );
 
-        if ($params != null && isset($params["xsltFilename"])) {//$this->xsltFilename != null) {
+        if ($params != null && isset($params["xsltFilename"])) {
             $xsl = new \RPI\Framework\Views\Xsl\View($params["xsltFilename"]);
-            // TODO: this call will not currently work as $data is not the correct type...
-            $xsl->render($data, "php://output");
+            return $xsl->render($data);
         } else {
-            echo $data->saveXml();
+            return $data->saveXml();
         }
     }
 }

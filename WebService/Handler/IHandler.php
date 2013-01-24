@@ -6,14 +6,19 @@ interface IHandler
 {
     /**
      * Process the request
+     * 
      * @param string $content Request body
-     * @param array  $request Request GET parameters
+     * 
+     * @return \RPI\Framework\WebService\Request
      */
-    public static function getRequest($content, $request);
+    public function getRequest($content);
 
     /**
      * Render the response
+     * 
      * @param Response $response
+     * 
+     * @return string Content body
      */
-    public static function render(\RPI\Framework\WebService\Response $response, array $params = null);
+    public function render(\RPI\Framework\WebService\Response $response, array $params = null);
 }

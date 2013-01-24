@@ -7,9 +7,9 @@ namespace RPI\Framework\WebService\Exceptions;
  */
 class InvalidRequest extends WebService
 {
-    public function __construct($details = null)
+    public function __construct($details = null, $previous = null)
     {
-        parent::__construct("Invalid request object: ".$details);
         $this->code = -32600;
+        parent::__construct("Invalid request object: ".$details, $this->code, $previous);
     }
 }

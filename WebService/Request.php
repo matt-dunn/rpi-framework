@@ -7,75 +7,41 @@ namespace RPI\Framework\WebService;
  */
 class Request
 {
+    /**
+     *
+     * @var long
+     */
     public $timestamp;
+    
+    /**
+     *
+     * @var \RPI\Framework\WebService\RequestMethod
+     */
     public $method;
+    
+    /**
+     *
+     * @var string
+     */
     public $id;
 
     /**
      * @param Request $request
      */
-    public function __construct($request = null)
+    public function __construct($timestamp = null, \RPI\Framework\WebService\RequestMethod $method = null, $id = null)
     {
-        if ($request != null) {
-            if (isset($request->request)) {
-                if (isset($request->request->timestamp)) {
-                    $this->timestamp = $request->request->timestamp;
-                }
-
-                if (isset($request->request->id)) {
-                    $this->id = $request->request->id;
-                }
-
-                if (isset($request->request->method) && isset($request->request->method->name)) {
-                    $format = null;
-                    if (!isset($request->request->method->format)) {
-                        $format = $this->getFormat();
-                    } else {
-                        $format = $request->request->method->format;
-                    }
-
-                    if (isset($request->request->method->params)) {
-                        $this->method = new RequestMethod(
-                            $request->request->method->name,
-                            $format,
-                            (array)$request->request->method->params
-                        );
-                    } else {
-                        $this->method = new RequestMethod($request->request->method->name, $format);
-                    }
-                } else {
-                    throw new \RPI\Framework\WebService\Exceptions\ServerError(500, "No method specified");
-                }
-            } else {	// Assume this is a JSON-RPC object...
-                $format = $this->getFormat();
-
-                if (isset($request->id)) {
-                    $this->id = $request->id;
-                }
-
-                if (isset($request->params)) {
-                    $this->method = new RequestMethod(
-                        $request->method,
-                        $format,
-                        array_values((array) $request->params)
-                    );
-                } else {
-                    $this->method = new RequestMethod($request->method, $format);
-                }
-            }
+        if (isset($timestamp)) {
+            $this->timestamp = $timestamp;
+        } else {
+            $this->timestamp = microtime(true);
         }
-    }
-
-    private function getFormat()
-    {
-        $contentType = "json";
-        if (isset($_SERVER["CONTENT_TYPE"])) {
-            $contentType = explode(";", $_SERVER["CONTENT_TYPE"]);
-            $contentType = $contentType[0];
-
-            $contentType = strtolower(substr($contentType, strpos($contentType, "/") + 1));
+        
+        if (isset($method)) {
+            $this->method = $method;
+        } else {
+            $this->method = new \RPI\Framework\WebService\RequestMethod();
         }
-
-        return $contentType;
+        
+        $this->id = $id;
     }
 }

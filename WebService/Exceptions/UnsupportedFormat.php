@@ -8,8 +8,4 @@ namespace RPI\Framework\WebService\Exceptions;
 class UnsupportedFormat extends WebService
 {
     protected $message = "UnsupportedFormat";
-    public function __construct(\Exception $previous = null)
-    {
-        parent::__construct($this->message, null, $previous);
-    }
 }

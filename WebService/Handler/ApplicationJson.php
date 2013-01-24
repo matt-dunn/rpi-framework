@@ -7,25 +7,34 @@ namespace RPI\Framework\WebService\Handler;
  */
 class ApplicationJson implements \RPI\Framework\WebService\Handler\IHandler
 {
-    public static function getRequest($content, $request)
+    public function getRequest($content)
     {
-        $requestData = null;
+        $request = null;
+        
         try {
             if (isset($content) && $content !== "") {
                 $data = json_decode($content);
                 if ($data !== false) {
-                    $requestData = new \RPI\Framework\WebService\Request($data);
+                    $request = new \RPI\Framework\WebService\Request(
+                        $data->request->timestamp,
+                        new \RPI\Framework\WebService\RequestMethod(
+                            $data->request->method->name,
+                            $data->request->method->format,
+                            (isset($data->request->method->params) ? (array)$data->request->method->params : null)
+                        ),
+                        (isset($data->request->id) ? $data->request->id : null)
+                    );
                 }
             }
         } catch (\Exception $ex) {
-            throw new \RPI\Framework\WebService\Exceptions\InvalidRequest($content);
+            throw new \RPI\Framework\WebService\Exceptions\InvalidRequest($content, $ex);
         }
 
-        return $requestData;
+        return $request;
     }
 
-    public static function render(\RPI\Framework\WebService\Response $response, array $params = null)
+    public function render(\RPI\Framework\WebService\Response $response, array $params = null)
     {
-        echo json_encode($response);
+        return json_encode($response);
     }
 }
