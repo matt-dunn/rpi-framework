@@ -217,14 +217,26 @@ class Router
         return $this->map;
     }
     
-    public function routeStatusCode($statusCode)
+    /**
+     * 
+     * @param int $statusCode
+     * @param string $method
+     * @return \RPI\Framework\App\Router\Route
+     */
+    public function routeStatusCode($statusCode, $method)
     {
+        $method = strtolower($method);
+        \RPI\Framework\Helpers\Utils::validateOption(
+            $method,
+            array("get", "post", "delete", "put", "head")
+        );
+        
         $details = null;
         if (isset($this->map["#errorDocuments"]) && isset($this->map["#errorDocuments"][$statusCode])) {
             $match = $this->map["#errorDocuments"][$statusCode];
             
             $details = new \RPI\Framework\App\Router\Route(
-                $_SERVER['REQUEST_METHOD'],
+                $method,
                 "status:$statusCode",
                 $match["controller"],
                 $match["uuid"]

@@ -223,7 +223,10 @@ class App
         if ($statusCode != "200") {
             $this->getResponse()->setStatusCode($statusCode);
             
-            $controller = $this->runStatusCode($statusCode);
+            $controller = $this->runStatusCode(
+                $statusCode,
+                $this->getRequest()->getMethod()
+            );
             
             if (!isset($controller)) {
                 throw new \Exception("Error document handler not found for status code $statusCode");
@@ -245,18 +248,20 @@ class App
     /**
      * 
      * @param type $statusCode
+     * 
      * @return \RPI\Framework\Controller|null
+     * 
      * @throws \Exception
      */
-    private function runStatusCode($statusCode)
+    private function runStatusCode($statusCode, $method)
     {
         $router = $this->getRouter();
         
         if (isset($router)) {
-            $route = $router->routeStatusCode($statusCode);
+            $route = $router->routeStatusCode($statusCode, $method);
 
             if (isset($route)) {
-                return $this->runRouteController($route);
+                return $this->runRouteController($route, $method);
             }
         } else {
             throw new \Exception("Router not initialised");
@@ -269,7 +274,9 @@ class App
      * 
      * @param type $path
      * @param type $method
+     * 
      * @return \RPI\Framework\Controller|null
+     * 
      * @throws \Exception
      */
     private function runRouteControllerPath($path, $method)
@@ -295,7 +302,7 @@ class App
      * @param type $method
      * @return \RPI\Framework\Controller|null
      */
-    private function runRouteController(\RPI\Framework\App\Router\Route $route, $method = null)
+    private function runRouteController(\RPI\Framework\App\Router\Route $route, $method)
     {
         $this->action = $route->action;
         
