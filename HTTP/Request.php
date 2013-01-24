@@ -233,6 +233,8 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
     
     public function setAcceptLanguages(array $accept)
     {
+        arsort($accept, SORT_NUMERIC);
+
         $this->acceptLanguages = $accept;
     }
     
@@ -247,6 +249,8 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
     
     public function setAcceptEncoding(array $accept)
     {
+        arsort($accept, SORT_NUMERIC);
+
         $this->acceptEncoding = $accept;
     }
     
@@ -261,6 +265,8 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
     
     public function setAccept(array $accept)
     {
+        arsort($accept, SORT_NUMERIC);
+
         $this->accept = $accept;
     }
     
@@ -283,7 +289,7 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
             $accepts[trim(strtolower($value))] = (double)(isset($quality) ? $quality : 1);
         }
         
-        arsort($accepts);
+        arsort($accepts, SORT_NUMERIC);
         
         return $accepts;
     }
