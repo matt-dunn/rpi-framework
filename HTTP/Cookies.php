@@ -27,13 +27,13 @@ class Cookies implements ICookies
         return null;
     }
 
-    public function getValue($name)
+    public function getValue($name, $default = null)
     {
         if (isset($this->cookies) && isset($this->cookies[$name])) {
             return $this->cookies[$name]["value"];
         }
         
-        return null;
+        return $default;
     }
     
     public function set(
@@ -115,5 +115,10 @@ class Cookies implements ICookies
         }
         
         return false;
+    }
+
+    public function getAll()
+    {
+        return $this->cookies;
     }
 }

@@ -2,26 +2,11 @@
 
 namespace RPI\Framework\HTTP;
 
-class Response implements \RPI\Framework\HTTP\IResponse
+class Response extends Message implements \RPI\Framework\HTTP\IResponse
 {
-    private $body = null;
-    private $cookies = null;
-    private $headers = null;
-    private $protocolVersion = null;
-    private $statusCode = null;
-    private $contentEncoding = null;
-    private $mimetype = null;
-    
     public function getBody()
     {
         return $this->body;
-    }
-
-    public function setBody($body)
-    {
-        $this->body = $body;
-        
-        return $this;
     }
 
     public function getCookies()
@@ -33,13 +18,6 @@ class Response implements \RPI\Framework\HTTP\IResponse
         return $this->cookies;
     }
 
-    public function setCookies(ICookies $cookies)
-    {
-        $this->cookies = $cookies;
-        
-        return $this;
-    }
-
     public function getHeaders()
     {
         if (!isset($this->headers)) {
@@ -47,33 +25,6 @@ class Response implements \RPI\Framework\HTTP\IResponse
         }
         
         return $this->headers;
-    }
-
-    public function setHeaders(IHeaders $headers)
-    {
-        $this->headers = $headers;
-        
-        return $this;
-    }
-
-    public function getProtocolVersion()
-    {
-        if (!isset($this->protocolVersion)) {
-            if (isset($_SERVER['SERVER_PROTOCOL'])) {
-                $this->protocolVersion = substr($_SERVER['SERVER_PROTOCOL'], 5);
-            } else {
-                $this->protocolVersion = "1.1";
-            }
-        }
-        
-        return $this->protocolVersion;
-    }
-
-    public function setProtocolVersion($version)
-    {
-        $this->protocolVersion = $version;
-        
-        return $this;
     }
 
     public function getStatusCode()
@@ -85,35 +36,14 @@ class Response implements \RPI\Framework\HTTP\IResponse
         return $this->statusCode;
     }
 
-    public function setStatusCode($code)
-    {
-        $this->statusCode = $code;
-        
-        return $this;
-    }
-
     public function getContentEncoding()
     {
         return $this->contentEncoding;
     }
 
-    public function setContentEncoding($encoding)
-    {
-        $this->contentEncoding = $encoding;
-        
-        return $this;
-    }
-
     public function getMimeType()
     {
         return $this->mimetype;
-    }
-
-    public function setMimeType($mimetype)
-    {
-        $this->mimetype = $mimetype;
-        
-        return $this;
     }
 
     public function dispatch()
@@ -155,10 +85,5 @@ class Response implements \RPI\Framework\HTTP\IResponse
         $this->getHeaders()->dispatch();
         
         exit;
-    }
-    
-    public function __toString()
-    {
-        return "HTTP/{$this->getProtocolVersion()} {$this->getStatusCode()}";
     }
 }

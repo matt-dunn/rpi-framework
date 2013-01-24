@@ -17,38 +17,34 @@ interface IRequest extends IMessage
     public function setMethod($method);
 
     /**
-     *
      * Gets the method.
      *
      * @return string Method.
-     *
      */
     public function getMethod();
 
     /**
-     *
      * Sets the absolute URL.
      *
      * @param string $url URL.
-     *
+     * 
      * @return \RPI\Framework\HTTP\IRequest Reference to the request.
-     *
-     * @throws InvalidArgumentException If the URL is invalid.
-     *
+     * 
+     * @throws \InvalidArgumentException If the URL is invalid.
      */
     public function setUrl($url);
 
     /**
-     *
      * Gets the absolute URL.
      *
      * @return string URL.
-     *
      */
     public function getUrl();
     
     /**
-     * Get the URL path only.
+     * Get the URL path.
+     * 
+     * @return string
      */
     public function getUrlPath();
     
@@ -56,17 +52,25 @@ interface IRequest extends IMessage
      * Set the request GET/POST parameters
      * 
      * @param array $params
+     * 
      * @return \RPI\Framework\HTTP\IRequest
      */
     public function setParameters(array $parameters);
     
     /**
      * Get the request GET/POST parameters
+     * 
+     * @return array
      */
     public function getParameters();
     
     /**
      * Get the request GET/POST parameter
+     * 
+     * @param string $name Name of the parameter to retrieve
+     * @param mixed $default Default value to return if the param is not defined
+     * 
+     * @return mixed|null
      */
     public function getParameter($name, $default = null);
     
@@ -74,19 +78,36 @@ interface IRequest extends IMessage
      * Set the request POST parameters
      * 
      * @param array $params
+     * 
      * @return \RPI\Framework\HTTP\IRequest
      */
     public function setPostParameters(array $parameters);
     
     /**
      * Get the request POST parameters
+     * 
+     * @return array
      */
     public function getPostParameters();
     
     /**
      * Get the request POST parameter
+     * 
+     * @param string $name Name of the parameter to retrieve
+     * @param mixed $default Default value to return if the param is not defined
+     * 
+     * @return mixed
      */
     public function getPostParameter($name, $default = null);
     
+    /**
+     * Return the request content type
+     * 
+     * @return array(
+     *      "contenttype" => array("mimetype" => <mimetype>[, "type" => <type>, "subtype" => <subtype>]),
+     *      ["charset" => <character encoding>],
+     *      ["parameters" => array(<name> => <value>)]
+     *  )
+     */
     public function getContentType();
 }

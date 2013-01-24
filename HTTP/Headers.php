@@ -73,12 +73,17 @@ class Headers implements IHeaders
         return false;
     }
 
-    public function get($name)
+    public function get($name, $default = null)
     {
         if (isset($this->headers) && isset($this->headers[$name])) {
             return $this->headers[$name];
         }
         
-        return null;
+        return $default;
+    }
+
+    public function getAll()
+    {
+        return $this->headers;
     }
 }

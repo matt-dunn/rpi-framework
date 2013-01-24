@@ -2,20 +2,13 @@
 
 namespace RPI\Framework\HTTP;
 
-class Request implements \RPI\Framework\HTTP\IRequest
+class Request extends Message implements \RPI\Framework\HTTP\IRequest
 {
-    private $body = null;
-    private $cookies = null;
-    private $headers = null;
     private $method = null;
     private $url = null;
     private $parameters = null;
     private $postParameters = null;
-    private $protocolVersion = null;
-    private $statusCode = null;
     private $contentType = null;
-    private $contentEncoding = null;
-    private $mimetype = null;
     
     public function getCookies()
     {
@@ -35,13 +28,6 @@ class Request implements \RPI\Framework\HTTP\IRequest
         return $this->body;
     }
 
-    public function setBody($body)
-    {
-        $this->body = $body;
-        
-        return $this;
-    }
-
     public function getHeaders()
     {
         if (!isset($this->headers)) {
@@ -49,13 +35,6 @@ class Request implements \RPI\Framework\HTTP\IRequest
         }
         
         return $this->headers;
-    }
-
-    public function setHeaders(IHeaders $headers)
-    {
-        $this->headers = $headers;
-        
-        return $this;
     }
 
     public function getMethod()
@@ -113,6 +92,11 @@ class Request implements \RPI\Framework\HTTP\IRequest
 
     public function getUrlPath()
     {
+        if (isset($_SERVER["REDIRECT_URL"])) {
+            return $_SERVER["REDIRECT_URL"];
+        } elseif (isset($_SERVER["REQUEST_URI"])) {
+            return parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+        }
         return parse_url($this->getUrl(), PHP_URL_PATH);
     }
 
@@ -184,27 +168,6 @@ class Request implements \RPI\Framework\HTTP\IRequest
         return $this;
     }
     
-    public function getProtocolVersion()
-    {
-        if (!isset($this->protocolVersion)) {
-            if (isset($_SERVER['SERVER_PROTOCOL'])) {
-                $this->protocolVersion = substr($_SERVER['SERVER_PROTOCOL'], 5);
-            } else {
-                $this->protocolVersion = "1.1";
-            }
-        }
-        
-        return $this->protocolVersion;
-    }
-
-    public function setProtocolVersion($version)
-    {
-        $this->protocolVersion = $version;
-        
-        return $this;
-    }
-
-
     public function getStatusCode()
     {
         if (!isset($this->statusCode)) {
@@ -216,14 +179,6 @@ class Request implements \RPI\Framework\HTTP\IRequest
         }
         
         return $this->statusCode;
-    }
-
-
-    public function setStatusCode($code)
-    {
-        $this->statusCode = $code;
-        
-        return $this;
     }
 
     public function getContentEncoding()
@@ -253,10 +208,5 @@ class Request implements \RPI\Framework\HTTP\IRequest
         }
         
         return $this->mimetype;
-    }
-
-    public function __toString()
-    {
-        return "HTTP/{$this->getProtocolVersion()} {$this->getStatusCode()}";
     }
 }

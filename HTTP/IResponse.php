@@ -8,22 +8,17 @@ namespace RPI\Framework\HTTP;
 interface IResponse extends IMessage
 {
     /**
-     *
-     * Sets the collection of all cookies.
-     *
-     * @return RPI\Framework\HTTP\ICookies
-     *
-     */
-    public function setCookies(ICookies $cookies);
-    
-    public function setMimeType($mimetype);
-    
-    public function setContentEncoding($encoding);
-   
-    /**
      * Dispatch this response.
+     * 
+     * @return string Content body
      */
     public function dispatch();
     
+    /**
+     * Redirect to a new page
+     * 
+     * @param string $url               Absolute URL
+     * @param bool $movedPermanently    Send a 301 if true
+     */
     public function redirect($url, $movedPermanently = false);
 }
