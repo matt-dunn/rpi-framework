@@ -15,7 +15,7 @@ class Cookies implements ICookies
             }
         }
         
-        $this->domain = \RPI\Framework\App\Cookie::getCookieDomain();
+        $this->domain = \RPI\Framework\Helpers\Cookie::getCookieDomain();
     }
 
     public function get($name)

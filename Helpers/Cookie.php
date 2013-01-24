@@ -1,6 +1,6 @@
 <?php
 
-namespace RPI\Framework\App;
+namespace RPI\Framework\Helpers;
 
 /**
  * Cookie

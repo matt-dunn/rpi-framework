@@ -31,9 +31,9 @@ class Session
 
                     session_name("s");
                     session_set_cookie_params(
-                        \RPI\Framework\App\Cookie::COOKIE_EXPIRY_OFFSET + 1,
+                        \RPI\Framework\Helpers\Cookie::COOKIE_EXPIRY_OFFSET + 1,
                         "/",
-                        \RPI\Framework\App\Cookie::getCookieDomain(),
+                        \RPI\Framework\Helpers\Cookie::getCookieDomain(),
                         false,
                         true
                     );
@@ -48,9 +48,9 @@ class Session
                         setcookie(
                             session_name(),
                             $_COOKIE[session_name()],
-                            time() + \RPI\Framework\App\Cookie::COOKIE_EXPIRY_OFFSET + 1,
+                            time() + \RPI\Framework\Helpers\Cookie::COOKIE_EXPIRY_OFFSET + 1,
                             "/",
-                            \RPI\Framework\App\Cookie::getCookieDomain(),
+                            \RPI\Framework\Helpers\Cookie::getCookieDomain(),
                             false,
                             true
                         );
