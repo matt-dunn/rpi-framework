@@ -110,4 +110,9 @@ interface IRequest extends IMessage
      *  )
      */
     public function getContentType();
+    
+    /**
+     * @return string
+     */
+    public function getRemoteAddress();
 }

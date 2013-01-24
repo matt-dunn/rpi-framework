@@ -55,40 +55,6 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         }
     }
 
-    // TODO: move out of the service... into controller?
-    public function ensureSecure($requiresSecure = true)
-    {
-        if ($this->app->getConfig()->getValue("config/security/@certificateInstalled") == "true") {
-            $isSecureConnection = false;
-            if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {
-                $isSecureConnection = true;
-            }
-
-            $secureDomain = $this->app->getConfig()->getValue("config/domains/secure");
-            $websiteDomain = $this->app->getConfig()->getValue("config/domains/website");
-
-            if ($requiresSecure && (!$isSecureConnection
-                || ($secureDomain !== false && $secureDomain != $_SERVER["SERVER_NAME"]))) {
-                $this->getAuthenticatedUser();	// Force a re-issue of the user token
-                $sslPort = "";
-                if ($this->sslPort != "443") {
-                    $sslPort = ":".$this->sslPort;
-                }
-                if ($secureDomain === false) {
-                    $secureDomain = $_SERVER["SERVER_NAME"];
-                }
-                $this->app->getResponse()->redirect("https://".$secureDomain.$sslPort.$_SERVER["REQUEST_URI"]);
-            } elseif (!$requiresSecure && ($isSecureConnection
-                || ($websiteDomain !== false && $websiteDomain != $_SERVER["SERVER_NAME"]))) {
-                $this->getAuthenticatedUser();	// Force a re-issue of the user token
-                if ($websiteDomain === false) {
-                    $websiteDomain = $_SERVER["SERVER_NAME"];
-                }
-                $this->app->getResponse()->redirect("http://".$websiteDomain.$_SERVER["REQUEST_URI"]);
-            }
-        }
-    }
-
     // ------------------------------------------------------------------------------------------------------------
     // User management
     // ------------------------------------------------------------------------------------------------------------
@@ -409,9 +375,6 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
     {
         // TODO: add agent string?
         $agent = "";
-        //if (isset($_SERVER["HTTP_USER_AGENT"])) {
-        //	$agent = $_SERVER["HTTP_USER_AGENT"];
-        //}
         $token = "u=$uuid&d=".hash("sha256", $this->app->getConfig()->getValue("config/keys/userToken").$uuid.$agent);
         $token .= "&c=".sprintf("%u", crc32($token));
 
@@ -438,7 +401,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         if (!$validToken) {
             \RPI\Framework\Exception\Handler::logMessage(
                 __METHOD__." - Authentication tamper detected (validateUserToken): 
-                    [TOKEN: $token] [IP:". $_SERVER["REMOTE_ADDR"]."]",
+                    [TOKEN: $token] [IP:". $this->app->getRequest()->getRemoteAddress()."]",
                 LOG_ERR,
                 "authentication"
             );
@@ -462,9 +425,6 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
         // TODO: add agent string?
         $agent = "";
-        //if (isset($_SERVER["HTTP_USER_AGENT"])) {
-        //	$agent = $_SERVER["HTTP_USER_AGENT"];
-        //}
         $token = "e=$expiry&u=$uuid&d=".hash(
             "sha256",
             $this->app->getConfig()->getValue("config/keys/authenticationToken").$expiry.$uuid.$agent
@@ -497,7 +457,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         if (!$validToken) {
             \RPI\Framework\Exception\Handler::logMessage(
                 __METHOD__." - Authentication tamper detected (validateAuthenticationToken): 
-                    [TOKEN: $token] [IP:". $_SERVER["REMOTE_ADDR"]."]"
+                    [TOKEN: $token] [IP:". $this->app->getRequest()->getRemoteAddress()."]"
             );
             $this->logout(true);
         }

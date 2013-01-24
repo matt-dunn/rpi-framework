@@ -109,4 +109,40 @@ class HTTP
             "parameters" => $parameter
         );
     }
+    
+    /**
+     * TODO:
+     * @param type $url
+     * @param type $requiresSecure
+     */
+    public static function forceSecure($url, $requiresSecure = true)
+    {
+        //$isSecureConnection = false;
+        //if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {
+        //    $isSecureConnection = true;
+        //}
+        //
+        //$secureDomain = $this->app->getConfig()->getValue("config/domains/secure");
+        //$websiteDomain = $this->app->getConfig()->getValue("config/domains/website");
+        //
+        //if ($requiresSecure && (!$isSecureConnection
+        //    || ($secureDomain !== false && $secureDomain != $_SERVER["SERVER_NAME"]))) {
+        //    $this->getAuthenticatedUser();	// Force a re-issue of the user token
+        //    $sslPort = "";
+        //    if ($this->sslPort != "443") {
+        //        $sslPort = ":".$this->sslPort;
+        //    }
+        //    if ($secureDomain === false) {
+        //        $secureDomain = $_SERVER["SERVER_NAME"];
+        //    }
+        //    $this->app->getResponse()->redirect("https://".$secureDomain.$sslPort.$_SERVER["REQUEST_URI"]);
+        //} elseif (!$requiresSecure && ($isSecureConnection
+        //    || ($websiteDomain !== false && $websiteDomain != $_SERVER["SERVER_NAME"]))) {
+        //    $this->getAuthenticatedUser();	// Force a re-issue of the user token
+        //    if ($websiteDomain === false) {
+        //        $websiteDomain = $_SERVER["SERVER_NAME"];
+        //    }
+        //    $this->app->getResponse()->redirect("http://".$websiteDomain.$_SERVER["REQUEST_URI"]);
+        //}
+    }
 }

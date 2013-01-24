@@ -213,4 +213,9 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
         
         return $this->mimetype;
     }
+    
+    public function getRemoteAddress()
+    {
+        return $_SERVER["REMOTE_ADDR"];
+    }
 }
