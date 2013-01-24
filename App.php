@@ -193,6 +193,11 @@ class App
         return $this->request;
     }
     
+    public function setRequest(\RPI\Framework\HTTP\IRequest $request)
+    {
+        $this->request = $request;
+    }
+    
     /**
      * 
      * @return \RPI\Framework\HTTP\IResponse
@@ -234,7 +239,7 @@ class App
             }
         }
         
-        $this->getResponse()->dispatch();
+        return $this->getResponse();
     }
 
     /**

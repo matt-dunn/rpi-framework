@@ -139,8 +139,9 @@ class Handler
     private static function runErrorController($statusCode)
     {
         if (!isCli()) {
+            $GLOBALS["RPI_APP"]->getResponse()->getHeaders()->clear();
             $GLOBALS["RPI_APP"]->getRequest()->setStatusCode($statusCode);
-            $GLOBALS["RPI_APP"]->run();
+            $GLOBALS["RPI_APP"]->run()->dispatch();
         }
     }
 
