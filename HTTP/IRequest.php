@@ -115,4 +115,35 @@ interface IRequest extends IMessage
      * @return string
      */
     public function getRemoteAddress();
+    
+    /**
+     * 
+     * @param array $accept
+     */
+    public function setAcceptLanguages(array $accept);
+    
+    /**
+     * @return array    List of accept languages ordered by quality
+     */
+    public function getAcceptLanguages();
+    
+    /**
+     * 
+     * @param array $accept
+     */
+    public function setAcceptEncoding(array $accept);
+    /**
+     * @return array    List of accept encoding types ordered by quality
+     */
+    public function getAcceptEncoding();
+    
+    /**
+     * 
+     * @param array $accept
+     */
+    public function setAccept(array $accept);
+    /**
+     * @return array    List of accept types ordered by quality
+     */
+    public function getAccept();
 }

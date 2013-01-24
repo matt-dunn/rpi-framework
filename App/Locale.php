@@ -41,61 +41,6 @@ class Locale
     }
 
     /**
-     * Return an array of all languages in the browser accept header in order of 
-     * quality. The default language will always be in the list.
-     * @return <type>
-     */
-    // TODO: also check the querystring and cookie for local setting - this
-    // should take priority over HTTP_ACCEPT_LANGUAGE
-    public static function getAcceptLanguages()
-    {
-        static $languages = false;
-        static $HTTP_ACCEPT_LANGUAGE = null;
-
-        $langAccept = null;
-        if (isset($_SERVER["HTTP_ACCEPT_LANGUAGE"])) {
-            $langAccept = $_SERVER["HTTP_ACCEPT_LANGUAGE"];
-        }
-
-        if ($languages === false || $langAccept !== $HTTP_ACCEPT_LANGUAGE) {
-            $languages = array();
-            $languagePrototypes = array();
-            $HTTP_ACCEPT_LANGUAGE = null;
-
-            if (isset($langAccept)) {
-                $HTTP_ACCEPT_LANGUAGE = $_SERVER["HTTP_ACCEPT_LANGUAGE"];
-
-                $locales = explode(",", $langAccept);
-                foreach ($locales as $locale) {
-                    $localeParts = explode(";", $locale);
-                    $quality = "1";
-                    if (count($localeParts) > 1) {
-                        $quality = substr($localeParts[1], 2);
-                    }
-                    $language = strtoupper($localeParts[0]);
-                    $languages[$language] = $quality;
-
-                    $languageParts = explode("-", $language);
-                    if (count($languageParts) > 1) {
-                        if (!isset($languagePrototypes[$languageParts[0]])
-                            || (isset($languagePrototypes[$languageParts[0]])
-                            && $quality < $languagePrototypes[$languageParts[0]])) {
-                            $languagePrototypes[$languageParts[0]] = $quality - 0.01;
-                        }
-                    }
-                }
-            }
-            $languages = $languages + $languagePrototypes;
-            arsort($languages);
-            // Make sure the default set language is the final option in the list...
-            $languages[self::getLocale()] = true;
-            $languages = array_keys($languages);
-        }
-
-        return $languages;
-    }
-
-    /**
      * Get the default locale
      * @return <type> Get the default locale
      */

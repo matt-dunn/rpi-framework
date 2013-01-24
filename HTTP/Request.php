@@ -10,6 +10,9 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
     private $parameters = null;
     private $postParameters = null;
     private $contentType = null;
+    private $accept = null;
+    private $acceptLanguages = null;
+    private $acceptEncoding = null;
     
     public function getCookies()
     {
@@ -217,5 +220,71 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
     public function getRemoteAddress()
     {
         return $_SERVER["REMOTE_ADDR"];
+    }
+    
+    public function getAcceptLanguages()
+    {
+        if (!isset($this->acceptLanguages)) {
+            $this->acceptLanguages = $this->parseAccept($_SERVER["HTTP_ACCEPT_LANGUAGE"]);
+        }
+        
+        return $this->acceptLanguages;
+    }
+    
+    public function setAcceptLanguages(array $accept)
+    {
+        $this->acceptLanguages = $accept;
+    }
+    
+    public function getAcceptEncoding()
+    {
+        if (!isset($this->acceptEncoding)) {
+            $this->acceptEncoding = $this->parseAccept($_SERVER["HTTP_ACCEPT_ENCODING"]);
+        }
+        
+        return $this->acceptEncoding;
+    }
+    
+    public function setAcceptEncoding(array $accept)
+    {
+        $this->acceptEncoding = $accept;
+    }
+    
+    public function getAccept()
+    {
+        if (!isset($this->accept)) {
+            $this->accept = $this->parseAccept($_SERVER["HTTP_ACCEPT"]);
+        }
+        
+        return $this->accept;
+    }
+    
+    public function setAccept(array $accept)
+    {
+        $this->accept = $accept;
+    }
+    
+    
+    /**
+     * 
+     * @param string $accept
+     * 
+     * @return array
+     */
+    private function parseAccept($accept)
+    {
+        $accepts = array();
+        
+        $acceptParts = explode(",", $accept);
+        foreach ($acceptParts as $value) {
+            if (strpos($value, ';q=')) {
+                list($value, $quality) = explode(';q=', $value);
+            }
+            $accepts[trim(strtolower($value))] = (double)(isset($quality) ? $quality : 1);
+        }
+        
+        arsort($accepts);
+        
+        return $accepts;
     }
 }
