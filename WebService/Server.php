@@ -208,10 +208,18 @@ abstract class Server extends \RPI\Framework\Controller
 
             if ($responseMethod->format != $request->method->format) {
                 // TODO: add conversion methods to the handlers to allow conversion
-                throw new \RPI\Framework\WebService\Exceptions\UnsupportedFormat("'{$responseMethod->format}' cannot be converted to '{$request->method->format}'.");
+                throw new \RPI\Framework\WebService\Exceptions\UnsupportedFormat(
+                    "'{$responseMethod->format}' cannot be converted to '{$request->method->format}'."
+                );
             }
 
-            return new Response($request, ResponseStatus::SUCCESS, $responseMethod->format, $responseMethod->data, $responseMethod->params);
+            return new Response(
+                $request,
+                ResponseStatus::SUCCESS,
+                $responseMethod->format,
+                $responseMethod->data,
+                $responseMethod->params
+            );
         } else {
             throw new \RPI\Framework\WebService\Exceptions\MissingMethod($request);
         }
@@ -225,7 +233,9 @@ abstract class Server extends \RPI\Framework\Controller
      */
     private function getRequest($content, $mimetype)
     {
-        $className = "\\RPI\Framework\\WebService\\Handler\\".\RPI\Framework\Helpers\Utils::toCamelCase(strtolower(str_replace("/", "_", $mimetype)));
+        $className = "\\RPI\Framework\\WebService\\Handler\\".\RPI\Framework\Helpers\Utils::toCamelCase(
+            strtolower(str_replace("/", "_", $mimetype))
+        );
 
         if (class_exists($className)) {
             $handler = new $className();
