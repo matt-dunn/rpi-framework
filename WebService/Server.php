@@ -60,8 +60,6 @@ abstract class Server extends \RPI\Framework\Controller
                     $contentType["contenttype"]["mimetype"]
                 );
 
-                $this->app->getDebug()->log($request);
-                
                 $this->context = new Context($request->timestamp, $request->method->format);
 
                 $this->response = $this->callMethod($request);
