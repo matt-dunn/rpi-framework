@@ -193,6 +193,9 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
         if (!isset($this->contentEncoding)) {
             $contentType = $this->getContentType();
             $this->contentEncoding = $contentType["charset"];
+            if (!isset($this->contentEncoding)) {
+                $this->contentEncoding = "utf-8";
+            }
         }
         
         return $this->contentEncoding;
@@ -207,6 +210,14 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
         return $this->contentType;
     }
 
+    public function setMimeType($mimetype)
+    {
+        $this->mimetype = $mimetype;
+        $this->contentType = \RPI\Framework\Helpers\HTTP::parseContentType($this->mimetype.";charset=".$this->getContentEncoding());
+        
+        return $this;
+    }
+    
     public function getMimeType()
     {
         if (!isset($this->mimetype)) {

@@ -38,6 +38,9 @@ class Response extends Message implements \RPI\Framework\HTTP\IResponse
 
     public function getContentEncoding()
     {
+        if (!isset($this->contentEncoding)) {
+            $this->contentEncoding = "utf-8";
+        }
         return $this->contentEncoding;
     }
 
