@@ -73,7 +73,8 @@ abstract class HTML extends \RPI\Framework\Controller
      * 
      * @return boolean
      */
-    public function canCreateComponents(){
+    public function canCreateComponents()
+    {
         return true;
     }
     
