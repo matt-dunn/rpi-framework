@@ -204,7 +204,15 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
     public function getContentType()
     {
         if (!isset($this->contentType)) {
-            $this->contentType = \RPI\Framework\Helpers\HTTP::parseContentType($_SERVER["CONTENT_TYPE"]);
+            if (isset($_SERVER["CONTENT_TYPE"])) {
+                $this->contentType = \RPI\Framework\Helpers\HTTP::parseContentType(
+                    $_SERVER["CONTENT_TYPE"]
+                );
+            } else {
+                $this->contentType = \RPI\Framework\Helpers\HTTP::parseContentType(
+                    $this->mimetype.";charset=".$this->contentEncoding
+                );
+            }
         }
         
         return $this->contentType;
@@ -213,7 +221,9 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
     public function setMimeType($mimetype)
     {
         $this->mimetype = $mimetype;
-        $this->contentType = \RPI\Framework\Helpers\HTTP::parseContentType($this->mimetype.";charset=".$this->getContentEncoding());
+        $this->contentType = \RPI\Framework\Helpers\HTTP::parseContentType(
+            $this->mimetype.";charset=".$this->getContentEncoding()
+        );
         
         return $this;
     }
