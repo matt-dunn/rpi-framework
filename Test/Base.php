@@ -131,4 +131,22 @@ abstract class Base extends \PHPUnit_Framework_TestCase
 
         return $xpathObject->query($xpath);
     }
+    
+    /**
+     * 
+     * @param string $body
+     */
+    protected function simulatePost($body)
+    {
+        $_SERVER["REQUEST_METHOD"] = "post";
+        $_SERVER["REQUEST_URI"] = "http://localhost/ws/component/";
+        $_SERVER["CONTENT_TYPE"] = "application/json; charset=utf-8";
+        $_SERVER["HTTP_ACCEPT_LANGUAGE"] =
+            "en-gb,en;q=0.9,en-us;q=0.8,de-de;q=0.6,de;q=0.5,fr;q=0.4,zh-hk;q=0.3,fr-mc;q=0.1";
+        $_SERVER["HTTP_ACCEPT"] = "application/json, text/javascript, */*; q=0.01";
+        
+        stream_wrapper_unregister("php");
+        stream_wrapper_register("php", "\RPI\Framework\Test\MockPhpStream");
+        file_put_contents("php://input", $body);
+    }
 }
