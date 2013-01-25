@@ -135,22 +135,30 @@ abstract class Component extends \RPI\Framework\Controller\HTML
         if ($this->visible) {
             $this->processAction();
             
-            if (!isset($this->model)) {
-                $this->model = $this->getModel();
-            }
+            $this->model = $this->getModel();
 
             $controller = $this->getRootController();
             if (isset($controller) && isset($controller->options)) {
                 $this->controllerOptions = $controller->options;
             }
 
+            $processChildren = false;
+            
             if ($this->getCacheKey() !== false && $this->isCacheable()) {
                 if (!$this->canRenderViewFromCache()
                     || \RPI\Framework\Cache\Front\Store::fetch($this->getCacheKey(), null, $this->type) === false) {
-                    parent::process();
+                    $processChildren = true;
                 }
             } else {
-                parent::process();
+                $processChildren = true;
+            }
+            
+            if ($processChildren && isset($this->components)) {
+                foreach ($this->components as $component) {
+                    if (isset($component)) {
+                        $component["component"]->process();
+                    }
+                }
             }
         }
     }

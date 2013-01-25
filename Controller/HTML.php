@@ -68,12 +68,30 @@ abstract class HTML extends \RPI\Framework\Controller
      */
     abstract protected function getView();
 
+    /**
+     * Indicates if components should be created
+     * 
+     * @return boolean
+     */
+    public function canCreateComponents(){
+        return true;
+    }
+    
+    /**
+     * 
+     * @param string $id
+     * @param \RPI\Framework\App $app
+     * @param array $options
+     * @param \RPI\Framework\Views\IView $viewRendition
+     */
     public function __construct(
         $id,
         \RPI\Framework\App $app,
         array $options = null,
         \RPI\Framework\Views\IView $viewRendition = null
     ) {
+        $options = $this->setup($id, $app, $options);
+
         if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
             if (!isset($options)) {
                 $options = array();
@@ -94,10 +112,12 @@ abstract class HTML extends \RPI\Framework\Controller
             $this->cacheKey = $id."_".implode("_o:", $options);
         }
         
-        parent::__construct($id, $app, $options);
-        
         if (isset($viewRendition)) {
             $this->setView($viewRendition);
+        }
+        
+        if ($this->initController($options) !== false) {
+            $this->init();
         }
     }
     
@@ -112,6 +132,7 @@ abstract class HTML extends \RPI\Framework\Controller
     /**
      * 
      * @param \RPI\Framework\Component $component
+     * 
      * @return \RPI\Framework\Component
      */
     public function addComponent(\RPI\Framework\Component $component)
@@ -132,9 +153,7 @@ abstract class HTML extends \RPI\Framework\Controller
     {
         $this->processAction();
             
-        if (!isset($this->model)) {
-            $this->model = $this->getModel();
-        }
+        $this->model = $this->getModel();
 
         if (isset($this->components)) {
             foreach ($this->components as $component) {
@@ -144,6 +163,7 @@ abstract class HTML extends \RPI\Framework\Controller
             }
         }
     }
+    
     protected function canRenderViewFromCache()
     {
         return true;
@@ -157,6 +177,7 @@ abstract class HTML extends \RPI\Framework\Controller
     protected function prerenderComponents()
     {
         $rendition = null;
+            
         if (isset($this->components)) {
             foreach ($this->components as $component) {
                 $rendition .= $component["component"]->prerender();

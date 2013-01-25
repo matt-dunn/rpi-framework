@@ -67,7 +67,33 @@ abstract class Controller
      */
     abstract public function render();
     
+    /**
+     * 
+     * @param string $id
+     * @param \RPI\Framework\App $app
+     * @param array $options
+     * 
+     * @throws \Exception
+     */
     public function __construct($id, \RPI\Framework\App $app, array $options = null)
+    {
+        $options = $this->setup($id, $app, $options);
+        
+        if ($this->initController($options) !== false) {
+            $this->init();
+        }
+    }
+    
+    /**
+     * Setup the controller. Only should be called in a __construct
+     * 
+     * @param string $id
+     * @param \RPI\Framework\App $app
+     * @param array $options
+     * 
+     * @throws \Exception
+     */
+    protected function setup($id, \RPI\Framework\App $app, array $options = null)
     {
         $this->id = $id;
         $this->app = $app;
@@ -77,7 +103,7 @@ abstract class Controller
         if (!isset($options)) {
             $options = array();
         }
-        
+ 
         $this->options = $this->getControllerOptions($this->parseOptions($options));
         if (!$this->options instanceof \RPI\Framework\Controller\Options) {
             throw new \Exception(
@@ -85,10 +111,17 @@ abstract class Controller
                 "Must be of type '\RPI\Framework\Controller\Options'."
             );
         }
+        
+        $controllerAction = $this->app->getAction();
 
-        if ($this->initController($options) !== false) {
-            $this->init();
+        if (isset($controllerAction->params)) {
+            $options = array_merge(
+                $options,
+                $this->options->addOptionsByArray($controllerAction->params)
+            );
         }
+        
+        return $options;
     }
     
     /**
@@ -136,10 +169,6 @@ abstract class Controller
     {
         if ($this->controllerActionProcessed === false) {
             $controllerAction = $this->app->getAction();
-            
-            if (isset($controllerAction->params)) {
-                $this->options->addOptionsByArray($controllerAction->params);
-            }
             
             if (isset($controllerAction->method)) {
                 $methodName = $controllerAction->method."Action";

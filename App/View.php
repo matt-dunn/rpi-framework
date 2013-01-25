@@ -174,13 +174,15 @@ class View
             && count($controllerData["components"]) > 0) {
             
             if ($controller instanceof \RPI\Framework\Controller\HTML) {
-                foreach ($controllerData["components"] as $childControllerUUID) {
-                    $controller->addComponent(
-                        $this->createControllerByUUID(
-                            $childControllerUUID,
-                            $app
-                        )
-                    );
+                if ($controller->canCreateComponents()) {
+                    foreach ($controllerData["components"] as $childControllerUUID) {
+                        $controller->addComponent(
+                            $this->createControllerByUUID(
+                                $childControllerUUID,
+                                $app
+                            )
+                        );
+                    }
                 }
             } else {
                 throw new \Exception(

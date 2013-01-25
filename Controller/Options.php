@@ -50,22 +50,26 @@ class Options
      * @param array $options                Associative array of options
      * @param type $addOnlyValidOptions     If true, add only valid options from $availableOptions
      *                                      to the controller options
-     * @return \RPI\Framework\Controller\Options
+     * @return array                        Array of options added
      */
     public function addOptionsByArray(array $options, $addOnlyValidOptions = true)
     {
+        $addedOptions = array();
+        
         if ($addOnlyValidOptions) {
             foreach ($options as $name => $value) {
                 if (isset($this->availableOptions[$name])) {
                     $this->options[$name] = $value;
+                    $addedOptions[$name] = $value;
                 }
             }
         } else {
             $this->options = array_merge($this->options, $options);
+            $addedOptions = $this->options;
             $this->validate();
         }
         
-        return $this;
+        return $addedOptions;
     }
     
     /**
