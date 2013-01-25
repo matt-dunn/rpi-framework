@@ -12,6 +12,24 @@ class Reflection
     {
     }
 
+    /**
+     * Cast the top level object to type
+     * @param object $obj
+     * @param string $type
+     * @return boolean
+     */
+    public static function cast($obj, $type)
+    {
+        if (class_exists($type)) {
+            $serializedObject = serialize($obj);
+            $unserializedObject =
+                'O:' . strlen($type) . ':"' . $type . '":' . substr($serializedObject, $serializedObject[2] + 7);
+            return unserialize($unserializedObject);
+        } else {
+            return false;
+        }
+    }
+
     public static function createObject($className, array $params = null, $type = null)
     {
         $instance = new \ReflectionClass($className);
