@@ -45,13 +45,6 @@ abstract class HTML extends \RPI\Framework\Controller
      */
     private $cacheKey = false;
     
-    /**
-     *
-     * @var string
-     */
-    private static $pageTitle = null;
-    private static $pageTitleOverridden = false;
-    
     abstract protected function isCacheable();
 
     abstract protected function getModel();
@@ -98,16 +91,6 @@ abstract class HTML extends \RPI\Framework\Controller
                 $options = array();
             }
             
-            if (!isset(self::$pageTitle)) {
-                $pageTitle = \RPI\Framework\Cache\Front\Store::fetchContent(
-                    $app->getRequest()->getUrlPath()."-title",
-                    null,
-                    "title"
-                );
-
-                self::$pageTitle = $pageTitle;
-            }
-
             // TODO: should this use $this->options->get()? This will create a new cache
             //       instance for any component placed into a different viewMode for example
             $this->cacheKey = $id."_".implode("_o:", $options);
@@ -277,35 +260,5 @@ abstract class HTML extends \RPI\Framework\Controller
         }
         
         return $this->cacheKey;
-    }
-    
-    public function getPageTitle()
-    {
-        return (self::$pageTitle === false ? null : self::$pageTitle);
-    }
-
-    public function setPageTitle($title, $override = false)
-    {
-        if (!$override && self::$pageTitleOverridden) {
-            return false;
-            
-        }
-        
-        if (self::$pageTitle != $title) {
-            self::$pageTitle = $title;
-            self::$pageTitleOverridden = true;
-
-            if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
-                \RPI\Framework\Cache\Front\Store::store(
-                    $this->app->getRequest()->getUrlPath()."-title",
-                    self::$pageTitle,
-                    "title"
-                );
-            }
-            
-            return true;
-        }
-        
-        return false;
     }
 }
