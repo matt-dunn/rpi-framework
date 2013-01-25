@@ -30,8 +30,13 @@ abstract class Server extends \RPI\Framework\Controller
             $this->alwaysIncludeExceptionMessage = true;
         }
 
+        // Attempt to set the current url from the XMLHTTPRequest referer if set
+        // TODO: 1) this is set by the client so are there any security issues with this? check against valid domains?
+        //       2) is the referer *always* a fully qualified UTL?
         if (isset($_SERVER["HTTP_REFERER"])) {
-            $_SERVER["REDIRECT_URL"] = parse_url($_SERVER["HTTP_REFERER"], PHP_URL_PATH);
+            if (!\RPI\Framework\Helpers\HTTP::isValidUrl($_SERVER["HTTP_REFERER"])) {
+                $this->app->getRequest()->setUrl($_SERVER["HTTP_REFERER"]);
+            }
         }
     }
 
