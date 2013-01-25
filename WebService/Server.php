@@ -85,8 +85,7 @@ abstract class Server extends \RPI\Framework\Controller
                     );
                     
                     $this->app->getResponse()->setStatusCode($ex->httpCode);
-                } elseif ($ex instanceof \RPI\Framework\Exceptions\InvalidParameter
-                    || $this->alwaysIncludeExceptionMessage) {
+                } elseif ($ex instanceof \RPI\Framework\Exceptions\InvalidParameter) {
                     $response->error = new \RPI\Framework\WebService\Error(
                         -32602,
                         get_class($ex),
@@ -95,10 +94,14 @@ abstract class Server extends \RPI\Framework\Controller
 
                     $this->app->getResponse()->setStatusCode(500);
                 } else {
+                    $message = "Server error";
+                    if ($this->alwaysIncludeExceptionMessage) {
+                        $message = $ex->getMessage();
+                    }
                     $response->error = new \RPI\Framework\WebService\Error(
-                        -32400,
+                        -32200,
                         get_class($ex),
-                        "Server error"
+                        $message
                     );
 
                     $this->app->getResponse()->setStatusCode(500);

@@ -8,6 +8,7 @@ namespace RPI\Framework\WebService\Exceptions;
 abstract class WebService extends \Exception
 {
     public $httpCode = 500;
+    public $code = 32001;
     protected $localizationMessageId;
 
     public function getLocalizedMessage()
