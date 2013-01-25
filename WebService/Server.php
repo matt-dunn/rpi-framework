@@ -50,14 +50,16 @@ abstract class Server extends \RPI\Framework\Controller
         $format = $contentType["contenttype"]["subtype"];
 
         try {
+            $request = null;
+            
             try {
                 $startTime = microtime(true);
-                
+
                 $request = $this->getRequest(
                     $this->app->getRequest()->getBody(),
                     $contentType["contenttype"]["mimetype"]
                 );
-                
+
                 $this->app->getDebug()->log($request);
                 
                 $this->context = new Context($request->timestamp, $request->method->format);
@@ -71,7 +73,10 @@ abstract class Server extends \RPI\Framework\Controller
 
                 ob_clean();
 
-                $response = new Response(new Request(), ResponseStatus::ERROR, $format);
+                if (!isset($request)) {
+                    $request = new Request();
+                }
+                $response = new Response($request, ResponseStatus::ERROR, $format);
                 unset($response->result);
 
                 if ($ex instanceof \RPI\Framework\WebService\Exceptions\WebService) {
@@ -121,22 +126,10 @@ abstract class Server extends \RPI\Framework\Controller
                 $this->app->getDebug()->log($buffer, "Output buffer");
             }
         }
+        
+        $this->app->getResponse()->setMimeType("application/{$this->response->format}");
 
-        $contentType = "application_{$this->response->format}";
-        $className = "\\RPI\Framework\\WebService\\Handler\\".\RPI\Framework\Helpers\Utils::toCamelCase($contentType);
-
-        if (class_exists($className)) {
-            // charset=".mb_detect_encoding($responseString, "UTF-8, ISO-8859-1"));
-            $this->app->getResponse()->setMimeType("application/{$this->response->format}");
-
-            $params = $this->response->params;
-            unset($this->response->params);
-            
-            $handler = new $className();
-            return $handler->render($this->response, $params);
-        } else {
-            throw new \RPI\Framework\WebService\Exceptions\InvalidMimeType("application/{$this->response->format}");
-        }
+        return (string)$this->response;
     }
 
     

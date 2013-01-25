@@ -14,7 +14,7 @@ class ApplicationJson implements \RPI\Framework\WebService\Handler\IHandler
         try {
             if (isset($content) && $content !== "") {
                 $data = json_decode($content);
-                if ($data !== false) {
+                if ($data !== false && isset($data->request->timestamp) && isset($data->request->method->name)) {
                     $request = new \RPI\Framework\WebService\Request(
                         $data->request->timestamp,
                         new \RPI\Framework\WebService\RequestMethod(
@@ -28,6 +28,10 @@ class ApplicationJson implements \RPI\Framework\WebService\Handler\IHandler
             }
         } catch (\Exception $ex) {
             throw new \RPI\Framework\WebService\Exceptions\InvalidRequest($content, $ex);
+        }
+        
+        if (!isset($request)) {
+            throw new \RPI\Framework\WebService\Exceptions\InvalidRequest($content);
         }
 
         return $request;

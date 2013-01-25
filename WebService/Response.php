@@ -78,4 +78,20 @@ class Response
         $this->result = $data;
         $this->params = $params;
     }
+    
+    public function __toString()
+    {
+        $contentType = "application_{$this->format}";
+        $className = "\\RPI\Framework\\WebService\\Handler\\".\RPI\Framework\Helpers\Utils::toCamelCase($contentType);
+
+        if (class_exists($className)) {
+            $params = $this->params;
+            unset($this->params);
+            
+            $handler = new $className();
+            return $handler->render($this, $params);
+        } else {
+            throw new \RPI\Framework\WebService\Exceptions\InvalidMimeType("application/{$this->format}");
+        }
+    }
 }
