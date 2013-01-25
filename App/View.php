@@ -59,7 +59,9 @@ class View
         if ($controllerData !== false) {
             $controller = self::createComponentFromViewData($controllerData, $app, $controllerOptions);
             if (isset($type) && !$controller instanceof $type) {
-                throw new \Exception("Component '$uuid' (".get_class($controller).") must be an instance of '$type'.");
+                throw new \InvalidArgumentException(
+                    "Component '$uuid' (".get_class($controller).") must be an instance of '$type'."
+                );
             }
             
             return $controller;
