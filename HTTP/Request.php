@@ -35,7 +35,16 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
     public function getHeaders()
     {
         if (!isset($this->headers)) {
-            $this->headers = new \RPI\Framework\HTTP\Headers(headers_list());
+            $this->headers = new \RPI\Framework\HTTP\Headers();
+                    
+            foreach ($_SERVER as $key => $value) {
+                if (strpos($key, 'HTTP_') === 0) {
+                    $this->headers->add(
+                        str_replace(' ', '-', ucwords(str_replace('_', ' ', strtolower(substr($key, 5))))),
+                        $value
+                    );
+                }
+            }
         }
         
         return $this->headers;
