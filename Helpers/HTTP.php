@@ -112,6 +112,19 @@ class HTTP
         );
     }
     
+    public static function getUrlPath()
+    {
+        $urlPath = null;
+        
+        if (isset($_SERVER["REDIRECT_URL"])) {
+            $urlPath = $_SERVER["REDIRECT_URL"];
+        } elseif (isset($_SERVER["REQUEST_URI"])) {
+            $urlPath = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+        }
+        
+        return $urlPath;
+    }
+    
     /**
      * TODO:
      * @param type $url

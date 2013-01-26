@@ -5,9 +5,41 @@ namespace RPI\Framework\Controller\HTML;
 abstract class Front extends \RPI\Framework\Controller\HTML
 {
     /**
+     *
+     * @var array
+     */
+    private static $pageTitleDetails = null;
+    
+    /**
      * Return the page title
      */
-    abstract public function getPageTitle();
+    public static function getPageTitle()
+    {
+        if (!isset(self::$pageTitleDetails)) {
+            if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
+                self::$pageTitleDetails = \RPI\Framework\Cache\Front\Store::fetchContent(
+                    \RPI\Framework\Helpers\HTTP::getUrlPath()."-title",
+                    null,
+                    "title"
+                );
+            }
+
+            if (isset(self::$pageTitleDetails) && self::$pageTitleDetails !== false) {
+                self::$pageTitleDetails = unserialize(self::$pageTitleDetails);
+            } else {
+                self::$pageTitleDetails = array(
+                    "title" => "",
+                    "priority" => 0
+                );
+            }
+        }
+
+        if (self::$pageTitleDetails !== false) {
+            return self::$pageTitleDetails["title"];
+        }
+        
+        return null;
+    }
     
     /**
      * Set the page title
@@ -22,5 +54,27 @@ abstract class Front extends \RPI\Framework\Controller\HTML
      * @param string $title Page title
      * @param int $priority Priority setting of setting the title. Value 0 to 100.
      */
-    abstract public function setPageTitle($title, $priority = 0);
+    public static function setPageTitle($title, $priority = 0)
+    {
+        if (!isset(self::$pageTitleDetails) || self::$pageTitleDetails === false) {
+            self::getPageTitle();
+        }
+        
+        if (self::$pageTitleDetails["title"] != $title && $priority >= self::$pageTitleDetails["priority"]) {
+            self::$pageTitleDetails["title"] = $title;
+            self::$pageTitleDetails["priority"] = (int)$priority;
+
+            if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
+                \RPI\Framework\Cache\Front\Store::store(
+                    \RPI\Framework\Helpers\HTTP::getUrlPath()."-title",
+                    serialize(self::$pageTitleDetails),
+                    "title"
+                );
+            }
+        
+            return true;
+        }
+        
+        return false;
+    }
 }
