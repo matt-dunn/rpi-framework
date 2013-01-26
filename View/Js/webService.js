@@ -41,6 +41,7 @@ RPI.webService.call = function(service, methodName, params, callback, errorCallb
 		dataType: "json",
 		contentType: "application/json; charset=utf-8",
 		sourceUrl: sourceUrl,
+        headers: {"Document-Location": document.location.href},
 		success: function(o) {
 			if(RPI.loader) {
 				RPI.loader.hide();
