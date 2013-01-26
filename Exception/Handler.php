@@ -144,9 +144,9 @@ class Handler
 
     /**
      * Handle unhandled exceptions
-     * @param Exception $exception
+     * @param \Exception $exception
      */
-    public static function handleExceptions($exception)
+    public static function handleExceptions(\Exception $exception)
     {
         if (ob_get_level() > 0) {
             ob_clean();
@@ -172,6 +172,10 @@ class Handler
                 self::log($exception, LOG_ERR, "authentication");
                 
                 self::runErrorController(403);
+            } elseif ($exception instanceof \ErrorException) {
+                self::log($exception, LOG_CRIT);
+                
+                self::runErrorController(500);
             } else {
                 self::log($exception, LOG_CRIT);
 
