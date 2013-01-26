@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\Events;
 
-class ViewUpdated implements \RPI\Framework\Event\IEvent
+class PageTitleUpdated implements \RPI\Framework\Event\IClientEvent
 {
     private $parameters = null;
     
@@ -18,6 +18,6 @@ class ViewUpdated implements \RPI\Framework\Event\IEvent
 
     public function getType()
     {
-        return "viewupdated.RPI";
+        return "pagetitleupdated.RPI";
     }
 }

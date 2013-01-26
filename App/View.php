@@ -230,7 +230,9 @@ class View
                         \RPI\Framework\Exception\Handler::logMessage("Unable to clear data store", LOG_WARNING);
                     }
 
-                    \RPI\Framework\Events\ViewUpdated::fire();
+                    \RPI\Framework\Event\Manager::fire(
+                        new \RPI\Framework\Events\ViewUpdated()
+                    );
 
                     $xpath = new \DomXPath($domDataViews);
                     $xpath->registerNamespace("RPI", "http://www.rpi.co.uk/presentation/config/");

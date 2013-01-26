@@ -21,6 +21,8 @@ abstract class Server extends \RPI\Framework\Controller
      * @var type boolean
      */
     private $alwaysIncludeExceptionMessage = false;
+    
+    private $clientEvents = array();
 
     protected function initController(array $options)
     {
@@ -37,7 +39,27 @@ abstract class Server extends \RPI\Framework\Controller
         }
         if (isset($documentLocation) && \RPI\Framework\Helpers\HTTP::isValidUrl($documentLocation)) {
             $this->app->getRequest()->setUrl($documentLocation);
+            
+            // Slightly nasty 'hack' to ensure any code requesting the current url gets the document location
+            // of the service call:
+            $_SERVER["REQUEST_URI"] = $documentLocation;
+            $_SERVER["REDIRECT_URL"] = parse_url($documentLocation, PHP_URL_PATH);
         }
+        
+        \RPI\Framework\Event\Manager::addEventListener(
+            "RPI\Framework\Event\IClientEvent",
+            array($this, "clientEvent")
+        );
+    }
+    
+    public function clientEvent(\RPI\Framework\Event $event, $params)
+    {
+        unset($event->target);
+        
+        $this->clientEvents[] = array(
+            "event" => $event,
+            "params" => $params
+        );
     }
 
     /**
@@ -125,6 +147,10 @@ abstract class Server extends \RPI\Framework\Controller
      */
     public function render()
     {
+        if (count($this->clientEvents) > 0) {
+            $this->response->events = $this->clientEvents;
+        }
+        
         if ($this->getConfig()->getValue("config/debug/@enabled", false) === true) {
             $buffer = ob_get_clean();
         

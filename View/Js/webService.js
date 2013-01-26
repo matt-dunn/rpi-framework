@@ -49,6 +49,15 @@ RPI.webService.call = function(service, methodName, params, callback, errorCallb
 
 			if(o) {
 				if(o.status == RPI.webService.responseStatus.success && callback) {
+                    if(o.events) {
+                        for(var i = 0; i < o.events.length; i++) {
+                            var event = o.events[i];
+                            jQuery.event.trigger(
+                                event.event.type,
+                                event.params
+                            );
+                        }
+                    }
 					callback(o.result, o, sourceData);
 				} else if(o.status == RPI.webService.responseStatus.error) {
 					if(errorCallback) {

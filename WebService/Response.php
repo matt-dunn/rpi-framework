@@ -60,6 +60,8 @@ class Response
      * @var array|null
      */
     public $params = null;
+    
+    public $events = null;
 
     /**
      * @param Request $request
