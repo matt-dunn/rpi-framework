@@ -151,9 +151,9 @@ abstract class Server extends \RPI\Framework\Controller
             $this->response->events = $this->clientEvents;
         }
         
-        if ($this->getConfig()->getValue("config/debug/@enabled", false) === true) {
-            $buffer = ob_get_clean();
+        $buffer = ob_get_clean();
         
+        if ($this->getConfig()->getValue("config/debug/@enabled", false) === true) {
             if ($buffer !== false && $buffer != "") {
                 $this->app->getDebug()->log($buffer, "Output buffer");
             }
