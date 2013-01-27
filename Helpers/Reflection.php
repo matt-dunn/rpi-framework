@@ -83,13 +83,13 @@ class Reflection
     
     private static function getDependency(\RPI\Framework\App $app, $className, $parameterName, $interfaceName)
     {
+        static $objects = array();
+        
         if (!interface_exists($interfaceName)) {
             throw new \Exception(
                 "Constructor for '$className' parameter '$parameterName' must be an interface. '$interfaceName' used"
             );
         }
-        
-        static $objects = array();
         
         if (isset($objects[$interfaceName])) {
             return $objects[$interfaceName];
@@ -102,7 +102,7 @@ class Reflection
         
         foreach ($dependency as $dependencyInfo) {
             if ($dependencyInfo["@"]["interface"] == $interfaceName) {
-                //echo "CREATE:[$interfaceName]\n<br/>";
+                //echo "CREATE:[$interfaceName ($className)]\n<br/>";
         
                 $objects[$interfaceName] = self::createObjectByClassInfo($app, $dependencyInfo["class"]);
                 return $objects[$interfaceName];
