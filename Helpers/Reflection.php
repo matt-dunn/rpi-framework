@@ -39,8 +39,13 @@ class Reflection
      * @param boolean $matchParams
      * @return boolean
      */
-    public static function createObject(\RPI\Framework\App $app, $className, array $params = null, $type = null, $matchParams = true)
-    {
+    public static function createObject(
+        \RPI\Framework\App $app,
+        $className,
+        array $params = null,
+        $type = null,
+        $matchParams = true
+    ) {
         $instance = new \ReflectionClass($className);
         $constructorParams = null;
 
