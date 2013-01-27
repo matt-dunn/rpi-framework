@@ -81,14 +81,21 @@ class Reflection
         return $o;
     }
     
-    private static function getDependency(\RPI\Framework\App $app, $className, $parameterName, $interfaceName)
+    public static function getDependency(\RPI\Framework\App $app, $className, $parameterName, $interfaceName)
     {
         static $objects = array();
         
         if (!interface_exists($interfaceName)) {
-            throw new \Exception(
-                "Constructor for '$className' parameter '$parameterName' must be an interface. '$interfaceName' used"
-            );
+            $message = null;
+            
+            if (isset($className) && isset($parameterName)) {
+                $message = "Constructor for '$className' parameter '$parameterName' ".
+                    "must be an interface. '$interfaceName' used";
+            } else {
+                $message = "'$interfaceName' must be an interface";
+            }
+            
+            throw new \Exception($message);
         }
         
         if (isset($objects[$interfaceName])) {
@@ -96,16 +103,18 @@ class Reflection
         }
         
         $dependency = $app->getConfig()->getValue("config/dependencies/dependency");
-        if (isset($dependency["@"])) {
-            $dependency = array($dependency);
-        }
-        
-        foreach ($dependency as $dependencyInfo) {
-            if ($dependencyInfo["@"]["interface"] == $interfaceName) {
-                //echo "CREATE:[$interfaceName ($className)]\n<br/>";
-        
-                $objects[$interfaceName] = self::createObjectByClassInfo($app, $dependencyInfo["class"]);
-                return $objects[$interfaceName];
+        if (isset($dependency)) {
+            if (isset($dependency["@"])) {
+                $dependency = array($dependency);
+            }
+
+            foreach ($dependency as $dependencyInfo) {
+                if ($dependencyInfo["@"]["interface"] == $interfaceName) {
+                    //echo "CREATE:[$interfaceName ($className)]\n<br/>";
+
+                    $objects[$interfaceName] = self::createObjectByClassInfo($app, $dependencyInfo["class"]);
+                    return $objects[$interfaceName];
+                }
             }
         }
         
