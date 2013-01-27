@@ -16,6 +16,7 @@ abstract class Front extends \RPI\Framework\Controller\HTML
     public static function getPageTitle()
     {
         if (!isset(self::$pageTitleDetails)) {
+            // TODO: store in data cache?
 //            if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
                 self::$pageTitleDetails = \RPI\Framework\Cache\Front\Store::fetchContent(
                     \RPI\Framework\Helpers\HTTP::getUrlPath()."-title",
@@ -59,6 +60,8 @@ abstract class Front extends \RPI\Framework\Controller\HTML
         if (!isset(self::$pageTitleDetails) || self::$pageTitleDetails === false) {
             self::getPageTitle();
         }
+        
+        $title = t("site.controller.page.title", array($title));
         
         if (self::$pageTitleDetails["title"] != $title && $priority >= self::$pageTitleDetails["priority"]) {
             self::$pageTitleDetails["title"] = $title;
