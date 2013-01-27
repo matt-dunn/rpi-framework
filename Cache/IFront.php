@@ -1,8 +1,8 @@
 <?php
 
-namespace RPI\Framework\Cache\Front;
+namespace RPI\Framework\Cache;
 
-interface IStore
+interface IFront
 {
     /**
      * Return the cache path

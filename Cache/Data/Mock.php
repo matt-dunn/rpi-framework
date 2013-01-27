@@ -1,6 +1,6 @@
 <?php
 
-namespace RPI\Framework\Cache\Data\Provider;
+namespace RPI\Framework\Cache\Data;
 
 /**
  * APC cache support wrapper
@@ -8,7 +8,7 @@ namespace RPI\Framework\Cache\Data\Provider;
  *
  * @author Matt Dunn
  */
-class Mock implements \RPI\Framework\Cache\Data\IStore
+class Mock implements \RPI\Framework\Cache\IData
 {
     private $data = array();
     

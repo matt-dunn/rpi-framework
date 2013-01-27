@@ -1,34 +1,34 @@
 <?php
 
-namespace RPI\Framework\Cache\Front\Provider;
+namespace RPI\Framework\Cache\Front;
 
-class File implements IProvider
+class File implements \RPI\Framework\Cache\IFront
 {
-    private static $fileCachePath;
+    private $fileCachePath;
 
-    public static function getFileCachePath()
+    public function getFileCachePath()
     {
-        if (!isset(self::$fileCachePath)) {
-            self::$fileCachePath = $_SERVER["DOCUMENT_ROOT"]."/../.cache/";
-            if (!file_exists(self::$fileCachePath)) {
+        if (!isset($this->fileCachePath)) {
+            $this->fileCachePath = $_SERVER["DOCUMENT_ROOT"]."/../.cache/";
+            if (!file_exists($this->fileCachePath)) {
                 throw new \Exception(
-                    "Cache directory does not exist: '".self::$fileCachePath.
+                    "Cache directory does not exist: '".$this->fileCachePath.
                     "'. Please create this directory with the correct write permissions."
                 );
             }
         }
 
-        return self::$fileCachePath;
+        return $this->fileCachePath;
     }
 
-    public static function setFileCachePath($cachePath)
+    public function setFileCachePath($cachePath)
     {
         if (substr($cachePath, strlen($cachePath) - 1, 1) != "/") {
             $cachePath .= "/";
         }
-        self::$fileCachePath = $cachePath;
-        if (!file_exists(self::$fileCachePath)) {
-            mkdir(self::$fileCachePath, 0777);
+        $this->fileCachePath = $cachePath;
+        if (!file_exists($this->fileCachePath)) {
+            mkdir($this->fileCachePath, 0777);
         }
 
         return true;
@@ -39,7 +39,7 @@ class File implements IProvider
      * @param  string $key Unique key to identify a cache item
      * @return object or false				An object from the cache or false if cache item does not exist or has been invalidated
      */
-    public static function fetch($key, $timestamp = null, $group = null)
+    public function fetch($key, $timestamp = null, $group = null)
     {
         $cacheFile = self::getFileCachePath().md5($key);
         if (isset($group)) {
@@ -58,7 +58,7 @@ class File implements IProvider
         return false;
     }
 
-    public static function fetchContent($key, $timestamp = null, $group = null)
+    public function fetchContent($key, $timestamp = null, $group = null)
     {
         $filePath = self::fetch($key, $timestamp, $group);
         if ($filePath !== false) {
@@ -74,7 +74,7 @@ class File implements IProvider
      * @param  object  $value Object to store in the cache
      * @return boolean True if successful
      */
-    public static function store($key, $value, $group = null)
+    public function store($key, $value, $group = null)
     {
         $cacheFile = self::getFileCachePath().md5($key);
         if (isset($group)) {
@@ -92,7 +92,7 @@ class File implements IProvider
     /**
      * Remove all item from the cache
      */
-    public static function clear($group = null)
+    public function clear($group = null)
     {
         $cachePath = self::getFileCachePath();
         $filePattern = "*";
@@ -105,7 +105,7 @@ class File implements IProvider
     /**
      * Remove an item from the cache
      */
-    public static function delete($key, $group = null)
+    public function delete($key, $group = null)
     {
         $cacheFile = self::getFileCachePath().md5($key);
         if (isset($group)) {
@@ -120,12 +120,12 @@ class File implements IProvider
         return false;
     }
 
-    public static function isAvailable()
+    public function isAvailable()
     {
         return true;
     }
 
-    public static function validateCacheItem($key, $timestamp = null, $group = null)
+    public function validateCacheItem($key, $timestamp = null, $group = null)
     {
         $cacheFile = self::getFileCachePath().md5($key);
         if (isset($group)) {
@@ -144,7 +144,7 @@ class File implements IProvider
         return false;
     }
     
-    private static function normalizeName($name)
+    private function normalizeName($name)
     {
         return str_replace("\\", ".", $name);
     }

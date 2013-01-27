@@ -10,7 +10,7 @@ interface ILocalisation
     /**
      * @param array $options
      */
-    public function __construct(\RPI\Framework\App $app, \RPI\Framework\Cache\Data\IStore $store, array $options);
+    public function __construct(\RPI\Framework\App $app, \RPI\Framework\Cache\IData $store, array $options);
 
     /**
      * Return a list of available locales

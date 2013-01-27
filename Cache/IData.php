@@ -1,8 +1,8 @@
 <?php
 
-namespace RPI\Framework\Cache\Data;
+namespace RPI\Framework\Cache;
 
-interface IStore
+interface IData
 {
     /**
      * Check to see if APC is available

@@ -20,12 +20,12 @@ abstract class Front extends \RPI\Framework\Controller\HTML
                 $GLOBALS["RPI_APP"],
                 null,
                 null,
-                "RPI\Framework\Cache\Front\Provider\IProvider"
+                "RPI\Framework\Cache\IFront"
             );
 
             if (!isset($frontStore)) {
                 throw new \Exception(
-                    "RPI\Framework\Cache\Front\Provider\IProvider dependency not configured correctly"
+                    "RPI\Framework\Cache\IFront dependency not configured correctly"
                 );
             }
 
@@ -88,12 +88,12 @@ abstract class Front extends \RPI\Framework\Controller\HTML
                 $GLOBALS["RPI_APP"],
                 null,
                 null,
-                "RPI\Framework\Cache\Front\Provider\IProvider"
+                "RPI\Framework\Cache\IFront"
             );
 
             if (!isset($frontStore)) {
                 throw new \Exception(
-                    "RPI\Framework\Cache\Front\Provider\IProvider dependency not configured correctly"
+                    "RPI\Framework\Cache\IFront dependency not configured correctly"
                 );
             }
 

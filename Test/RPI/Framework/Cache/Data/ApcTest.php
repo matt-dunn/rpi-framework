@@ -1,6 +1,6 @@
 <?php
 
-namespace RPI\Framework\Test\RPI\Framework\Cache\Data\Provider;
+namespace RPI\Framework\Test\RPI\Framework\Cache\Data;
 
 /**
  * Test class for Apc.
@@ -21,7 +21,7 @@ class ApcTest extends \RPI\Framework\Test\Base
     {
         parent::setUp();
         
-        $this->object = new \RPI\Framework\Cache\Data\Provider\Apc;
+        $this->object = new \RPI\Framework\Cache\Data\Apc;
     }
 
     /**

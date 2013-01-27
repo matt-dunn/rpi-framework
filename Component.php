@@ -69,7 +69,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     public function __construct(
         $id,
         \RPI\Framework\App $app,
-        \RPI\Framework\Cache\Front\Provider\IProvider $frontStore,
+        \RPI\Framework\Cache\IFront $frontStore,
         \RPI\Framework\Views\IView $viewRendition = null,
         array $options = null
     ) {

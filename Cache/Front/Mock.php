@@ -1,15 +1,15 @@
 <?php
 
-namespace RPI\Framework\Cache\Front\Provider;
+namespace RPI\Framework\Cache\Front;
 
-class Mock implements IProvider
+class Mock implements \RPI\Framework\Cache\IFront
 {
-    public static function getFileCachePath()
+    public function getFileCachePath()
     {
         return null;
     }
 
-    public static function setFileCachePath($cachePath)
+    public function setFileCachePath($cachePath)
     {
         return true;
     }
@@ -19,12 +19,12 @@ class Mock implements IProvider
      * @param  string $key Unique key to identify a cache item
      * @return object or false				An object from the cache or false if cache item does not exist or has been invalidated
      */
-    public static function fetch($key, $timestamp = null, $group = null)
+    public function fetch($key, $timestamp = null, $group = null)
     {
         return false;
     }
 
-    public static function fetchContent($key, $timestamp = null, $group = null)
+    public function fetchContent($key, $timestamp = null, $group = null)
     {
         return false;
     }
@@ -35,7 +35,7 @@ class Mock implements IProvider
      * @param  object  $value Object to store in the cache
      * @return boolean True if successful
      */
-    public static function store($key, $value, $group = null)
+    public function store($key, $value, $group = null)
     {
         return true;
     }
@@ -43,7 +43,7 @@ class Mock implements IProvider
     /**
      * Remove all item from the cache
      */
-    public static function clear($group = null)
+    public function clear($group = null)
     {
         return true;
     }
@@ -51,17 +51,17 @@ class Mock implements IProvider
     /**
      * Remove an item from the cache
      */
-    public static function delete($key, $group = null)
+    public function delete($key, $group = null)
     {
         return true;
     }
 
-    public static function isAvailable()
+    public function isAvailable()
     {
         return true;
     }
 
-    public static function validateCacheItem($key, $timestamp = null, $group = null)
+    public function validateCacheItem($key, $timestamp = null, $group = null)
     {
         return false;
     }

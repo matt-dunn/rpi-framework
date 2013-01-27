@@ -33,6 +33,8 @@ abstract class Base extends \PHPUnit_Framework_TestCase
         
         $_SERVER["REQUEST_URI"] = "/";
         $_SERVER["HTTP_HOST"] = "phpunit";
+        $_SERVER["HTTP_ACCEPT_LANGUAGE"] = "en";
+        $_SERVER["HTTP_ACCEPT"] = "application/json, text/javascript, */*; q=0.01";
     }
     
     protected function loadFixture($fixtureName)

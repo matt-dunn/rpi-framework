@@ -24,7 +24,7 @@ class App
     
     /**
      *
-     * @var \RPI\Framework\Cache\Data\IStore 
+     * @var \RPI\Framework\Cache\IData 
      */
     private $dataStore;
     
@@ -74,12 +74,12 @@ class App
      * 
      * @param string $webConfigFile
      * @param string $viewConfigFile
-     * @param \RPI\Framework\Cache\Data\IStore $dataStore
+     * @param \RPI\Framework\Cache\IData $dataStore
      */
     public function __construct(
         $webConfigFile,
         $viewConfigFile,
-        \RPI\Framework\Cache\Data\IStore $dataStore = null,
+        \RPI\Framework\Cache\IData $dataStore = null,
         $characterEncoding = null
     ) {
         $GLOBALS["RPI_APP"] = $this;
@@ -98,14 +98,12 @@ class App
     
     /**
      * 
-     * @return \RPI\Framework\Cache\Data\IStore
+     * @return \RPI\Framework\Cache\IData
      */
     private function getDataStore()
     {
         if (!isset($this->dataStore)) {
-            $this->dataStore = new \RPI\Framework\Cache\Data\Store(
-                new \RPI\Framework\Cache\Data\Provider\Apc()
-            );
+            $this->dataStore = new \RPI\Framework\Cache\Data\Apc();
         }
         
         return $this->dataStore;

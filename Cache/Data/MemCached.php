@@ -1,6 +1,6 @@
 <?php
 
-namespace RPI\Framework\Cache\Data\Provider;
+namespace RPI\Framework\Cache\Data;
 
 /**
  * MemCached cache support wrapper
@@ -8,10 +8,10 @@ namespace RPI\Framework\Cache\Data\Provider;
  *
  * @author Matt Dunn
  */
-class MemCached implements \RPI\Framework\Cache\Data\IStore
+class MemCached implements \RPI\Framework\Cache\IData
 {
-    private static $isAvailable = null;
-    private static $memCached;
+    private $isAvailable = null;
+    private $memCached;
     
     public function __construct($host = "localhost", $port = 11211)
     {
@@ -21,14 +21,14 @@ class MemCached implements \RPI\Framework\Cache\Data\IStore
 
     private function getMemcahed()
     {
-        if (!isset(self::$memCached)) {
-            self::$memCached = new \Memcached();
-            //var_dump(self::$memCached->getServerList());
+        if (!isset($this->memCached)) {
+            $this->memCached = new \Memcached();
+            //var_dump($this->memCached->getServerList());
             //echo "[{$this->host}][{$this->port}]";
-            self::$memCached->addServer($this->host, $this->port);
+            $this->memCached->addServer($this->host, $this->port);
         }
 
-        return self::$memCached;
+        return $this->memCached;
     }
 
     /**
@@ -37,11 +37,11 @@ class MemCached implements \RPI\Framework\Cache\Data\IStore
      */
     public function isAvailable()
     {
-        if (self::$isAvailable === null) {
-            self::$isAvailable = extension_loaded("Memcached");
+        if ($this->isAvailable === null) {
+            $this->isAvailable = extension_loaded("Memcached");
         }
 
-        return self::$isAvailable;
+        return $this->isAvailable;
     }
 
     /**

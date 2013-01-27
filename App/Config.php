@@ -20,16 +20,16 @@ class Config
 
     /**
      *
-     * @var \RPI\Framework\Cache\Data\IStore 
+     * @var \RPI\Framework\Cache\IData 
      */
     private $store = null;
 
     /**
      * Initialise the application configuration
-     * @param \RPI\Framework\Cache\Data\IStore $store
+     * @param \RPI\Framework\Cache\IData $store
      * @param string  $file        Name of the config file
      */
-    public function __construct(\RPI\Framework\Cache\Data\IStore $store, $file)
+    public function __construct(\RPI\Framework\Cache\IData $store, $file)
     {
         $this->store = $store;
         

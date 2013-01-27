@@ -15,11 +15,11 @@ class View
     
     /**
      * 
-     * @param \RPI\Framework\Cache\Data\IStore $store
+     * @param \RPI\Framework\Cache\IData $store
      * @param type $configFile
      * @return \RPI\Framework\App\Router
      */
-    public function __construct(\RPI\Framework\Cache\Data\IStore $store, $configFile)
+    public function __construct(\RPI\Framework\Cache\IData $store, $configFile)
     {
         $this->store = $store;
         $this->file = $configFile;

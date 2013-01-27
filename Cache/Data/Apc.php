@@ -1,6 +1,6 @@
 <?php
 
-namespace RPI\Framework\Cache\Data\Provider;
+namespace RPI\Framework\Cache\Data;
 
 /**
  * APC cache support wrapper
@@ -8,9 +8,9 @@ namespace RPI\Framework\Cache\Data\Provider;
  *
  * @author Matt Dunn
  */
-class Apc implements \RPI\Framework\Cache\Data\IStore
+class Apc implements \RPI\Framework\Cache\IData
 {
-    private static $isAvailable = null;
+    private $isAvailable = null;
 
     /**
      * Check to see if APC is available
@@ -18,11 +18,11 @@ class Apc implements \RPI\Framework\Cache\Data\IStore
      */
     public function isAvailable()
     {
-        if (self::$isAvailable === null) {
-            self::$isAvailable = extension_loaded("APC");
+        if ($this->isAvailable === null) {
+            $this->isAvailable = extension_loaded("APC");
         }
 
-        return self::$isAvailable;
+        return $this->isAvailable;
     }
 
     /**
