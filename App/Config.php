@@ -55,7 +55,7 @@ class Config
             if (isset($basePath[$key])) {
                 $basePath = $basePath[$key];
             } else {
-                return ($default !== null ? $default : false);
+                return $default;
             }
         }
 
