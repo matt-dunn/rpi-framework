@@ -24,7 +24,9 @@ abstract class Front extends \RPI\Framework\Controller\HTML
             );
 
             if (!isset($frontStore)) {
-                throw new \Exception("RPI\Framework\Cache\Front\Provider\IProvider dependency not configured correctly");
+                throw new \Exception(
+                    "RPI\Framework\Cache\Front\Provider\IProvider dependency not configured correctly"
+                );
             }
 
             // TODO: store in data cache?
@@ -90,7 +92,9 @@ abstract class Front extends \RPI\Framework\Controller\HTML
             );
 
             if (!isset($frontStore)) {
-                throw new \Exception("RPI\Framework\Cache\Front\Provider\IProvider dependency not configured correctly");
+                throw new \Exception(
+                    "RPI\Framework\Cache\Front\Provider\IProvider dependency not configured correctly"
+                );
             }
 
             //if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
