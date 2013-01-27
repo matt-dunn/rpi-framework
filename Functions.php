@@ -14,7 +14,7 @@ function t($id, $args = null)
     );
     
     if (!isset($localisationService)) {
-        throw new \Exception("Localisation service dependency not configured correctly");
+        throw new \Exception("RPI\Framework\Services\Localisation\ILocalisation dependency not configured correctly");
     }
     
     return $localisationService->t($id, $args);

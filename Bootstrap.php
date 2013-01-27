@@ -37,6 +37,17 @@ require(__DIR__."/Autoload.php");
 \RPI\Framework\Event\Manager::addEventListener(
     "RPI\Framework\Events\ViewUpdated",
     function (\RPI\Framework\Event $event, $params) {
-        \RPI\Framework\Cache\Front\Store::clear();
+        $frontStore = \RPI\Framework\Helpers\Reflection::getDependency(
+            $GLOBALS["RPI_APP"],
+            null,
+            null,
+            "RPI\Framework\Cache\Front\Provider\IProvider"
+        );
+
+        if (!isset($frontStore)) {
+            throw new \Exception("RPI\Framework\Cache\Front\Provider\IProvider dependency not configured correctly");
+        }
+
+        $frontStore->clear();
     }
 );

@@ -64,6 +64,20 @@ abstract class Component extends \RPI\Framework\Controller\HTML
      */
     private $visible = true;
     
+    protected $frontStore = null;
+    
+    public function __construct(
+        $id,
+        \RPI\Framework\App $app,
+        \RPI\Framework\Cache\Front\Provider\IProvider $frontStore,
+        \RPI\Framework\Views\IView $viewRendition = null,
+        array $options = null
+    ) {
+        $this->frontStore = $frontStore;
+        
+        parent::__construct($id, $app, $options, $viewRendition);
+    }
+    
     protected function initController(array $options)
     {
         $this->viewType = "component".(isset($this->id) && $this->id !== "" ? "_".$this->id : "");
@@ -146,7 +160,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
             
             if ($this->getCacheKey() !== false && $this->isCacheable()) {
                 if (!$this->canRenderViewFromCache()
-                    || \RPI\Framework\Cache\Front\Store::fetch($this->getCacheKey(), null, $this->type) === false) {
+                    || $this->frontStore->fetch($this->getCacheKey(), null, $this->type) === false) {
                     $processChildren = true;
                 }
             } else {
@@ -231,7 +245,7 @@ EOT;
     {
         if ($this->visible) {
             if ($this->getCacheKey() !== false && !$this->canRenderViewFromCache() && $this->isCacheable()) {
-                $cacheContent = \RPI\Framework\Cache\Front\Store::fetchContent($this->getCacheKey(), null, $this->type);
+                $cacheContent = $this->frontStore->fetchContent($this->getCacheKey(), null, $this->type);
                 if ($cacheContent !== false) {
                     return $cacheContent;
                 }
@@ -240,7 +254,7 @@ EOT;
             $rendition = $this->getView()->render($this);
 
             if ($this->getCacheKey() !== false && !$this->canRenderViewFromCache() && $this->isCacheable()) {
-                \RPI\Framework\Cache\Front\Store::store($this->getCacheKey(), $rendition, $this->type);
+                $this->frontStore->store($this->getCacheKey(), $rendition, $this->type);
             }
 
             return $rendition;
@@ -253,10 +267,10 @@ EOT;
         $cacheFile = false;
         
         if ($this->isCacheable()) {
-            $cacheFile = \RPI\Framework\Cache\Front\Store::fetch($this->getCacheKey(), null, $this->type);
+            $cacheFile = $this->frontStore->fetch($this->getCacheKey(), null, $this->type);
             if ($cacheFile === false) {
                 $rendition = $this->renderView();
-                $cacheFile = \RPI\Framework\Cache\Front\Store::store($this->getCacheKey(), $rendition, $this->type);
+                $cacheFile = $this->frontStore->store($this->getCacheKey(), $rendition, $this->type);
             }
 
             if ($cacheFile === false) {

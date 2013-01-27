@@ -16,9 +16,20 @@ abstract class Front extends \RPI\Framework\Controller\HTML
     public static function getPageTitle()
     {
         if (!isset(self::$pageTitleDetails)) {
+            $frontStore = \RPI\Framework\Helpers\Reflection::getDependency(
+                $GLOBALS["RPI_APP"],
+                null,
+                null,
+                "RPI\Framework\Cache\Front\Provider\IProvider"
+            );
+
+            if (!isset($frontStore)) {
+                throw new \Exception("RPI\Framework\Cache\Front\Provider\IProvider dependency not configured correctly");
+            }
+
             // TODO: store in data cache?
             //if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
-                self::$pageTitleDetails = \RPI\Framework\Cache\Front\Store::fetchContent(
+                self::$pageTitleDetails = $frontStore->fetchContent(
                     \RPI\Framework\Helpers\HTTP::getUrlPath()."-title",
                     null,
                     "title"
@@ -71,8 +82,19 @@ abstract class Front extends \RPI\Framework\Controller\HTML
                 new \RPI\Framework\Events\PageTitleUpdated(array("title" => $title))
             );
             
+            $frontStore = \RPI\Framework\Helpers\Reflection::getDependency(
+                $GLOBALS["RPI_APP"],
+                null,
+                null,
+                "RPI\Framework\Cache\Front\Provider\IProvider"
+            );
+
+            if (!isset($frontStore)) {
+                throw new \Exception("RPI\Framework\Cache\Front\Provider\IProvider dependency not configured correctly");
+            }
+
             //if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
-                \RPI\Framework\Cache\Front\Store::store(
+                $frontStore->store(
                     \RPI\Framework\Helpers\HTTP::getUrlPath()."-title",
                     serialize(self::$pageTitleDetails),
                     "title"
