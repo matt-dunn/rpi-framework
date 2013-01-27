@@ -157,17 +157,19 @@ class View
         $viewRendition = null;
         if (isset($controllerData["viewRendition"])) {
             $viewRendition = \RPI\Framework\Helpers\Reflection::createObjectByTypeInfo(
-                $controllerData["viewRendition"]
+                $app,
+                array("options" => $controllerData["viewRendition"])
             );
         }
 
         $controller = \RPI\Framework\Helpers\Reflection::createObject(
+            $app,
             $controllerData["type"],
             array(
-                (isset($controllerData["id"]) && $controllerData["id"] !== "" ? $controllerData["id"] : null),
-                $app,
-                $componentOptions,
-                $viewRendition
+                "id" => (isset($controllerData["id"]) && $controllerData["id"] !== "" ? $controllerData["id"] : null),
+                "app" => $app,
+                "options" => $componentOptions,
+                "viewRendition" => $viewRendition
             )
         );
 

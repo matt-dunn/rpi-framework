@@ -32,19 +32,21 @@ abstract class Service implements \RPI\Framework\Services\IService
                 "config/services/".str_replace("\\", "_", $__CLASS__)."/class"
             );
             
+            $app = array("@" => array("name" => "app"), "object" => self::$app);
+            
             if (!isset($classInfo["value"])) {
-                $classInfo["value"] = array(self::$app);
+                $classInfo["value"] = array($app);
             } elseif (\RPI\Framework\Helpers\Utils::isAssoc($classInfo["value"])) {
-                $classInfo["value"] = array(self::$app, $classInfo["value"]);
+                $classInfo["value"] = array($app, $classInfo["value"]);
             } else {
                 $classInfo["value"] = array_merge(
-                    array(self::$app),
+                    array($app),
                     $classInfo["value"]
                 );
             }
             
             if ($classInfo !== false) {
-                return \RPI\Framework\Helpers\Reflection::createObjectByClassInfo($classInfo);
+                return \RPI\Framework\Helpers\Reflection::createObjectByClassInfo(self::$app, $classInfo);
             } else {
                 return false;
             }

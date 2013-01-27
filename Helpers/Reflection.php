@@ -30,11 +30,48 @@ class Reflection
         }
     }
 
-    public static function createObject($className, array $params = null, $type = null)
+    public static function createObject(\RPI\Framework\App $app, $className, array $params = null, $type = null)
     {
         $instance = new \ReflectionClass($className);
-        $o = $instance->getConstructor() && isset($params) ?
-            $instance->newInstanceArgs($params) : $instance->newInstance();
+        $constructorParams = null;
+
+        if (isset($params)) {
+            $constructor = $instance->getConstructor();
+            if (isset($constructor)) {
+                $constructorParams = array();
+                foreach ($constructor->getParameters() as $reflectionParameter) {
+                    if (isset($params[$reflectionParameter->getName()])) {
+                        $constructorParams[] = $params[$reflectionParameter->getName()];
+                    } else {
+                        // TODO: create...
+                        //echo "CREATE:($className)[{$reflectionParameter->getClass()->getName()}]\n";
+                        $class = $reflectionParameter->getClass();
+                        if (isset($class)) {
+                            if ($class->getName() == "RPI\Framework\App") {
+                                $constructorParams[] = $app;
+                            } else {
+                                $constructorParams[] = self::getDependency(
+                                    $app,
+                                    $className,
+                                    $reflectionParameter->getName(),
+                                    $class->getName()
+                                );
+                            }
+                        } else {
+                            $constructorParams[] = null;
+                        }
+                    }
+                }
+                
+                if (count($constructorParams) == 0) {
+                    $constructorParams = null;
+                }
+            }
+        }
+        
+        $o = $instance->getConstructor() && isset($constructorParams) ?
+            $instance->newInstanceArgs($constructorParams) : $instance->newInstance();
+        
         if ($type != null && !in_array($type, (class_implements($o)))) {
             \RPI\Framework\Exception\Handler::logMessage("Object does not implement $type");
 
@@ -43,8 +80,39 @@ class Reflection
 
         return $o;
     }
+    
+    private static function getDependency(\RPI\Framework\App $app, $className, $parameterName, $interfaceName)
+    {
+        if (!interface_exists($interfaceName)) {
+            throw new \Exception(
+                "Constructor for '$className' parameter '$parameterName' must be an interface. '$interfaceName' used"
+            );
+        }
+        
+        static $objects = array();
+        
+        if (isset($objects[$interfaceName])) {
+            return $objects[$interfaceName];
+        }
+        
+        $dependency = $app->getConfig()->getValue("config/dependencies/dependency");
+        if (isset($dependency["@"])) {
+            $dependency = array($dependency);
+        }
+        
+        foreach ($dependency as $dependencyInfo) {
+            if ($dependencyInfo["@"]["interface"] == $interfaceName) {
+                //echo "CREATE:[$interfaceName]\n<br/>";
+        
+                $objects[$interfaceName] = self::createObjectByClassInfo($app, $dependencyInfo["class"]);
+                return $objects[$interfaceName];
+            }
+        }
+        
+        return null;
+    }
 
-    public static function createObjectByTypeInfo($typeInfo)
+    public static function createObjectByTypeInfo(\RPI\Framework\App $app, $typeInfo)
     {
         $params = null;
         if (isset($typeInfo["param"])) {
@@ -55,9 +123,9 @@ class Reflection
             $params = array();
             foreach ($paramArgs as $param) {
                 if (isset($param["type"])) {
-                    $params[] = self::createObjectByTypeInfo($param);
+                    $params[] = self::createObjectByTypeInfo($app, $param);
                 } elseif (isset($param["param"])) {
-                    $params[] = self::createObjectByTypeInfo($param);
+                    $params[] = self::createObjectByTypeInfo($app, $param);
                 } elseif (isset($param["value"])) {
                     $params[] = $param["value"];
                 }
@@ -65,7 +133,7 @@ class Reflection
         }
 
         if (isset($typeInfo["type"])) {
-            return  self::createObject($typeInfo["type"], $params);
+            return  self::createObject($app, $typeInfo["type"], $params);
         } else {
             return $params;
         }
@@ -78,7 +146,7 @@ class Reflection
      * @param  string $type      Type of object to create
      * @return object
      */
-    public static function createObjectByClassInfo($classInfo, $type = null)
+    public static function createObjectByClassInfo(\RPI\Framework\App $app, $classInfo, $type = null)
     {
         if (isset($classInfo["@"]) && isset($classInfo["@"]["type"])) {
             $params = array();
@@ -88,33 +156,22 @@ class Reflection
                 if (!isset($values[0]) || !is_array($values)) {
                     $values = array($values);
                 }
-
-                foreach ($values as $name => $value) {
-                    if (is_object($value)) {
-                        array_push($params, $value);
-                    } elseif (isset($value["@"]) && isset($value["@"]["type"])) {
-                        array_push($params, self::createObjectByClassInfo($value));
+                
+                foreach ($values as $value) {
+                    $name = $value["@"]["name"];
+                    
+                    if (isset($value["object"])) {
+                        $params[$name] = $value["object"];
+                    } elseif (isset($value["class"])) {
+                        $params[$name] = self::createObjectByClassInfo($app, $value["class"]);
                     } else {
-                        $items = array();
-                        if (is_array($value)) {
-                            foreach ($value as $itemName => $item) {
-                                if (isset($item["@"]) && isset($item["@"]["type"])) {
-                                    array_push($params, self::createObjectByClassInfo($item));
-                                } else {
-                                    $items[$itemName] = $item;
-                                }
-                            }
-                        } else {
-                            array_push($params, $value);
-                        }
-                        if (count($items) > 0) {
-                            array_push($params, $items);
-                        }
+                        unset($value["@"]);
+                        $params[$name] = $value;
                     }
                 }
             }
 
-            return self::createObject($className, $params, $type);
+            return self::createObject($app, $className, $params, $type);
         } else {
             throw new \Exception("Invalid class information");
         }
