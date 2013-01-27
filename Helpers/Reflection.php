@@ -30,13 +30,22 @@ class Reflection
         }
     }
 
-    public static function createObject(\RPI\Framework\App $app, $className, array $params = null, $type = null)
+    /**
+     * 
+     * @param \RPI\Framework\App $app
+     * @param type $className
+     * @param array $params
+     * @param string $type
+     * @param boolean $matchParams
+     * @return boolean
+     */
+    public static function createObject(\RPI\Framework\App $app, $className, array $params = null, $type = null, $matchParams = true)
     {
         $instance = new \ReflectionClass($className);
         $constructorParams = null;
 
         if (isset($params)) {
-            if (\RPI\Framework\Helpers\Utils::isAssoc($params)) {
+            if ($matchParams) {
                 $constructor = $instance->getConstructor();
                 if (isset($constructor)) {
                     $constructorParams = array();
@@ -145,7 +154,7 @@ class Reflection
         }
 
         if (isset($typeInfo["type"])) {
-            return  self::createObject($app, $typeInfo["type"], $params);
+            return  self::createObject($app, $typeInfo["type"], $params, null, false);
         } else {
             return $params;
         }
