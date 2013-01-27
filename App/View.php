@@ -158,10 +158,10 @@ class View
         if (isset($controllerData["viewRendition"])) {
             $viewRendition = \RPI\Framework\Helpers\Reflection::createObjectByTypeInfo(
                 $app,
-                array("options" => $controllerData["viewRendition"])
+                $controllerData["viewRendition"]
             );
         }
-
+        
         $controller = \RPI\Framework\Helpers\Reflection::createObject(
             $app,
             $controllerData["type"],
