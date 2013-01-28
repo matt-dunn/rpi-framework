@@ -119,7 +119,7 @@ class Config
             } else {
                 throw new \Exception("Unable to load config file '$file'");
             }
-        } catch(\Exception $ex) {
+        } catch (\Exception $ex) {
             if (isset($seg)) {
                 \RPI\Framework\Helpers\Locking::release($seg);
             }
@@ -137,14 +137,16 @@ class Config
                 
                 $handlerInstance = new $handler();
                 if (!$handlerInstance instanceof \RPI\Framework\App\Config\IHandler) {
-                    throw new \Exception("Handler '$handler' must implement interface 'RPI\Framework\App\Config\IHandler'.");
+                    throw new \Exception(
+                        "Handler '$handler' must implement interface 'RPI\Framework\App\Config\IHandler'."
+                    );
                 }
                 
                 $processedConfig = $handlerInstance->process($configItem);
                 if (isset($processedConfig)) {
                     $configData[$name] = $processedConfig;
                 }
-            } else if (is_array($configItem)) {
+            } elseif (is_array($configItem)) {
                 $configData[$name] = self::processConfig($configItem);
             } else {
                 $configData[$name] = $configItem;
