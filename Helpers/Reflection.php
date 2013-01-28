@@ -43,46 +43,41 @@ class Reflection
         \RPI\Framework\App $app,
         $className,
         array $params = null,
-        $type = null,
-        $matchParams = true
+        $type = null
     ) {
         $instance = new \ReflectionClass($className);
         $constructorParams = null;
 
         if (isset($params)) {
-            if ($matchParams) {
-                $constructor = $instance->getConstructor();
-                if (isset($constructor)) {
-                    $constructorParams = array();
-                    foreach ($constructor->getParameters() as $reflectionParameter) {
-                        if (isset($params[$reflectionParameter->getName()])) {
-                            $constructorParams[] = $params[$reflectionParameter->getName()];
-                        } else {
-                            //echo "CREATE:($className)[{$reflectionParameter->getClass()->getName()}]\n";
-                            $class = $reflectionParameter->getClass();
-                            if (isset($class)) {
-                                if ($class->getName() == "RPI\Framework\App") {
-                                    $constructorParams[] = $app;
-                                } else {
-                                    $constructorParams[] = self::getDependency(
-                                        $app,
-                                        $className,
-                                        $reflectionParameter->getName(),
-                                        $class->getName()
-                                    );
-                                }
+            $constructor = $instance->getConstructor();
+            if (isset($constructor)) {
+                $constructorParams = array();
+                foreach ($constructor->getParameters() as $reflectionParameter) {
+                    if (isset($params[$reflectionParameter->getName()])) {
+                        $constructorParams[] = $params[$reflectionParameter->getName()];
+                    } else {
+                        //echo "CREATE:($className)[{$reflectionParameter->getClass()->getName()}]\n";
+                        $class = $reflectionParameter->getClass();
+                        if (isset($class)) {
+                            if ($class->getName() == "RPI\Framework\App") {
+                                $constructorParams[] = $app;
                             } else {
-                                $constructorParams[] = null;
+                                $constructorParams[] = self::getDependency(
+                                    $app,
+                                    $className,
+                                    $reflectionParameter->getName(),
+                                    $class->getName()
+                                );
                             }
+                        } else {
+                            $constructorParams[] = null;
                         }
                     }
-
-                    if (count($constructorParams) == 0) {
-                        $constructorParams = null;
-                    }
                 }
-            } else {
-                $constructorParams = $params;
+
+                if (count($constructorParams) == 0) {
+                    $constructorParams = null;
+                }
             }
         }
         
@@ -149,17 +144,15 @@ class Reflection
             $params = array();
             foreach ($paramArgs as $param) {
                 if (isset($param["type"])) {
-                    $params[] = self::createObjectByTypeInfo($app, $param);
-                } elseif (isset($param["param"])) {
-                    $params[] = self::createObjectByTypeInfo($app, $param);
+                    $params[$param["name"]] = self::createObjectByTypeInfo($app, $param);
                 } elseif (isset($param["value"])) {
-                    $params[] = $param["value"];
+                    $params[$param["name"]] = $param["value"];
                 }
             }
         }
 
         if (isset($typeInfo["type"])) {
-            return  self::createObject($app, $typeInfo["type"], $params, null, false);
+            return  self::createObject($app, $typeInfo["type"], $params);
         } else {
             return $params;
         }
@@ -172,7 +165,7 @@ class Reflection
      * @param  string $type      Type of object to create
      * @return object
      */
-    public static function createObjectByClassInfo(\RPI\Framework\App $app, $classInfo, $type = null)
+    private static function createObjectByClassInfo(\RPI\Framework\App $app, $classInfo, $type = null)
     {
         if (isset($classInfo["@"]) && isset($classInfo["@"]["type"])) {
             $params = array();

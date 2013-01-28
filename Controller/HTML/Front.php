@@ -11,6 +11,29 @@ abstract class Front extends \RPI\Framework\Controller\HTML
     private static $pageTitleDetails = null;
     
     /**
+     * @return \RPI\Framework\Model\User
+     */
+    public static function getAuthenticatedUser()
+    {
+        $authenticationService = \RPI\Framework\Helpers\Reflection::getDependency(
+            $GLOBALS["RPI_APP"],
+            null,
+            null,
+            "RPI\Framework\Services\Authentication\IAuthentication"
+        );
+
+        if (!isset($authenticationService)) {
+            throw new \Exception(
+                "RPI\Framework\Services\Authentication\IAuthentication dependency not configured correctly"
+            );
+        }
+        
+        $authenticatedUser = $authenticationService->getAuthenticatedUser();
+        
+        return $authenticatedUser;
+    }
+    
+    /**
      * Return the page title
      */
     public static function getPageTitle()

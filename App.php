@@ -84,8 +84,6 @@ class App
     ) {
         $GLOBALS["RPI_APP"] = $this;
         
-        \RPI\Framework\Services\Service::init($this);
-        
         $this->webConfigFile = $webConfigFile;
         $this->viewConfigFile = $viewConfigFile;
         $this->dataStore = $dataStore;
