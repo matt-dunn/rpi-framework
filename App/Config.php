@@ -140,7 +140,10 @@ class Config
                     throw new \Exception("Handler '$handler' must implement interface 'RPI\Framework\App\Config\IHandler'.");
                 }
                 
-                $configData[$name] = $handlerInstance->process($configItem);
+                $processedConfig = $handlerInstance->process($configItem);
+                if (isset($processedConfig)) {
+                    $configData[$name] = $processedConfig;
+                }
             } else if (is_array($configItem)) {
                 $configData[$name] = self::processConfig($configItem);
             } else {
