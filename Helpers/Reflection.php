@@ -85,9 +85,7 @@ class Reflection
             $instance->newInstanceArgs($constructorParams) : $instance->newInstance();
         
         if ($type != null && !in_array($type, (class_implements($o)))) {
-            \RPI\Framework\Exception\Handler::logMessage("Object does not implement $type");
-
-            return false;
+            throw new \InvalidArgumentException("Object '$className' does not implement '$type'");
         }
 
         return $o;
@@ -114,20 +112,10 @@ class Reflection
             return $objects[$interfaceName];
         }
         
-        $dependency = $app->getConfig()->getValue("config/dependencies/dependency");
-        if (isset($dependency)) {
-            if (isset($dependency["@"])) {
-                $dependency = array($dependency);
-            }
-
-            foreach ($dependency as $dependencyInfo) {
-                if ($dependencyInfo["@"]["interface"] == $interfaceName) {
-                    //echo "CREATE:[$interfaceName ($className)]\n<br/>";
-
-                    $objects[$interfaceName] = self::createObjectByClassInfo($app, $dependencyInfo["class"]);
-                    return $objects[$interfaceName];
-                }
-            }
+        $dependencies = $app->getConfig()->getValue("config/dependencies");
+        if (isset($dependencies) && isset($dependencies[$interfaceName])) {
+            $objects[$interfaceName] = self::createObjectByClassInfo($app, $dependencies[$interfaceName]);
+            return $objects[$interfaceName];
         }
         
         return null;

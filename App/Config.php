@@ -67,43 +67,90 @@ class Config
     */
     private function init($file)
     {
-        if (file_exists($file)) {
-            $config = $this->store->fetch("PHP_RPI_CONFIG-".$file);
-            if ($config === false) {
-                $seg = \RPI\Framework\Helpers\Locking::lock(__CLASS__);
+        $seg = null;
+        
+        try {
+            if (file_exists($file)) {
+                $config = $this->store->fetch("PHP_RPI_CONFIG-".$file);
+                if ($config === false) {
+                    $domDataViews = new \DOMDocument();
+                    $domDataViews->load($file);
+                    $schemaFile = __DIR__."/../../Schemas/Conf/App.2.0.0.xsd";
+                    if (!$domDataViews->schemaValidate($schemaFile)) {
+                        throw new \Exception(
+                            __CLASS__."::parseViewConfig - Invalid config file '".
+                            $file."'. Check against schema '".$schemaFile."'"
+                        );
+                    }
 
-                require_once(__DIR__."/../../Vendor/PEAR/Config.php");
+                    $seg = \RPI\Framework\Helpers\Locking::lock(__CLASS__);
 
-                $c = new \Config();
-                $root = $c->parseConfig(
-                    $file,
-                    "Xml",
-                    array(
-                        "encoding" => "UTF-8"
-                    )
-                );
-                if ($root instanceof \PEAR_Error) {
-                    throw new \Exception($root->getMessage());
-                }
-                $config = self::parseTypes($root->toArray());
-                $this->store->store("PHP_RPI_CONFIG-".$file, $config, $file);
+                    require_once(__DIR__."/../../Vendor/PEAR/Config.php");
 
-                \RPI\Framework\Helpers\Locking::release($seg);
-
-                if ($this->store->isAvailable()) {
-                    \RPI\Framework\Exception\Handler::logMessage(
-                        __CLASS__."::".__METHOD__." - Config read from '".$file."'",
-                        LOG_NOTICE
+                    $c = new \Config();
+                    $root = $c->parseConfig(
+                        $file,
+                        "Xml",
+                        array(
+                            "encoding" => "UTF-8"
+                        )
                     );
-                }
-            }
+                    if ($root instanceof \PEAR_Error) {
+                        throw new \Exception($root->getMessage());
+                    }
+                    
+                    $config = self::processConfig(
+                        self::parseTypes($root->toArray())
+                    );
 
-            return $config;
-        } else {
-            throw new \Exception("Unable to load config file '$file'");
+                    $this->store->store("PHP_RPI_CONFIG-".$file, $config, $file);
+
+                    \RPI\Framework\Helpers\Locking::release($seg);
+
+                    if ($this->store->isAvailable()) {
+                        \RPI\Framework\Exception\Handler::logMessage(
+                            __CLASS__."::".__METHOD__." - Config read from '".$file."'",
+                            LOG_NOTICE
+                        );
+                    }
+                }
+
+                return $config;
+            } else {
+                throw new \Exception("Unable to load config file '$file'");
+            }
+        } catch(\Exception $ex) {
+            if (isset($seg)) {
+                \RPI\Framework\Helpers\Locking::release($seg);
+            }
+            
+            throw $ex;
         }
     }
     
+    private static function processConfig(array $config)
+    {
+        $configData = array();
+        foreach ($config as $name => $configItem) {
+            if (isset($configItem["@"]) && isset($configItem["@"]["handler"])) {
+                $handler = $configItem["@"]["handler"];
+                
+                $handlerInstance = new $handler();
+                if (!$handlerInstance instanceof \RPI\Framework\App\Config\IHandler) {
+                    throw new \Exception("Handler '$handler' must implement interface 'RPI\Framework\App\Config\IHandler'.");
+                }
+                
+                $configData[$name] = $handlerInstance->process($configItem);
+            } else if (is_array($configItem)) {
+                $configData[$name] = self::processConfig($configItem);
+            } else {
+                $configData[$name] = $configItem;
+            }
+        }
+        
+        return $configData;
+    }
+
     private static function parseTypes($config)
     {
         if (is_array($config)) {
