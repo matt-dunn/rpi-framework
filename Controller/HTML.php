@@ -2,6 +2,11 @@
 
 namespace RPI\Framework\Controller;
 
+/**
+ * @property-read array $messages Controller message collection
+ * @property-read \RPI\Framework\Views\IView $view Controller view
+ * @property-read string $cacheKey Controller cache key
+ */
 abstract class HTML extends \RPI\Framework\Controller
 {
     /**

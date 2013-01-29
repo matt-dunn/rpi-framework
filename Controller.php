@@ -5,6 +5,15 @@ namespace RPI\Framework;
 /**
  * Base class for all controllers
  * @package RPI\Framework
+ * 
+ * @property-read string $safeTypeName Object type as a 'safe' value
+ * @property-read \RPI\Framework\Controller\Options $options Controller options
+ * @property-read string $id Controller ID
+ * @property-read string $type Controller type
+ * @property-read \RPI\Framework\App $app
+ * @property-read \RPI\Framework\App\Config $config
+ * @property-read \RPI\Framework\Controller $parent Parent controller
+ * @property-read \RPI\Framework\Controller $rootController Top level controller
  */
 abstract class Controller extends \RPI\Framework\Helpers\Object
 {
@@ -40,8 +49,16 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
     
     private $controllerActionProcessed = false;
     
+    /**
+     *
+     * @var \RPI\Framework\Controller
+     */
     private $rootController = false;
 
+    /**
+     *
+     * @var \RPI\Framework\Controller
+     */
     private $parentController = null;
 
     
