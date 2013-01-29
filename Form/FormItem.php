@@ -8,6 +8,10 @@ abstract class FormItem
     private $normalizeString;
     private $hasRunValidators = false;
     
+    /**
+     *
+     * @var \RPI\Framework\Form
+     */
     protected $form;
     /**
      * Set to true if all the defined validators have been run. Validators may

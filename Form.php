@@ -4,7 +4,6 @@ namespace RPI\Framework;
 
 abstract class Form extends \RPI\Framework\Component
 {
-    public $id = "";
     public $pageName;
     public $name;
     public $action;
@@ -81,6 +80,8 @@ abstract class Form extends \RPI\Framework\Component
                 )
                 ? $this->forms[$this->postBackFormName] : null
             );
+        } else {
+            return parent::__get($key);
         }
     }
 
@@ -89,7 +90,7 @@ abstract class Form extends \RPI\Framework\Component
         // Ensure all properties are set when serializing the object
         $this->isValidPostBack = $this->__get("isValidPostBack");
 
-        return array();
+        return parent::__sleep();
     }
 
     public function addFormItem(\RPI\Framework\Form\FormItem $formItem)
