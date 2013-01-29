@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * RPI Framework
+ * 
+ * (c) Matt Dunn <matt@red-pixel.co.uk>
+ */
+
 namespace RPI\Framework;
 
 /**
@@ -170,7 +176,11 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
     
     /**
      * Define the available options for a controller
+     * 
+     * @see \RPI\Framework\Controller\Options::__construct()
+     * 
      * @param array $options
+     * 
      * @return \RPI\Framework\Controller\Options
      */
     protected function getControllerOptions(array $options)

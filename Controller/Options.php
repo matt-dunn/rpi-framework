@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * RPI Framework
+ * 
+ * (c) Matt Dunn <matt@red-pixel.co.uk>
+ */
+
 namespace RPI\Framework\Controller;
 
 /**
@@ -8,10 +14,22 @@ namespace RPI\Framework\Controller;
  */
 class Options
 {
+    /**
+     * Collection of available options
+     * 
+     * @var array 
+     */
     private $availableOptions;
+    
+    /**
+     * Collection of defined options
+     * 
+     * @var array
+     */
     private $options;
     
     /**
+     * Create options
      * 
     * @param array $availableOptions
     *            array(
@@ -33,8 +51,10 @@ class Options
     }
     
     /**
+     * Add an option
      * 
      * @param \RPI\Framework\Controller\Options $options
+     * 
      * @return \RPI\Framework\Controller\Options
      */
     public function add(\RPI\Framework\Controller\Options $options)
@@ -47,6 +67,7 @@ class Options
     
     /**
      * Add an associative array of options
+     * 
      * @param array $options                Associative array of options
      * @param type $addOnlyValidOptions     If true, add only valid options from $availableOptions
      *                                      to the controller options
@@ -73,7 +94,10 @@ class Options
     }
     
     /**
-     * Validate the options against the $availableOptions
+     * Validate the options against the available options
+     * 
+     * @see $availableOptions
+     * 
      * @throws \InvalidArgumentException
      */
     public function validate()
@@ -119,6 +143,13 @@ class Options
         }
     }
     
+    /**
+     * Get a collection of options
+     * 
+     * @param string $optionType
+     * 
+     * @return array
+     */
     public function get($optionType = null)
     {
         $options = array();
@@ -138,6 +169,15 @@ class Options
         return $options;
     }
 
+    /**
+     * Get an options
+     * 
+     * @param string $name
+     * 
+     * @return mixed
+     * 
+     * @throws \InvalidArgumentException
+     */
     public function __get($name)
     {
         if (isset($this->availableOptions[$name])) {
@@ -155,6 +195,9 @@ class Options
         }
     }
     
+    /**
+     * @ignore
+     */
     public function __sleep()
     {
         return array(
@@ -162,6 +205,9 @@ class Options
         );
     }
     
+    /**
+     * @ignore
+     */
     public function __invoke()
     {
         $options = array();
@@ -171,6 +217,9 @@ class Options
         return $options;
     }
     
+    /**
+     * @ignore
+     */
     public function __isset($name)
     {
         return isset($this->options[$name]);

@@ -1,8 +1,16 @@
 <?php
 
+/**
+ * RPI Framework
+ * 
+ * (c) Matt Dunn <matt@red-pixel.co.uk>
+ */
+
 namespace RPI\Framework\Controller;
 
 /**
+ * Base class for all controllers dealing with HTML
+ * 
  * @property-read array $messages Controller message collection
  * @property-read \RPI\Framework\Views\IView $view Controller view
  * @property-read string $cacheKey Controller cache key
@@ -52,6 +60,11 @@ abstract class HTML extends \RPI\Framework\Controller
     
     abstract protected function isCacheable();
 
+    /**
+     * Get the controller model
+     * 
+     * @return mixed
+     */
     abstract protected function getModel();
     
     abstract public function prerender();
@@ -61,6 +74,7 @@ abstract class HTML extends \RPI\Framework\Controller
     abstract public function renderView();
 
     /**
+     * Get the view object used to render the controller
      * 
      * @return \RPI\Framework\Views\IView
      */

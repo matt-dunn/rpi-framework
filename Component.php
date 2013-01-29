@@ -1,10 +1,15 @@
 <?php
 
+/**
+ * RPI Framework
+ * 
+ * (c) Matt Dunn <matt@red-pixel.co.uk>
+ */
+
 namespace RPI\Framework;
 
 /**
  * Base class for all components
- * @package RPI\Framework
  */
 abstract class Component extends \RPI\Framework\Controller\HTML
 {
@@ -83,6 +88,9 @@ abstract class Component extends \RPI\Framework\Controller\HTML
         }
     }
     
+    /**
+     * {@inheritdoc}
+     */
     protected function getControllerOptions(array $options)
     {
         return parent::getControllerOptions($options)->add(
