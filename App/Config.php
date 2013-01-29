@@ -144,7 +144,16 @@ class Config
                 
                 $processedConfig = $handlerInstance->process($configItem);
                 if (isset($processedConfig)) {
-                    $configData[$name] = $processedConfig;
+                    if (isset($processedConfig["name"]) && isset($processedConfig["value"])) {
+                        if (isset($configData[$processedConfig["name"]])) {
+                            throw new \Exception(
+                                "Config item '{$processedConfig["name"]}' already exists. Check your config definition."
+                            );
+                        }
+                        $configData[$processedConfig["name"]] = $processedConfig["value"];
+                    } else {
+                        $configData[$name] = $processedConfig;
+                    }
                 }
             } elseif (is_array($configItem)) {
                 $configData[$name] = self::processConfig($configItem);
