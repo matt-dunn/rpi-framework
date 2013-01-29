@@ -189,34 +189,52 @@ class Dom
                 );
                 $tagOutput = false;
             } elseif ($obj instanceof \DOMDocument) {
-                $xml .= '<'.$elementName.' _class="'.get_class($obj).'" _type="'.gettype($obj).'">'.
-                        $obj->saveXML($obj->documentElement);
-                $tagOutput = true;
+                $xmlContent = trim($obj->saveXML($obj->documentElement));
+                // TODO: test this with different domdocument settings...
+                //       the "<?xml" test is checking for an empty document as it returns the declaration
+                //       if no document xml has been set...
+                if ($xmlContent != "" && substr($xmlContent, 0, 5) != "<?xml") {
+                    $xml .= '<'.$elementName.' _class="'.get_class($obj).'" _type="'.gettype($obj).'">'.$xmlContent;
+                    $tagOutput = true;
+                }
             } else {
                 $xml .= '<'.$elementName.' _class="'.get_class($obj).'" _type="'.gettype($obj).'">'.$endLine;
                 $tagOutput = true;
-                $reflect = new \ReflectionObject($obj);
-                $propertyType = \ReflectionProperty::IS_PUBLIC;
+                
                 if (isset($propertyList)) {
-                    $propertyType =
-                        \ReflectionProperty::IS_PUBLIC
-                        | \ReflectionProperty::IS_PRIVATE
-                        | \ReflectionProperty::IS_PROTECTED;
-                }
-                foreach ($reflect->getProperties($propertyType) as $prop) {
-                    $name = $prop->getName();
-                    if (!isset($propertyList) || in_array($name, $propertyList)) {
+                    foreach ($propertyList as $name) {
+                        $value = $obj->$name;
+                        if (isset($value)) {
+                            self::simpleSerialize(
+                                $name,
+                                $defaultElementName,
+                                $value,
+                                $xml,
+                                $endLine,
+                                $namespace,
+                                $elementName
+                            );
+                        }
+                    }
+                } else {
+                    $reflect = new \ReflectionObject($obj);
+                    $propertyType = \ReflectionProperty::IS_PUBLIC;
+                    
+                    foreach ($reflect->getProperties($propertyType) as $prop) {
+                        $name = $prop->getName();
                         $prop->setAccessible(true);
                         $value = $prop->getValue($obj);
-                        self::simpleSerialize(
-                            $name,
-                            $defaultElementName,
-                            $value,
-                            $xml,
-                            $endLine,
-                            $namespace,
-                            $elementName
-                        );
+                        if (isset($value)) {
+                            self::simpleSerialize(
+                                $name,
+                                $defaultElementName,
+                                $value,
+                                $xml,
+                                $endLine,
+                                $namespace,
+                                $elementName
+                            );
+                        }
                     }
                 }
             }
