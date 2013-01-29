@@ -13,6 +13,8 @@
 
 <xsl:import href="../../../View/Xsl/Document/Imports.xsl"/>
 
+<xsl:import href="../../../Controller/Message/View/Xsl/View.xsl"/>
+
 <!-- Default component template for missing views -->
 <xsl:template match="component" mode="component">
     <div style="border:5px solid #aa0000;background-color:red;color:#fff;padding:0.5em">

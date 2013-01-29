@@ -47,12 +47,6 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     public $order = null;
     
     /**
-     * Options set on the page controller
-     * @var array
-     */
-    public $controllerOptions = null;
-    
-    /**
      * Web service details
      * @var string
      */
@@ -133,28 +127,12 @@ abstract class Component extends \RPI\Framework\Controller\HTML
         return $this->visible;
     }
     
-    public function __sleep()
-    {
-        $this->canRenderViewFromCache = $this->canRenderViewFromCache();
-        $this->cacheEnabled = ($this->getCacheKey() !== false);
-
-        $serializeProperties = get_object_vars($this);
-        unset($serializeProperties["components"]);
-        unset($serializeProperties["visible"]);
-        return array_keys($serializeProperties);
-    }
-    
     public function process()
     {
         if ($this->visible) {
             $this->processAction();
             
             $this->model = $this->getModel();
-
-            $controller = $this->getRootController();
-            if (isset($controller) && isset($controller->options)) {
-                $this->controllerOptions = $controller->options;
-            }
 
             $processChildren = false;
             

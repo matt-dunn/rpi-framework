@@ -74,6 +74,10 @@
             </ul>
         </xsl:if>
 
+        <xsl:apply-templates select="messages" mode="component">
+            <xsl:with-param name="headingLevel" select="number($_headingLevel)"/>
+        </xsl:apply-templates>
+
         <xsl:apply-templates select="." mode="component">
             <xsl:with-param name="headingLevel" select="number($_headingLevel)"/>
         </xsl:apply-templates>

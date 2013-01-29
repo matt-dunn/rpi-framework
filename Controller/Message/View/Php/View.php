@@ -32,16 +32,17 @@ EOT;
         $rendition = "";
 
         if (isset($messages[$type]) && count($messages[$type]) > 0) {
-            foreach ($messages[$type] as $title => $messageGroup) {
+            foreach ($messages[$type] as $messageGroup) {
                 $rendition .= <<<EOT
                     <div class="{$type}">
 EOT;
+                $title = $messageGroup["group"]["title"];
                 if (isset($title) && $title != "") {
                     $rendition .= <<<EOT
-                            <h2 class="h">{$title}</h2>
+                        <h2 class="h">{$title}</h2>
 EOT;
                 }
-                $rendition .= $this->renderHeaderMessageTypeDetails($messageGroup);
+                $rendition .= $this->renderHeaderMessageTypeDetails($messageGroup["group"]["messages"]);
                 $rendition .= <<<EOT
                     </div>
 EOT;

@@ -107,10 +107,13 @@ abstract class HTML extends \RPI\Framework\Controller
     
     public function __sleep()
     {
-        $serializeProperties = get_object_vars($this);
-        unset($serializeProperties["view"]);
-
-        return array_keys($serializeProperties);
+        $properties = parent::__sleep();
+        
+        unset ($properties["components"]);
+        unset ($properties["view"]);
+        unset ($properties["cacheKey"]);
+        
+        return $properties;
     }
     
     /**
@@ -209,11 +212,26 @@ abstract class HTML extends \RPI\Framework\Controller
             $this->messages[$type] = array();
         }
 
-        if (!isset($this->messages[$type][$title])) {
-            $this->messages[$type][$title] = array();
+        $foundMessage = false;
+        foreach ($this->messages[$type] as $index => $messageType) {
+            if ($messageType["group"]["title"] == $title) {
+                $this->messages[$type][$index]["group"]["messages"][]
+                    = new \RPI\Framework\Controller\Message($message, $type, $id);
+                $foundMessage = true;
+                break;
+            }
         }
-
-        $this->messages[$type][$title][] = new \RPI\Framework\Controller\Message($message, $type, $id);
+        
+        if (!$foundMessage) {
+            $messageType =
+                array("group" =>
+                    array(
+                        "title" => $title,
+                        "messages" => array(new \RPI\Framework\Controller\Message($message, $type, $id))
+                    )
+                );
+            $this->messages[$type][] = $messageType;
+        }
     }
 
     public function addControllerMessage($message, $type = null, $id = null, $title = null)

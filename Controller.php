@@ -6,31 +6,31 @@ namespace RPI\Framework;
  * Base class for all controllers
  * @package RPI\Framework
  */
-abstract class Controller
+abstract class Controller extends \RPI\Framework\Helpers\Object
 {
     /**
      *
      * @var string
      */
-    public $safeTypeName;
+    private $safeTypeName;
 
     /**
      *
      * @var \RPI\Framework\Controller\Options 
      */
-    public $options = null;
+    private $options = null;
 
     /**
      *
      * @var string
      */
-    public $id = null;
+    private $id = null;
     
     /**
      *
      * @var string
      */
-    protected $type;
+    private $type;
     
     /**
      *
@@ -82,6 +82,33 @@ abstract class Controller
         if ($this->initController($options) !== false) {
             $this->init();
         }
+    }
+    
+    public function __sleep()
+    {
+        $properties = parent::__sleep();
+        
+        unset ($properties["app"]);
+        unset ($properties["rootController"]);
+        unset ($properties["parent"]);
+        unset ($properties["config"]);
+        
+        return $properties;
+    }
+    
+    public function getOptions()
+    {
+        return $this->options;
+    }
+    
+    public function getId()
+    {
+        return $this->id;
+    }
+    
+    public function getSafeTypeName()
+    {
+        return $this->safeTypeName;
     }
     
     /**

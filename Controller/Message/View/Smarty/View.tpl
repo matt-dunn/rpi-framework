@@ -1,11 +1,12 @@
 {function name=renderHeaderMessageType messages=null type=null}
     {if (isset($messages[$type]) && count($messages[$type]) > 0)}
-        {foreach from=$messages[$type] key=title item=messageGroup}
+        {foreach from=$messages[$type] item=messageGroup}
             <div class="{$type}">
+                {assign var=title value=$messageGroup["group"]["title"]}
                 {if ($title|trim != "")}
                     <h2 class="h">{$title}</h2>
                     <ul>
-                        {foreach from=$messageGroup item=message}
+                        {foreach from=$messageGroup["group"]["messages"] item=message}
                             {if isset($message->id)}
                                 <li>
                                     <a href="#{$message->id}">{$message->message}</a>

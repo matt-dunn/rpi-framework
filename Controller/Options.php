@@ -166,15 +166,7 @@ class Options
     {
         $options = array();
         foreach ($this->options as $name => $value) {
-            $options[$name] = array(
-                "value" => $value,
-                "optionType" =>
-                    (
-                        isset($this->availableOptions[$name]["optionType"])
-                            ? $this->availableOptions[$name]["optionType"]
-                            : null
-                    )
-            );
+            $options[$name] = $value;
         }
         return $options;
     }
