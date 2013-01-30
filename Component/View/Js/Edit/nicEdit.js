@@ -1355,6 +1355,15 @@ var nicUploadButton = nicEditorAdvancedButton.extend({
     xhr.onload = function() {
       try {
         var res = JSON.parse(xhr.responseText);
+        if(res.events) {
+            for(var i = 0; i < res.events.length; i++) {
+                var event = res.events[i];
+                jQuery.event.trigger(
+                    event.event.type,
+                    event.params
+                );
+            }
+        }
         this.onUploaded(res.result.upload);
       } catch(e) {
         var res = JSON.parse(xhr.responseText);
