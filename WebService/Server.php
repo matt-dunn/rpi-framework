@@ -71,8 +71,6 @@ abstract class Server extends \RPI\Framework\Controller
 
     public function process()
     {
-        $this->processAction();
-        
         $contentType = $this->getApp()->getRequest()->getContentType();
         $format = $contentType["contenttype"]["subtype"];
 
@@ -89,6 +87,14 @@ abstract class Server extends \RPI\Framework\Controller
 
                 $this->context = new Context($request->timestamp, $request->method->format);
 
+                $action = $this->getAction();
+                if (!isset($request->method->name) && isset($action)) {
+                    $request->method->name = $action->method;
+                    $request->method->params = $action->params;
+                } else {
+                    $this->processAction();
+                }
+        
                 $this->response = $this->callMethod($request);
                 
                 $this->response->executionTime = (microtime(true) - $startTime) * 1000;
@@ -183,10 +189,11 @@ abstract class Server extends \RPI\Framework\Controller
      */
     private function callMethod(Request $request)
     {
-        if (isset($request->method)
-            && $request->method->name
-            && method_exists($this, $request->method->name)) {
-            
+        if (!isset($request->method)) {
+            $request->method = "defaultMethod";
+        }
+        
+        if (method_exists($this, $request->method->name)) {
             $responseMethod = null;
             
             try {

@@ -28,14 +28,13 @@ class RequestMethod
     /**
      *
      * @param string $name   Method name
+     * @param string $format Request format. Defaults to 'json'.
      * @param array  $params Method parameters
      */
     public function __construct($name = null, $format = null, array $params = null)
     {
         if (isset($name)) {
             $this->name = $name;
-        } else {
-            $this->name = "defaultMethod";
         }
         
         if (isset($format)) {
