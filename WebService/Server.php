@@ -259,7 +259,7 @@ abstract class Server extends \RPI\Framework\Controller
     private function getRequest($content, $mimetype)
     {
         $className = "\\RPI\Framework\\WebService\\Handler\\".\RPI\Framework\Helpers\Utils::toCamelCase(
-            strtolower(str_replace("/", "_", $mimetype))
+            strtolower(str_replace(array("/", "-"), "_", $mimetype))
         );
 
         if (class_exists($className)) {
