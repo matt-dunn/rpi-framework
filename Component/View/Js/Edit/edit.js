@@ -9,12 +9,6 @@
  * @author Matt Dunn
  */
 
-//TODO:
-//      *1) auto save
-//      2) integrate rich editor (tinymce?, https://github.com/balupton/html5edit?)
-//      *3) focus element
-
-
 RPI._("component").edit = (function() {
     var _autoSaveEnabled = true;
     var _autoSaveTimeout = 10000;
@@ -39,165 +33,24 @@ RPI._("component").edit = (function() {
                 
                 switch(target.data("option")) {
                     case "edit":
-                        beforeLoadComponent(component, target.data("option"));
-                        
-                        RPI.webService.call(getServiceUrl(component), "edit", {"id" : component.data("id")}, 
-                            function(data, response, sourceData) {
-                                loadComponent(component, data.xhtml, target.data("option"));
-                                    
-                                var richEditElements = jQuery(document).find("[data-id='"+ component.data("id") + "'] .editable[data-rich-edit=true]");
-                                if(richEditElements.length > 0) {
-                                    if(!document.nicEditor) {
-                                        document.nicEditor = new nicEditor(
-                                            {
-                                                buttonList : ['fontFormat', 'bold', 'italic', 'ol', 'ul', 'indent','outdent', 'image', 'upload', 'link', 'unlink', 'subscript', 'superscript']
-                                            }
-                                        );
-                                        document.nicEditor.floatingPanel();
-                                    }
-
-                                    richEditElements.each(
-                                        function() {
-                                            document.nicEditor.addInstance(this);
-                                        }
-                                    );
-                                }
-
-                                jQuery(document).find("[data-id='"+ component.data("id") + "'] .editable:first").focus();
-                            },
-                            function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
-                            }
-                        );
+                        actionEdit(component);
                         break;
                         
                     case "save":
-                        var boundElements = [];
-                        
-                        component.find(".editable").each(
-                            function() {
-                                if(this.isDirty) {
-                                    var o = jQuery(this).clone();
-                                    if(beforeSaveComponent(component, o, o.data("bind"), target.data("option"))) {
-                                        var content = o.attr("value");
-                                        if(!content) {
-                                            content = jQuery.htmlClean(o.html());
-                                        }
-                                        boundElements.push({bind: o.data("bind"), content: content});
-                                    }
-                                }
-                            }
-                        );
-                        
-                        if(boundElements.length > 0) {
-                            beforeLoadComponent(component, target.data("option"));
-
-                            RPI.webService.call(getServiceUrl(component), "save", {id : component.data("id"), boundElements: boundElements}, 
-                                function(data, response, sourceData) {
-                                    removeEditorInstances(component);
-                                    
-                                    component.find(".editable").each(
-                                        function() {
-                                            if(this.isDirty) {
-                                                this.autosave = this.isDirty = false;
-                                                jQuery(document.body).attr("isDirty-count", parseInt(jQuery(document.body).attr("isDirty-count")) - 1);
-                                            }
-                                        }
-                                    );
-                                        
-                                    loadComponent(component, data.xhtml, target.data("option"));
-                                },
-                                function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
-                                    component.find(".editable").each(
-                                        function() {
-                                            if(this.isDirty) {
-                                                this.autosave = false;
-                                            }
-                                        }
-                                    );
-                                    updateAutoSaveMessage(component, "There was a problem saving the document");
-                                    if(!isAuthenticationException) {
-                                        console.log("There was a problem saving the document");
-                                    }
-                                }
-                            );
-                        }
+                        actionSave(component);
                         break;
                         
                     case "cancel":
-                        beforeLoadComponent(component, target.data("option"));
-                        
-                        RPI.webService.call(getServiceUrl(component), "cancel", {id : component.data("id")}, 
-                            function(data, response, sourceData) {
-                                removeEditorInstances(component);
-                                
-                                component.find(".editable").each(
-                                    function() {
-                                        if(this.isDirty) {
-                                            this.isDirty = false;
-                                            jQuery(document.body).attr("isDirty-count", parseInt(jQuery(document.body).attr("isDirty-count")) - 1);
-                                        }
-                                    }
-                                );
-                                    
-                                loadComponent(component, data.xhtml, target.data("option"));
-                           },
-                            function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
-                            }
-                        );
+                        actionCancel(component);
                         break;
                         
                     case "delete":
-                        if(beforeDelete(component, target.data("bind"))) {
-                            beforeLoadComponent(component, target.data("option"));
-
-                            RPI.webService.call(getServiceUrl(component), "delete", {id : component.data("id"), bind : target.data("bind")}, 
-                                function(data, response, sourceData) {
-                                    removeEditorInstances(component);
-
-                                    component.find(".editable").each(
-                                        function() {
-                                            if(this.isDirty) {
-                                                this.isDirty = false;
-                                                jQuery(document.body).attr("isDirty-count", parseInt(jQuery(document.body).attr("isDirty-count")) - 1);
-                                            }
-                                        }
-                                    );
-
-                                    loadComponent(component, data.xhtml, target.data("option"));
-                                },
-                                function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
-                                }
-                            );
-                        }
+                        actionDelete(component, target.data("bind"));
                         break;
                         
                     case "add":
-                        if(beforeAdd(component, target.data("bind"))) {
-                            beforeLoadComponent(component, target.data("option"));
-
-                            RPI.webService.call(getServiceUrl(component), "create", {id : component.data("id"), bind : target.data("bind"), data : {title : "", url : "/"}}, 
-                                function(data, response, sourceData) {
-                                    removeEditorInstances(component);
-
-                                    component.find(".editable").each(
-                                        function() {
-                                            if(this.isDirty) {
-                                                this.isDirty = false;
-                                                jQuery(document.body).attr("isDirty-count", parseInt(jQuery(document.body).attr("isDirty-count")) - 1);
-                                            }
-                                        }
-                                    );
-
-                                    loadComponent(component, data.xhtml, target.data("option"));
-                                },
-                                function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
-                                }
-                            );
-                        }
+                        actionAdd(component, target.data("bind"));
                         break;
-                        
-//                    default:
-//                        alert(target.data("option")); 
                }
             }
         );
@@ -422,10 +275,214 @@ RPI._("component").edit = (function() {
         return serviceUrl;
     }
     
+    function actionView(component) {
+        if (!component.data("id")) {
+            throw "Invalid/not set component ID";
+        }
+        
+        beforeLoadComponent(component, "view");
+        
+        RPI.webService.call(getServiceUrl(component), "view", {id : component.data("id")}, 
+            function(data, response, sourceData) {
+                removeEditorInstances(component);
+
+                loadComponent(component, data.xhtml, "view");
+           },
+            function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
+            }
+        );
+    }
+    
+    function actionEdit(component) {
+        if (!component.data("id")) {
+            throw "Invalid/not set component ID";
+        }
+        
+        beforeLoadComponent(component, "edit");
+
+        RPI.webService.call(getServiceUrl(component), "edit", {"id" : component.data("id")}, 
+            function(data, response, sourceData) {
+                loadComponent(component, data.xhtml, "edit");
+
+                var richEditElements = jQuery(document).find("[data-id='"+ component.data("id") + "'] .editable[data-rich-edit=true]");
+                if(richEditElements.length > 0) {
+                    if(!document.nicEditor) {
+                        document.nicEditor = new nicEditor(
+                            {
+                                buttonList : ['fontFormat', 'bold', 'italic', 'ol', 'ul', 'indent','outdent', 'image', 'upload', 'link', 'unlink', 'subscript', 'superscript']
+                            }
+                        );
+                        document.nicEditor.floatingPanel();
+                    }
+
+                    richEditElements.each(
+                        function() {
+                            document.nicEditor.addInstance(this);
+                        }
+                    );
+                }
+
+                jQuery(document).find("[data-id='"+ component.data("id") + "'] .editable:first").focus();
+            },
+            function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
+            }
+        );
+    }
+    
+    function actionSave(component) {
+        if (!component.data("id")) {
+            throw "Invalid/not set component ID";
+        }
+        
+        var boundElements = [];
+
+        component.find(".editable").each(
+            function() {
+                if(this.isDirty) {
+                    var o = jQuery(this).clone();
+                    if(beforeSaveComponent(component, o, o.data("bind"), "save")) {
+                        var content = o.attr("value");
+                        if(!content) {
+                            content = jQuery.htmlClean(o.html());
+                        }
+                        boundElements.push({bind: o.data("bind"), content: content});
+                    }
+                }
+            }
+        );
+
+        if(boundElements.length > 0) {
+            beforeLoadComponent(component, "save");
+
+            RPI.webService.call(getServiceUrl(component), "save", {id : component.data("id"), boundElements: boundElements}, 
+                function(data, response, sourceData) {
+                    removeEditorInstances(component);
+
+                    component.find(".editable").each(
+                        function() {
+                            if(this.isDirty) {
+                                this.autosave = this.isDirty = false;
+                                jQuery(document.body).attr("isDirty-count", parseInt(jQuery(document.body).attr("isDirty-count")) - 1);
+                            }
+                        }
+                    );
+
+                    loadComponent(component, data.xhtml, "save");
+                },
+                function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
+                    component.find(".editable").each(
+                        function() {
+                            if(this.isDirty) {
+                                this.autosave = false;
+                            }
+                        }
+                    );
+                    updateAutoSaveMessage(component, "There was a problem saving the document");
+                    if(!isAuthenticationException) {
+                        console.log("There was a problem saving the document");
+                    }
+                }
+            );
+        }
+    }
+    
+    function actionCancel(component) {
+        if (!component.data("id")) {
+            throw "Invalid/not set component ID";
+        }
+        
+        beforeLoadComponent(component, "cancel");
+
+        RPI.webService.call(getServiceUrl(component), "cancel", {id : component.data("id")}, 
+            function(data, response, sourceData) {
+                removeEditorInstances(component);
+
+                component.find(".editable").each(
+                    function() {
+                        if(this.isDirty) {
+                            this.isDirty = false;
+                            jQuery(document.body).attr("isDirty-count", parseInt(jQuery(document.body).attr("isDirty-count")) - 1);
+                        }
+                    }
+                );
+
+                loadComponent(component, data.xhtml, "cancel");
+           },
+            function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
+            }
+        );
+    }
+    
+    function actionDelete(component, bindName) {
+        if (!component.data("id")) {
+            throw "Invalid/not set component ID";
+        }
+        
+        if(beforeDelete(component, bindName)) {
+            beforeLoadComponent(component, "delete");
+
+            RPI.webService.call(getServiceUrl(component), "delete", {id : component.data("id"), bind : bindName}, 
+                function(data, response, sourceData) {
+                    removeEditorInstances(component);
+
+                    component.find(".editable").each(
+                        function() {
+                            if(this.isDirty) {
+                                this.isDirty = false;
+                                jQuery(document.body).attr("isDirty-count", parseInt(jQuery(document.body).attr("isDirty-count")) - 1);
+                            }
+                        }
+                    );
+
+                    loadComponent(component, data.xhtml, "delete");
+                },
+                function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
+                }
+            );
+        }
+    }
+    
+    function actionAdd(component, bindName) {
+        if (!component.data("id")) {
+            throw "Invalid/not set component ID";
+        }
+        
+        if(beforeAdd(component, bindName)) {
+            beforeLoadComponent(component, "delete");
+
+            RPI.webService.call(getServiceUrl(component), "create", {id : component.data("id"), bind : bindName, data : null}, 
+                function(data, response, sourceData) {
+                    removeEditorInstances(component);
+
+                    component.find(".editable").each(
+                        function() {
+                            if(this.isDirty) {
+                                this.isDirty = false;
+                                jQuery(document.body).attr("isDirty-count", parseInt(jQuery(document.body).attr("isDirty-count")) - 1);
+                            }
+                        }
+                    );
+
+                    loadComponent(component, data.xhtml, "delete");
+                },
+                function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
+                }
+            );
+        }
+    }
+    
     init();
 
+    jQuery(document).live(
+        "pagetitleupdated.RPI",
+        function(e, params) {
+            if(params.title) {
+                document.title = params.title;
+            }
+        }
+    );
+        
     return {
-//		show : function() {
-//		}
+		view: actionView
 	}
 })();
