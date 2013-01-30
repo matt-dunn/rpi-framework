@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\App\Config\Handler;
 
-class Section implements \RPI\Framework\App\Config\IHandler
+class NamedCollection implements \RPI\Framework\App\Config\IHandler
 {
     public function process(array $config)
     {
