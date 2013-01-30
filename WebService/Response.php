@@ -81,7 +81,7 @@ class Response
         $this->params = $params;
     }
     
-    public function __toString()
+    public function render()
     {
         $contentType = "application_{$this->format}";
         $className = "\\RPI\Framework\\WebService\\Handler\\".\RPI\Framework\Helpers\Utils::toCamelCase($contentType);

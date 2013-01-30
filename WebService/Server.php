@@ -84,7 +84,7 @@ abstract class Server extends \RPI\Framework\Controller
                     $this->app->getRequest()->getBody(),
                     $contentType["contenttype"]["mimetype"]
                 );
-
+                
                 $this->context = new Context($request->timestamp, $request->method->format);
 
                 $action = $this->getAction();
@@ -110,6 +110,13 @@ abstract class Server extends \RPI\Framework\Controller
                 $response = new Response($request, ResponseStatus::ERROR, $format);
                 unset($response->result);
 
+                // If the format is not supported (e.g. form multi-part post) then revert back to the default
+                $className = "\\RPI\Framework\\WebService\\Handler\\Application{$response->format}";
+                if (!class_exists($className)) {
+                    $response->format = "json";
+
+                }
+                
                 if ($ex instanceof \RPI\Framework\WebService\Exceptions\WebService) {
                     $response->error = new \RPI\Framework\WebService\Error(
                         $ex->getCode(),
@@ -153,21 +160,26 @@ abstract class Server extends \RPI\Framework\Controller
      */
     public function render()
     {
-        if (count($this->clientEvents) > 0) {
-            $this->response->events = $this->clientEvents;
-        }
-        
-        $buffer = ob_get_clean();
-        
-        if ($this->getConfig()->getValue("config/debug/@enabled", false) === true) {
-            if ($buffer !== false && $buffer != "") {
-                $this->app->getDebug()->log($buffer, "Output buffer");
-            }
-        }
-        
-        $this->app->getResponse()->setMimeType("application/{$this->response->format}");
+        try {
+            $this->app->getResponse()->setMimeType("application/{$this->response->format}");
 
-        return (string)$this->response;
+            if (count($this->clientEvents) > 0) {
+                $this->response->events = $this->clientEvents;
+            }
+
+            $buffer = ob_get_clean();
+
+            if ($this->getConfig()->getValue("config/debug/@enabled", false) === true) {
+                if ($buffer !== false && $buffer != "") {
+                    $this->app->getDebug()->log($buffer, "Output buffer");
+                }
+            }
+
+            return $this->response->render();
+        } catch (\Exception $ex) {
+            \RPI\Framework\Exception\Handler::log($ex);
+            $this->app->getResponse()->setStatusCode(500);
+        }
     }
 
     
