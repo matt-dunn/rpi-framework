@@ -20,5 +20,3 @@ spl_autoload_register("rpiFrameworkPhpUnitAutoload");
 \RPI\Framework\App\Locale::init();
 
 mb_internal_encoding("UTF-8");
-
-require_once(__DIR__."/../Functions.php");
