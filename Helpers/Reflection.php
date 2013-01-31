@@ -102,7 +102,7 @@ class Reflection
                 $message = "Constructor for '$className' parameter '$parameterName' ".
                     "must be an interface. '$interfaceName' used";
             } else {
-                $message = "'$interfaceName' must be an interface";
+                $message = "'$interfaceName' must be a valid interface.";
             }
             
             throw new \Exception($message);
