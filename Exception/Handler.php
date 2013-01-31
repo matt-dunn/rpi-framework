@@ -220,7 +220,8 @@ class Handler
     {
         $error = error_get_last();
         if (isset($error)) {
-            throw new \ErrorException($error["message"], $error["type"], 0, $error["file"], $error["line"]);
+            self::logMessage("ERROR (shutdown): ".$error["message"]." - ".$error["file"]."#".$error["line"]);
+            self::displayFailsafe();
         }
     }
 
