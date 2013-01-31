@@ -22,7 +22,7 @@ class Cookies implements ICookies
     {
         if (isset($this->cookies) && isset($this->cookies[$name])) {
             $cookie = $this->cookies[$name];
-            if ($cookie["expire"] !== -1) {
+            if (!isset($cookie["expire"]) || $cookie["expire"] !== -1) {
                 return $cookie;
             }
         }
@@ -34,7 +34,7 @@ class Cookies implements ICookies
     {
         if (isset($this->cookies) && isset($this->cookies[$name])) {
             $cookie = $this->cookies[$name];
-            if ($cookie["expire"] !== -1) {
+            if (!isset($cookie["expire"]) || $cookie["expire"] !== -1) {
                 return $cookie["value"];
             }
         }
