@@ -21,7 +21,10 @@ class Cookies implements ICookies
     public function get($name)
     {
         if (isset($this->cookies) && isset($this->cookies[$name])) {
-            return $this->cookies[$name];
+            $cookie = $this->cookies[$name];
+            if ($cookie["expire"] !== -1) {
+                return $cookie;
+            }
         }
         
         return null;
@@ -30,7 +33,10 @@ class Cookies implements ICookies
     public function getValue($name, $default = null)
     {
         if (isset($this->cookies) && isset($this->cookies[$name])) {
-            return $this->cookies[$name]["value"];
+            $cookie = $this->cookies[$name];
+            if ($cookie["expire"] !== -1) {
+                return $cookie["value"];
+            }
         }
         
         return $default;
