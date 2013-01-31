@@ -41,7 +41,7 @@ interface IHeaders
      */
     public function clear();
     
-    /*
+    /**
      * Return a collection of all HTTP headers
      * 
      * @return array|null
