@@ -26,8 +26,6 @@ require(__DIR__."/Autoload.php");
 // Configure the application:
 \RPI\Framework\App\Locale::init();
 
-\RPI\Framework\App\Session::init();
-
 // =====================================================================
 // Event listeners:
 

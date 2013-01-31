@@ -18,10 +18,14 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
     private $authenticatedUser = null;
 
     private $cookieDetectionEnabled = true;
+    
+    private $authenticatedUserSessionName = null;
 
     public function __construct(\RPI\Framework\App $app, array $options)
     {
         $this->app = $app;
+        
+        $this->authenticatedUserSessionName = __CLASS__."-authenticatedUser";
 
         $this->authenticationExpiryOffset =
             \RPI\Framework\Helpers\Utils::getNamedValue(
@@ -73,8 +77,8 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         }
 
         $user = false;
-
-        session_regenerate_id(true);
+        
+        $this->app->getSession()->regenerate(true);
 
         try {
             $result = $this->createUser(
@@ -112,7 +116,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
                 throw new \RPI\Framework\Exceptions\Cookie();
             }
 
-            session_regenerate_id(true);
+            $this->app->getSession()->regenerate(true);
 
             $result = $this->authenticateUserDetails(strtolower($email), $password);
 
@@ -228,9 +232,10 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
                 $this->app->getRequest()->getCookies()->getValue("u")
             );
             if ($this->validateUserToken($token, $tokenParts)) {
-                if (isset($_SESSION[__CLASS__."-authenticatedUser"])) {
+                $authenticatedUserSessionName = $this->authenticatedUserSessionName;
+                if (isset($this->app->getSession()->$authenticatedUserSessionName)) {
                     $user = $this->setUser(
-                        $_SESSION[__CLASS__."-authenticatedUser"],
+                        $this->app->getSession()->$authenticatedUserSessionName,
                         $this->createUserToken($tokenParts["u"])
                     );
                 } else {
@@ -335,7 +340,8 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
      */
     private function setUser(\RPI\Framework\Model\User $user, $userToken = null, $authenticationToken = null)
     {
-        $this->authenticatedUser = $_SESSION[__CLASS__."-authenticatedUser"] = $user;
+        $authenticatedUserSessionName = $this->authenticatedUserSessionName;
+        $this->authenticatedUser = $this->app->getSession()->$authenticatedUserSessionName = $user;
 
         if ($userToken != null) {
             $encryptedUserToken = \RPI\Framework\Helpers\Crypt::encrypt(

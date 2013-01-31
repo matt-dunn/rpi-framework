@@ -2,7 +2,7 @@
 
 namespace RPI\Framework;
 
-class App
+class App extends \RPI\Framework\Helpers\Object
 {
     /**
      *
@@ -71,6 +71,12 @@ class App
     private $response = null;
     
     /**
+     *
+     * @var \RPI\Framework\App\Session
+     */
+    private $session = null;
+    
+    /**
      * 
      * @param string $webConfigFile
      * @param string $viewConfigFile
@@ -92,6 +98,18 @@ class App
         }
         
         mb_internal_encoding($this->characterEncoding);
+    }
+    
+    /**
+     * @return \RPI\Framework\Session
+     */
+    public function getSession()
+    {
+        if (!isset($this->session)) {
+            $this->session = \RPI\Framework\Helpers\Reflection::createObject($this, "\RPI\Framework\Session");
+        }
+        
+        return $this->session;
     }
     
     /**
