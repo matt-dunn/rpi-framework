@@ -30,7 +30,7 @@ class Date extends \RPI\Framework\Form\FormItem\Input
         }
         $this->dateValidator = new \RPI\Framework\Form\Validator\RegularExpression(
             "/^$regEx$/",
-            t("rpi.framework.form.validator.date")
+            \RPI\Framework\Facade::localisation()->t("rpi.framework.form.validator.date")
         );
         $this->addValidator($this->dateValidator);
     }

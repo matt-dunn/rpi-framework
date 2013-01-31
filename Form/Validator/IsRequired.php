@@ -10,7 +10,7 @@ class IsRequired extends \RPI\Framework\Form\Validator
         if ($message != null) {
             $this->message = $message;
         } else {
-            $this->message = t("rpi.framework.forms.validator.isRequired");
+            $this->message = \RPI\Framework\Facade::localisation()->t("rpi.framework.forms.validator.isRequired");
         }
     }
 

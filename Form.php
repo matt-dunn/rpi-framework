@@ -204,7 +204,7 @@ abstract class Form extends \RPI\Framework\Component
         $this->hasError = ($type == \RPI\Framework\Controller\Message\Type::ERROR);
         
         if ($type == \RPI\Framework\Controller\Message\Type::ERROR && !isset($title)) {
-            $title = t("rpi.framework.forms.error.heading");
+            $title = \RPI\Framework\Facade::localisation()->t("rpi.framework.forms.error.heading");
         }
         
         parent::addControllerMessage($message, $type, $id, $title);

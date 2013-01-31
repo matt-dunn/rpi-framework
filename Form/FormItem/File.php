@@ -18,10 +18,10 @@ class File extends \RPI\Framework\Form\FormItem
         if ($this->form->isPostBack) {
             if (isset($_FILES[$this->id])) {
                 if ($_FILES[$this->id]["tmp_name"] != "" && $_FILES[$this->id]["error"] != "0") {
-                    $this->setMessage(t("rpi.framework.forms.fileError"));
+                    $this->setMessage(\RPI\Framework\Facade::localisation()->t("rpi.framework.forms.fileError"));
                 } elseif ($_FILES[$this->id]["tmp_name"] != "") {
                     if ($_FILES[$this->id]["size"] > $this->maxSize) {
-                        $this->setMessage(t("rpi.framework.forms.fileSize"));
+                        $this->setMessage(\RPI\Framework\Facade::localisation()->t("rpi.framework.forms.fileSize"));
                     }
 
                     $file = $_FILES[$this->id];
@@ -29,7 +29,7 @@ class File extends \RPI\Framework\Form\FormItem
                     if (isset($this->allowedMimeTypes)) {
                         $mimeType = explode(";", \RPI\Framework\Helpers\FileUtils::getMimeType($file["tmp_name"]));
                         if (array_search($mimeType[0], $this->allowedMimeTypes) === false) {
-                            $this->setMessage(t("rpi.framework.forms.fileMimeType"));
+                            $this->setMessage(\RPI\Framework\Facade::localisation()->t("rpi.framework.forms.fileMimeType"));
                         }
                     }
                 }

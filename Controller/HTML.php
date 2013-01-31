@@ -223,7 +223,7 @@ abstract class HTML extends \RPI\Framework\Controller
 
         if (!isset($title) || trim($title) == "") {
             if ($type == \RPI\Framework\Controller\Message\Type::ERROR) {
-                $title = t("rpi.framework.heading.error");
+                $title = \RPI\Framework\Facade::localisation()->t("rpi.framework.heading.error");
             }
         }
 

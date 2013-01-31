@@ -97,7 +97,7 @@ abstract class Front extends \RPI\Framework\Controller\HTML
             self::getPageTitle();
         }
         
-        $title = t("site.controller.page.title", array($title));
+        $title = \RPI\Framework\Facade::localisation()->t("site.controller.page.title", array($title));
         
         if (self::$pageTitleDetails["title"] != $title && $priority >= self::$pageTitleDetails["priority"]) {
             self::$pageTitleDetails["title"] = $title;

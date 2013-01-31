@@ -17,8 +17,6 @@ if (!isset($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"])) {
 // ================================================================================================================
 // Application initialisation
 
-require("Functions.php");
-
 require(__DIR__."/Exception/Handler.php");
 \RPI\Framework\Exception\Handler::set();
 
