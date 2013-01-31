@@ -236,6 +236,9 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
                 } else {
                     $currentUser = $this->getCurrentUser($tokenParts["u"]);
                     if ($currentUser !== false) {
+                        $this->app->getRequest()->getCookies()->set("a", null, -1);
+                        $this->app->getResponse()->getCookies()->set("a", null, -1);
+                        $currentUser->isAuthenticated = false;
                         $user = $this->setUser($currentUser, $this->createUserToken($tokenParts["u"]));
                     }
                 }
@@ -346,6 +349,11 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
                 $encryptedUserToken,
                 time() + (60 * 60 * 24 * 365 * 5)
             );
+            $this->app->getRequest()->getCookies()->set(
+                "u",
+                $encryptedUserToken,
+                time() + (60 * 60 * 24 * 365 * 5)
+            );
         }
 
         if ($authenticationToken != null) {
@@ -357,6 +365,11 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
             // Add an hour (3600) to the expiry to ensure cookies do not expire unexpectedly
             // (Safari has some problems with this...)
             $this->app->getResponse()->getCookies()->set(
+                "a",
+                $encryptedAuthenticationToken,
+                time() + $this->authenticationExpiryOffset + 3600
+            );
+            $this->app->getRequest()->getCookies()->set(
                 "a",
                 $encryptedAuthenticationToken,
                 time() + $this->authenticationExpiryOffset + 3600
