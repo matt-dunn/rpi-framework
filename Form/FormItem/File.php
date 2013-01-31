@@ -29,7 +29,9 @@ class File extends \RPI\Framework\Form\FormItem
                     if (isset($this->allowedMimeTypes)) {
                         $mimeType = explode(";", \RPI\Framework\Helpers\FileUtils::getMimeType($file["tmp_name"]));
                         if (array_search($mimeType[0], $this->allowedMimeTypes) === false) {
-                            $this->setMessage(\RPI\Framework\Facade::localisation()->t("rpi.framework.forms.fileMimeType"));
+                            $this->setMessage(
+                                \RPI\Framework\Facade::localisation()->t("rpi.framework.forms.fileMimeType")
+                            );
                         }
                     }
                 }

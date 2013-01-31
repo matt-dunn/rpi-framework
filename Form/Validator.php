@@ -19,7 +19,7 @@ abstract class Validator
     /**
      *
      * @var string
-å     */
+     */
     public $type;
 
     /**

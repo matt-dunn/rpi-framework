@@ -23,7 +23,9 @@ class Standard extends RegularExpression
                 parent::__construct(
                     "/^\s*\(?(0\s*[2]{1}\s*[0]{1}\s*[7,8]{1}\s*\)?[1-9]{1}\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*)|".
                     "([0]{1}\s*[1-8]{1}\s*\d\s*\d\s*\d\s*\)?\s*\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*)\s*$/",
-                    \RPI\Framework\Facade::localisation()->t("rpi.framework.forms.validator.standard.telephoneNumberUK"),
+                    \RPI\Framework\Facade::localisation()->t(
+                        "rpi.framework.forms.validator.standard.telephoneNumberUK"
+                    ),
                     $buttons
                 );
                 break;
@@ -31,7 +33,9 @@ class Standard extends RegularExpression
                 parent::__construct(
                     "/^\s*(\+\s*4\s*4\s*?7\s*\d\s*\d\s*\d\s*|\(?0\s*7\s*\d\s*\d\s*\d\s*\)?)".
                     "\d\s*\d\s*\d\s*\d\s*\d\s*\d\s*$/",
-                    \RPI\Framework\Facade::localisation()->t("rpi.framework.forms.validator.standard.telephoneNumberMobileUK"),
+                    \RPI\Framework\Facade::localisation()->t(
+                        "rpi.framework.forms.validator.standard.telephoneNumberMobileUK"
+                    ),
                     $buttons
                 );
                 break;
