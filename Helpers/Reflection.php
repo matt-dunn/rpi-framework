@@ -48,36 +48,38 @@ class Reflection
         $instance = new \ReflectionClass($className);
         $constructorParams = null;
 
-        if (isset($params)) {
-            $constructor = $instance->getConstructor();
-            if (isset($constructor)) {
-                $constructorParams = array();
-                foreach ($constructor->getParameters() as $reflectionParameter) {
-                    if (isset($params[$reflectionParameter->getName()])) {
-                        $constructorParams[] = $params[$reflectionParameter->getName()];
-                    } else {
-                        //echo "CREATE:($className)[{$reflectionParameter->getClass()->getName()}]\n";
-                        $class = $reflectionParameter->getClass();
-                        if (isset($class)) {
-                            if ($class->getName() == "RPI\Framework\App") {
-                                $constructorParams[] = $app;
-                            } else {
-                                $constructorParams[] = self::getDependency(
-                                    $app,
-                                    $className,
-                                    $reflectionParameter->getName(),
-                                    $class->getName()
-                                );
-                            }
+        if (!isset($params)) {
+            $params = array();
+        }
+        
+        $constructor = $instance->getConstructor();
+        if (isset($constructor)) {
+            $constructorParams = array();
+            foreach ($constructor->getParameters() as $reflectionParameter) {
+                if (isset($params[$reflectionParameter->getName()])) {
+                    $constructorParams[] = $params[$reflectionParameter->getName()];
+                } else {
+                    //echo "CREATE:($className)[{$reflectionParameter->getClass()->getName()}]\n";
+                    $class = $reflectionParameter->getClass();
+                    if (isset($class)) {
+                        if ($class->getName() == "RPI\Framework\App") {
+                            $constructorParams[] = $app;
                         } else {
-                            $constructorParams[] = null;
+                            $constructorParams[] = self::getDependency(
+                                $app,
+                                $className,
+                                $reflectionParameter->getName(),
+                                $class->getName()
+                            );
                         }
+                    } else {
+                        $constructorParams[] = null;
                     }
                 }
+            }
 
-                if (count($constructorParams) == 0) {
-                    $constructorParams = null;
-                }
+            if (count($constructorParams) == 0) {
+                $constructorParams = null;
             }
         }
         
