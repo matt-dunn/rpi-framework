@@ -4,12 +4,34 @@ namespace RPI\Framework\Form;
 
 abstract class Validator
 {
+    /**
+     *
+     * @var boolean
+     */
     public $hasError = false;
+    
+    /**
+     *
+     * @var array
+     */
     public $buttons;
+    
+    /**
+     *
+     * @var string
+å     */
     public $type;
 
+    /**
+     *
+     * @var \RPI\Framework\Form\FormItem
+     */
     protected $formItem;
 
+    /**
+     *
+     * @var string
+     */
     private $validatorMessage = null;
 
     public function __construct($type, array $buttons = null)
@@ -23,6 +45,10 @@ abstract class Validator
         $this->formItem = $formItem;
     }
 
+    /**
+     * 
+     * @return \RPI\Framework\Form\FormItem
+     */
     public function getParent()
     {
         return $this->formItem;
