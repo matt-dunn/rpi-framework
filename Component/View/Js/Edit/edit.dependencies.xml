@@ -2,6 +2,7 @@
 <dependencies>
 	<dependency name="../../../../View/Js/webService.js"/>
 	<dependency name="../../../../../Vendor/jQuery/plugins/jquery.htmlClean.js"/>
+	<dependency name="../../../../../Vendor/jQuery/plugins/jquery.cookie.js"/>
 	<dependency name="nicEdit.js"/>
 
     <dependency name="../../Css/Edit/edit.css"/>
