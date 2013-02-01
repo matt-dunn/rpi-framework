@@ -17,8 +17,9 @@ class State
     {
         $this->form = $form;
 
-        $state = $this->form->getApp()->getRequest()->getParameter("state");
-        $formName = $this->form->getApp()->getRequest()->getParameter("formName");
+        $state = $this->form->getApp()->getRequest()->getPostParameter("state");
+        $formName = $this->form->getApp()->getRequest()->getPostParameter("formName");
+
         if ($state !== null && $formName == $this->form->id) {
             try {
                 $stateString = base64_decode($state);
@@ -37,12 +38,7 @@ class State
         }
     }
 
-    public function value($name, $value)
-    {
-        $this->values[$name] = $value;
-    }
-
-    public function get($key)
+   public function get($key)
     {
         if (array_key_exists($key, $this->values)) {
             $value = $this->values[$key];
@@ -78,23 +74,50 @@ class State
             unset($this->values[$key]);
         }
     }
+    
+    public function getFormValue()
+    {
+        $formValue = null;
+
+        if (count($this->values) > 0) {
+            $formValue = "";
+            foreach ($this->values as $name => $value) {
+                $formValue .= ($name."=".urlencode($value)."&");
+            }
+
+            if (substr($formValue, strlen($formValue) - 1, 1) == "&") {
+                $formValue = substr($formValue, 0, strlen($formValue) - 1);
+            }
+
+            $formValue = base64_encode(\RPI\Framework\Helpers\Crypt::encrypt(self::$key, $formValue));
+        }
+
+        return $formValue;
+    }
 
     public function __sleep()
     {
-        $this->formValue = "";
+        $this->formValue = $this->getFormValue();
 
-        if (count($this->values) > 0) {
-            foreach ($this->values as $name => $value) {
-                $this->formValue .= ($name."=".urlencode($value)."&");
-            }
+        return array("formValue");
+    }
+    
+    public function __toString()
+    {
+        return $this->render();
+    }
 
-            if (substr($this->formValue, strlen($this->formValue) - 1, 1) == "&") {
-                $this->formValue = substr($this->formValue, 0, strlen($this->formValue) - 1);
-            }
-
-            $this->formValue = base64_encode(\RPI\Framework\Helpers\Crypt::encrypt(self::$key, $this->formValue));
+    public function render()
+    {
+        $rendition = "";
+        $formValue = $this->getFormValue();
+        
+        if (isset($formValue)) {
+            $rendition = <<<EOT
+                <input type="hidden" name="state" value="{$formValue}"/>
+EOT;
         }
-
-        return array();
+        
+        return $rendition;
     }
 }
