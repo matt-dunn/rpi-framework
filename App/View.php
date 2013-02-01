@@ -421,7 +421,7 @@ class View
                     if (trim($route->getAttribute("mimetype")) != "") {
                         $mimetype = $route->getAttribute("mimetype");
                     }
-                    $secure = false;
+                    $secure = null;
                     if (trim($route->getAttribute("secure")) != "") {
                         $secure = ($route->getAttribute("secure") == "true");
                     }

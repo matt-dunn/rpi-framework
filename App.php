@@ -336,21 +336,26 @@ class App extends \RPI\Framework\Helpers\Object
      */
     private function runRouteController(\RPI\Framework\App\Router\Route $route, $method)
     {
-        $forceSecure = !\RPI\Framework\Facade::authentication()->getAuthenticatedUser()->isAnonymous;
-        if ($route->secure === true) {
-            $forceSecure = true;
+        $forceSecure = null;
+        if (isset($route->secure)) {
+            $forceSecure = $route->secure;
+        } elseif (!$this->getRequest()->isAjax()) {
+            $forceSecure = !\RPI\Framework\Facade::authentication()->getAuthenticatedUser()->isAnonymous;
         }
-        $hostname = $this->getRequest()->getHost();
-        \RPI\Framework\Helpers\HTTP::forceSecure(
-            $this->getConfig()->getValue("config/server/domains/secure", $hostname),
-            $this->getConfig()->getValue("config/server/domains/website", $hostname),
-            $this->getRequest()->isSecureConnection(),
-            $this->getConfig()->getValue("config/server/sslPort"),
-            $hostname,
-            $this,
-            $this->getRequest()->getUrlPath(),
-            $forceSecure
-        );
+        
+        if (isset($forceSecure)) {
+            $hostname = $this->getRequest()->getHost();
+            \RPI\Framework\Helpers\HTTP::forceSecure(
+                $this->getConfig()->getValue("config/server/domains/secure", $hostname),
+                $this->getConfig()->getValue("config/server/domains/website", $hostname),
+                $this->getRequest()->isSecureConnection(),
+                $this->getConfig()->getValue("config/server/sslPort"),
+                $hostname,
+                $this,
+                $this->getRequest()->getUrlPath(),
+                $forceSecure
+            );
+        }
         
         $this->action = $route->action;
         

@@ -99,6 +99,9 @@ class Router
                 if (!isset($details["defaultParams"])) {
                     unset($details["defaultParams"]);
                 }
+                if (!isset($details["secure"])) {
+                    unset($details["secure"]);
+                }
 
                 $pathParts = explode("/", $path);
 
@@ -241,7 +244,7 @@ class Router
                 $match["controller"],
                 $match["uuid"],
                 null,
-                $match["secure"]
+                (isset($match["secure"]) ? $match["secure"] : null)
             );
         }
         
@@ -340,7 +343,7 @@ class Router
                             $match["controller"],
                             $match["uuid"],
                             null,
-                            $match["secure"]
+                            (isset($match["secure"]) ? $match["secure"] : null)
                         );
 
                         if (isset($match["action"]) || isset($match["params"])) {
