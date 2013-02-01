@@ -38,7 +38,7 @@ class State
         }
     }
 
-   public function get($key)
+    public function get($key)
     {
         if (array_key_exists($key, $this->values)) {
             $value = $this->values[$key];

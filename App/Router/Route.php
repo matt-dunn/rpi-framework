@@ -40,8 +40,14 @@ class Route
      */
     public $secure = null;
     
-    public function __construct($method, $route, $controller, $uuid, \RPI\Framework\App\Router\Action $action = null, $secure = false)
-    {
+    public function __construct(
+        $method,
+        $route,
+        $controller,
+        $uuid,
+        \RPI\Framework\App\Router\Action $action = null,
+        $secure = false
+    ) {
         \RPI\Framework\Helpers\Utils::validateOption(
             strtolower($method),
             array("get", "post", "delete", "put", "head")
