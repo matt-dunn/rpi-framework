@@ -33,7 +33,7 @@ abstract class Server extends \RPI\Framework\Controller
         }
 
         // Attempt to get the document location of the request:
-        $documentLocation = $this->app->getRequest()->getHeaders()->get("Document-Location");
+        $documentLocation = $this->app->getRequest()->getHeaders()->get("X-Document-Location");
         if (!isset($documentLocation) && isset($_SERVER["HTTP_REFERER"])) {
             $documentLocation = $_SERVER["HTTP_REFERER"];
         }
