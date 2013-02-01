@@ -57,10 +57,6 @@ class Cookies implements ICookies
         
         $this->cookies[$name] = array("value" => $value);
             
-        if (isset($value)) {
-            $this->cookies[$name]["value"] = $value;
-        }
-            
         if (isset($expire)) {
             $this->cookies[$name]["expire"] = $expire;
         }
@@ -82,6 +78,11 @@ class Cookies implements ICookies
         }
         
         return $this;
+    }
+    
+    public function delete($name)
+    {
+        $this->set($name, null, -1);
     }
 
     public function dispatch()

@@ -49,6 +49,13 @@ interface IRequest extends IMessage
     public function getUrlPath();
     
     /**
+     * Get the host
+     * 
+     * @return string
+     */
+    public function getHost();
+    
+    /**
      * Set the request GET/POST parameters
      * 
      * @param array $params
@@ -146,4 +153,9 @@ interface IRequest extends IMessage
      * @return array    List of accept types ordered by quality
      */
     public function getAccept();
+    
+    /**
+     * @return bool True if secure
+     */
+    public function isSecureConnection();
 }

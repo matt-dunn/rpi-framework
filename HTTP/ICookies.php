@@ -56,6 +56,13 @@ interface ICookies
     public function getAll();
     
     /**
+     * Delete a cookie
+     * 
+     * @param string $name
+     */
+    public function delete($name);
+    
+    /**
      * Send the cookies
      * 
      * @return bool True if cookies have been sent
