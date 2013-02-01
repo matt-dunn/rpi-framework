@@ -158,4 +158,9 @@ interface IRequest extends IMessage
      * @return bool True if secure
      */
     public function isSecureConnection();
+    
+    /**
+     * @return bool True if the request was instantiated by an AJAX request
+     */
+    public function isAjax();
 }

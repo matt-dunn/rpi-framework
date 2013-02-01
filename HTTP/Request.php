@@ -310,6 +310,11 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
         return (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on");
     }
     
+    public function isAjax()
+    {
+		return (strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) === "xmlhttprequest");
+    }
+    
     /**
      * 
      * @param string $accept
