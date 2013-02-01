@@ -12,6 +12,56 @@ class Dom
     private function __construct()
     {
     }
+    
+    /**
+     * Validate a DOMDocument against an schema
+     * 
+     * @param \DOMDocument $doc
+     * @param string $schemaFile
+     * 
+     * @return boolean
+     * 
+     * @throws \Exception
+     */
+    public static function validateSchema(\DOMDocument $doc, $schemaFile)
+    {
+        $currentState = libxml_use_internal_errors(true);
+        
+        $isValid = $doc->schemaValidate($schemaFile);
+        
+        if (!$isValid) {
+            $errors = libxml_get_errors();
+            $message = "";
+            foreach ($errors as $error) {
+                switch ($error->level) {
+                    case LIBXML_ERR_WARNING:
+                        $message .= "Warning [$error->code]: ";
+                        break;
+                    case LIBXML_ERR_ERROR:
+                        $message .= "Error [$error->code]: ";
+                        break;
+                    case LIBXML_ERR_FATAL:
+                        $message .= "Fatal Error [$error->code]: ";
+                        break;
+                }
+                $message .= trim($error->message);
+                if ($error->file) {
+                    $message .= " in '$error->file'";
+                }
+                $message .= " on line $error->line.\n";
+            }
+
+            libxml_clear_errors();
+            
+            libxml_use_internal_errors($currentState);
+            
+            throw new \Exception($message);
+        }
+        
+        libxml_use_internal_errors($currentState);
+        
+        return true;
+    }
 
     public static function addElement(\DomElement $parent, $elementName, $textValue = null)
     {
