@@ -15,14 +15,11 @@ namespace RPI\Framework\App;
 class Security
 {
     private $session = null;
-    private $requestCookies = null;
     
     public function __construct(
-        \RPI\Framework\App\Session $session,
-        \RPI\Framework\HTTP\ICookies $requestCookies
+        \RPI\Framework\App\Session $session
     ) {
         $this->session = $session;
-        $this->requestCookies = $requestCookies;
         
         if (!isset($this->session->token)) {
             $this->session->token = \RPI\Framework\Helpers\Crypt::generateHash(microtime(true));

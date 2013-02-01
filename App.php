@@ -103,6 +103,11 @@ class App extends \RPI\Framework\Helpers\Object
             $this->characterEncoding = $characterEncoding;
         }
         
+        $this->security = new \RPI\Framework\App\Security(
+            $this->getSession()
+        );
+        $this->getResponse()->getCookies()->set("t", $this->security->getToken(), null, null, null, null, false);
+        
         mb_internal_encoding($this->characterEncoding);
     }
     
@@ -120,13 +125,6 @@ class App extends \RPI\Framework\Helpers\Object
     
     public function getSecurity()
     {
-        if (!isset($this->security)) {
-            $this->security = new \RPI\Framework\App\Security(
-                $this->getSession(),
-                $this->getRequest()->getCookies()
-            );
-        }
-        
         return $this->security;
     }
     
