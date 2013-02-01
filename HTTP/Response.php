@@ -84,6 +84,7 @@ class Response extends Message implements \RPI\Framework\HTTP\IResponse
         header($message, true);
         
         $this->getHeaders()->clear()->add("Location", $url);
+        $this->body = null;
         
         $this->getHeaders()->dispatch();
         
