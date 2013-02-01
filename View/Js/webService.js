@@ -30,7 +30,7 @@ RPI.webService.call = function(service, methodName, params, callback, errorCallb
 	if(RPI.loader) {
 		RPI.loader.show();
 	}
-
+    
 	return jQuery.ajax({
 		type: "POST",
 		async: true,
@@ -41,7 +41,10 @@ RPI.webService.call = function(service, methodName, params, callback, errorCallb
 		dataType: "json",
 		contentType: "application/json; charset=utf-8",
 		sourceUrl: sourceUrl,
-        headers: {"X-Document-Location": document.location.href},
+        headers: {
+            "X-Document-Location": document.location.href,
+            "X-Token": jQuery.cookie("t")
+        },
 		success: function(o) {
 			if(RPI.loader) {
 				RPI.loader.hide();

@@ -67,6 +67,7 @@ abstract class Server extends \RPI\Framework\Controller
      */
     protected function init()
     {
+        $this->app->getSecurity()->validateToken($this->app->getRequest()->getHeaders()->get("X-Token"));
     }
 
     public function process()

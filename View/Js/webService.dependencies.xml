@@ -6,5 +6,6 @@
 	<!--<dependency name="../../../Vendor/jQuery/plugins/jquery.ajaxQueue.js"/>-->
 	<dependency name="../../../Vendor/jQuery/plugins/jquery.MetaData.js"/>
 	<dependency name="../../../Vendor/jQuery/plugins/jquery.parsequery.js"/>
+	<dependency name="../../../Vendor/jQuery/plugins/jquery.cookie.js"/>
 	<dependency name="../../Controller/View/Js/Loader/loader.js"/>
 </dependencies>
