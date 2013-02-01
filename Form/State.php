@@ -4,11 +4,8 @@ namespace RPI\Framework\Form;
 
 class State
 {
-    // TODO: move keys into seperate key class that can auto-gen appropiate keys
-    //       as a dynamically created php file if it does not exist
-    //		 this allows unique keys to be generated for each environment
-    private static $key = "fdk$%32gkgv*563£fgddfREgfe:'#~`|\dgfg<\d/?defgEq234aZ~/,£$,3Fesf";
-    private $form;
+    private $key = null;
+    private $form = null;
 
     public $values = array();
     public $formValue;
@@ -16,6 +13,10 @@ class State
     public function __construct(\RPI\Framework\Form $form)
     {
         $this->form = $form;
+        $this->key = $form->getApp()->getConfig()->getValue("config/keys/formState");
+        if (!isset($this->key)) {
+            throw new \Exception("Encryption key 'config/keys/formState' not configured.");
+        }
 
         $state = $this->form->getApp()->getRequest()->getPostParameter("state");
         $formName = $this->form->getApp()->getRequest()->getPostParameter("formName");
@@ -24,7 +25,7 @@ class State
             try {
                 $stateString = base64_decode($state);
                 if ($stateString !== false) {
-                    $formValues = explode("&", \RPI\Framework\Helpers\Crypt::decrypt(self::$key, $stateString));
+                    $formValues = explode("&", \RPI\Framework\Helpers\Crypt::decrypt($this->key, $stateString));
 
                     foreach ($formValues as $formValue) {
                         $valueParts = explode("=", $formValue);
@@ -89,7 +90,7 @@ class State
                 $formValue = substr($formValue, 0, strlen($formValue) - 1);
             }
 
-            $formValue = base64_encode(\RPI\Framework\Helpers\Crypt::encrypt(self::$key, $formValue));
+            $formValue = base64_encode(\RPI\Framework\Helpers\Crypt::encrypt($this->key, $formValue));
         }
 
         return $formValue;
