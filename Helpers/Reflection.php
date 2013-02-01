@@ -173,9 +173,15 @@ class Reflection
                         $params[$name] = $value["object"];
                     } elseif (isset($value["class"])) {
                         $params[$name] = self::createObjectByClassInfo($app, $value["class"]);
+                    } elseif (isset($value["@"]["type"])) {
+                        $params[$name] = self::createObjectByClassInfo($app, $value);
                     } else {
                         unset($value["@"]);
-                        $params[$name] = $value;
+                        if (isset($value["#"])) {
+                            $params[$name] = $value["#"];
+                        } else {
+                            $params[$name] = $value;
+                        }
                     }
                 }
             }
