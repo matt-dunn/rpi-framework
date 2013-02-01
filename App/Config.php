@@ -73,16 +73,14 @@ class Config
             if (file_exists($file)) {
                 $config = $this->store->fetch("PHP_RPI_CONFIG-".$file);
                 if ($config === false) {
-                    $domDataViews = new \DOMDocument();
-                    $domDataViews->load($file);
-                    $schemaFile = __DIR__."/../../Schemas/Conf/App.2.0.0.xsd";
-                    if (!$domDataViews->schemaValidate($schemaFile)) {
-                        throw new \Exception(
-                            __CLASS__."::parseViewConfig - Invalid config file '".
-                            $file."'. Check against schema '".$schemaFile."'"
-                        );
-                    }
-
+                    $domDataConfig = new \DOMDocument();
+                    $domDataConfig->load($file);
+                    
+                    \RPI\Framework\Helpers\Dom::validateSchema(
+                        $domDataConfig,
+                        __DIR__."/../../Schemas/Conf/App.2.0.0.xsd"
+                    );
+                    
                     $seg = \RPI\Framework\Helpers\Locking::lock(__CLASS__);
 
                     require_once(__DIR__."/../../Vendor/PEAR/Config.php");

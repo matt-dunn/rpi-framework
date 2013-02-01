@@ -219,14 +219,12 @@ class View
 
                     $domDataViews = new \DOMDocument();
                     $domDataViews->load($file);
-                    $schemaFile = __DIR__."/../../Schemas/Conf/Views.2.0.0.xsd";
-                    if (!$domDataViews->schemaValidate($schemaFile)) {
-                        throw new \Exception(
-                            __CLASS__."::parseViewConfig - Invalid config file '".
-                            $file."'. Check against schema '".$schemaFile."'"
-                        );
-                    }
-
+                    
+                    \RPI\Framework\Helpers\Dom::validateSchema(
+                        $domDataViews,
+                        __DIR__."/../../Schemas/Conf/Views.2.0.0.xsd"
+                    );
+                    
                     // Clear the view keys in the store
                     if ($this->store->clear(null, "PHP_RPI_CONTENT_VIEWS-".$file) === false) {
                         \RPI\Framework\Exception\Handler::logMessage("Unable to clear data store", LOG_WARNING);
