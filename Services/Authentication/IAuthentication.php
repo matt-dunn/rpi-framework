@@ -20,15 +20,15 @@ interface IAuthentication
      * @param  string            $roleType
      * @return AuthenticatedUser or false on error
      */
-    public function registerUser(
-        $firstName,
-        $surname,
-        $email,
-        $password,
-        $details = null,
-        $disabled = false,
-        $roleType = "user"
-    );
+    //public function registerUser(
+    //    $firstName,
+    //    $surname,
+    //    $email,
+    //    $password,
+    //    $details = null,
+    //    $disabled = false,
+    //    $roleType = "user"
+    //);
 
     /**
      * Authenticate user login details
@@ -43,7 +43,7 @@ interface IAuthentication
      * @param boolean $requiresAuthentication Indicate if the item requires a secure connection
      * @param int     $accessLevel
      */
-    public function checkAuthentication($requiresAuthentication = false, $accessLevel = 0);
+    //public function checkAuthentication($requiresAuthentication = false, $accessLevel = 0);
 
     /**
      *
@@ -59,7 +59,7 @@ interface IAuthentication
      *
      * @param int $accessControlLevel
      */
-    public function forceAuthentication($accessControlLevel = 0);
+    //public function forceAuthentication($accessControlLevel = 0);
 
     /**
      *

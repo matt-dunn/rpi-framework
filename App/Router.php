@@ -239,7 +239,9 @@ class Router
                 $method,
                 "status:$statusCode",
                 $match["controller"],
-                $match["uuid"]
+                $match["uuid"],
+                null,
+                $match["secure"]
             );
         }
         
@@ -336,7 +338,9 @@ class Router
                             $method,
                             $matchPath,
                             $match["controller"],
-                            $match["uuid"]
+                            $match["uuid"],
+                            null,
+                            $match["secure"]
                         );
 
                         if (isset($match["action"]) || isset($match["params"])) {

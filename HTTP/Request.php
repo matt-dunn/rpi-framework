@@ -113,6 +113,11 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
         
         return $this->urlPath;
     }
+    
+    public function getHost()
+    {
+        return parse_url($this->getUrl(), PHP_URL_HOST);
+    }
 
     public function setUrl($url)
     {
@@ -300,6 +305,10 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
         $this->accept = $accept;
     }
     
+    public function isSecureConnection()
+    {
+        return (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on");
+    }
     
     /**
      * 

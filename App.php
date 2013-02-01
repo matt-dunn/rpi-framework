@@ -77,6 +77,12 @@ class App extends \RPI\Framework\Helpers\Object
     private $session = null;
     
     /**
+     *
+     * @var \RPI\Framework\App\Security
+     */
+    private $security = null;
+    
+    /**
      * 
      * @param string $webConfigFile
      * @param string $viewConfigFile
@@ -101,15 +107,27 @@ class App extends \RPI\Framework\Helpers\Object
     }
     
     /**
-     * @return \RPI\Framework\Session
+     * @return \RPI\Framework\App\Session
      */
     public function getSession()
     {
         if (!isset($this->session)) {
-            $this->session = \RPI\Framework\Helpers\Reflection::createObject($this, "\RPI\Framework\Session");
+            $this->session = \RPI\Framework\Helpers\Reflection::createObject($this, "\RPI\Framework\App\Session");
         }
         
         return $this->session;
+    }
+    
+    public function getSecurity()
+    {
+        if (!isset($this->security)) {
+            $this->security = new \RPI\Framework\App\Security(
+                $this->getSession(),
+                $this->getRequest()->getCookies()
+            );
+        }
+        
+        return $this->security;
     }
     
     /**
@@ -318,6 +336,22 @@ class App extends \RPI\Framework\Helpers\Object
      */
     private function runRouteController(\RPI\Framework\App\Router\Route $route, $method)
     {
+        $forceSecure = !\RPI\Framework\Facade::authentication()->getAuthenticatedUser()->isAnonymous;
+        if ($route->secure === true) {
+            $forceSecure = true;
+        }
+        $hostname = $this->getRequest()->getHost();
+        \RPI\Framework\Helpers\HTTP::forceSecure(
+            $this->getConfig()->getValue("config/server/domains/secure", $hostname),
+            $this->getConfig()->getValue("config/server/domains/website", $hostname),
+            $this->getRequest()->isSecureConnection(),
+            $this->getConfig()->getValue("config/server/sslPort"),
+            $hostname,
+            $this,
+            $this->getRequest()->getUrlPath(),
+            $forceSecure
+        );
+        
         $this->action = $route->action;
         
         $controller = $this->view->createControllerByUUID(

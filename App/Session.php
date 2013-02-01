@@ -1,6 +1,12 @@
 <?php
 
-namespace RPI\Framework;
+/**
+ * RPI Framework
+ * 
+ * (c) Matt Dunn <matt@red-pixel.co.uk>
+ */
+
+namespace RPI\Framework\App;
 
 /**
  * Session
@@ -26,7 +32,7 @@ class Session
             //session_save_path($sessionPath);
             session_cache_limiter("private_no_expire, must-revalidate");
             session_start();
-
+            
             // Reset the session expiry:
             if (isset($_COOKIE[session_name()])) {
                 setcookie(
@@ -47,7 +53,7 @@ class Session
      * 
      * @param boolean $deleteOldSession
      * 
-     * @return \RPI\Framework\Session
+     * @return \RPI\Framework\App\Session
      */
     public function regenerate($deleteOldSession = false)
     {
@@ -78,7 +84,7 @@ class Session
      * @param string $name
      * @param mixed $value
      * 
-     * @return \RPI\Framework\Session
+     * @return \RPI\Framework\App\Session
      */
     public function __set($name, $value)
     {
@@ -92,7 +98,7 @@ class Session
      * 
      * @param string $name
      * 
-     * @return \RPI\Framework\Session
+     * @return \RPI\Framework\App\Session
      */
     public function __unset($name)
     {
@@ -101,6 +107,13 @@ class Session
         return $this;
     }
     
+    /**
+     * Test if an item is in the session
+     * 
+     * @param string $name
+     * 
+     * @return boolean
+     */
     public function __isset($name)
     {
         return isset($_SESSION[$name]);

@@ -1,30 +1,107 @@
 <?php
 
+/**
+ * RPI Framework
+ * 
+ * (c) Matt Dunn <matt@red-pixel.co.uk>
+ */
+
 namespace RPI\Framework;
 
+/**
+ * Web Form
+ */
 abstract class Form extends \RPI\Framework\Component
 {
+    /**
+     * Page name identifier used for checking postback
+     * @var string
+     */
     public $pageName;
+    
+    /**
+     * Form name/ID
+     * @var string
+     */
     public $name;
+    
+    /**
+     * Form action
+     * @var string
+     */
     public $action;
+    
+    /**
+     * Form method
+     * @var string  Method <post|get>
+     */
     public $method = "post";
+    
+    /**
+     * Collection of form items
+     * @var array
+     */
     public $formItems = array();
+    
+    /**
+     *
+     * @var boolean
+     */
     public $hasError = false;
+    
+    /**
+     * Collection of form buttons
+     * @var array
+     */
     public $buttons = array();
+    
+    /**
+     *
+     * @var boolean
+     */
     public $isPostBack = false;
+    
+    /**
+     *
+     * @var \RPI\Framework\Form\State
+     */
     public $state;
+    
+    /**
+     *
+     * @var string
+     */
     public $title;
+    
+    /**
+     *
+     * @var \RPI\Framework\Form\FormItem
+     */
     public $focusFormItem = null;
+    
+    /**
+     *
+     * @var \RPI\Framework\Form\Button
+     */
     public $postBackButton = null;
     
+    /**
+     *
+     * @var boolean
+     */
     private $isCachable;
     
     /**
      * Set to true if all the defined validators have been run. Validators may
      * not run if they have been set to run against specific validators
+     * 
+     * @var boolean
      */
     public $hasAllRunValidators = true;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function initController(array $options)
     {
         $this->method = $this->options->method;
@@ -42,6 +119,42 @@ abstract class Form extends \RPI\Framework\Component
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    protected function init()
+    {
+        $formName = $this->app->getRequest()->getParameter("formName");
+        
+        $this->isPostBack = (
+            isset($formName)
+            && $formName == $this->id
+        );
+        
+        if ($this->isPostBack && $this->method == "post") {
+            $this->app->getSecurity()->validateToken($this->state->get("csrf-token"));
+        }
+        
+        $this->state->set("csrf-token", $this->app->getSecurity()->getToken(), false);
+
+        foreach ($this->formItems as $formItem) {
+            $formItem->init();
+        }
+
+        if ($this->isPostBack) {
+            $postbackButtonId = $this->app->getRequest()->getParameter("confirm", "default");
+            foreach ($this->buttons as $button) {
+                if ($button->id == $postbackButtonId) {
+                    $this->postBackButton = $button;
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function getControllerOptions(array $options)
     {
         return parent::getControllerOptions($options)->add(
@@ -93,6 +206,12 @@ abstract class Form extends \RPI\Framework\Component
         return parent::__sleep();
     }
 
+    /**
+     * 
+     * @param \RPI\Framework\Form\FormItem $formItem
+     * 
+     * @return \RPI\Framework\Form\FormItem
+     */
     public function addFormItem(\RPI\Framework\Form\FormItem $formItem)
     {
         $formItem->setParent($this);
@@ -101,6 +220,12 @@ abstract class Form extends \RPI\Framework\Component
         return $formItem;
     }
 
+    /**
+     * 
+     * @param \RPI\Framework\Form\Button $button
+     * 
+     * @return \RPI\Framework\Form\Button
+     */
     public function addButton(\RPI\Framework\Form\Button $button)
     {
         $button->setParent($this);
@@ -109,6 +234,11 @@ abstract class Form extends \RPI\Framework\Component
         return $button;
     }
 
+    /**
+     * Run validators against form items
+     * 
+     * @return boolean  False if there are no errors
+     */
     private function validateForm()
     {
         $errorCount = 0;
@@ -142,6 +272,11 @@ abstract class Form extends \RPI\Framework\Component
         return ($errorCount > 0);
     }
 
+    /**
+     * Validate the form
+     * 
+     * @return boolean  False if there are validation errors
+     */
     public function validate()
     {
         $this->hasError = $this->validateForm();
@@ -184,6 +319,9 @@ abstract class Form extends \RPI\Framework\Component
         return !$this->hasError;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function addMessage($message, $type = null, $id = null, $title = null)
     {
         if (!isset($type)) {
@@ -195,6 +333,9 @@ abstract class Form extends \RPI\Framework\Component
         parent::addMessage($message, $type, $id, $title);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function addControllerMessage($message, $type = null, $id = null, $title = null)
     {
         if (!isset($type)) {
@@ -210,30 +351,9 @@ abstract class Form extends \RPI\Framework\Component
         parent::addControllerMessage($message, $type, $id, $title);
     }
 
-    protected function init()
-    {
-        $formName = $this->app->getRequest()->getParameter("formName");
-        
-        $this->isPostBack = (
-            isset($formName)
-            && $formName == $this->id
-        );
-
-        foreach ($this->formItems as $formItem) {
-            $formItem->init();
-        }
-
-        if ($this->isPostBack) {
-            $postbackButtonId = $this->app->getRequest()->getParameter("confirm", "default");
-            foreach ($this->buttons as $button) {
-                if ($button->id == $postbackButtonId) {
-                    $this->postBackButton = $button;
-                    break;
-                }
-            }
-        }
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     protected function getView()
     {
         if (!isset($this->view)) {
@@ -247,6 +367,9 @@ abstract class Form extends \RPI\Framework\Component
         return $this->view;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function process()
     {
         parent::process();
@@ -258,6 +381,13 @@ abstract class Form extends \RPI\Framework\Component
         }
     }
 
+    /**
+     * Test if a form contains a form item of a specified type
+     * 
+     * @param string $formItemType
+     * 
+     * @return boolean  True if form item type is found
+     */
     public function hasFormItemType($formItemType)
     {
         foreach ($this->formItems as $formItem) {
@@ -269,20 +399,35 @@ abstract class Form extends \RPI\Framework\Component
         return false;
     }
 
+    /**
+     * Set client focus on a specified form item. Only supported if JavaScript
+     * is enabled on client side.
+     * 
+     * @param \RPI\Framework\Form\FormItem $formItem
+     */
     public function setFocus(\RPI\Framework\Form\FormItem $formItem)
     {
         $this->focusFormItem = $formItem;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function getModel()
     {
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function canRenderViewFromCache()
     {
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function isCacheable()
     {
         if (!isset($this->isCachable)) {
@@ -306,18 +451,33 @@ abstract class Form extends \RPI\Framework\Component
         return $this->isCachable;
     }
 
+    /**
+     * Create the form items
+     */
     abstract protected function createFormItems();
 
+    /**
+     * Perform any initiailisation on the form items
+     */
     protected function initializeFormData()
     {
     }
 
+    /**
+     * Run the form validation
+     */
     abstract protected function processForm();
     
+    /**
+     * Run part of the form validation. Useful for AJAX validation of individual form item(s)
+     */
     protected function processFormPartial()
     {
     }
 
+    /**
+     * Called if there are any validation errors
+     */
     protected function handlePostBackErrors()
     {
     }

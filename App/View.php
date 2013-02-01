@@ -421,6 +421,10 @@ class View
                     if (trim($route->getAttribute("mimetype")) != "") {
                         $mimetype = $route->getAttribute("mimetype");
                     }
+                    $secure = false;
+                    if (trim($route->getAttribute("secure")) != "") {
+                        $secure = ($route->getAttribute("secure") == "true");
+                    }
                     $defaultParams = null;
                     if (trim($route->getAttribute("defaultParams")) != "") {
                         $defaultParamsParts = explode(",", $route->getAttribute("defaultParams"));
@@ -450,7 +454,8 @@ class View
                         "action" => $action,
                         "fileExtension" => $fileExtension,
                         "mimetype" => $mimetype,
-                        "defaultParams" => $defaultParams
+                        "defaultParams" => $defaultParams,
+                        "secure" => $secure
                     );
                 } else {
                     $statusCode = $route->getAttribute("status");

@@ -62,52 +62,52 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
     // ------------------------------------------------------------------------------------------------------------
     // User management
     // ------------------------------------------------------------------------------------------------------------
-    public function registerUser(
-        $firstName,
-        $surname,
-        $email,
-        $password,
-        $details = null,
-        $requireVerification = false,
-        $disabled = false,
-        $roleType = "user"
-    ) {
-        if ($this->cookieDetectionEnabled && $this->app->getRequest()->getCookies()->get("cd") == null) {
-            throw new \RPI\Framework\Exceptions\Cookie();
-        }
-
-        $user = false;
-        
-        $this->app->getSession()->regenerate(true);
-
-        try {
-            $result = $this->createUser(
-                $firstName,
-                $surname,
-                strtolower($email),
-                $password,
-                $details,
-                $requireVerification,
-                $disabled,
-                $roleType
-            );
-            if ($result !== false) {
-                $user = $this->createAuthenticatedUser($result);
-            }
-        } catch (\RPI\Framework\Exceptions\Account\Disabled $ex) {
-            // Do nothing
-        }
-
-        if ($user !== false) {
-            if ($user ->accountVerified && $user->accountActivated) {
-                return $this->authenticate($user, strtolower($email));
-            } else {
-                return $user;
-            }
-        } else {
-            return false;
-        }
-    }
+    //public function registerUser(
+    //    $firstName,
+    //    $surname,
+    //    $email,
+    //    $password,
+    //    $details = null,
+    //    $requireVerification = false,
+    //    $disabled = false,
+    //    $roleType = "user"
+    //) {
+    //    if ($this->cookieDetectionEnabled && $this->app->getRequest()->getCookies()->get("cd") == null) {
+    //        throw new \RPI\Framework\Exceptions\Cookie();
+    //    }
+    //
+    //    $user = false;
+    //
+    //    $this->app->getSession()->regenerate(true);
+    //
+    //    try {
+    //        $result = $this->createUser(
+    //            $firstName,
+    //            $surname,
+    //            strtolower($email),
+    //            $password,
+    //            $details,
+    //            $requireVerification,
+    //            $disabled,
+    //            $roleType
+    //        );
+    //        if ($result !== false) {
+    //            $user = $this->createAuthenticatedUser($result);
+    //        }
+    //    } catch (\RPI\Framework\Exceptions\Account\Disabled $ex) {
+    //        // Do nothing
+    //    }
+    //
+    //    if ($user !== false) {
+    //        if ($user ->accountVerified && $user->accountActivated) {
+    //            return $this->authenticate($user, strtolower($email));
+    //        } else {
+    //            return $user;
+    //        }
+    //    } else {
+    //        return false;
+    //    }
+    //}
 
     public function authenticateUser($email, $password)
     {
@@ -140,39 +140,41 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     public function logout($complete = true)
     {
-        $this->app->getResponse()->getCookies()->set("a", null, -1);
+        $this->app->getRequest()->getCookies()->delete("a");
+        $this->app->getResponse()->getCookies()->delete("a");
         if ($complete) {
-            $this->app->getResponse()->getCookies()->set("u", null, -1);
+            $this->app->getRequest()->getCookies()->delete("u");
+            $this->app->getResponse()->getCookies()->delete("u");
         }
     }
 
     // ------------------------------------------------------------------------------------------------------------
     // Helpers
     // ------------------------------------------------------------------------------------------------------------
-    public function checkAuthentication(
-        $requiresAuthentication = false,
-        $accessLevel = \RPI\Framework\Model\User\AccessLevel::NONE
-    ) {
-        if ($requiresAuthentication) {
-            return $this->forceAuthentication($accessLevel);
-        } elseif ($this->authenticatedUser && $this->authenticatedUser->isAuthenticated) {
-            // Re-issue the token with a new expiry
-            $this->setUser(
-                $this->authenticatedUser,
-                null,
-                $this->createAuthenticationToken(
-                    strtolower($this->authenticatedUser->email),
-                    time() + $this->authenticationExpiryOffset
-                )
-            );
-
-            return true;
-        } else {
-            $this->logout(false);
-
-            return false;
-        }
-    }
+    //public function checkAuthentication(
+    //    $requiresAuthentication = false,
+    //    $accessLevel = \RPI\Framework\Model\User\AccessLevel::NONE
+    //) {
+    //    if ($requiresAuthentication) {
+    //        return $this->forceAuthentication($accessLevel);
+    //    } elseif ($this->authenticatedUser && $this->authenticatedUser->isAuthenticated) {
+    //        // Re-issue the token with a new expiry
+    //        $this->setUser(
+    //            $this->authenticatedUser,
+    //            null,
+    //            $this->createAuthenticationToken(
+    //                strtolower($this->authenticatedUser->email),
+    //                time() + $this->authenticationExpiryOffset
+    //            )
+    //        );
+    //
+    //        return true;
+    //    } else {
+    //        $this->logout(false);
+    //
+    //        return false;
+    //    }
+    //}
 
     public function isAuthenticatedUser()
     {
@@ -184,40 +186,40 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         return ($this->getAuthenticatedUser() !== false && $this->getAuthenticatedUser()->isAnonymous);
     }
 
-    public function forceAuthentication($accessControlLevel = 0)
-    {
-        $isAuthenticated = false;
-
-        $this->getAuthenticatedUser();
-
-        if ($this->authenticatedUser && $this->authenticatedUser instanceof \RPI\Framework\Model\User) {
-            $isAuthenticated = $this->checkAuthenticationState();
-
-            if (!$isAuthenticated) {
-                $this->logout(false);
-            } else {
-                // Re-issue the token with a new expiry
-                $this->setUser(
-                    $this->authenticatedUser,
-                    null,
-                    $this->createAuthenticationToken(
-                        strtolower($this->authenticatedUser->email),
-                        time() + $this->authenticationExpiryOffset
-                    )
-                );
-            }
-        }
-
-        if (!$isAuthenticated) {
-            throw new \RPI\Framework\Exceptions\Authentication();
-        }
-
-        if ($accessControlLevel > 0 && $this->authenticatedUser->accessLevel > $accessControlLevel) {
-            throw new \RPI\Framework\Exceptions\Authorization();
-        }
-
-        return $isAuthenticated;
-    }
+    //public function forceAuthentication($accessControlLevel = 0)
+    //{
+    //    $isAuthenticated = false;
+    //
+    //    $this->getAuthenticatedUser();
+    //
+    //    if ($this->authenticatedUser && $this->authenticatedUser instanceof \RPI\Framework\Model\User) {
+    //        $isAuthenticated = $this->checkAuthenticationState();
+    //
+    //        if (!$isAuthenticated) {
+    //            $this->logout(false);
+    //        } else {
+    //            // Re-issue the token with a new expiry
+    //            $this->setUser(
+    //                $this->authenticatedUser,
+    //                null,
+    //                $this->createAuthenticationToken(
+    //                    strtolower($this->authenticatedUser->email),
+    //                    time() + $this->authenticationExpiryOffset
+    //                )
+    //            );
+    //        }
+    //    }
+    //
+    //    if (!$isAuthenticated) {
+    //        throw new \RPI\Framework\Exceptions\Authentication();
+    //    }
+    //
+    //    if ($accessControlLevel > 0 && $this->authenticatedUser->accessLevel > $accessControlLevel) {
+    //        throw new \RPI\Framework\Exceptions\Authorization();
+    //    }
+    //
+    //    return $isAuthenticated;
+    //}
 
     public function getAuthenticatedUser()
     {
@@ -241,9 +243,8 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
                 } else {
                     $currentUser = $this->getCurrentUser($tokenParts["u"]);
                     if ($currentUser !== false) {
-                        $this->app->getRequest()->getCookies()->set("a", null, -1);
-                        $this->app->getResponse()->getCookies()->set("a", null, -1);
-                        $currentUser->isAuthenticated = false;
+                        $this->logout(false);
+
                         $user = $this->setUser($currentUser, $this->createUserToken($tokenParts["u"]));
                     }
                 }
@@ -373,12 +374,18 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
             $this->app->getResponse()->getCookies()->set(
                 "a",
                 $encryptedAuthenticationToken,
-                time() + $this->authenticationExpiryOffset + 3600
+                time() + $this->authenticationExpiryOffset + 3600,
+                null,
+                null,
+                true
             );
             $this->app->getRequest()->getCookies()->set(
                 "a",
                 $encryptedAuthenticationToken,
-                time() + $this->authenticationExpiryOffset + 3600
+                time() + $this->authenticationExpiryOffset + 3600,
+                null,
+                null,
+                true
             );
         }
 

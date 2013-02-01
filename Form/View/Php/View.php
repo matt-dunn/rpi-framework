@@ -70,6 +70,7 @@ EOT;
                 <form method="{$controller->method}" action="{$controller->action}" 
                     id="{$controller->id}"{$className}{$encodingType}>
                     <div>
+                        {$controller->state->render()}
                         <input type="hidden" name="pageName" value="{$controller->pageName}" />
                         <input type="hidden" name="formName" value="{$controller->id}" />
                         {$stateFormItem}
