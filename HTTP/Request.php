@@ -259,7 +259,7 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
     
     public function getAcceptLanguages()
     {
-        if (!isset($this->acceptLanguages)) {
+        if (!isset($this->acceptLanguages) && isset($_SERVER["HTTP_ACCEPT_LANGUAGE"])) {
             $this->acceptLanguages = $this->parseAccept($_SERVER["HTTP_ACCEPT_LANGUAGE"]);
         }
         
@@ -275,7 +275,7 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
     
     public function getAcceptEncoding()
     {
-        if (!isset($this->acceptEncoding)) {
+        if (!isset($this->acceptEncoding) && isset($_SERVER["HTTP_ACCEPT_ENCODING"])) {
             $this->acceptEncoding = $this->parseAccept($_SERVER["HTTP_ACCEPT_ENCODING"]);
         }
         
@@ -291,7 +291,7 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
     
     public function getAccept()
     {
-        if (!isset($this->accept)) {
+        if (!isset($this->accept) && isset($_SERVER["HTTP_ACCEPT"])) {
             $this->accept = $this->parseAccept($_SERVER["HTTP_ACCEPT"]);
         }
         
