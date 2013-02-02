@@ -63,7 +63,7 @@ class HTMLTest extends \RPI\Framework\Test\Base
             <div>x<i>10. dwqd</i>dqwdqw <strong>qdwq</strong> wqd!!</div>
 EOT;
 
-        $htmlResult = \RPI\Framework\Helpers\HTML::parseHTML($source);
+        $htmlResult = \RPI\Framework\Helpers\HTML::sanitise($source);
         var_dump($htmlResult);
 
         $d = new \DOMDocument();

@@ -12,7 +12,12 @@ class HTML
     {
     }
 
-    public static function parseHTML($htmlSource)
+    /**
+     * Sanitise HTML content
+     * @param string $htmlSource
+     * @return string
+     */
+    public static function sanitise($htmlSource)
     {
         $data = new \DOMDocument();
         $data->loadXML("<body xmlns=\"http://www.w3.org/1999/xhtml\">".$htmlSource."</body>");
