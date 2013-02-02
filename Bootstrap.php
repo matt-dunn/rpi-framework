@@ -34,7 +34,7 @@ require(__DIR__."/Autoload.php");
     "RPI\Framework\Events\ViewUpdated",
     function (\RPI\Framework\Event $event, $params) {
         $frontStore = \RPI\Framework\Helpers\Reflection::getDependency(
-            $GLOBALS["RPI_APP"],
+            \RPI\Framework\Facade::app(),
             null,
             null,
             "RPI\Framework\Cache\IFront"

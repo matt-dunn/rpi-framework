@@ -33,4 +33,14 @@ class Facade
             "RPI\Framework\Services\Authentication\IAuthentication"
         );
     }
+    
+    /**
+     * Get an instance of the App
+     * 
+     * @return \RPI\Framework\App
+     */
+    public static function app()
+    {
+        return $GLOBALS["RPI_APP"];
+    }
 }

@@ -136,9 +136,12 @@ class Handler
     private static function runErrorController($statusCode)
     {
         if (!isCli()) {
-            $GLOBALS["RPI_APP"]->getResponse()->getHeaders()->clear();
-            $GLOBALS["RPI_APP"]->getRequest()->setStatusCode($statusCode);
-            $GLOBALS["RPI_APP"]->run()->dispatch();
+            $app = \RPI\Framework\Facade::app();
+            $app->getResponse()
+                ->getHeaders()->clear();
+            $app->getRequest()
+                ->setStatusCode($statusCode);
+            $app->run()->dispatch();
         }
     }
 
@@ -163,7 +166,7 @@ class Handler
                     $from = $exception->from;
                 }
                 // TODO: remove hard coded url:
-                $GLOBALS["RPI_APP"]->getResponse()->redirect("/account/login/?from=".urlencode($from));
+                \RPI\Framework\Facade::app()->getResponse()->redirect("/account/login/?from=".urlencode($from));
             } elseif ($exception instanceof \RPI\Framework\Exceptions\Authorization) {
                 self::log($exception, LOG_ERR, "authentication");
                 
@@ -253,14 +256,19 @@ class Handler
         if (self::$showFailSafeMessage && !isCli()) {
             try {
                 ob_start();
-                $GLOBALS["RPI_APP"]->getResponse()->setMimeType("text/html");
-                $GLOBALS["RPI_APP"]->getResponse()->getHeaders()->clear();
-                $GLOBALS["RPI_APP"]->getResponse()->setStatusCode(500);
-                $GLOBALS["RPI_APP"]->getResponse()->dispatch();
-                require(pathinfo(__FILE__, PATHINFO_DIRNAME)."/Static/FailSafe.html");
-                $buffer = ob_get_contents();
-                ob_end_clean();
-                echo $buffer;
+                $app = \RPI\Framework\Facade::app();
+                if (!$app->getRequest()->isAjax()) {
+                    $app->getResponse()->setMimeType("text/html")
+                        ->setStatusCode(500)
+                        ->getHeaders()->clear();
+                    $app->getResponse()->dispatch();
+                    require(pathinfo(__FILE__, PATHINFO_DIRNAME)."/Static/FailSafe.html");
+                    $buffer = ob_get_contents();
+                    ob_end_clean();
+                    echo $buffer;
+                } else {
+                    $app->getResponse()->setStatusCode(500);
+                }
             } catch (\Exception $ex) {
             }
             exit();

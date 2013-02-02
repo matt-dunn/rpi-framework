@@ -16,7 +16,7 @@ abstract class Front extends \RPI\Framework\Controller\HTML
     public static function getAuthenticatedUser()
     {
         $authenticationService = \RPI\Framework\Helpers\Reflection::getDependency(
-            $GLOBALS["RPI_APP"],
+            \RPI\Framework\Facade::app(),
             null,
             null,
             "RPI\Framework\Services\Authentication\IAuthentication"
@@ -40,7 +40,7 @@ abstract class Front extends \RPI\Framework\Controller\HTML
     {
         if (!isset(self::$pageTitleDetails)) {
             $frontStore = \RPI\Framework\Helpers\Reflection::getDependency(
-                $GLOBALS["RPI_APP"],
+                \RPI\Framework\Facade::app(),
                 null,
                 null,
                 "RPI\Framework\Cache\IFront"
@@ -117,7 +117,7 @@ abstract class Front extends \RPI\Framework\Controller\HTML
             
             if ($priority !== -1) {
                 $frontStore = \RPI\Framework\Helpers\Reflection::getDependency(
-                    $GLOBALS["RPI_APP"],
+                    \RPI\Framework\Facade::app(),
                     null,
                     null,
                     "RPI\Framework\Cache\IFront"
