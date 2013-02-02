@@ -17,6 +17,12 @@ function isCli()
  */
 class Handler
 {
+    // TODO: these values should be either configurable or calculated depending on the environment
+    const MAX_MESSAGE_LENGTH = 50000;
+    const MAX_MESSAGE_LENGTH_WIN = 5000;
+    
+    const MAX_ARGUMENTS_LENGTH = 1000;
+
     private function __construct()
     {
     }
@@ -105,15 +111,15 @@ class Handler
     {
         if (!isset($argsText) || $argsText == "") {
             $argsText = "";
-        } elseif (strlen($argsText) > 1000) {
-            $argsText .= " [TRUNCATED]";
+        } elseif (strlen($argsText) > self::MAX_ARGUMENTS_LENGTH) {
+            $argsText .= substr($argsText, 0, self::MAX_ARGUMENTS_LENGTH)." [TRUNCATED]";
 
             return;
         }
 
         if (count($args) > 0) {
             if ($argsText == "") {
-                $argsText = "args: ";
+                $argsText = "args: \n";
             }
             foreach ($args as $key => $value) {
                 $argsText .= ("[$key => ");
@@ -122,13 +128,14 @@ class Handler
                 if (is_object($value)) {
                     $argsText .= get_class($value);
                 } elseif (is_array($value)) {
+                    $argsText .= "\t";
                     self::getArgs($value, $argsText);
                 } elseif (is_string($value)) {
                     $argsText .= ("\"".$value."\"");
                 } else {
                     $argsText .= $value;
                 }
-                $argsText .= "]";
+                $argsText .= "]\n";
             }
         }
     }
@@ -208,7 +215,7 @@ class Handler
                 if (strpos($errFile, "PEAR") !== false) { // Don't log any PEAR errors
                     self::$unloggedStrictErrorCount++;
                 } else {
-                    self::logMessage("STRICT/DEPRECATED WARNING: [$errNo] $errStr - $errFile#$errLine", LOG_WARNING);
+                    self::logMessage("STRICT/DEPRECATED WARNING: [$errNo] $errStr - $errFile#$errLine", LOG_ERR);
                 }
                 break;
             default:
@@ -295,9 +302,9 @@ class Handler
             $msg = "[".$host."] ".$msg;
 
             if (self::$logErrorsToSysLog) {
-                $maxMessageLength = 500;
+                $maxMessageLength = self::MAX_MESSAGE_LENGTH;
                 if (strtoupper(substr(PHP_OS, 0, 3)) === "WIN") {
-                    $maxMessageLength = 5000;
+                    $maxMessageLength = self::MAX_MESSAGE_LENGTH_WIN;
                 }
 
                 if ($ident !== null) {
