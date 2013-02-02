@@ -593,7 +593,7 @@ class View
                                 break;
                             case "user":
                                 $expression = $negate.
-                                    "((string) (\RPI\Framework\Controller\HTML\Front::".
+                                    "((string) (\RPI\Framework\Facade::authentication()->".
                                     "getAuthenticatedUser()->{$name})
                                     == '".strtolower($value)."') ";
                                 break;
