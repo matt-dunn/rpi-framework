@@ -75,37 +75,22 @@ EOT;
                 1. dwqdq dwd no tag text font tag text
             </p>
             <p>
-                2. dwqdq
+                2. dwqdq dwd dwqh ioh iodwq
             </p>
             <p>
-                dwd dwqh ioh iodwq
+                3. dwqdq dwd no tag text font tag text
             </p>
-            <p>
-                3. dwqdq
-            </p>
-            <p>
-                dwd no tag text font tag text
-            </p>
-            <p>
-                4. dqwdqw <strong>qdwq</strong> wqd!!
-            </p>
-            <p>
-                <strong>5. dqw</strong>dqw <strong>qdwq</strong> wqd!!
-            </p>
-            <p>
-                6. dqwdqw <strong>qdwq</strong> wqd<em>!!</em>
-            </p>
-            <p>
-                7. dqwdqw <strong>qdwq</strong> wqd!!
-            </p>
-            <p>
-                <strong>8. dqw</strong>dqw <strong>qdwq</strong> wqd<em>!!</em>
-            </p>
-            <p>
-                <strong>9. dqw</strong>dqw</p>
-            <p>
-                <strong>qdwq</strong> wqd<em>!!</em>
-            </p>
+            4. dqwdqw <strong>qdwq</strong> wqd!!
+
+            <strong>5. dqw</strong>dqw <strong>qdwq</strong> wqd!!
+
+            6. dqwdqw <strong>qdwq</strong> wqd<em>!!</em>
+
+            7. dqwdqw <strong>qdwq</strong> wqd!!
+
+            <strong>8. dqw</strong>dqw <strong>qdwq</strong> wqd<em>!!</em>
+
+            <strong>9. dqw</strong>dqw <strong>qdwq</strong> wqd<em>!!</em>            
             <p>
                 x<em>10. dwqd</em>dqwdqw <strong>qdwq</strong> wqd!!
             </p>

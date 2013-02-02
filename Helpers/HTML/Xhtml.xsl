@@ -41,10 +41,29 @@
 <xsl:template match="xhtml:*">
 	<xsl:param name="headingLevel" select="number(1)"/>
 	
-	<xsl:apply-templates select="xhtml:*">
+	<xsl:apply-templates>
 		<xsl:with-param name="headingLevel" select="$headingLevel"/>
 	</xsl:apply-templates>
 </xsl:template>
+
+<xsl:template match=
+  "xhtml:div[descendant::xhtml:div or descendant::xhtml:p]
+  |
+   xhtml:p[descendant::xhtml:div or descendant::xhtml:p]
+  ">
+    <xsl:apply-templates/>
+</xsl:template>
+
+<xsl:template match=
+  "xhtml:div[descendant::xhtml:div or descendant::xhtml:p]/text()
+  |
+   xhtml:p[descendant::xhtml:div or descendant::xhtml:p]/text()
+  ">
+    <xsl:element name="{name(..)}">
+        <xsl:apply-templates/>
+    </xsl:element>
+</xsl:template>
+ 
 <!-- = / DEFAULTS =============================================================================== -->
 
 <!-- = DEFAULT MATCHES =============================================================================== -->
