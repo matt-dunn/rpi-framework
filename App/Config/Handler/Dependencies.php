@@ -13,7 +13,7 @@ class Dependencies implements \RPI\Framework\App\Config\IHandler
         
         $dependencyConfig = array();
         foreach ($dependencies as $dependencyInfo) {
-            $dependencyConfig[$dependencyInfo["@"]["interface"]] = $dependencyInfo["class"];
+            $dependencyConfig[$dependencyInfo["@"]["class"]] = $dependencyInfo["class"];
         }
 
         return $dependencyConfig;

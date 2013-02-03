@@ -99,33 +99,33 @@ class Reflection
         return $o;
     }
     
-    public static function getDependency(\RPI\Framework\App $app, $interfaceName)
+    public static function getDependency(\RPI\Framework\App $app, $className)
     {
-        $dependency = self::getDependencyObject($app, $interfaceName);
+        $dependency = self::getDependencyObject($app, $className);
         
         if (!isset($dependency)) {
-            throw new \Exception("Unable to create dependency '$interfaceName'. Check configuration settings");
+            throw new \Exception("Unable to create dependency '$className'. Check configuration settings");
         }
         
         return $dependency;
     }
 
-    private static function getDependencyObject(\RPI\Framework\App $app, $interfaceName)
+    private static function getDependencyObject(\RPI\Framework\App $app, $className)
     {
         static $objects = array();
         
-        if (!interface_exists($interfaceName) && !class_exists($interfaceName)) {
-            throw new \Exception("Interface or class '$interfaceName' does not exist");
+        if (!interface_exists($className) && !class_exists($className)) {
+            throw new \Exception("Interface or class '$className' does not exist");
         }
         
-        if (isset($objects[$interfaceName])) {
-            return $objects[$interfaceName];
+        if (isset($objects[$className])) {
+            return $objects[$className];
         }
         
         $dependencies = $app->getConfig()->getValue("config/dependencies");
-        if (isset($dependencies) && isset($dependencies[$interfaceName])) {
-            $objects[$interfaceName] = self::createObjectByClassInfo($app, $dependencies[$interfaceName]);
-            return $objects[$interfaceName];
+        if (isset($dependencies) && isset($dependencies[$className])) {
+            $objects[$className] = self::createObjectByClassInfo($app, $dependencies[$className]);
+            return $objects[$className];
         }
         
         return null;
