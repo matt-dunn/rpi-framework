@@ -33,7 +33,7 @@ class Config
     {
         $this->store = $store;
         
-        $this->config = $this->init($file);
+        $this->config = $this->init(\RPI\Framework\Helpers\Utils::buildFullPath($file));
     }
 
     /**

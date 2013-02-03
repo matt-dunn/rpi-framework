@@ -22,7 +22,7 @@ class View
     public function __construct(\RPI\Framework\Cache\IData $store, $configFile)
     {
         $this->store = $store;
-        $this->file = $configFile;
+        $this->file = \RPI\Framework\Helpers\Utils::buildFullPath($configFile);
         
         $this->parseViewConfig();
     }

@@ -18,12 +18,6 @@ class App extends \RPI\Framework\Helpers\Object
     
     /**
      *
-     * @var string
-     */
-    private $viewConfigFile;
-    
-    /**
-     *
      * @var \RPI\Framework\Cache\IData 
      */
     private $dataStore;
@@ -85,28 +79,30 @@ class App extends \RPI\Framework\Helpers\Object
     /**
      * 
      * @param string $webConfigFile
-     * @param string $viewConfigFile
+     * @param \RPI\Framework\App\View $view
      * @param \RPI\Framework\Cache\IData $dataStore
+     * @param \RPI\Framework\App\Security $security
+     * @param \RPI\Framework\App\Session $session
+     * @param \RPI\Framework\App\Config $config
+     * @param type $characterEncoding
      */
     public function __construct(
         $webConfigFile,
-        $viewConfigFile,
+        \RPI\Framework\App\View $view = null,
         \RPI\Framework\Cache\IData $dataStore = null,
         \RPI\Framework\App\Security $security = null,
         \RPI\Framework\App\Session $session = null,
         \RPI\Framework\App\Config $config = null,
-        \RPI\Framework\App\View $view = null,
         $characterEncoding = null
     ) {
         $GLOBALS["RPI_APP"] = $this;
         
         $this->webConfigFile = $webConfigFile;
-        $this->viewConfigFile = $viewConfigFile;
+        $this->view = $view;
         $this->dataStore = $dataStore;
         $this->security = $security;
         $this->session = $session;
         $this->config = $config;
-        $this->view = $view;
         if (isset($characterEncoding)) {
             $this->characterEncoding = $characterEncoding;
         }
@@ -179,10 +175,7 @@ class App extends \RPI\Framework\Helpers\Object
     public function getView()
     {
         if (!isset($this->view)) {
-            $this->view = new \RPI\Framework\App\View(
-                $this->getDataStore(),
-                $this->viewConfigFile
-            );
+            $this->view = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\App\View");
         }
         return $this->view;
     }
