@@ -98,7 +98,23 @@ abstract class Form extends \RPI\Framework\Component
      * @var boolean
      */
     public $hasAllRunValidators = true;
+    
+    protected $security = null;
 
+    public function __construct(
+        $id,
+        \RPI\Framework\App $app,
+        \RPI\Framework\Cache\IFront $frontStore,
+        \RPI\Framework\App\Security $security,
+        \RPI\Framework\Views\IView $viewRendition = null,
+        array $options = null
+    ) {
+        $this->frontStore = $frontStore;
+        $this->security = $security;
+        
+        parent::__construct($id, $app, $frontStore, $viewRendition, $options);
+    }
+    
     /**
      * {@inheritdoc}
      */
@@ -132,10 +148,10 @@ abstract class Form extends \RPI\Framework\Component
         );
         
         if ($this->isPostBack && $this->method == "post") {
-            $this->app->getSecurity()->validateToken($this->state->get("csrf-token"));
+            $this->security->validateToken($this->state->get("csrf-token"));
         }
         
-        $this->state->set("csrf-token", $this->app->getSecurity()->getToken(), false);
+        $this->state->set("csrf-token", $this->security->getToken(), false);
 
         foreach ($this->formItems as $formItem) {
             $formItem->init();

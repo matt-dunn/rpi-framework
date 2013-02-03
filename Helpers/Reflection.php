@@ -56,26 +56,32 @@ class Reflection
         if (isset($constructor)) {
             $constructorParams = array();
             foreach ($constructor->getParameters() as $reflectionParameter) {
+                $param = null;
                 if (isset($params[$reflectionParameter->getName()])) {
-                    $constructorParams[] = $params[$reflectionParameter->getName()];
+                    $param = $params[$reflectionParameter->getName()];
                 } else {
                     //echo "CREATE:($className)[{$reflectionParameter->getClass()->getName()}]\n";
                     $class = $reflectionParameter->getClass();
                     if (isset($class)) {
                         if ($class->getName() == "RPI\Framework\App") {
-                            $constructorParams[] = $app;
+                            $param = $app;
                         } else {
-                            $constructorParams[] = self::getDependency(
+                            $param = self::getDependencyObject(
                                 $app,
-                                $className,
-                                $reflectionParameter->getName(),
                                 $class->getName()
                             );
                         }
-                    } else {
-                        $constructorParams[] = null;
                     }
                 }
+                
+                if (!isset($param) && !$reflectionParameter->isDefaultValueAvailable()) {
+                    throw new \Exception(
+                        "Class '$className' constructor parameter '".$reflectionParameter->getName().
+                        "' must be defined as a dependency. Check the application configuration settings."
+                    );
+                }
+                
+                $constructorParams[] = $param;
             }
 
             if (count($constructorParams) == 0) {
@@ -93,21 +99,23 @@ class Reflection
         return $o;
     }
     
-    public static function getDependency(\RPI\Framework\App $app, $className, $parameterName, $interfaceName)
+    public static function getDependency(\RPI\Framework\App $app, $interfaceName)
+    {
+        $dependency = self::getDependencyObject($app, $interfaceName);
+        
+        if (!isset($dependency)) {
+            throw new \Exception("Unable to create dependency '$interfaceName'. Check configuration settings");
+        }
+        
+        return $dependency;
+    }
+
+    private static function getDependencyObject(\RPI\Framework\App $app, $interfaceName)
     {
         static $objects = array();
         
-        if (!interface_exists($interfaceName)) {
-            $message = null;
-            
-            if (isset($className) && isset($parameterName)) {
-                $message = "Constructor for '$className' parameter '$parameterName' ".
-                    "must be an interface. '$interfaceName' used";
-            } else {
-                $message = "'$interfaceName' must be a valid interface.";
-            }
-            
-            throw new \Exception($message);
+        if (!interface_exists($interfaceName) && !class_exists($interfaceName)) {
+            throw new \Exception("Interface or class '$interfaceName' does not exist");
         }
         
         if (isset($objects[$interfaceName])) {

@@ -77,7 +77,7 @@ class App extends \RPI\Framework\Helpers\Object
     private $session = null;
     
     /**
-     *
+     * 
      * @var \RPI\Framework\App\Security
      */
     private $security = null;
@@ -92,6 +92,10 @@ class App extends \RPI\Framework\Helpers\Object
         $webConfigFile,
         $viewConfigFile,
         \RPI\Framework\Cache\IData $dataStore = null,
+        \RPI\Framework\App\Security $security = null,
+        \RPI\Framework\App\Session $session = null,
+        \RPI\Framework\App\Config $config = null,
+        \RPI\Framework\App\View $view = null,
         $characterEncoding = null
     ) {
         $GLOBALS["RPI_APP"] = $this;
@@ -99,14 +103,13 @@ class App extends \RPI\Framework\Helpers\Object
         $this->webConfigFile = $webConfigFile;
         $this->viewConfigFile = $viewConfigFile;
         $this->dataStore = $dataStore;
+        $this->security = $security;
+        $this->session = $session;
+        $this->config = $config;
+        $this->view = $view;
         if (isset($characterEncoding)) {
             $this->characterEncoding = $characterEncoding;
         }
-        
-        $this->security = new \RPI\Framework\App\Security(
-            $this->getSession()
-        );
-        $this->getResponse()->getCookies()->set("t", $this->security->getToken(), null, null, null, null, false);
         
         mb_internal_encoding($this->characterEncoding);
     }
@@ -117,14 +120,22 @@ class App extends \RPI\Framework\Helpers\Object
     public function getSession()
     {
         if (!isset($this->session)) {
-            $this->session = \RPI\Framework\Helpers\Reflection::createObject($this, "\RPI\Framework\App\Session");
+            $this->session = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\App\Session");
         }
         
         return $this->session;
     }
     
+    /**
+     * 
+     * @return \RPI\Framework\App\Security
+     */
     public function getSecurity()
     {
+        if (!isset($this->security)) {
+            $this->security = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\App\Security");
+        }
+        
         return $this->security;
     }
     
@@ -249,6 +260,8 @@ class App extends \RPI\Framework\Helpers\Object
      */
     public function run()
     {
+        $this->getResponse()->getCookies()->set("t", $this->getSecurity()->getToken(), null, null, null, null, false);
+        
         $statusCode = $this->getRequest()->getStatusCode();
         if ($statusCode != "200") {
             $this->getResponse()->setStatusCode($statusCode);

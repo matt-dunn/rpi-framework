@@ -24,6 +24,19 @@ abstract class Server extends \RPI\Framework\Controller
     
     private $clientEvents = array();
 
+    protected $security = null;
+    
+    public function __construct(
+        $id,
+        \RPI\Framework\App $app,
+        \RPI\Framework\App\Security $security,
+        array $options = null
+    ) {
+        $this->security = $security;
+        
+        parent::__construct($id, $app, $options);
+    }
+    
     protected function initController(array $options)
     {
         ob_start();
@@ -67,7 +80,7 @@ abstract class Server extends \RPI\Framework\Controller
      */
     protected function init()
     {
-        $this->app->getSecurity()->validateToken($this->app->getRequest()->getHeaders()->get("X-Token"));
+        $this->security->validateToken($this->app->getRequest()->getHeaders()->get("X-Token"));
     }
 
     public function process()
