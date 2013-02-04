@@ -83,7 +83,6 @@ class App extends \RPI\Framework\Helpers\Object
      * @param \RPI\Framework\Cache\IData $dataStore
      * @param \RPI\Framework\App\Security $security
      * @param \RPI\Framework\App\Session $session
-     * @param \RPI\Framework\App\Config $config
      * @param string $characterEncoding
      */
     public function __construct(
@@ -92,7 +91,6 @@ class App extends \RPI\Framework\Helpers\Object
         \RPI\Framework\Cache\IData $dataStore = null,
         \RPI\Framework\App\Security $security = null,
         \RPI\Framework\App\Session $session = null,
-        \RPI\Framework\App\Config $config = null,
         $characterEncoding = null
     ) {
         $GLOBALS["RPI_APP"] = $this;
@@ -102,7 +100,6 @@ class App extends \RPI\Framework\Helpers\Object
         $this->dataStore = $dataStore;
         $this->security = $security;
         $this->session = $session;
-        $this->config = $config;
         if (isset($characterEncoding)) {
             $this->characterEncoding = $characterEncoding;
         }
