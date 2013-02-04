@@ -23,6 +23,8 @@ class Config
      * @var \RPI\Framework\Cache\IData 
      */
     private $store = null;
+    
+    private $valueCache = array();
 
     /**
      * Initialise the application configuration
@@ -44,10 +46,8 @@ class Config
      */
     public function getValue($keyPath, $default = null)
     {
-        static $values = array();
-        
-        if (isset($values[$keyPath])) {
-            return $values[$keyPath];
+        if (isset($this->valueCache[$keyPath])) {
+            return $this->valueCache[$keyPath];
         }
 
         $basePath = $this->config["root"];
@@ -66,7 +66,7 @@ class Config
             }
         }
 
-        $values[$keyPath] = $basePath;
+        $this->valueCache[$keyPath] = $basePath;
         
         return $basePath;
     }
