@@ -46,7 +46,7 @@ class Config
     {
         static $values = array();
         
-        if ($values[$keyPath]) {
+        if (isset($values[$keyPath])) {
             return $values[$keyPath];
         }
 
