@@ -42,7 +42,7 @@ class Config
      * Return a value from the application config using simple 'xpath' syntax
      * @param  string $keyPath Xpath style syntax path to required data
      * @param  string $default Default value if value is not found. Defaults to NULL.
-     * @return string or false if not found
+     * @return string|null
      */
     public function getValue($keyPath, $default = null)
     {
@@ -51,9 +51,17 @@ class Config
         }
 
         $basePath = $this->config["root"];
-        $keys = explode("/", $keyPath);
-        $keys = join("@", $keys);
-        $keys = explode("@", $keys);
+        $keys = explode(
+            "@",
+            join(
+                "@",
+                explode(
+                    "/",
+                    $keyPath
+                )
+            )
+        );
+
         foreach ($keys as $key) {
             if ($key == "") {
                 $key = "@";
@@ -179,9 +187,9 @@ class Config
                 if (is_array($value)) {
                     $config[$name] = self::parseTypes($value);
                 } else {
-                    if ($value == "true") {
+                    if (trim($value) == "true") {
                         $config[$name] = true;
-                    } elseif ($value == "false") {
+                    } elseif (trim($value) == "false") {
                         $config[$name] = false;
                     } elseif (ctype_digit($value)) {
                         $config[$name] = (int) $value;
