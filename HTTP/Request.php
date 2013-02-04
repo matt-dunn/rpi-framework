@@ -193,9 +193,9 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
     {
         if (!isset($this->statusCode)) {
             if (isset($_SERVER["REDIRECT_STATUS"])) {
-                $this->statusCode = $_SERVER["REDIRECT_STATUS"];
+                $this->statusCode = (int)$_SERVER["REDIRECT_STATUS"];
             } else {
-                $this->statusCode = "200";
+                $this->statusCode = 200;
             }
         }
         

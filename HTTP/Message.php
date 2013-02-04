@@ -15,7 +15,7 @@ abstract class Message implements \RPI\Framework\HTTP\IMessage
 
     public function setStatusCode($code)
     {
-        $this->statusCode = $code;
+        $this->statusCode = (int)$code;
         
         return $this;
     }
