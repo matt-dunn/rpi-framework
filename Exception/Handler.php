@@ -143,12 +143,9 @@ class Handler
     private static function runErrorController($statusCode)
     {
         if (!isCli()) {
-            $app = \RPI\Framework\Facade::app();
-            $app->getResponse()
-                ->getHeaders()->clear();
-            $app->getRequest()
-                ->setStatusCode($statusCode);
-            $app->run()->dispatch();
+            \RPI\Framework\Facade::app()
+                ->runStatusCode($statusCode)
+                ->dispatch();
         }
     }
 

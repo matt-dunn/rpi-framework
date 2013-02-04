@@ -253,79 +253,18 @@ class App extends \RPI\Framework\Helpers\Object
     /**
      * 
      * @return \RPI\Framework\HTTP\IResponse
+     * 
      * @throws \RPI\Framework\Exceptions\PageNotFound|\Exception
      */
     public function run()
     {
         $this->getResponse()->getCookies()->set("t", $this->getSecurity()->getToken(), null, null, null, null, false);
         
-        $statusCode = $this->getRequest()->getStatusCode();
-        if ($statusCode != "200") {
-            $this->getResponse()->setStatusCode($statusCode);
-            
-            $controller = $this->runStatusCode(
-                $statusCode,
-                $this->getRequest()->getMethod()
-            );
-            
-            if (!isset($controller)) {
-                throw new \Exception("Error document handler not found for status code $statusCode");
-            }
-        } else {
-            $controller = $this->runRouteControllerPath(
-                $this->getRequest()->getUrlPath(),
-                $this->getRequest()->getMethod()
-            );
-
-            if (!isset($controller)) {
-                throw new \RPI\Framework\Exceptions\PageNotFound();
-            }
-        }
-        
-        return $this->getResponse();
-    }
-
-    /**
-     * 
-     * @param type $statusCode
-     * 
-     * @return \RPI\Framework\Controller|null
-     * 
-     * @throws \Exception
-     */
-    private function runStatusCode($statusCode, $method)
-    {
         $router = $this->getRouter();
-        
         if (isset($router)) {
-            $route = $router->routeStatusCode($statusCode, $method);
-
-            if (isset($route)) {
-                return $this->runRouteController($route, $method);
-            }
-        } else {
-            throw new \Exception("Router not initialised");
-        }
-        
-        return null;
-    }
-    
-    /**
-     * 
-     * @param type $path
-     * @param type $method
-     * 
-     * @return \RPI\Framework\Controller|null
-     * 
-     * @throws \Exception
-     */
-    private function runRouteControllerPath($path, $method)
-    {
-        $router = $this->getRouter();
-        
-        if (isset($router)) {
-            $route = $router->route($path, $method);
-
+            $method = $this->getRequest()->getMethod();
+            $route = $router->route($this->getRequest()->getUrlPath(), $method);
+            
             if (isset($route)) {
                 $forceSecure = null;
                 if (isset($route->secure)) {
@@ -348,13 +287,50 @@ class App extends \RPI\Framework\Helpers\Object
                     );
                 }
 
-                return $this->runRouteController($route, $method);
+                if ($this->runRouteController($route, $method) === null) {
+                    throw new \Exception("Unable to create controller");
+                }
+            } else {
+                throw new \RPI\Framework\Exceptions\PageNotFound();
             }
         } else {
             throw new \Exception("Router not initialised");
         }
         
-        return null;
+        return $this->getResponse();
+    }
+
+    /**
+     * 
+     * @param int $statusCode   Valid HTTP status code
+     * 
+     * @return \RPI\Framework\HTTP\IResponse
+     * 
+     * @throws \Exception
+     */
+    public function runStatusCode($statusCode)
+    {
+        $this->getResponse()->setStatusCode($statusCode)
+            ->getHeaders()
+            ->clear();
+        
+        $router = $this->getRouter();
+        if (isset($router)) {
+            $method = $this->getRequest()->getMethod();
+            $route = $router->routeStatusCode($statusCode, $method);
+            
+            if (isset($route)) {
+                if ($this->runRouteController($route, $method) === null) {
+                    throw new \Exception("Unable to create controller");
+                }
+            } else {
+                throw new \Exception("Error document handler not found for status code $statusCode");
+            }
+        } else {
+            throw new \Exception("Router not initialised");
+        }
+        
+        return $this->getResponse();
     }
     
     /**
