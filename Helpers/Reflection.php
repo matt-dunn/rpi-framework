@@ -114,12 +114,6 @@ class Reflection
     {
         static $objects = array();
         
-        if (!interface_exists($className) && !class_exists($className)) {
-            throw new \Exception(
-                "Interface or class '$className' does not exist. Check the application configuration."
-            );
-        }
-        
         if (isset($objects[$className])) {
             if ($objects[$className] === false) {
                 return null;
