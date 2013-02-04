@@ -37,7 +37,7 @@ abstract class Server extends \RPI\Framework\Controller
         parent::__construct($id, $app, $options);
     }
     
-    protected function initController(array $options)
+    protected function initController()
     {
         ob_start();
         
