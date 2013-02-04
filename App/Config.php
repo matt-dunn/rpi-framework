@@ -44,6 +44,12 @@ class Config
      */
     public function getValue($keyPath, $default = null)
     {
+        static $values = array();
+        
+        if ($values[$keyPath]) {
+            return $values[$keyPath];
+        }
+
         $basePath = $this->config["root"];
         $keys = explode("/", $keyPath);
         $keys = join("@", $keys);
@@ -55,10 +61,13 @@ class Config
             if (isset($basePath[$key])) {
                 $basePath = $basePath[$key];
             } else {
-                return $default;
+                $basePath = $default;
+                break;
             }
         }
 
+        $values[$keyPath] = $basePath;
+        
         return $basePath;
     }
     
