@@ -16,7 +16,7 @@ class Reflection
      * Cast the top level object to type
      * @param object $obj
      * @param string $type
-     * @return boolean
+     * @return object|boolean
      */
     public static function cast($obj, $type)
     {
@@ -36,7 +36,6 @@ class Reflection
      * @param type $className
      * @param array $params
      * @param string $type
-     * @param boolean $matchParams
      * @return boolean
      */
     public static function createObject(
@@ -46,29 +45,28 @@ class Reflection
         $type = null
     ) {
         $instance = new \ReflectionClass($className);
-        $constructorParams = null;
+        $constructorParams = array();
 
-        if (!isset($params)) {
-            $params = array();
-        }
-        
         $constructor = $instance->getConstructor();
         if (isset($constructor)) {
-            $constructorParams = array();
+            if (!isset($params)) {
+                $params = array();
+            }
+            
             foreach ($constructor->getParameters() as $reflectionParameter) {
                 $param = null;
                 if (isset($params[$reflectionParameter->getName()])) {
                     $param = $params[$reflectionParameter->getName()];
                 } else {
-                    //echo "CREATE:($className)[{$reflectionParameter->getClass()->getName()}]\n";
                     $class = $reflectionParameter->getClass();
                     if (isset($class)) {
-                        if ($class->getName() == "RPI\Framework\App") {
+                        $className = $class->getName();
+                        if ($className == "RPI\Framework\App") {
                             $param = $app;
                         } else {
                             $param = self::getDependencyObject(
                                 $app,
-                                $class->getName()
+                                $className
                             );
                         }
                     }
@@ -83,16 +81,11 @@ class Reflection
                 
                 $constructorParams[] = $param;
             }
-
-            if (count($constructorParams) == 0) {
-                $constructorParams = null;
-            }
         }
         
-        $o = $instance->getConstructor() && isset($constructorParams) ?
-            $instance->newInstanceArgs($constructorParams) : $instance->newInstance();
+        $o = $instance->newInstanceArgs($constructorParams);
         
-        if ($type != null && !in_array($type, (class_implements($o)))) {
+        if (isset($type) && !in_array($type, (class_implements($o)))) {
             throw new \InvalidArgumentException("Object '$className' does not implement '$type'");
         }
 
