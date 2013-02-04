@@ -77,7 +77,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
         parent::__construct($id, $app, $options, $viewRendition);
     }
     
-    protected function initController(array $options)
+    protected function initController()
     {
         $this->viewType = "component".(isset($this->id) && $this->id !== "" ? "_".$this->id : "");
         

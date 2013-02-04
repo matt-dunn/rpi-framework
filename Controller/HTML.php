@@ -119,7 +119,7 @@ abstract class HTML extends \RPI\Framework\Controller
             $this->setView($viewRendition);
         }
         
-        if ($this->initController($options) !== false) {
+        if ($this->initController() !== false) {
             $this->init();
         }
     }

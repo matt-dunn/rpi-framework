@@ -72,7 +72,7 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
      * Initialise the controller
      * @return bool Boolean to indicate if processing should continue. Return FALSE to stop processing
      */
-    abstract protected function initController(array $options);
+    abstract protected function initController();
     
     /**
      * Initialise the controller instance
@@ -102,7 +102,7 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
     {
         $options = $this->setup($id, $app, $options);
         
-        if ($this->initController($options) !== false) {
+        if ($this->initController() !== false) {
             $this->init();
         }
     }

@@ -84,7 +84,7 @@ class App extends \RPI\Framework\Helpers\Object
      * @param \RPI\Framework\App\Security $security
      * @param \RPI\Framework\App\Session $session
      * @param \RPI\Framework\App\Config $config
-     * @param type $characterEncoding
+     * @param string $characterEncoding
      */
     public function __construct(
         $webConfigFile,
@@ -148,6 +148,10 @@ class App extends \RPI\Framework\Helpers\Object
         return $this->dataStore;
     }
     
+    /**
+     * 
+     * @return string
+     */
     public function getCharacterEncoding()
     {
         return $this->characterEncoding;

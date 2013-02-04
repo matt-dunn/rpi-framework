@@ -118,8 +118,10 @@ abstract class Form extends \RPI\Framework\Component
     /**
      * {@inheritdoc}
      */
-    protected function initController(array $options)
+    protected function initController()
     {
+        parent::initController();
+        
         $this->method = $this->options->method;
         $this->action = $this->options->action;
         $this->pageName = $this->action;
