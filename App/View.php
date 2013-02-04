@@ -16,7 +16,7 @@ class View
     /**
      * 
      * @param \RPI\Framework\Cache\IData $store
-     * @param type $configFile
+     * @param string $configFile
      * @return \RPI\Framework\App\Router
      */
     public function __construct(\RPI\Framework\Cache\IData $store, $configFile)
@@ -548,7 +548,7 @@ class View
         
         $controller = array(
             "id" => $controllerUUID,
-            "type" => $controllerElement->getAttribute("type"),
+            "type" => trim(ltrim($controllerElement->getAttribute("type"), "\\")),
         );
         
         if (isset($options)) {
