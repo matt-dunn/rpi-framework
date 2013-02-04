@@ -13,7 +13,17 @@ class Dependencies implements \RPI\Framework\App\Config\IHandler
         
         $dependencyConfig = array();
         foreach ($dependencies as $dependencyInfo) {
-            $dependencyConfig[$dependencyInfo["@"]["class"]] = $dependencyInfo["class"];
+            $className = ltrim($dependencyInfo["@"]["class"], "\\");
+            
+            if (interface_exists($className)) {
+                $dependencyInfo["class"]["@"]["isInterface"] = true;
+            } elseif (class_exists($className)) {
+                $dependencyInfo["class"]["@"]["isInterface"] = false;
+            } else {
+                throw new \Exception("Class or interface '{$className}' cannot be found. Check application configuration.");
+            }
+            
+            $dependencyConfig[$className] = $dependencyInfo["class"];
         }
 
         return $dependencyConfig;
