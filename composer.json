@@ -18,5 +18,6 @@
     },
     "suggest": {
     },
-    "target-dir": "RPI/Framework"
+    "target-dir": "RPI/Framework",
+    "minimum-stability": "dev"
 }
