@@ -1,7 +1,16 @@
 <?php
 
+/**
+ * RPI Framework
+ * 
+ * (c) Matt Dunn <matt@red-pixel.co.uk>
+ */
+
 namespace RPI\Framework;
 
+/**
+ * App kernel
+ */
 class App extends \RPI\Framework\Helpers\Object
 {
     /**
