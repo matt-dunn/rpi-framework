@@ -5,7 +5,7 @@ namespace RPI\Framework;
 class App extends \RPI\Framework\Helpers\Object
 {
     /**
-     *
+     * Default character coding set to 'utf-8'
      * @var string
      */
     private $characterEncoding = "utf-8";
