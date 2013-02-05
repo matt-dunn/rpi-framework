@@ -1,6 +1,0 @@
-{
-    "name": "RPI/Framework",
-    "require": {
-        "php": ">=5.3.0"
-    }
-}
