@@ -1,0 +1,23 @@
+{
+    "name": "rpi/framework",
+    "type": "library",
+    "description": "RPI Core Framework",
+    "keywords": [],
+    "homepage": "http://www.red-pixel.co.uk",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Matt Dunn",
+            "email": "matt@red-pixel.co.uk"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "require-dev": {
+    },
+    "suggest": {
+    },
+    "target-dir": "RPI/Framework",
+    "minimum-stability": "dev"
+}
