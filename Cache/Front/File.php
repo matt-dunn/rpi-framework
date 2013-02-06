@@ -9,13 +9,7 @@ class File implements \RPI\Framework\Cache\IFront
     public function getFileCachePath()
     {
         if (!isset($this->fileCachePath)) {
-            $this->fileCachePath = $_SERVER["DOCUMENT_ROOT"]."/../.cache/";
-            if (!file_exists($this->fileCachePath)) {
-                throw new \Exception(
-                    "Cache directory does not exist: '".$this->fileCachePath.
-                    "'. Please create this directory with the correct write permissions."
-                );
-            }
+            $this->setFileCachePath($_SERVER["DOCUMENT_ROOT"]."/../.cache/");
         }
 
         return $this->fileCachePath;
@@ -26,10 +20,29 @@ class File implements \RPI\Framework\Cache\IFront
         if (substr($cachePath, strlen($cachePath) - 1, 1) != "/") {
             $cachePath .= "/";
         }
-        $this->fileCachePath = $cachePath;
-        if (!file_exists($this->fileCachePath)) {
-            mkdir($this->fileCachePath, 0777);
+        
+        if (!file_exists($cachePath)) {
+            if (!is_writable(dirname($cachePath))) {
+                throw new \Exception(
+                    "Unable to create cache directory '$cachePath'",
+                    null,
+                    new \RPI\Framework\Exceptions\PermissionDeniedFileWrite(
+                        dirname($cachePath)
+                    )
+                );
+            }
+            
+            mkdir($cachePath, 0777);
         }
+        
+        if (!is_writable($cachePath)) {
+            throw new \RPI\Framework\Exceptions\PermissionDeniedFileWrite($cachePath);
+        }
+        if (!is_readable($cachePath)) {
+            throw new \RPI\Framework\Exceptions\PermissionDeniedFileRead($cachePath);
+        }
+        
+        $this->fileCachePath = $cachePath;
 
         return true;
     }
@@ -45,7 +58,12 @@ class File implements \RPI\Framework\Cache\IFront
         if (isset($group)) {
             $cacheFile = $cacheFile.".".self::normalizeName($group);
         }
+        
         if (file_exists($cacheFile)) {
+            if (!is_readable($cacheFile)) {
+                throw new \RPI\Framework\Exceptions\PermissionDeniedFileRead($cacheFile);
+            }
+
             if (isset($timestamp) && $timestamp >= filemtime($cacheFile)) {
                 self::delete($key, $group);
 
@@ -80,6 +98,11 @@ class File implements \RPI\Framework\Cache\IFront
         if (isset($group)) {
             $cacheFile = $cacheFile.".".self::normalizeName($group);
         }
+        
+        if (!is_writable(dirname($cacheFile))) {
+            throw new \RPI\Framework\Exceptions\PermissionDeniedFileWrite($cacheFile);
+        }
+
         if (file_put_contents($cacheFile, $value, LOCK_EX) !== false) {
             // TODO: is this required?
             // clearstatcache(true, $cacheFile);
@@ -99,6 +122,11 @@ class File implements \RPI\Framework\Cache\IFront
         if (isset($group)) {
             $filePattern = "*.".self::normalizeName($group);
         }
+        
+        if (!is_writable($cachePath)) {
+            throw new \RPI\Framework\Exceptions\PermissionDeniedFileWrite($cachePath);
+        }
+        
         \RPI\Framework\Helpers\FileUtils::deleteFiles($cachePath, $filePattern);
     }
 
@@ -111,7 +139,12 @@ class File implements \RPI\Framework\Cache\IFront
         if (isset($group)) {
             $cacheFile = $cacheFile.".".self::normalizeName($group);
         }
+        
         if (file_exists($cacheFile)) {
+            if (!is_writable(dirname($cacheFile))) {
+                throw new \RPI\Framework\Exceptions\PermissionDeniedFileWrite($cacheFile);
+            }
+
             unlink($cacheFile);
 
             return true;
