@@ -100,8 +100,7 @@ class Config
                     
                     $seg = \RPI\Framework\Helpers\Locking::lock(__CLASS__);
 
-                    require_once(__DIR__."/../../Vendor/PEAR/Config.php");
-
+                    require_once($GLOBALS["RPI_PATH_VENDOR"]."/PEAR/Config.php");
                     $c = new \Config();
                     $root = $c->parseConfig(
                         $file,

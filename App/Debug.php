@@ -25,7 +25,7 @@ class Debug
     private function getLogger()
     {
         if (!isset($this->logger)) {
-            require_once(__DIR__.'/../../Vendor/FirePHPCore/FirePHP.class.php');
+            require_once($GLOBALS["RPI_PATH_VENDOR"]."/FirePHPCore/FirePHP.class.php");
             $this->logger = \FirePHP::getInstance(true);
             if ($this->app->getConfig()->getValue("config/debug/@enabled", false) === false) {
                 \RPI\Framework\Exception\Handler::logMessage("Debug logger called when not in debug mode", LOG_WARNING);

@@ -133,7 +133,7 @@ class Dom
      */
     public static function serializeToDomPear($o, $serializerOptions, \DomElement $node = null, $namespace = null)
     {
-        require_once(__DIR__."/../../Vendor/PEAR/XML/Serializer.php");
+        require_once($GLOBALS["RPI_PATH_VENDOR"]."/PEAR/XML/Serializer.php");
         $serializer = new \XML_Serializer($serializerOptions);
         if ($namespace != null) {
             $serializer->setOption("namespace", $namespace);
@@ -322,7 +322,7 @@ class Dom
      */
     public static function deserializeToArray($xml, $serializerOptions)
     {
-        require_once(__DIR__."/../../Vendor/PEAR/XML/Unserializer.php");
+        require_once($GLOBALS["RPI_PATH_VENDOR"]."/PEAR/XML/Unserializer.php");
         $serializer = new \XML_Unserializer($serializerOptions);
         $status = $serializer->unserialize($xml);
 

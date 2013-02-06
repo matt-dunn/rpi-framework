@@ -533,7 +533,7 @@ class View
         $viewRenditionElements = $xpath->query("RPI:viewRendition", $controllerElement);
         if ($viewRenditionElements->length > 0) {
             $viewRenditionElements = $viewRenditionElements->item(0);
-            require_once(__DIR__."/../../Vendor/PEAR/XML/Unserializer.php");
+            require_once($GLOBALS["RPI_PATH_VENDOR"]."/PEAR/XML/Unserializer.php");
             $serializer = new \XML_Unserializer(
                 array(
                     "parseAttributes" => true
