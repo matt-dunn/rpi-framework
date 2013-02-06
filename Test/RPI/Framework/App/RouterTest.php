@@ -59,7 +59,7 @@ class RouterTest extends \RPI\Framework\Test\Base
 
     /**
      * @covers RPI\Framework\App\Router::route
-     * @expectedException RPI\Framework\Exceptions\InvalidParameter
+     * @expectedException RPI\Framework\Exceptions\InvalidArgument
      */
     public function testRouteInvalidMethodNull()
     {
@@ -71,7 +71,7 @@ class RouterTest extends \RPI\Framework\Test\Base
 
     /**
      * @covers RPI\Framework\App\Router::route
-     * @expectedException RPI\Framework\Exceptions\InvalidParameter
+     * @expectedException RPI\Framework\Exceptions\InvalidArgument
      */
     public function testRouteInvalidMethod()
     {

@@ -5,14 +5,10 @@ namespace RPI\Framework\Exceptions\Account;
 /**
  * Duplicate User exception
  */
-class DuplicateUser extends \Exception
+class DuplicateUser extends \RuntimeException implements \RPI\Framework\Exceptions\IException
 {
-    protected $message = "Duplicate error";
-
-    public function __construct($msg = null)
+    public function __construct($userId, $previous = null)
     {
-        if (isset($msg)) {
-            $this->message = $msg;
-        }
+        parent::__construct("Duplicate user '$userId'", 0, $previous);
     }
 }

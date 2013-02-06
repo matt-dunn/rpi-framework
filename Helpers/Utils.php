@@ -83,17 +83,17 @@ class Utils
     {
         if (is_array($option)) {
             if (count($option) == 0) {
-                throw new \RPI\Framework\Exceptions\InvalidParameter($option, $options);
+                throw new \RPI\Framework\Exceptions\InvalidArgument($option, $options);
             }
 
             foreach ($option as $item) {
                 if (!in_array($item, $options)) {
-                    throw new \RPI\Framework\Exceptions\InvalidParameter($option, $options);
+                    throw new \RPI\Framework\Exceptions\InvalidArgument($option, $options);
                 }
             }
         } else {
             if (!in_array($option, $options)) {
-                throw new \RPI\Framework\Exceptions\InvalidParameter($option, $options);
+                throw new \RPI\Framework\Exceptions\InvalidArgument($option, $options);
             }
         }
     }

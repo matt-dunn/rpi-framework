@@ -139,7 +139,7 @@ abstract class Server extends \RPI\Framework\Controller
                     );
                     
                     $this->app->getResponse()->setStatusCode($ex->httpCode);
-                } elseif ($ex instanceof \RPI\Framework\Exceptions\InvalidParameter) {
+                } elseif ($ex instanceof \RPI\Framework\Exceptions\InvalidArgument) {
                     $response->error = new \RPI\Framework\WebService\Error(
                         -32602,
                         get_class($ex),

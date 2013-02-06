@@ -5,7 +5,7 @@ namespace RPI\Framework\WebService\Exceptions;
 /**
  * General web service exception
  */
-abstract class WebService extends \Exception
+abstract class WebService extends \Exception implements \RPI\Framework\Exceptions\IException
 {
     public $httpCode = 500;
     public $code = 32001;

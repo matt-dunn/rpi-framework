@@ -5,14 +5,10 @@ namespace RPI\Framework\Exceptions\Account;
 /**
  * Verification exception
  */
-class Verification extends \Exception
+class Verification extends \RuntimeException implements \RPI\Framework\Exceptions\IException
 {
-    protected $message = "Duplicate error";
-
-    public function __construct($msg = null)
+    public function __construct($userId, $previous = null)
     {
-        if (isset($msg)) {
-            $this->message = $msg;
-        }
+        parent::__construct("Verification failed for user '$userId'", 0, $previous);
     }
 }

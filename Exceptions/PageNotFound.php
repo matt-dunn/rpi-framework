@@ -5,11 +5,11 @@ namespace RPI\Framework\Exceptions;
 /**
  * 404 page not found exception
  */
-class PageNotFound extends \Exception
+class PageNotFound extends \RuntimeException implements \RPI\Framework\Exceptions\IException
 {
     public $url;
 
-    public function __construct($requestUrl = null)
+    public function __construct($requestUrl = null, $previous = null)
     {
         if (isset($requestUrl)) {
             $this->url = $requestUrl;
@@ -18,7 +18,7 @@ class PageNotFound extends \Exception
         } elseif (isset($_SERVER["REQUEST_URI"])) {
             $this->url = $_SERVER["REQUEST_URI"];
         }
-        $this->message = "Resource not found: ".$this->url;
-        $this->code = 404;
+
+        parent::__construct("Resource not found: ".$this->url, 404, $previous);
     }
 }
