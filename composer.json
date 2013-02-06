@@ -12,8 +12,17 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3"
+        "php": ">=5.3.3",
+        "firephp/firephp-core": "dev-master",
+        "smarty/smarty": "dev-trunk",
+        "rpi/components/carousel": "dev-master"
     },
+    "repositories": [
+        {
+            "type": "composer",
+            "url":  "http://packages.red-pixel.co.uk/"
+        }
+    ],
     "require-dev": {
     },
     "suggest": {
