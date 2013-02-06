@@ -94,8 +94,14 @@ class Handler
 
         $msg = $ex->getMessage();
 
+        $errorCode = $ex->getCode();
+        if ($errorCode != 0) {
+            $errorCode = get_class($ex).":($errorCode)";
+        } else {
+            $errorCode = get_class($ex);
+        }
         self::writeToLog(
-            "[".$ex->getCode()."] ".$msg." in ".$ex->getFile()."#".$ex->getLine().": \n".$traceMessage,
+            "[$errorCode] $msg in {$ex->getFile()}#{$ex->getLine()}: \n$traceMessage",
             $priority,
             $ident,
             $includeDebugInformation,
@@ -203,12 +209,11 @@ class Handler
      * @param string  $errFile
      * @param integer $errLine
      */
-    public static function handle($errNo, $errStr = null, $errFile = null, $errLine = null)
+    public static function handle($errNo, $errStr, $errFile, $errLine)
     {
         switch ($errNo) {
             case E_STRICT:
             case E_DEPRECATED:
-            case E_NOTICE:
                 if (strpos($errFile, "PEAR") !== false) { // Don't log any PEAR errors
                     self::$unloggedStrictErrorCount++;
                 } else {
@@ -216,7 +221,7 @@ class Handler
                 }
                 break;
             default:
-                throw new \ErrorException($errStr, $errNo, 0, $errFile, $errLine);
+                throw new \ErrorException($errStr, 0, $errNo, $errFile, $errLine);
         }
     }
 
