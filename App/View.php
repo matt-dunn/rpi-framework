@@ -52,7 +52,9 @@ class View
         array $controllerOptions = null
     ) {
         if (!isset($this->file)) {
-            throw new \Exception(__CLASS__."::init must be called before '".__METHOD__."' can be called.");
+            throw new \RPI\Framework\Exceptions\RuntimeException(
+                __CLASS__."::init must be called before '".__METHOD__."' can be called."
+            );
         }
         
         $controllerData = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-".$this->file."-controller-$uuid");
@@ -73,7 +75,9 @@ class View
     public function getDecoratorView(\stdClass $decoratorDetails)
     {
         if (!isset($this->file)) {
-            throw new \Exception(__CLASS__."::init must be called before '".__METHOD__."' can be called.");
+            throw new \RPI\Framework\Exceptions\RuntimeException(
+                __CLASS__."::init must be called before '".__METHOD__."' can be called."
+            );
         }
         
         $decoratorData = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-".$this->file."-decorators");
@@ -189,7 +193,7 @@ class View
                     }
                 }
             } else {
-                throw new \Exception(
+                throw new \RPI\Framework\Exceptions\RuntimeException(
                     "'".$controllerData["type"]."' is not a valid type. Must be of type '\RPI\Framework\Component'"
                 );
             }
@@ -214,7 +218,7 @@ class View
 
                 try {
                     if (!file_exists($file)) {
-                        throw new \Exception("Unable to locate '$file'");
+                        throw new \RPI\Framework\Exceptions\RuntimeException("Unable to locate '$file'");
                     }
 
                     $domDataViews = new \DOMDocument();
@@ -396,7 +400,7 @@ class View
 
                     $matchFullPath = "/".$match.($match == "" ? "" : "/");
                     if (isset($routeMap[$matchFullPath])) {
-                        throw new \Exception(
+                        throw new \RPI\Framework\Exceptions\RuntimeException(
                             "Duplicate pattern match '$matchFullPath' found in ".
                             "{$route->ownerDocument->documentURI}".
                             "#{$route->getLineNo()}."
@@ -435,7 +439,7 @@ class View
 
                                 $defaultParams[trim($defaultParamPart[0])] = $defaultParamPart[1];
                             } else {
-                                throw new \Exception(
+                                throw new \RPI\Framework\Exceptions\RuntimeException(
                                     "Invalid syntax '$defaultParamsPart'. Must be '<name>=<value>' in".
                                     "{$route->ownerDocument->documentURI}".
                                     "#{$route->getLineNo()}."
@@ -673,7 +677,7 @@ class View
 
                     $d = &$d[$name];
                 } else {
-                    throw new \Exception(
+                    throw new \RPI\Framework\Exceptions\RuntimeException(
                         "Invalid decorator syntax '$matchPart' in ".
                         "{$decorator->ownerDocument->documentURI}".
                         "#{$decorator->getLineNo()}. Must be <name>=<value>"

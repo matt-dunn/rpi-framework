@@ -23,7 +23,7 @@ class Manager
             }
             self::$events[$eventName][] = $callback;
         } else {
-            throw new \Exception("No event exists for '$eventName'.");
+            throw new \RPI\Framework\Exceptions\RuntimeException("No event exists for '$eventName'.");
         }
     }
 

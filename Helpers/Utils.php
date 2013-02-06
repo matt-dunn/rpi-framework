@@ -384,11 +384,11 @@ class Utils
             if (eval("?>".$rendition) === false) {
                 $lastError = error_get_last();
                 if (isset($lastError) && isset($lastError["message"])) {
-                    throw new \Exception(
+                    throw new \RPI\Framework\Exceptions\RuntimeException(
                         "There was a problem parsing in processPHP. In addition: '".$lastError["message"]."'."
                     );
                 } else {
-                    throw new \Exception("There was a problem parsing in processPHP");
+                    throw new \RPI\Framework\Exceptions\RuntimeException("There was a problem parsing in processPHP");
                 }
             }
             
@@ -400,11 +400,11 @@ class Utils
             if (eval("?>".$rendition) === false) {
                 $lastError = error_get_last();
                 if (isset($lastError) && isset($lastError["message"])) {
-                    throw new \Exception(
+                    throw new \RPI\Framework\Exceptions\RuntimeException(
                         "There was a problem parsing in processPHP. In addition: '".$lastError["message"]."'."
                     );
                 } else {
-                    throw new \Exception("There was a problem parsing in processPHP");
+                    throw new \RPI\Framework\Exceptions\RuntimeException("There was a problem parsing in processPHP");
                 }
             }
         }

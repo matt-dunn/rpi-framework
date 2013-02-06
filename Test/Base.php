@@ -71,7 +71,7 @@ abstract class Base extends \PHPUnit_Framework_TestCase
             case "json":
                 $fixture = json_decode(file_get_contents($fixturePath), true);
                 if (!isset($fixture)) {
-                    throw new \Exception("Invalid json fixure '$fixturePath'");
+                    throw new \RPI\Framework\Exceptions\RuntimeException("Invalid json fixure '$fixturePath'");
                 }
                 break;
             default:

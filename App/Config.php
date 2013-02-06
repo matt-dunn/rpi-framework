@@ -110,7 +110,7 @@ class Config
                         )
                     );
                     if ($root instanceof \PEAR_Error) {
-                        throw new \Exception($root->getMessage());
+                        throw new \RPI\Framework\Exceptions\RuntimeException($root->getMessage());
                     }
                     
                     $config = self::processConfig(
@@ -131,7 +131,7 @@ class Config
 
                 return $config;
             } else {
-                throw new \Exception("Unable to load config file '$file'");
+                throw new \RPI\Framework\Exceptions\RuntimeException("Unable to load config file '$file'");
             }
         } catch (\Exception $ex) {
             if (isset($seg)) {
@@ -151,7 +151,7 @@ class Config
                 
                 $handlerInstance = new $handler();
                 if (!$handlerInstance instanceof \RPI\Framework\App\Config\IHandler) {
-                    throw new \Exception(
+                    throw new \RPI\Framework\Exceptions\RuntimeException(
                         "Handler '$handler' must implement interface 'RPI\Framework\App\Config\IHandler'."
                     );
                 }
@@ -160,7 +160,7 @@ class Config
                 if (isset($processedConfig)) {
                     if (isset($processedConfig["name"]) && isset($processedConfig["value"])) {
                         if (isset($configData[$processedConfig["name"]])) {
-                            throw new \Exception(
+                            throw new \RPI\Framework\Exceptions\RuntimeException(
                                 "Config item '{$processedConfig["name"]}' already exists. Check your config definition."
                             );
                         }

@@ -156,7 +156,7 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
  
         $this->options = $this->getControllerOptions($this->parseOptions($options));
         if (!$this->options instanceof \RPI\Framework\Controller\Options) {
-            throw new \Exception(
+            throw new \RPI\Framework\Exceptions\RuntimeException(
                 "Invalid type returned from Component::getOptions. ".
                 "Must be of type '\RPI\Framework\Controller\Options'."
             );
@@ -229,7 +229,7 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
                 if (method_exists($this, $methodName)) {
                     call_user_method_array($methodName, $this, $controllerAction->params);
                 } else {
-                    throw new \Exception(
+                    throw new \RPI\Framework\Exceptions\RuntimeException(
                         "Action '{$controllerAction->method}' ({$this->type}::{$methodName}) ".
                         "has not been implemented in '".$this->type."'."
                     );

@@ -294,13 +294,13 @@ class App extends \RPI\Framework\Helpers\Object
                 }
 
                 if ($this->runRouteController($route, $method) === null) {
-                    throw new \Exception("Unable to create controller");
+                    throw new \RPI\Framework\Exceptions\RuntimeException("Unable to create controller");
                 }
             } else {
                 throw new \RPI\Framework\Exceptions\PageNotFound();
             }
         } else {
-            throw new \Exception("Router not initialised");
+            throw new \RPI\Framework\Exceptions\RuntimeException("Router not initialised");
         }
         
         return $this->getResponse();
@@ -327,13 +327,15 @@ class App extends \RPI\Framework\Helpers\Object
             
             if (isset($route)) {
                 if ($this->runRouteController($route, $method) === null) {
-                    throw new \Exception("Unable to create controller");
+                    throw new \RPI\Framework\Exceptions\RuntimeException("Unable to create controller");
                 }
             } else {
-                throw new \Exception("Error document handler not found for status code $statusCode");
+                throw new \RPI\Framework\Exceptions\RuntimeException(
+                    "Error document handler not found for status code $statusCode"
+                );
             }
         } else {
-            throw new \Exception("Router not initialised");
+            throw new \RPI\Framework\Exceptions\RuntimeException("Router not initialised");
         }
         
         return $this->getResponse();

@@ -23,7 +23,7 @@ class File implements \RPI\Framework\Cache\IFront
         
         if (!file_exists($cachePath)) {
             if (!is_writable(dirname($cachePath))) {
-                throw new \Exception(
+                throw new \RPI\Framework\Exceptions\RuntimeException(
                     "Unable to create cache directory '$cachePath'",
                     null,
                     new \RPI\Framework\Exceptions\PermissionDeniedFileWrite(
@@ -108,7 +108,7 @@ class File implements \RPI\Framework\Cache\IFront
             // clearstatcache(true, $cacheFile);
             return realpath($cacheFile);
         } else {
-            return false;
+            throw new \RPI\Framework\Cache\Exceptions\CacheStore($key);
         }
     }
 

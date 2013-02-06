@@ -15,7 +15,9 @@ class State
         $this->form = $form;
         $this->key = $form->getApp()->getConfig()->getValue("config/keys/formState");
         if (!isset($this->key)) {
-            throw new \Exception("Encryption key 'config/keys/formState' not configured.");
+            throw new \RPI\Framework\Exceptions\RuntimeException(
+                "Encryption key 'config/keys/formState' not configured."
+            );
         }
 
         $state = $this->form->getApp()->getRequest()->getPostParameter("state");

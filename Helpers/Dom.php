@@ -55,7 +55,7 @@ class Dom
             
             libxml_use_internal_errors($currentState);
             
-            throw new \Exception($message);
+            throw new \RPI\Framework\Exceptions\RuntimeException($message);
         }
         
         libxml_use_internal_errors($currentState);

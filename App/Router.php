@@ -36,11 +36,15 @@ class Router
             $fileExtension = null;
             
             if (!isset($details["match"]) && !isset($details["statusCode"])) {
-                throw new \Exception("Router map missing 'match' or 'statusCode' value");
+                throw new \RPI\Framework\App\Router\Exceptions\InvalidRoute(
+                    "Router map missing 'match' or 'statusCode' value"
+                );
             }
             
             if (!isset($details["controller"])) {
-                throw new \Exception("Router map '{$details["match"]}' missing 'controller' value");
+                throw new \RPI\Framework\App\Router\Exceptions\InvalidRoute(
+                    "Router map '{$details["match"]}' missing 'controller' value"
+                );
             }
             
             if (isset($details["via"])) {

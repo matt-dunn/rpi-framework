@@ -22,7 +22,7 @@ abstract class Front extends \RPI\Framework\Controller\HTML
             );
 
             if (!isset($frontStore)) {
-                throw new \Exception(
+                throw new \RPI\Framework\Exceptions\RuntimeException(
                     "RPI\Framework\Cache\IFront dependency not configured correctly"
                 );
             }
@@ -97,7 +97,7 @@ abstract class Front extends \RPI\Framework\Controller\HTML
                 );
 
                 if (!isset($frontStore)) {
-                    throw new \Exception(
+                    throw new \RPI\Framework\Exceptions\RuntimeException(
                         "RPI\Framework\Cache\IFront dependency not configured correctly"
                     );
                 }

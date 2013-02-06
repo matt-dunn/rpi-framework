@@ -40,7 +40,9 @@ require(__DIR__."/Autoload.php");
         );
 
         if (!isset($frontStore)) {
-            throw new \Exception("RPI\Framework\Cache\IFront dependency not configured correctly");
+            throw new \RPI\Framework\Exceptions\RuntimeException(
+                "RPI\Framework\Cache\IFront dependency not configured correctly"
+            );
         }
 
         $frontStore->clear();

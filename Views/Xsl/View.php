@@ -31,7 +31,7 @@ class View implements \RPI\Framework\Views\IView
         $xsltFilename = \RPI\Framework\Helpers\Utils::buildFullPath($xsltFilename);
 
         if (!file_exists($xsltFilename)) {
-            throw new \Exception("XSL file '$xsltFilename' not found");
+            throw new \RPI\Framework\Exceptions\RuntimeException("XSL file '$xsltFilename' not found");
         }
         $this->xsltFilename = realpath($xsltFilename);
     }

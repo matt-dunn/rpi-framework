@@ -260,7 +260,7 @@ EOT;
             }
 
             if ($cacheFile === false) {
-                throw new \Exception("Unable to store rendition in cache");
+                throw new \RPI\Framework\Exceptions\RuntimeException("Unable to store rendition in cache");
             }
         }
         

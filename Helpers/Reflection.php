@@ -73,7 +73,7 @@ class Reflection
                 }
                 
                 if (!isset($param) && !$reflectionParameter->isDefaultValueAvailable()) {
-                    throw new \Exception(
+                    throw new \RPI\Framework\Exceptions\RuntimeException(
                         "Class '$className' constructor parameter '".$reflectionParameter->getName().
                         "' must be defined as a dependency. Check the application configuration settings."
                     );
@@ -97,7 +97,9 @@ class Reflection
         $dependency = self::getDependencyObject($app, $className);
         
         if (!isset($dependency)) {
-            throw new \Exception("Unable to create dependency '$className'. Check configuration settings");
+            throw new \RPI\Framework\Exceptions\RuntimeException(
+                "Unable to create dependency '$className'. Check configuration settings"
+            );
         }
         
         return $dependency;
@@ -190,7 +192,7 @@ class Reflection
 
             return self::createObject($app, $className, $params, $type);
         } else {
-            throw new \Exception("Invalid class information");
+            throw new \RPI\Framework\Exceptions\RuntimeException("Invalid class information");
         }
     }
 }

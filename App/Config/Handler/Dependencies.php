@@ -20,7 +20,7 @@ class Dependencies implements \RPI\Framework\App\Config\IHandler
             } elseif (class_exists($className)) {
                 $dependencyInfo["class"]["@"]["isInterface"] = false;
             } else {
-                throw new \Exception(
+                throw new \RPI\Framework\Exceptions\RuntimeException(
                     "Class or interface '{$className}' cannot be found. Check application configuration."
                 );
             }
