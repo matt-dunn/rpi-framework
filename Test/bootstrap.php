@@ -5,7 +5,8 @@ ob_start();
 
 require_once 'PHPUnit/Autoload.php';
 
-ini_set("include_path", __DIR__."/../../Vendor/PEAR".PATH_SEPARATOR.ini_get("include_path"));
+$GLOBALS["RPI_PATH_VENDOR"] = __DIR__."/../../Vendor";
+ini_set("include_path", $GLOBALS["RPI_PATH_VENDOR"]."/PEAR".PATH_SEPARATOR.ini_get("include_path"));
 
 // ================================================================================================================
 
