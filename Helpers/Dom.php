@@ -344,7 +344,12 @@ class Dom
         return $doc;
     }
 
-    public static function getInnerXML($node)
+    /**
+     * 
+     * @param \DOMNode $node
+     * @return string
+     */
+    public static function getInnerXML(\DOMNode$node)
     {
         $innerHTML= "";
         foreach ($node->childNodes as $child) {
@@ -355,10 +360,10 @@ class Dom
     }
     /**
      * Return the outer XML for a DOM node
-     * @param  DOMNode $node
+     * @param  \DOMNode $node
      * @return string  XML string
      */
-    public static function getOuterXML($node)
+    public static function getOuterXML(\DOMNode $node)
     {
         $doc = new \DOMDocument();
         $doc->appendChild($doc->importNode($node, true));
@@ -366,6 +371,11 @@ class Dom
         return $doc->saveHTML();
     }
 
+    /**
+     * 
+     * @param \DOMDocument $doc
+     * @return \DomXPath
+     */
     public static function getXPath(\DOMDocument $doc)
     {
         $xpath = new \DomXPath($doc);
@@ -375,6 +385,28 @@ class Dom
         return $xpath;
     }
 
+    /**
+     * 
+     * @param \DOMDocument $doc
+     * @param string $xpath
+     * @return \DOMNode
+     */
+    public static function getElementByXPath(\DOMDocument $doc, $xpath)
+    {
+        $xpath = new \DomXPath($doc);
+        $xpath->registerNamespace("services", "http://www.rpi.co.uk/presentation/services");
+        $xpath->registerNamespace("commonDocument", "http://www.rpi.co.uk/presentation/common/document");
+        $xpath->registerNamespace("xhtml", "http://www.w3.org/1999/xhtml");
+
+        return $xpath->evaluate($xpath);
+    }
+    
+    /**
+     * 
+     * @param \DOMDocument $doc
+     * @param string $xpath
+     * @return string
+     */
     public static function getTextByXpath(\DOMDocument $doc, $xpath)
     {
         $xpathObject = self::getXPath($doc);
@@ -385,6 +417,6 @@ class Dom
             return $nodes->item(0)->nodeValue;
         }
 
-        return "";
+        return false;
     }
 }
