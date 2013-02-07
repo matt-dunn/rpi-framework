@@ -393,12 +393,13 @@ class Dom
      */
     public static function getElementByXPath(\DOMDocument $doc, $xpath)
     {
-        $xpath = new \DomXPath($doc);
-        $xpath->registerNamespace("services", "http://www.rpi.co.uk/presentation/services");
-        $xpath->registerNamespace("commonDocument", "http://www.rpi.co.uk/presentation/common/document");
-        $xpath->registerNamespace("xhtml", "http://www.w3.org/1999/xhtml");
+        $xp = new \DomXPath($doc);
+        $xp->registerNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        $xp->registerNamespace("services", "http://www.rpi.co.uk/presentation/services");
+        $xp->registerNamespace("commonDocument", "http://www.rpi.co.uk/presentation/common/document");
+        $xp->registerNamespace("xhtml", "http://www.w3.org/1999/xhtml");
 
-        return $xpath->evaluate($xpath);
+        return $xp->evaluate($xpath);
     }
     
     /**
