@@ -7,7 +7,7 @@ namespace RPI\Framework\WebService\Exceptions;
  */
 class Forbidden extends WebService
 {
-    public $httpCode = 200;	// Don't throw a 403 here as we want to be able to catch the exception details in the client
+    public $httpCode = 403;
     protected $message = "You do not have permission to perform this action";
     protected $localizationMessageId = "rpi.framework.webservice.forbidden";
 }
