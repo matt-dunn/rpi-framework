@@ -164,9 +164,9 @@ class Config
                                 "Config item '{$processedConfig["name"]}' already exists. Check your config definition."
                             );
                         }
-                        $configData[$processedConfig["name"]] = $processedConfig["value"];
+                        $configData[$processedConfig["name"]] = self::processConfig($processedConfig["value"]);
                     } else {
-                        $configData[$name] = $processedConfig;
+                        $configData[$name] = self::processConfig($processedConfig);
                     }
                 }
             } elseif (is_array($configItem)) {

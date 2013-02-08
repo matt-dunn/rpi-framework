@@ -6,16 +6,20 @@ class NamedCollection implements \RPI\Framework\App\Config\IHandler
 {
     public function process(array $config)
     {
-        $name = $config["@"]["name"];
-        unset($config["@"]["name"]);
-        unset($config["@"]["handler"]);
-        if (count($config["@"]) == 0) {
-            unset($config["@"]);
+        if (isset($config["@"]["name"])) {
+            $name = $config["@"]["name"];
+            unset($config["@"]["name"]);
+            unset($config["@"]["handler"]);
+            if (count($config["@"]) == 0) {
+                unset($config["@"]);
+            }
+            
+            return array(
+                "name" => $name,
+                "value" => $config
+            );
+        } else {
+            return $config;
         }
-        
-        return array(
-            "name" => $name,
-            "value" => $config
-        );
     }
 }
