@@ -4,16 +4,42 @@ namespace RPI\Framework\App\Security;
 
 class Acl
 {
+    /**
+     *
+     * @var \RPI\Framework\App\Security\Acl\Model\IDomainObject 
+     */
     private $domainObject = null;
     
-    public function __construct(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
-    {
+    /**
+     *
+     * @var \RPI\Framework\App\Security\Acl\Model\IProvider
+     */
+    private $provider = null;
+    
+    /**
+     *
+     * @var \RPI\Framework\Model\User
+     */
+    private $user = null;
+    
+    public function __construct(
+        \RPI\Framework\App\Security\Acl\Model\IProvider $provider,
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
+        \RPI\Framework\Model\User $user
+    ) {
+        $this->provider = $provider;
         $this->domainObject = $domainObject;
+        $this->user = $user;
     }
     
-    public function getAces()
+    public function check($access, $property = null)
     {
         var_dump($this->domainObject->getId());
-        echo "<br/>";
+        var_dump($this->user->uuid);
+        $objectType = $this->domainObject->getType();
+        var_dump($this->provider->getAce($objectType));
+        echo "-----\n\n";
+        
+        return false;
     }
 }
