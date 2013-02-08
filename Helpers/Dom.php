@@ -27,6 +27,10 @@ class Dom
     {
         $currentState = libxml_use_internal_errors(true);
         
+        if (!file_exists($schemaFile)) {
+            throw new \Exception("Cannot locate schema '$schemaFile'");
+        }
+        
         $isValid = $doc->schemaValidate($schemaFile);
         
         if (!$isValid) {
