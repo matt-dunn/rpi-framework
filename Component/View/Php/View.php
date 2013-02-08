@@ -85,12 +85,19 @@ EOT;
         return $rendition;
     }
     
-    protected function getEditableElementAttributes($className, $editMode, $editable, $bindElementName, $allowRichEdit = false)
-    {
+    protected function getEditableElementAttributes(
+        $className,
+        $editMode,
+        $editable,
+        $bindElementName,
+        $allowRichEdit = false
+    ) {
         $attributes = " class=\"$className";
         if ($editMode && $editable) {
             $attributes .= " editable\"";
-            $attributes .= " contenteditable=\"true\" data-rich-edit=\"".($allowRichEdit ? "true" : "false")."\" data-bind=\"{$bindElementName}\"";
+            $attributes .=
+                " contenteditable=\"true\" data-rich-edit=\"".
+                ($allowRichEdit ? "true" : "false")."\" data-bind=\"{$bindElementName}\"";
         } else {
             $attributes .= "\"";
         }
