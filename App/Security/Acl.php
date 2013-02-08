@@ -4,6 +4,13 @@ namespace RPI\Framework\App\Security;
 
 class Acl
 {
+    const CREATE = 1;
+    const READ = 2;
+    const UPDATE = 4;
+    const DELETE = 8;
+    
+    const ALL = 15;
+    
     /**
      *
      * @var \RPI\Framework\App\Security\Acl\Model\IDomainObject 
@@ -34,11 +41,20 @@ class Acl
     
     public function check($access, $property = null)
     {
-        var_dump($this->domainObject->getId());
-        var_dump($this->user->uuid);
+        //var_dump($this->domainObject->getId());
+        //var_dump($this->user);
+        //$objectType = $this->domainObject->getType();
+        //var_dump($this->provider->getAce($objectType));
+        //echo "-----\n\n";
+        
         $objectType = $this->domainObject->getType();
-        var_dump($this->provider->getAce($objectType));
-        echo "-----\n\n";
+        $ace = $this->provider->getAce($objectType);
+        if (isset($ace)) {
+            if (isset($ace["access"]["roles"][$this->user->roleType])) {
+                $permissions = $ace["access"]["roles"][$this->user->roleType];
+                var_dump($permissions);
+            }
+        }
         
         return false;
     }
