@@ -170,13 +170,6 @@ class Handler
                 self::log($exception, LOG_ERR, "404", false);
 
                 self::runErrorController(404);
-            } elseif ($exception instanceof \RPI\Framework\Exceptions\Authentication) {
-                self::log($exception, LOG_ERR, "authentication", false);
-                if (isset($exception->from)) {
-                    $from = $exception->from;
-                }
-                // TODO: remove hard coded url:
-                \RPI\Framework\Facade::app()->getResponse()->redirect("/account/login/?from=".urlencode($from));
             } elseif ($exception instanceof \RPI\Framework\Exceptions\Authorization) {
                 self::log($exception, LOG_ERR, "authentication");
                 

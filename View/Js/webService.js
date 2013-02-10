@@ -64,9 +64,9 @@ RPI.webService.call = function(service, methodName, params, callback, errorCallb
 					callback(o.result, o, sourceData);
 				} else if(o.status == RPI.webService.responseStatus.error) {
 					if(errorCallback) {
-						errorCallback(o, o.status, o.error, (o.error.type == "RPI\\Framework\\WebService\\Exceptions\\Authentication") || o.error.type == "RPI\\Framework\\WebService\\Exceptions\\Forbidden", sourceData);
+						errorCallback(o, o.status, o.error, (o.error.type == "RPI\\Framework\\WebService\\Exceptions\\Authorization") || o.error.type == "RPI\\Framework\\WebService\\Exceptions\\Forbidden", sourceData);
 					}
-					if(o.error.type == "RPI\\Framework\\WebService\\Exceptions\\Authentication") {
+					if(o.error.type == "RPI\\Framework\\WebService\\Exceptions\\Authorization") {
 						alert(o.error.message);
 						document.location.href = "/account/login/?from=" + (this.sourceUrl ? this.sourceUrl.URLEncode() : document.location.href.URLEncode());
 					} else if(o.error.type == "RPI\\Framework\\WebService\\Exceptions\\Forbidden") {
