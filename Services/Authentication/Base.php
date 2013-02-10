@@ -59,56 +59,6 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         }
     }
 
-    // ------------------------------------------------------------------------------------------------------------
-    // User management
-    // ------------------------------------------------------------------------------------------------------------
-    //public function registerUser(
-    //    $firstName,
-    //    $surname,
-    //    $email,
-    //    $password,
-    //    $details = null,
-    //    $requireVerification = false,
-    //    $disabled = false,
-    //    $roleType = "user"
-    //) {
-    //    if ($this->cookieDetectionEnabled && $this->app->getRequest()->getCookies()->get("cd") == null) {
-    //        throw new \RPI\Framework\Exceptions\Cookie();
-    //    }
-    //
-    //    $user = false;
-    //
-    //    $this->app->getSession()->regenerate(true);
-    //
-    //    try {
-    //        $result = $this->createUser(
-    //            $firstName,
-    //            $surname,
-    //            strtolower($email),
-    //            $password,
-    //            $details,
-    //            $requireVerification,
-    //            $disabled,
-    //            $roleType
-    //        );
-    //        if ($result !== false) {
-    //            $user = $this->createAuthenticatedUser($result);
-    //        }
-    //    } catch (\RPI\Framework\Exceptions\Account\Disabled $ex) {
-    //        // Do nothing
-    //    }
-    //
-    //    if ($user !== false) {
-    //        if ($user ->accountVerified && $user->accountActivated) {
-    //            return $this->authenticate($user, strtolower($email));
-    //        } else {
-    //            return $user;
-    //        }
-    //    } else {
-    //        return false;
-    //    }
-    //}
-
     public function authenticateUser($email, $password)
     {
         try {
@@ -118,20 +68,10 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
             $this->app->getSession()->regenerate(true);
 
-            $result = $this->authenticateUserDetails(strtolower($email), $password);
-
-            if ($result !== false) {
-                return $this->authenticate($this->createAuthenticatedUser($result), strtolower($email));
-            } else {
-                \RPI\Framework\Exception\Handler::logMessage(
-                    __METHOD__." - [failure] email: $email",
-                    LOG_AUTH,
-                    "authentication"
-                );
-                $this->logout(true);
-
-                return false;
-            }
+            return $this->authenticate(
+                $this->authenticateUserDetails(strtolower($email), $password),
+                strtolower($email)
+            );
         } catch (\Exception $ex) {
             $this->logout(true);
             throw $ex;
@@ -148,34 +88,6 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         }
     }
 
-    // ------------------------------------------------------------------------------------------------------------
-    // Helpers
-    // ------------------------------------------------------------------------------------------------------------
-    //public function checkAuthentication(
-    //    $requiresAuthentication = false,
-    //    $accessLevel = \RPI\Framework\Model\User\AccessLevel::NONE
-    //) {
-    //    if ($requiresAuthentication) {
-    //        return $this->forceAuthentication($accessLevel);
-    //    } elseif ($this->authenticatedUser && $this->authenticatedUser->isAuthenticated) {
-    //        // Re-issue the token with a new expiry
-    //        $this->setUser(
-    //            $this->authenticatedUser,
-    //            null,
-    //            $this->createAuthenticationToken(
-    //                strtolower($this->authenticatedUser->email),
-    //                time() + $this->authenticationExpiryOffset
-    //            )
-    //        );
-    //
-    //        return true;
-    //    } else {
-    //        $this->logout(false);
-    //
-    //        return false;
-    //    }
-    //}
-
     public function isAuthenticatedUser()
     {
         return ($this->getAuthenticatedUser() !== false && $this->getAuthenticatedUser()->isAuthenticated);
@@ -185,41 +97,6 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
     {
         return ($this->getAuthenticatedUser() !== false && $this->getAuthenticatedUser()->isAnonymous);
     }
-
-    //public function forceAuthentication($accessControlLevel = 0)
-    //{
-    //    $isAuthenticated = false;
-    //
-    //    $this->getAuthenticatedUser();
-    //
-    //    if ($this->authenticatedUser && $this->authenticatedUser instanceof \RPI\Framework\Model\User) {
-    //        $isAuthenticated = $this->checkAuthenticationState();
-    //
-    //        if (!$isAuthenticated) {
-    //            $this->logout(false);
-    //        } else {
-    //            // Re-issue the token with a new expiry
-    //            $this->setUser(
-    //                $this->authenticatedUser,
-    //                null,
-    //                $this->createAuthenticationToken(
-    //                    strtolower($this->authenticatedUser->email),
-    //                    time() + $this->authenticationExpiryOffset
-    //                )
-    //            );
-    //        }
-    //    }
-    //
-    //    if (!$isAuthenticated) {
-    //        throw new \RPI\Framework\Exceptions\Authentication();
-    //    }
-    //
-    //    if ($accessControlLevel > 0 && $this->authenticatedUser->accessLevel > $accessControlLevel) {
-    //        throw new \RPI\Framework\Exceptions\Authorization();
-    //    }
-    //
-    //    return $isAuthenticated;
-    //}
 
     public function getAuthenticatedUser()
     {
@@ -263,20 +140,11 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         return $user;
     }
 
-    protected function getCurrentUser($email)
-    {
-        $result = $this->getCurrentUserDetails(strtolower($email));
-        if ($result !== false) {
-            return $this->createAuthenticatedUser($result);
-        }
-
-        return false;
-    }
-
     /**
      *
-     * @param  string  $user
-     * @param  string  $email
+     * @param  \RPI\Framework\Model\User  $user
+     * @param string $email
+     * 
      * @return boolean
      */
     private function authenticate($user, $email)
@@ -293,6 +161,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
                 $this->createAuthenticationToken($user->email, time() + $this->authenticationExpiryOffset)
             );
             $user->isAuthenticated = $this->checkAuthenticationState();
+            $user->isAnonymous = false;
 
             return $user;
         } else {
@@ -491,6 +360,12 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         return $validToken;
     }
 
+    /**
+     * 
+     * @param string $uuid
+     * 
+     * @return \RPI\Framework\Model\User
+     */
     protected function createAnonymousUser($uuid)
     {
         return new \RPI\Framework\Model\User(
@@ -499,117 +374,19 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
     }
 
     /**
-     * Create an AuthenticatedUser from an associative array
-     * @param  associative array         $result
+     *
+     * @param  string $email
+     * @param  string $password
+     * 
      * @return \RPI\Framework\Model\User
-     */
-    protected function createAuthenticatedUser($result)
-    {
-        if ($result) {
-            $disabled = null;
-            if (isset($result["disabled"]) && $result["disabled"] != null) {
-                $disabled = ($result["disabled"] == "1");
-            }
-            $accountVerified = null;
-            if (isset($result["accountVerified"]) && $result["accountVerified"] != null) {
-                $accountVerified = ($result["accountVerified"] == "1");
-            }
-            $accountActivated = false;
-            if (isset($result["accountActivated"]) && $result["accountActivated"] != null) {
-                $accountActivated = ($result["accountActivated"] == "1");
-            }
-
-            $user = new \RPI\Framework\Model\User(
-                $result["uuid"],
-                $result["firstname"],
-                $result["surname"],
-                strtolower($result["email"]),
-                strtotime($result["created"]),
-                strtotime($result["lastAccessed"]),
-                $result["roleType"],
-                $result["accessLevel"],
-                $disabled,
-                $accountVerified,
-                $accountActivated
-            );
-
-            $user->isAnonymous = false;
-
-            return $user;
-        }
-    }
-
-    /**
-     *
-     * @param  <type> $firstName
-     * @param  <type> $surname
-     * @param  <type> $email
-     * @param  <type> $password
-     * @param  <type> $details
-     * @param  <type> $requireVerification
-     * @param  <type> $disabled
-     * @param  <type> $roleType
-     * @return array
-     *		string firstname
-     *		string surname
-     *		string email
-     *		date created
-     *		date lastAccessed
-     *		int roleType
-     *		int accessLevel
-     *		xml details
-     *		boolean accountActivated
-     *		boolean accountVerified
-     *		long userId
-     *		guid uuid
-     */
-    abstract protected function createUser(
-        $firstName,
-        $surname,
-        $email,
-        $password,
-        $details = null,
-        $requireVerification = false,
-        $disabled = false,
-        $roleType = "user"
-    );
-
-    /**
-     *
-     * @param  <type> $email
-     * @param  <type> $password
-     * @return array
-     *		string firstname
-     *		string surname
-     *		string email
-     *		date created
-     *		date lastAccessed
-     *		int roleType
-     *		int accessLevel
-     *		xml details
-     *		boolean accountActivated
-     *		boolean accountVerified
-     *		long userId
-     *		guid uuid
      */
     abstract protected function authenticateUserDetails($email, $password);
 
     /**
      *
-     * @param  <type> $email
-     * @return array
-     *		string firstname
-     *		string surname
-     *		string email
-     *		date created
-     *		date lastAccessed
-     *		int roleType
-     *		int accessLevel
-     *		xml details
-     *		boolean accountActivated
-     *		boolean accountVerified
-     *		long userId
-     *		guid uuid
+     * @param  string $email
+     * 
+     * @return \RPI\Framework\Model\User
      */
-    abstract protected function getCurrentUserDetails($email);
+    abstract protected function getCurrentUser($email);
 }

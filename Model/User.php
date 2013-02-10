@@ -12,12 +12,7 @@ class User
     public $accountCreated;
     public $accountLastAccessed;
 
-    public $roleType;
-    public $accessLevel;
-
-    public $disabled;
-    public $accountVerified;
-    public $accountActivated;
+    public $role;
 
     public $isAuthenticated = false;
     public $isAnonymous = true;
@@ -29,16 +24,8 @@ class User
         $email = null,
         $accountCreated = null,
         $accountLastAccessed = null,
-        $roleType = "user",
-        $accessLevel = null,
-        $disabled = null,
-        $accountVerified = null,
-        $accountActivated = false
+        $role = "user"
     ) {
-        if (!isset($accessLevel)) {
-            $accessLevel = \RPI\Framework\Model\User\AccessLevel::NONE;
-        }
-
         $this->uuid = $uuid;
         $this->firstname = $firstname;
         $this->surname = $surname;
@@ -47,11 +34,6 @@ class User
         $this->accountCreated = $accountCreated;
         $this->accountLastAccessed = $accountLastAccessed;
 
-        $this->roleType = $roleType;
-        $this->accessLevel = $accessLevel;
-
-        $this->disabled = $disabled;
-        $this->accountVerified = $accountVerified;
-        $this->accountActivated = $accountActivated;
+        $this->role = $role;
     }
 }
