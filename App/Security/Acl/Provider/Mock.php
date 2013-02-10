@@ -10,6 +10,7 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
     
     public function __construct(array $aceMap)
     {
+//        var_dump(eval("return ".$aceMap["RPI\Services\Content\Model\Document\Common"]["access"]["roles"][1].";"));
         $this->aceMap = $aceMap;
         
         $this->aceMap = array(
@@ -37,7 +38,25 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                 )
             ),
             "Sites\Template\Model\Document\Location" => array(
-                
+                "access" => array(
+                    "roles" => array(
+                        "owner" => array(
+                            "permissions" => array(
+                                "*" => Acl::READ
+                            )
+                        ),
+                        "anonymous" => array(
+                            "permissions" => array(
+                                "*" => Acl::READ
+                            )
+                        ),
+                        "admin" => array(
+                            "permissions" => array(
+                                "*" => Acl::ALL
+                            )
+                        )
+                    )
+                )
             )
         );
     }
@@ -49,5 +68,35 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
         }
         
         return null;
+    }
+
+    public function isOwner(Acl\Model\IDomainObject $domainObject, \RPI\Framework\Model\User $user)
+    {
+        switch ($user->email) {
+            case "full@rpi.co.uk":
+                switch ($domainObject->getId()) {
+                    case "f90d51c4-0003-480d-9618-3c3dfcdb2439":    // 403
+                    case "f90d51c4-0003-480d-9618-3c3dfcdb2438":    // 404
+                    case "f90d51c4-0003-480d-9618-3c3dfcdb2437":    // 500
+                    case "f10d5cc4-0003-480d-9618-3c3dfcdb2439":    // test
+                    case "f10d5cc4-0003-480d-9618-3c3dfcdb2439":    // test2
+                    case "a10d5cc4-1233-480d-9618-3c3dfcdb2439":    // complex-markup
+                        return true;
+                }
+                break;
+            case "demo@rpi.co.uk":
+                switch ($domainObject->getId()) {
+                    case "f90d51c4-0003-480d-9618-3c3dfcdb2439":    // 403
+                    case "f90d51c4-0003-480d-9618-3c3dfcdb2438":    // 404
+                    case "f90d51c4-0003-480d-9618-3c3dfcdb2437":    // 500
+                    case "f10d5cc4-0003-480d-9618-3c3dfcdb2439":    // test
+                    case "f10d5cc4-0003-480d-9618-3c3dfcdb2439":    // test2
+                    case "a10d5cc4-1233-480d-9618-3c3dfcdb2439":    // complex-markup
+                        return false;
+                }
+                break;
+        }
+
+        return false;
     }
 }

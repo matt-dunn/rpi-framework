@@ -47,12 +47,43 @@ class Acl
         //var_dump($this->provider->getAce($objectType));
         //echo "-----\n\n";
         
+//        $this->user->role = "admin";
+        
         $objectType = $this->domainObject->getType();
         $ace = $this->provider->getAce($objectType);
+//        var_dump($ace);
+        
+        $canAccess = false;
+        
         if (isset($ace)) {
-            if (isset($ace["access"]["roles"][$this->user->roleType])) {
-                $permissions = $ace["access"]["roles"][$this->user->roleType];
-                var_dump($permissions);
+            if ($this->user->isAnonymous) {
+                $canAccess = $this->checkPermission($ace, $access, $property, "anonymous");
+            } else {
+                if (!$this->user->isAuthenticated) {
+                    throw new \RPI\Framework\Exceptions\Authentication();
+                }
+                
+                $canAccess = $this->checkPermission($ace, $access, $property, $this->user->role);
+
+                if ($canAccess === false && $this->provider->isOwner($this->domainObject, $this->user)) {
+                    $canAccess = $this->checkPermission($ace, $access, $property, "owner");
+                }
+            }
+        }
+        
+        return $canAccess;
+    }
+    
+    private function checkPermission(array $ace, $access, $property, $role)
+    {
+        if (isset($ace["access"]["roles"][$role])) {
+            $permissions = $ace["access"]["roles"][$role]["permissions"];
+//                var_dump($permissions);
+
+            if (isset($permissions["*"]) && ($permissions["*"] & $access)) {
+                return true;
+            } elseif (isset($property) && isset($permissions[$property]) && ($permissions[$property] & $access)) {
+                return true;
             }
         }
         
