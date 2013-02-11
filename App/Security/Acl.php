@@ -47,9 +47,7 @@ class Acl
         if (isset($ace)) {
             if ($this->user->isAnonymous) {
                 $canAccess = $this->checkPermission($ace, $access, $property, "anonymous");
-            }
-            
-            if ($canAccess === false) {
+            } else {
                 if (!$this->user->isAuthenticated) {
                     throw new \RPI\Framework\Exceptions\Authorization();
                 }

@@ -13,6 +13,29 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
         //$this->aceMap = $aceMap;
         
         $this->aceMap = array(
+            "RPI\Services\Navigation\Model\Navigation" => array(
+                "access" => array(
+                    "roles" => array(
+                        "owner" => array(
+                            "permissions" => array(
+                                "*" => Acl::ALL,
+                            )
+                        ),
+                        "anonymous" => array(
+                            "permissions" => array(
+                                "*" => Acl::READ
+                            )
+                        ),
+                        "admin" => array(
+                            "permissions" => array(
+                                "*" => Acl::ALL
+                            )
+                        )
+                    )
+                )
+            ),
+            
+            
             "RPI\Services\Content\Model\Document\Common" => array(
                 "access" => array(
                     "roles" => array(
