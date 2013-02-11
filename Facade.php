@@ -45,12 +45,22 @@ class Facade
      */
     public static function acl(\RPI\Framework\App\Security\Acl\Model\IDomainObject $object)
     {
-        return \RPI\Framework\Helpers\Reflection::createObject(
+        static $acls = array();
+        
+        $aclName = $object->getType();
+        
+        if (isset($acls[$aclName])) {
+            return $acls[$aclName];
+        }
+
+        $acls[$aclName] = \RPI\Framework\Helpers\Reflection::createObject(
             self::app(),
             "RPI\Framework\App\Security\Acl",
             array(
                 "domainObject" => $object
             )
         );
+        
+        return $acls[$aclName];
     }
 }
