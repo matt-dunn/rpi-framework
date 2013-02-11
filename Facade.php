@@ -39,4 +39,18 @@ class Facade
     {
         return $GLOBALS["RPI_APP"];
     }
+    
+    /**
+     * @return \RPI\Framework\App\Security\Acl
+     */
+    public static function acl(\RPI\Framework\App\Security\Acl\Model\IDomainObject $object)
+    {
+        return \RPI\Framework\Helpers\Reflection::createObject(
+            self::app(),
+            "RPI\Framework\App\Security\Acl",
+            array(
+                "domainObject" => $object
+            )
+        );
+    }
 }

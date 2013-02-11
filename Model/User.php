@@ -2,20 +2,20 @@
 
 namespace RPI\Framework\Model;
 
-class User
+class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model\IUser
 {
-    public $uuid;
-    public $firstname;
-    public $surname;
-    public $email;
+    protected $uuid;
+    protected $firstname;
+    protected $surname;
+    protected $email;
 
-    public $accountCreated;
-    public $accountLastAccessed;
+    protected $accountCreated;
+    protected $accountLastAccessed;
 
-    public $role;
+    protected $role;
 
-    public $isAuthenticated = false;
-    public $isAnonymous = true;
+    protected $isAuthenticated = false;
+    protected $isAnonymous = true;
 
     public function __construct(
         $uuid = null,
@@ -35,5 +35,64 @@ class User
         $this->accountLastAccessed = $accountLastAccessed;
 
         $this->role = $role;
+    }
+    
+    public function getUuid()
+    {
+        return $this->uuid;
+    }
+
+    public function getFirstname()
+    {
+        return $this->firstname;
+    }
+
+    public function getSurname()
+    {
+        return $this->surname;
+    }
+
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    public function getAccountCreated()
+    {
+        return $this->accountCreated;
+    }
+
+    public function getAccountLastAccessed()
+    {
+        return $this->accountLastAccessed;
+    }
+
+    public function getRole()
+    {
+        return $this->role;
+    }
+
+    public function getIsAuthenticated()
+    {
+        return $this->isAuthenticated;
+    }
+
+    public function setIsAuthenticated($isAuthenticated)
+    {
+        $this->isAuthenticated = $isAuthenticated;
+        
+        return $this;
+    }
+
+    public function getIsAnonymous()
+    {
+        return $this->isAnonymous;
+    }
+
+    public function setIsAnonymous($isAnonymous)
+    {
+        $this->isAnonymous = $isAnonymous;
+        
+        return $this;
     }
 }

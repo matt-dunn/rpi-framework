@@ -6,5 +6,8 @@ interface IProvider
 {
     public function getAce($objectType);
     
-    public function isOwner(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject, \RPI\Framework\Model\User $user);
+    public function isOwner(
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
+        \RPI\Framework\Model\User $user
+    );
 }

@@ -10,8 +10,7 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
     
     public function __construct(array $aceMap)
     {
-//        var_dump(eval("return ".$aceMap["RPI\Services\Content\Model\Document\Common"]["access"]["roles"][1].";"));
-        $this->aceMap = $aceMap;
+        //$this->aceMap = $aceMap;
         
         $this->aceMap = array(
             "RPI\Services\Content\Model\Document\Common" => array(

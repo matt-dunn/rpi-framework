@@ -32,38 +32,35 @@ class Acl
     public function __construct(
         \RPI\Framework\App\Security\Acl\Model\IProvider $provider,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
-        \RPI\Framework\Model\User $user
+        \RPI\Framework\Services\Authentication\IAuthentication $authentication
     ) {
         $this->provider = $provider;
         $this->domainObject = $domainObject;
-        $this->user = $user;
+        $this->user = $authentication->getAuthenticatedUser();
     }
     
     public function check($access, $property = null)
     {
-        //var_dump($this->domainObject->getId());
-        //var_dump($this->user);
-        //$objectType = $this->domainObject->getType();
-        //var_dump($this->provider->getAce($objectType));
-        //echo "-----\n\n";
-        
-//        $this->user->role = "admin";
-        
-        $objectType = $this->domainObject->getType();
-        $ace = $this->provider->getAce($objectType);
-//        var_dump($ace);
-        
         $canAccess = false;
         
+        $ace = $this->provider->getAce($this->domainObject->getType());
         if (isset($ace)) {
             if ($this->user->isAnonymous) {
                 $canAccess = $this->checkPermission($ace, $access, $property, "anonymous");
-            } else {
+            }
+            
+            if ($canAccess === false) {
                 if (!$this->user->isAuthenticated) {
                     throw new \RPI\Framework\Exceptions\Authorization();
                 }
                 
-                $canAccess = $this->checkPermission($ace, $access, $property, $this->user->role);
+                if (is_array($this->user->role)) {
+                    foreach ($this->user->role as $role) {
+                        $canAccess = $this->checkPermission($ace, $access, $property, $role);
+                    }
+                } else {
+                    $canAccess = $this->checkPermission($ace, $access, $property, $this->user->role);
+                }
 
                 if ($canAccess === false && $this->provider->isOwner($this->domainObject, $this->user)) {
                     $canAccess = $this->checkPermission($ace, $access, $property, "owner");
@@ -78,7 +75,6 @@ class Acl
     {
         if (isset($ace["access"]["roles"][$role])) {
             $permissions = $ace["access"]["roles"][$role]["permissions"];
-//                var_dump($permissions);
 
             if (isset($permissions["*"]) && ($permissions["*"] & $access)) {
                 return true;

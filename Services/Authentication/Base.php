@@ -142,7 +142,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     /**
      *
-     * @param  \RPI\Framework\Model\User  $user
+     * @param  \RPI\Framework\Model\IUser  $user
      * @param string $email
      * 
      * @return boolean
@@ -206,9 +206,9 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
      * @param  string                    $user
      * @param  string                    $userToken
      * @param  string                    $authenticationToken
-     * @return \RPI\Framework\Model\User
+     * @return \RPI\Framework\Model\IUser
      */
-    private function setUser(\RPI\Framework\Model\User $user, $userToken = null, $authenticationToken = null)
+    private function setUser(\RPI\Framework\Model\IUser $user, $userToken = null, $authenticationToken = null)
     {
         $authenticatedUserSessionName = $this->authenticatedUserSessionName;
         $this->authenticatedUser = $this->app->getSession()->$authenticatedUserSessionName = $user;
@@ -364,7 +364,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
      * 
      * @param string $uuid
      * 
-     * @return \RPI\Framework\Model\User
+     * @return \RPI\Framework\Model\IUser
      */
     protected function createAnonymousUser($uuid)
     {
@@ -378,7 +378,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
      * @param  string $email
      * @param  string $password
      * 
-     * @return \RPI\Framework\Model\User
+     * @return \RPI\Framework\Model\IUser
      */
     abstract protected function authenticateUserDetails($email, $password);
 
@@ -386,7 +386,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
      *
      * @param  string $email
      * 
-     * @return \RPI\Framework\Model\User
+     * @return \RPI\Framework\Model\IUser
      */
     abstract protected function getCurrentUser($email);
 }
