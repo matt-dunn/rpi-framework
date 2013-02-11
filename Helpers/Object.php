@@ -22,7 +22,7 @@ abstract class Object implements \Serializable
         if (method_exists($this, $property)) {
             $this->$property($value);
         } else {
-            throw new \InvalidArgumentException("'$name' cannot be set");
+            throw new \InvalidArgumentException("'$name' cannot is a readonly property");
         }
     }
     
