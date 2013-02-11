@@ -149,6 +149,17 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                         return true;
                 }
                 break;
+            case "guest@rpi.co.uk":
+                switch ($domainObject->getId()) {
+                    case "f90d51c4-0003-480d-9618-3c3dfcdb2439":    // 403
+                    case "f90d51c4-0003-480d-9618-3c3dfcdb2438":    // 404
+                    case "f90d51c4-0003-480d-9618-3c3dfcdb2437":    // 500
+                    case "f10d5cc4-0003-480d-9618-3c3dfcdb2439":    // test
+                    case "f10d5cc4-0003-480d-9618-3c3dfcdb2439":    // test2
+                    case "a10d5cc4-1233-480d-9618-3c3dfcdb2439":    // complex-markup
+                        return false;
+                }
+                break;
         }
 
         return false;
