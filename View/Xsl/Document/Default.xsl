@@ -37,6 +37,7 @@
     <xsl:param name="component"/>
     <xsl:param name="bind"/>
     <xsl:param name="className"/>
+    <xsl:param name="contenteditable" select="true()"/>
     <xsl:param name="richedit" select="false()"/>
 
     <xsl:choose>
@@ -52,7 +53,9 @@
                 <xsl:attribute name="data-rich-edit">true</xsl:attribute>
             </xsl:if>
             <xsl:attribute name="data-bind"><xsl:value-of select="$bind"/></xsl:attribute>
-            <xsl:attribute name="contenteditable">true</xsl:attribute>
+            <xsl:if test="$contenteditable">
+                <xsl:attribute name="contenteditable">true</xsl:attribute>
+            </xsl:if>
         </xsl:when>
         <xsl:when test="string-length(normalize-space($className)) &gt; 0">
             <xsl:attribute name="class">
