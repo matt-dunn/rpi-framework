@@ -16,17 +16,26 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
             "RPI\Services\Navigation\Model\Navigation" => array(
                 "access" => array(
                     "roles" => array(
+                        "user" => array(
+                            "aggregate" => Acl::ALL,
+                            "permissions" => array(
+                                "*" => Acl::ALL,
+                            )
+                        ),
                         "owner" => array(
+                            "aggregate" => Acl::ALL,
                             "permissions" => array(
                                 "*" => Acl::ALL,
                             )
                         ),
                         "anonymous" => array(
+                            "aggregate" => Acl::READ,
                             "permissions" => array(
                                 "*" => Acl::READ
                             )
                         ),
                         "admin" => array(
+                            "aggregate" => Acl::ALL,
                             "permissions" => array(
                                 "*" => Acl::ALL
                             )
@@ -40,20 +49,26 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                 "access" => array(
                     "roles" => array(
                         "owner" => array(
+                            "aggregate" => Acl::ALL,
                             "permissions" => array(
-                                "*" => Acl::READ,
-                                "commonDocument:title" => Acl::READ | Acl::UPDATE,
-                                "commonDocument:body" => Acl::READ | Acl::UPDATE
+                                "commonDocument:createdBy" => Acl::ALL,
+                                "commonDocument:title" => Acl::ALL,
+                                "commonDocument:summary/xhtml:body" => Acl::READ,
+                                "commonDocument:content/xhtml:body" => Acl::ALL,
                             )
                         ),
                         "anonymous" => array(
+                            "aggregate" => Acl::READ,
                             "permissions" => array(
-                                "*" => Acl::READ
+                                "commonDocument:createdBy" => Acl::READ,
+                                "commonDocument:title" => Acl::READ,
+                                "commonDocument:summary" => Acl::READ,
                             )
                         ),
                         "admin" => array(
+                            "aggregate" => Acl::ALL,
                             "permissions" => array(
-                                "*" => Acl::ALL
+                                "*" => Acl::ALL,
                             )
                         )
                     )
@@ -63,18 +78,35 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                 "access" => array(
                     "roles" => array(
                         "owner" => array(
+                            "aggregate" => Acl::ALL,
                             "permissions" => array(
-                                "*" => Acl::READ
+                                "commonDocument:createdBy" => Acl::READ,
+                                "commonDocument:title" => Acl::READ | Acl::UPDATE,
+                                "commonDocument:summary/xhtml:body" => Acl::ALL,
+                                "commonDocument:content/xhtml:body" => Acl::ALL,
+                                "testDocument:details/testDocument:type" => Acl::READ,
+                                "db:address/db:city" => Acl::ALL,
+                                "db:address/db:postcode" => Acl::ALL,
+                                "db:address/db:country" => Acl::ALL,
+                                "db:address/db:phone" => Acl::ALL
                             )
                         ),
                         "anonymous" => array(
+                            "aggregate" => Acl::READ,
                             "permissions" => array(
-                                "*" => Acl::READ
+                                "commonDocument:createdBy" => Acl::READ,
+                                "commonDocument:title" => Acl::READ,
+                                "commonDocument:summary" => Acl::READ,
+                                "db:address/db:city" => Acl::READ,
+                                "db:address/db:postcode" => Acl::READ,
+                                "db:address/db:country" => Acl::READ,
+                                "db:address/db:phone" => Acl::READ
                             )
                         ),
                         "admin" => array(
+                            "aggregate" => Acl::ALL,
                             "permissions" => array(
-                                "*" => Acl::ALL
+                                "*" => Acl::ALL,
                             )
                         )
                     )
@@ -103,7 +135,7 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                     case "f10d5cc4-0003-480d-9618-3c3dfcdb2439":    // test
                     case "f10d5cc4-0003-480d-9618-3c3dfcdb2439":    // test2
                     case "a10d5cc4-1233-480d-9618-3c3dfcdb2439":    // complex-markup
-                        return true;
+                        return false;
                 }
                 break;
             case "demo@rpi.co.uk":
@@ -114,7 +146,7 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                     case "f10d5cc4-0003-480d-9618-3c3dfcdb2439":    // test
                     case "f10d5cc4-0003-480d-9618-3c3dfcdb2439":    // test2
                     case "a10d5cc4-1233-480d-9618-3c3dfcdb2439":    // complex-markup
-                        return false;
+                        return true;
                 }
                 break;
         }

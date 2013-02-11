@@ -11,7 +11,9 @@
     
 	xmlns:xhtml="http://www.w3.org/1999/xhtml"
 
-	exclude-result-prefixes="xhtml xsi commonDocument services metadata"
+	xmlns:ext="http://php.net/xsl"
+    
+	exclude-result-prefixes="ext xhtml xsi commonDocument services metadata"
 >
 
 <xsl:template match="commonDocument:document" mode="common_document">
@@ -29,6 +31,35 @@
             <xsl:with-param name="headingLevel" select="$headingLevel"/>
         </xsl:apply-templates>
     </article>
+</xsl:template>
+
+<xsl:template match="*" mode="common_document-editableAttributes">
+    <xsl:param name="component"/>
+    <xsl:param name="bind"/>
+    <xsl:param name="className"/>
+    <xsl:param name="richedit" select="false()"/>
+
+    <xsl:choose>
+        <xsl:when test="boolean(number($component/editable)) and boolean(number($component/editMode)) and boolean(number(ext:function('\RPI\Framework\Views\Xsl\Extensions::aclCanUpdate', $bind)))">
+            <xsl:attribute name="class">
+                <xsl:if test="string-length(normalize-space($className)) &gt; 0">
+                    <xsl:value-of select="$className"/>
+                    <xsl:text> </xsl:text>
+                </xsl:if>
+                <xsl:text>editable</xsl:text>
+            </xsl:attribute>
+            <xsl:if test="$richedit">
+                <xsl:attribute name="data-rich-edit">true</xsl:attribute>
+            </xsl:if>
+            <xsl:attribute name="data-bind"><xsl:value-of select="$bind"/></xsl:attribute>
+            <xsl:attribute name="contenteditable">true</xsl:attribute>
+        </xsl:when>
+        <xsl:when test="string-length(normalize-space($className)) &gt; 0">
+            <xsl:attribute name="class">
+                <xsl:value-of select="$className"/>
+            </xsl:attribute>
+        </xsl:when>
+    </xsl:choose>
 </xsl:template>
 
 </xsl:stylesheet>

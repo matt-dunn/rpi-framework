@@ -19,13 +19,12 @@
     <xsl:param name="headingLevel"/>
     
     <xsl:element name="h{$headingLevel}">
-        <xsl:attribute name="class">h</xsl:attribute>
-        <xsl:if test="boolean(number($component/editable)) and boolean(number($component/editMode))">
-            <xsl:attribute name="class">h editable</xsl:attribute>
-            <xsl:attribute name="data-bind">commonDocument:title</xsl:attribute>
-            <xsl:attribute name="contenteditable">true</xsl:attribute>
-        </xsl:if>
-       
+        <xsl:apply-templates select="commonDocument:title" mode="common_document-editableAttributes">
+            <xsl:with-param name="component" select="$component"/>
+            <xsl:with-param name="bind" select="string('commonDocument:title')"/>
+            <xsl:with-param name="className" select="string('h')"/>
+        </xsl:apply-templates>
+        
         <xsl:value-of select="commonDocument:title"/>
     </xsl:element>
 </xsl:template>

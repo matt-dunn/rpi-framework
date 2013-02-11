@@ -12,6 +12,8 @@ class View implements \RPI\Framework\Views\IView
 
     protected $options;
     protected $xslOptions = array();
+    
+    private static $model = null;
 
     public function __construct($xsltFilename, array $options = null, array $xslOptions = null)
     {
@@ -38,6 +40,8 @@ class View implements \RPI\Framework\Views\IView
 
     public function render(\RPI\Framework\Controller $controller)
     {
+        self::$model = $controller->model;
+
         if (isset($this->options["debug"])) {
             $this->debug = ($this->options["debug"] === true);
         } else {
@@ -94,7 +98,7 @@ class View implements \RPI\Framework\Views\IView
             }
             self::$xslt[$this->xsltFilename] = $xp;
         }
-
+        
         if (isset($this->stream)) {
             return $xp->transformToURI($model, $this->stream);
         } else {
@@ -105,5 +109,10 @@ class View implements \RPI\Framework\Views\IView
     public function getViewTimestamp()
     {
         return filectime($this->xsltFilename);
+    }
+    
+    public static function getModel()
+    {
+        return self::$model;
     }
 }

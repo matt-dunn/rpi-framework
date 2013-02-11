@@ -2,6 +2,17 @@
 
 namespace RPI\Framework\Model;
 
+/**
+ * @property-read string $uuid
+ * @property-read string $firstname
+ * @property-read string $surname
+ * @property-read string $email
+ * @property-read datetime $accountCreated
+ * @property-read datetime $accountLastAccessed
+ * @property-read array|string $role
+ * @property boolean $isAuthenticated
+ * @property boolean $isAnonymous
+ */
 interface IUser
 {
     /**
