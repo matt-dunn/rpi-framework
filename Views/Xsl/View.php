@@ -13,6 +13,7 @@ class View implements \RPI\Framework\Views\IView
     protected $options;
     protected $xslOptions = array();
     
+    private static $controller = null;
     private static $model = null;
 
     public function __construct($xsltFilename, array $options = null, array $xslOptions = null)
@@ -40,6 +41,7 @@ class View implements \RPI\Framework\Views\IView
 
     public function render(\RPI\Framework\Controller $controller)
     {
+        self::$controller = $controller;
         self::$model = $controller->model;
 
         if (isset($this->options["debug"])) {
@@ -114,5 +116,14 @@ class View implements \RPI\Framework\Views\IView
     public static function getModel()
     {
         return self::$model;
+    }
+    
+    /**
+     * 
+     * @return \RPI\Framework\Controller
+     */
+    public static function getController()
+    {
+        return self::$controller;
     }
 }
