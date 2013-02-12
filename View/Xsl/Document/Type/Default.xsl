@@ -18,15 +18,17 @@
     <xsl:param name="component"/>
     <xsl:param name="headingLevel"/>
     
-    <xsl:element name="h{$headingLevel}">
-        <xsl:apply-templates select="commonDocument:title" mode="common_document-editableAttributes">
-            <xsl:with-param name="component" select="$component"/>
-            <xsl:with-param name="bind" select="string('commonDocument:title')"/>
-            <xsl:with-param name="className" select="string('h')"/>
-        </xsl:apply-templates>
-        
-        <xsl:value-of select="commonDocument:title"/>
-    </xsl:element>
+    <xsl:if test="commonDocument:title">
+        <xsl:element name="h{$headingLevel}">
+            <xsl:apply-templates select="commonDocument:title" mode="common_document-editableAttributes">
+                <xsl:with-param name="component" select="$component"/>
+                <xsl:with-param name="bind" select="string('commonDocument:title')"/>
+                <xsl:with-param name="className" select="string('h')"/>
+            </xsl:apply-templates>
+
+            <xsl:value-of select="commonDocument:title"/>
+        </xsl:element>
+    </xsl:if>
 </xsl:template>
 
 </xsl:stylesheet>

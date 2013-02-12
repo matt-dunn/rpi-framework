@@ -17,18 +17,20 @@
     <xsl:param name="component"/>
     <xsl:param name="headingLevel"/>
     
-    <div class="document">
-        <xsl:if test="boolean(number($component/editable)) and boolean(number($component/editMode))">
-            <xsl:attribute name="class">document editable</xsl:attribute>
-            <xsl:attribute name="data-bind">commonDocument:summary/xhtml:body</xsl:attribute>
-            <xsl:attribute name="data-rich-edit">true</xsl:attribute>
-            <xsl:attribute name="contenteditable">true</xsl:attribute>
-        </xsl:if>
+    <xsl:if test="commonDocument:summary/xhtml:body">
+        <div class="document">
+            <xsl:if test="boolean(number($component/editable)) and boolean(number($component/editMode))">
+                <xsl:attribute name="class">document editable</xsl:attribute>
+                <xsl:attribute name="data-bind">commonDocument:summary/xhtml:body</xsl:attribute>
+                <xsl:attribute name="data-rich-edit">true</xsl:attribute>
+                <xsl:attribute name="contenteditable">true</xsl:attribute>
+            </xsl:if>
 
-        <xsl:apply-templates select="commonDocument:summary/xhtml:body">
-            <xsl:with-param name="headingLevel" select="$headingLevel"/>
-        </xsl:apply-templates>
-    </div>
+            <xsl:apply-templates select="commonDocument:summary/xhtml:body">
+                <xsl:with-param name="headingLevel" select="$headingLevel"/>
+            </xsl:apply-templates>
+        </div>
+    </xsl:if>
 </xsl:template>
 
 </xsl:stylesheet>

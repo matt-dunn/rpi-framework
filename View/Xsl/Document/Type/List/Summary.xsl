@@ -17,29 +17,47 @@
     <xsl:param name="component"/>
     <xsl:param name="headingLevel"/>
 
-    <xsl:element name="h{$headingLevel}">
-        <xsl:attribute name="class">h</xsl:attribute>
-        <xsl:if test="boolean(number($component/editable)) and boolean(number($component/editMode))">
-            <xsl:attribute name="class">h editable</xsl:attribute>
-            <xsl:attribute name="data-bind">commonDocument:title</xsl:attribute>
-            <xsl:attribute name="contenteditable">true</xsl:attribute>
-        </xsl:if>
-       
-        <xsl:value-of select="commonDocument:title"/>
-    </xsl:element>
-    
-    <div class="document">
-        <xsl:if test="boolean(number($component/editable)) and boolean(number($component/editMode))">
-            <xsl:attribute name="class">document editable</xsl:attribute>
-            <xsl:attribute name="data-bind">commonDocument:summary/xhtml:body</xsl:attribute>
-            <xsl:attribute name="data-rich-edit">true</xsl:attribute>
-            <xsl:attribute name="contenteditable">true</xsl:attribute>
-        </xsl:if>
+    <xsl:if test="commonDocument:title">
+        <xsl:element name="h{$headingLevel}">
+            <xsl:attribute name="class">h</xsl:attribute>
+            <xsl:if test="boolean(number($component/editable)) and boolean(number($component/editMode))">
+                <xsl:attribute name="class">h editable</xsl:attribute>
+                <xsl:attribute name="data-bind">commonDocument:title</xsl:attribute>
+                <xsl:attribute name="contenteditable">true</xsl:attribute>
+            </xsl:if>
 
-        <xsl:apply-templates select="commonDocument:summary/xhtml:body">
-            <xsl:with-param name="headingLevel" select="$headingLevel"/>
-        </xsl:apply-templates>
-    </div>
+            <xsl:value-of select="commonDocument:title"/>
+        </xsl:element>
+    </xsl:if>
+    
+    <xsl:if test="commonDocument:createdBy">
+        <p>
+            <xsl:text>By </xsl:text>
+            <cite>
+                <xsl:apply-templates select="commonDocument:createdBy" mode="common_document-editableAttributes">
+                    <xsl:with-param name="component" select="$component"/>
+                    <xsl:with-param name="bind" select="string('commonDocument:createdBy')"/>
+                </xsl:apply-templates>
+
+                <xsl:value-of select="commonDocument:createdBy"/>
+            </cite>
+        </p>
+    </xsl:if>
+    
+    <xsl:if test="commonDocument:summary/xhtml:body">
+        <div class="document">
+            <xsl:if test="boolean(number($component/editable)) and boolean(number($component/editMode))">
+                <xsl:attribute name="class">document editable</xsl:attribute>
+                <xsl:attribute name="data-bind">commonDocument:summary/xhtml:body</xsl:attribute>
+                <xsl:attribute name="data-rich-edit">true</xsl:attribute>
+                <xsl:attribute name="contenteditable">true</xsl:attribute>
+            </xsl:if>
+
+            <xsl:apply-templates select="commonDocument:summary/xhtml:body">
+                <xsl:with-param name="headingLevel" select="$headingLevel"/>
+            </xsl:apply-templates>
+        </div>
+    </xsl:if>
 </xsl:template>
 
 </xsl:stylesheet>
