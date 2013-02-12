@@ -9,6 +9,9 @@ abstract class Base extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
+        \RPI\Framework\Facade::clearInstance();
+        \RPI\Framework\Helpers\Reflection::clearInstance();
+        
         $this->setUpGlobals();
     }
     

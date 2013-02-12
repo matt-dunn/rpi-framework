@@ -4,6 +4,12 @@ namespace RPI\Framework;
 
 class Facade
 {
+    private static $acls = array();
+        
+    private function __construct()
+    {
+    }
+    
     /**
      * Get an instance of the localisation service
      * 
@@ -45,15 +51,13 @@ class Facade
      */
     public static function acl(\RPI\Framework\App\Security\Acl\Model\IDomainObject $object)
     {
-        static $acls = array();
-        
         $aclName = $object->getType();
         
-        if (isset($acls[$aclName])) {
-            return $acls[$aclName];
+        if (isset(self::$acls[$aclName])) {
+            return self::$acls[$aclName];
         }
 
-        $acls[$aclName] = \RPI\Framework\Helpers\Reflection::createObject(
+        self::$acls[$aclName] = \RPI\Framework\Helpers\Reflection::createObject(
             self::app(),
             "RPI\Framework\App\Security\Acl",
             array(
@@ -61,6 +65,11 @@ class Facade
             )
         );
         
-        return $acls[$aclName];
+        return self::$acls[$aclName];
+    }
+    
+    public static function clearInstance()
+    {
+        self::$acls = null;
     }
 }

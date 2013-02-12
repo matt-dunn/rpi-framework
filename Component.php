@@ -139,14 +139,14 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     {
         if ($this->visible) {
             $this->processAction();
-            
-            $this->model = $this->getModel();
-            
-            if ($this->editable && $this->model instanceof \RPI\Framework\App\Security\Acl\Model\IDomainObject) {
-                $this->editable = \RPI\Framework\Facade::acl($this->model)->canUpdate();
+  
+            if (!$this->validateCache()) {
+                $this->model = $this->getModel();
+                
+                if ($this->editable && $this->model instanceof \RPI\Framework\App\Security\Acl\Model\IDomainObject) {
+                    $this->editable = \RPI\Framework\Facade::acl($this->model)->canUpdate();
+                }
             }
-            
-            $this->addCacheKey("editable:".$this->editable);
 
             $processChildren = false;
             
@@ -242,7 +242,9 @@ EOT;
                     return $cacheContent;
                 }
             }
-
+            
+            //echo "RENDER:[{$this->type}]<br/>\n";
+            
             $rendition = $this->getView()->render($this);
 
             if ($this->getCacheKey() !== false && !$this->canRenderViewFromCache() && $this->isCacheable()) {

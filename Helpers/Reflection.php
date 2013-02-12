@@ -8,6 +8,8 @@ namespace RPI\Framework\Helpers;
  */
 class Reflection
 {
+    private static $objects = array();
+    
     private function __construct()
     {
     }
@@ -107,21 +109,19 @@ class Reflection
 
     private static function getDependencyObject(\RPI\Framework\App $app, $className)
     {
-        static $objects = array();
-        
-        if (isset($objects[$className])) {
-            if ($objects[$className] === false) {
+        if (isset(self::$objects[$className])) {
+            if (self::$objects[$className] === false) {
                 return null;
             }
-            return $objects[$className];
+            return self::$objects[$className];
         }
-        
+
         $dependencies = $app->getConfig()->getValue("config/dependencies");
         if (isset($dependencies) && isset($dependencies[$className])) {
-            $objects[$className] = self::createObjectByClassInfo($app, $dependencies[$className]);
-            return $objects[$className];
+            self::$objects[$className] = self::createObjectByClassInfo($app, $dependencies[$className]);
+            return self::$objects[$className];
         } else {
-            $objects[$className] = false;
+            self::$objects[$className] = false;
         }
 
         return null;
@@ -194,5 +194,10 @@ class Reflection
         } else {
             throw new \RPI\Framework\Exceptions\RuntimeException("Invalid class information");
         }
+    }
+    
+    public static function clearInstance()
+    {
+        self::$objects = null;
     }
 }

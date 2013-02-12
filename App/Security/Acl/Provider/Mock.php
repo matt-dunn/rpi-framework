@@ -17,9 +17,9 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                 "access" => array(
                     "roles" => array(
                         "user" => array(
-                            "aggregate" => Acl::ALL,
+                            "aggregate" => Acl::READ,
                             "permissions" => array(
-                                "*" => Acl::ALL,
+                                "*" => Acl::READ,
                             )
                         ),
                         "owner" => array(
@@ -84,7 +84,7 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                                 "commonDocument:title" => Acl::READ | Acl::UPDATE,
                                 "commonDocument:summary/xhtml:body" => Acl::ALL,
                                 "commonDocument:content/xhtml:body" => Acl::ALL,
-                                "testDocument:details/testDocument:type" => Acl::READ,
+                                "testDocument:details/testDocument:type" => Acl::READ | Acl::UPDATE,
                                 "db:address/db:city" => Acl::ALL,
                                 "db:address/db:postcode" => Acl::ALL,
                                 "db:address/db:country" => Acl::ALL,
@@ -135,6 +135,8 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                     case "f10d5cc4-0003-480d-9618-3c3dfcdb2439":    // test
                     case "f10d5cc4-0003-480d-9618-3c3dfcdb2439":    // test2
                     case "a10d5cc4-1233-480d-9618-3c3dfcdb2439":    // complex-markup
+                    case "d90d51c4-1003-280d-3618-3c3dfcdb2438":    // navigation (default)
+                    case "d90d51c4-1003-280d-3618-3c3dfcdb2439":    // navigation (footer)
                         return false;
                 }
                 break;
@@ -146,6 +148,8 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                     case "f10d5cc4-0003-480d-9618-3c3dfcdb2439":    // test
                     case "f10d5cc4-0003-480d-9618-3c3dfcdb2439":    // test2
                     case "a10d5cc4-1233-480d-9618-3c3dfcdb2439":    // complex-markup
+                    case "d90d51c4-1003-280d-3618-3c3dfcdb2438":    // navigation (default)
+                    case "d90d51c4-1003-280d-3618-3c3dfcdb2439":    // navigation (footer)
                         return true;
                 }
                 break;
@@ -157,6 +161,8 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                     case "f10d5cc4-0003-480d-9618-3c3dfcdb2439":    // test
                     case "f10d5cc4-0003-480d-9618-3c3dfcdb2439":    // test2
                     case "a10d5cc4-1233-480d-9618-3c3dfcdb2439":    // complex-markup
+                    case "d90d51c4-1003-280d-3618-3c3dfcdb2438":    // navigation (default)
+                    case "d90d51c4-1003-280d-3618-3c3dfcdb2439":    // navigation (footer)
                         return false;
                 }
                 break;

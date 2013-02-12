@@ -67,6 +67,11 @@ abstract class HTML extends \RPI\Framework\Controller
      */
     abstract protected function getModel();
     
+    protected function validateCache()
+    {
+        return false;
+    }
+    
     abstract public function prerender();
     
     abstract protected function renderViewFromCache();
@@ -112,7 +117,11 @@ abstract class HTML extends \RPI\Framework\Controller
             
             // TODO: should this use $this->options->get()? This will create a new cache
             //       instance for any component placed into a different viewMode for example
-            $this->cacheKey = $id."_".implode("_o:", $options);
+            //$this->cacheKey = $id."_".implode("_o:", $options);
+            $this->cacheKey = serialize(array("id" => $id, "options" =>$options));
+            // TODO: should the role be used in the key??
+            //$this->cacheKey = $id."_".implode("_o:", $options).
+            //"_userrole:".\RPI\Framework\Facade::authentication()->getAuthenticatedUser()->role;
         }
         
         if (isset($viewRendition)) {
@@ -159,7 +168,9 @@ abstract class HTML extends \RPI\Framework\Controller
     {
         $this->processAction();
             
-        $this->model = $this->getModel();
+        if (!$this->validateCache()) {
+            $this->model = $this->getModel();
+        }
 
         if (isset($this->components)) {
             foreach ($this->components as $component) {
@@ -290,10 +301,12 @@ abstract class HTML extends \RPI\Framework\Controller
         return $this->cacheKey;
     }
     
-    public function addCacheKey($key)
+    public function setCacheKeyValue($key, $value)
     {
         if ($this->cacheKey !== false) {
-            $this->cacheKey .= "_".$key;
+            $keyData = unserialize($this->cacheKey);
+            $keyData["options"][$key] = $value;
+            $this->cacheKey = serialize($keyData);
         }
         
         return $this->cacheKey;
