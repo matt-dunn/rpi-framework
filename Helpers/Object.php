@@ -11,7 +11,7 @@ abstract class Object implements \Serializable
         if (method_exists($this, $property)) {
             return $this->$property();
         } else {
-            throw new \InvalidArgumentException("'$name' is not defined");
+            throw new \InvalidArgumentException("Undefined property: '$name'");
         }
     }
     
@@ -22,7 +22,7 @@ abstract class Object implements \Serializable
         if (method_exists($this, $property)) {
             $this->$property($value);
         } else {
-            throw new \InvalidArgumentException("'$name' cannot is a readonly property");
+            throw new \InvalidArgumentException("Property is read-only: '$name'");
         }
     }
     
@@ -33,7 +33,7 @@ abstract class Object implements \Serializable
         if (method_exists($this, $property)) {
             return ($this->$property() !== null);
         } else {
-            throw new \InvalidArgumentException("'$name' is not defined");
+            throw new \InvalidArgumentException("Undefined property: '$name'");
         }
     }
     
@@ -44,7 +44,7 @@ abstract class Object implements \Serializable
         if (method_exists($this, $property)) {
             $this->$property = null;
         } else {
-            throw new \InvalidArgumentException("'$name' is not defined");
+            throw new \InvalidArgumentException("Undefined property: '$name'");
         }
     }
     
