@@ -24,19 +24,19 @@ RPI.form = (function() {
 			element.textareaCount.html(remainingCount);
 		}
 
-        jQuery("textarea[maxlength]").live("keydown keyup paste cut copy",
+        jQuery("textarea[maxlength]").on("keydown keyup paste cut copy",
             function(e) {
                 textareaUpdateCount(this);
             }
         );
 
-        jQuery("fieldset .desc *").live("focus",
+        jQuery("fieldset .desc *").on("focus",
             function() {
                 jQuery(this).parents(".desc:first").addClass("f");
             }
         );
 
-        jQuery("fieldset .desc *").live("blur",
+        jQuery("fieldset .desc *").on("blur",
             function() {
                 jQuery(this).parents(".desc:first").removeClass("f");
             }

@@ -26,7 +26,9 @@ RPI._("component").edit = (function() {
             }
         );
         
-        jQuery(".component-editable .options").live("click",
+        jQuery(document).on(
+            "click",
+            ".component-editable .options",
             function(e) {
                 var component = jQuery(this).parents(".component:first");
                 var target = jQuery(e.target);
@@ -56,7 +58,9 @@ RPI._("component").edit = (function() {
         );
 
         // TODO: need to use something other than use DOMSubtreeModified as it's not supported by IE...
-        jQuery(".component-editable .editable").live("change DOMCharacterDataModified DOMNodeInserted DOMNodeRemoved",
+        jQuery(document).on(
+            "change DOMCharacterDataModified DOMNodeInserted DOMNodeRemoved",
+            ".component-editable .editable",
             function() {
                 if(_monitorDOMChangeEvents) {
                     var _self = this;
@@ -92,7 +96,7 @@ RPI._("component").edit = (function() {
                                     if(_self.autosave) {
                                         var o = container.clone();
                                         if(beforeSaveComponent(component, o, container.data("bind"), "autosave")) {
-                                            var content = o.attr("value");
+                                            var content = container.val();
                                             if(!content) {
                                                 content = jQuery.htmlClean(o.html());
                                             }
@@ -341,7 +345,7 @@ RPI._("component").edit = (function() {
                 if(this.isDirty) {
                     var o = jQuery(this).clone();
                     if(beforeSaveComponent(component, o, o.data("bind"), "save")) {
-                        var content = o.attr("value");
+                        var content = jQuery(this).val();
                         if(!content) {
                             content = jQuery.htmlClean(o.html());
                         }
@@ -473,7 +477,7 @@ RPI._("component").edit = (function() {
     
     init();
 
-    jQuery(document).live(
+    jQuery(document).on(
         "pagetitleupdated.RPI",
         function(e, params) {
             if(params.title) {

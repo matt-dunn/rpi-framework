@@ -402,8 +402,8 @@ RPI.validation = new function() {
 		if(document.getElementById && document.getElementsByName) {
 			var formElement = document.getElementById(formId);
 			if(formElement) {
-				jQuery(formElement).find("input,select,textarea").die("blur");
-				jQuery(formElement).find("input,select,button").die("focus");
+				jQuery(formElement).find("input,select,textarea").off("blur");
+				jQuery(formElement).find("input,select,button").off("focus");
 				jQuery(formElement).unbind("submit");
 				jQuery(formElement).unbind("click");
 				jQuery(formElement).unbind("keypress");
@@ -418,12 +418,14 @@ RPI.validation = new function() {
 		if(document.getElementById && document.getElementsByName) {
 			var formElement = document.getElementById(formId);
 			if(formElement) {
-				jQuery(formElement).find("input,select,textarea").live("blur", 
+				jQuery(formElement).find("input,select,textarea").on(
+                    "blur", 
                     function() {
                         validateFormItem(this, null, null, true);
                     }
                 );
-				jQuery(formElement).find("input,select,button").live("focus", 
+				jQuery(formElement).find("input,select,button").on(
+                    "focus", 
 					function(e) {
 						if(e.target && !_defaultElementNameDefined) { // && (e.target.type == "image" || e.target.type == "submit")) {
                             if((e.target.type == "image" || e.target.type == "submit")) {

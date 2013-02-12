@@ -10,7 +10,7 @@
  */
 
 RPI._("framework.view.document").style = (function() {
-//    jQuery(document).live(
+//    jQuery(document).on(
 //        "beforeadd.RPI.component.edit",
 //        function(e, component, bindName, option) {
 //            console.log(e.type + " - " + bindName + " - " + option)
@@ -18,7 +18,7 @@ RPI._("framework.view.document").style = (function() {
 //        }
 //    );
         
-//    jQuery(document).live(
+//    jQuery(document).on(
 //        "beforedelete.RPI.component.edit",
 //        function(e, component, bindName, option) {
 //            console.log(e.type + " - " + bindName + " - " + option)
@@ -26,14 +26,14 @@ RPI._("framework.view.document").style = (function() {
 //        }
 //    );
         
-//    jQuery(document).live(
+//    jQuery(document).on(
 //        "beforeload.RPI.component.edit",
 //        function(e, component, option) {
 //            console.log(e.type + " - " + option)
 //        }
 //    );
         
-    jQuery(document).live(
+    jQuery(document).on(
         "load.RPI.component.edit",
         function(e, component, option) {
 //            console.log(e.type + " - " + option)
@@ -41,7 +41,7 @@ RPI._("framework.view.document").style = (function() {
         }
     );
         
-    jQuery(document).live(
+    jQuery(document).on(
         "beforesave.RPI.component.edit",
         function(e, component, contentElement, bindName, option) {
 //            console.log(e.type + " - " + bindName + " - " + option)
