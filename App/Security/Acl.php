@@ -87,10 +87,6 @@ class Acl
         if (isset($this->provider)) {
             $ace = $this->provider->getAce($this->domainObject->getType());
             if (isset($ace)) {
-                //if ($this->user->isAnonymous) {
-                    $canAccess = $this->checkPermission($ace, $access, $property, "anonymous", $type);
-                //}
-
                 if ($canAccess === false) {
                     if (!$this->user->isAuthenticated && !$this->user->isAnonymous) {
                         //throw new \RPI\Framework\Exceptions\Authorization();
@@ -112,6 +108,10 @@ class Acl
                 //if (!$this->user->isAnonymous && $canAccess === false) {
                 //    $canAccess = $this->checkPermission($ace, $access, $property, "anonymous", $type);
                 //}
+                
+                if (!$canAccess) {
+                    $canAccess = $this->checkPermission($ace, $access, $property, "_default", $type);
+                }
             }
 
             return $canAccess;

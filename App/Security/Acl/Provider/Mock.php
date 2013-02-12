@@ -28,7 +28,7 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                                 "*" => Acl::ALL,
                             )
                         ),
-                        "anonymous" => array(
+                        "_default" => array(
                             "aggregate" => Acl::READ,
                             "permissions" => array(
                                 "*" => Acl::READ
@@ -57,12 +57,12 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                                 "commonDocument:content/xhtml:body" => Acl::ALL,
                             )
                         ),
-                        "anonymous" => array(
+                        "_default" => array(
                             "aggregate" => Acl::READ,
                             "permissions" => array(
                                 "commonDocument:createdBy" => Acl::READ,
                                 "commonDocument:title" => Acl::READ,
-                                "commonDocument:summary" => Acl::READ,
+                                "commonDocument:summary/xhtml:body" => Acl::READ,
                             )
                         ),
                         "admin" => array(
@@ -80,7 +80,7 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                         "owner" => array(
                             "aggregate" => Acl::ALL,
                             "permissions" => array(
-                                "commonDocument:createdBy" => Acl::READ,
+                                "commonDocument:createdBy" => Acl::READ | Acl::UPDATE,
                                 "commonDocument:title" => Acl::READ | Acl::UPDATE,
                                 "commonDocument:summary/xhtml:body" => Acl::ALL,
                                 "commonDocument:content/xhtml:body" => Acl::ALL,
@@ -91,12 +91,13 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                                 "db:address/db:phone" => Acl::ALL
                             )
                         ),
-                        "anonymous" => array(
+                        "_default" => array(
                             "aggregate" => Acl::READ,
                             "permissions" => array(
                                 "commonDocument:createdBy" => Acl::READ,
                                 "commonDocument:title" => Acl::READ,
-                                "commonDocument:summary" => Acl::READ,
+//                                "commonDocument:content/xhtml:body" => Acl::READ,
+                                "commonDocument:summary/xhtml:body" => Acl::READ,
                                 "db:address/db:city" => Acl::READ,
                                 "db:address/db:postcode" => Acl::READ,
                                 "db:address/db:country" => Acl::READ,
