@@ -317,4 +317,22 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
 
          return $this->rootController;
     }
+    
+    public function isContainedWithin($controller, $context = null)
+    {
+        if (!isset($context)) {
+            $context = $this;
+        }
+
+        $parent = $context->getParent();
+        if (isset($parent)) {
+            if ($parent instanceof $controller) {
+                return true;
+            } else {
+                return $this->isContainedWithin($controller, $parent);
+            }
+        }
+        
+        return false;
+    }
 }
