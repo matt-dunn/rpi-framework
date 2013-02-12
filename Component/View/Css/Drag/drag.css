@@ -1,0 +1,10 @@
+body.component_js .component-move {
+    border:2px solid #ccc;
+    background-color: #eee;
+    width:10px;
+    height:10px;
+    margin:0 5px 5px 0;
+    float:left;
+    cursor:move;
+    border-radius:0 0 10px 0;
+}

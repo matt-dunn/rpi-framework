@@ -54,6 +54,12 @@
             
         <xsl:apply-templates select="options/node()[optionType='data']" mode="component-componentAttributes"/>
         
+        <xsl:if test="boolean(number(isDragable))">
+            <div class="component-move">
+                <xsl:text> </xsl:text>
+           </div>
+        </xsl:if>
+        
         <xsl:if test="boolean(number(editable))">
             <ul class="options">
                 <xsl:choose>

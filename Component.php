@@ -58,6 +58,12 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     public $service = null;
     
     /**
+     *
+     * @var boolean
+     */
+    public $isDragable = false;
+    
+    /**
      * Indicates if the component is visible. Invisible components are not processed or rendered.
      * @var bool 
      */
@@ -138,6 +144,8 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     public function process()
     {
         if ($this->visible) {
+            //$this->isDragable = $this->isContainedWithin("RPI\Components\MultiColumn\Component");
+
             $this->processAction();
   
             if (!$this->validateCache()) {
