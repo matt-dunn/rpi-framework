@@ -382,7 +382,9 @@ jQuery().ready(
 		
 		RPI.framework.components.init();
 
-		jQuery(window).delegate("a[rel='external']", "click",
+        jQuery(document).on(
+            "click",
+            "a[rel='external']:not([contenteditable='true'])",
 			function(e) {
 				e.preventDefault();
 				window.open(this.href);
