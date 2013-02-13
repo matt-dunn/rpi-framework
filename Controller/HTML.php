@@ -15,26 +15,8 @@ namespace RPI\Framework\Controller;
  * @property-read \RPI\Framework\Views\IView $view Controller view
  * @property-read string $cacheKey Controller cache key
  */
-abstract class HTML extends \RPI\Framework\Controller
+abstract class HTML extends \RPI\Framework\Controller\Cacheable
 {
-    /**
-     *
-     * @var \RPI\Framework\Views\IView
-     */
-    protected $view = null;
-
-    /**
-     *
-     * @var string
-     */
-    public $viewType = null;
-    
-    /**
-     * Set by viewdata
-     * @var string
-     */
-    public $viewMode = null;
-
     /**
      *
      * @var array RPI\Framework\Component
@@ -43,48 +25,12 @@ abstract class HTML extends \RPI\Framework\Controller
     
     /**
      *
-     * @var object
-     */
-    public $model = null;
-    
-    /**
-     *
      * @var array 
      */
     protected $messages = null;
 
-    /**
-     * @var string
-     */
-    private $cacheKey = false;
-    
-    abstract protected function isCacheable();
-
-    /**
-     * Get the controller model
-     * 
-     * @return mixed
-     */
-    abstract protected function getModel();
-    
-    protected function validateCache()
-    {
-        return false;
-    }
-    
     abstract public function prerender();
     
-    abstract protected function renderViewFromCache();
-    
-    abstract public function renderView();
-
-    /**
-     * Get the view object used to render the controller
-     * 
-     * @return \RPI\Framework\Views\IView
-     */
-    abstract protected function getView();
-
     /**
      * Indicates if components should be created
      * 
@@ -95,51 +41,11 @@ abstract class HTML extends \RPI\Framework\Controller
         return true;
     }
     
-    /**
-     * 
-     * @param string $id
-     * @param \RPI\Framework\App $app
-     * @param array $options
-     * @param \RPI\Framework\Views\IView $viewRendition
-     */
-    public function __construct(
-        $id,
-        \RPI\Framework\App $app,
-        array $options = null,
-        \RPI\Framework\Views\IView $viewRendition = null
-    ) {
-        $options = $this->setup($id, $app, $options);
-
-        if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
-            if (!isset($options)) {
-                $options = array();
-            }
-            
-            // TODO: should this use $this->options->get()? This will create a new cache
-            //       instance for any component placed into a different viewMode for example
-            //$this->cacheKey = $id."_".implode("_o:", $options);
-            $this->cacheKey = serialize(array("id" => $id, "options" =>$options));
-            // TODO: should the role be used in the key??
-            //$this->cacheKey = $id."_".implode("_o:", $options).
-            //"_userrole:".\RPI\Framework\Facade::authentication()->getAuthenticatedUser()->role;
-        }
-        
-        if (isset($viewRendition)) {
-            $this->setView($viewRendition);
-        }
-        
-        if ($this->initController() !== false) {
-            $this->init();
-        }
-    }
-    
     public function __sleep()
     {
         $properties = parent::__sleep();
         
         unset ($properties["components"]);
-        unset ($properties["view"]);
-        unset ($properties["cacheKey"]);
         
         return $properties;
     }
@@ -181,16 +87,6 @@ abstract class HTML extends \RPI\Framework\Controller
         }
     }
     
-    protected function canRenderViewFromCache()
-    {
-        return true;
-    }
-
-    public function setView(\RPI\Framework\Views\IView $view)
-    {
-        $this->view = $view;
-    }
-
     protected function prerenderComponents()
     {
         $rendition = null;
@@ -294,21 +190,5 @@ abstract class HTML extends \RPI\Framework\Controller
         }
 
         return $matchedComponents;
-    }
-    
-    public function getCacheKey()
-    {
-        return $this->cacheKey;
-    }
-    
-    public function setCacheKeyValue($key, $value)
-    {
-        if ($this->cacheKey !== false) {
-            $keyData = unserialize($this->cacheKey);
-            $keyData["options"][$key] = $value;
-            $this->cacheKey = serialize($keyData);
-        }
-        
-        return $this->cacheKey;
     }
 }

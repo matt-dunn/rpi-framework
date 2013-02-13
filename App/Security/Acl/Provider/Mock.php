@@ -25,7 +25,7 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                 )
             ),
             
-            "RPI\Controllers\Rss\Controller" => array(
+            "Sites\Template\Controllers\Rss\DocumentList\Controller" => array(
                 "access" => array(
                     "roles" => array(
                         "_default" => array(
