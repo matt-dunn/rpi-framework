@@ -96,11 +96,7 @@ RPI._("component").edit = (function() {
                                     if(_self.autosave) {
                                         var o = container.clone();
                                         if(beforeSaveComponent(component, o, container.data("bind"), "autosave")) {
-                                            var content = container.val();
-                                            if(!content) {
-                                                content = jQuery.htmlClean(o.html());
-                                            }
-                                            RPI.webService.call(getServiceUrl(component), "autoSave", {id : component.data("id"), bind: container.data("bind"), content: content}, 
+                                            RPI.webService.call(getServiceUrl(component), "autoSave", {id : component.data("id"), bind: container.data("bind"), content: getElementValue(jQuery(this))}, 
                                                 function(data, response, sourceData) {
                                                     if(_self.isDirty) {
                                                         _self.isDirty = false;
@@ -279,6 +275,20 @@ RPI._("component").edit = (function() {
         return serviceUrl;
     }
     
+    function getElementValue(element) {
+        var content = null;
+        if(element.is(":checkbox")) {
+            content = (element.prop('checked') ? element.val() : null);
+        } else {
+            content = element.val();
+        }
+        if(!content) {
+            content = jQuery.htmlClean(element.html());
+        }
+        
+        return content;
+    }
+    
     function actionView(component) {
         if (!component.data("id")) {
             throw "Invalid/not set component ID";
@@ -345,11 +355,7 @@ RPI._("component").edit = (function() {
                 if(this.isDirty) {
                     var o = jQuery(this).clone();
                     if(beforeSaveComponent(component, o, o.data("bind"), "save")) {
-                        var content = jQuery(this).val();
-                        if(!content) {
-                            content = jQuery.htmlClean(o.html());
-                        }
-                        boundElements.push({bind: o.data("bind"), content: content});
+                        boundElements.push({bind: o.data("bind"), content: getElementValue(jQuery(this))});
                     }
                 }
             }
