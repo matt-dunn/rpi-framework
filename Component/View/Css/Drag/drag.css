@@ -1,10 +1,19 @@
-body.component_js .component-move {
+body.component_js .drag-move {
     border:2px solid #ccc;
     background-color: #eee;
     width:10px;
     height:10px;
-    margin:0 5px 5px 0;
-    float:left;
+    /*margin:0 5px 5px -10px;*/
+    /*float:left;*/
+    position:absolute;
+    top:0;
+    left:0;
     cursor:move;
     border-radius:0 0 10px 0;
+    z-index: 99999999;
+}
+
+.ui-state-highlight {
+    /*border:1px solid red !important;*/
+    border:1px dashed #ddd !important;
 }

@@ -16,20 +16,13 @@ RPI._("component").drag = {
     settings : {
         columns : '.RPI_Components_MultiColumn_Component .mc-c',
         widgetSelector: '.component',
-        handleSelector: '.component-move',
-        contentSelector: '.widget-content',
+        handleSelector: '.drag-move',
         widgetDefault : {
-            movable: true,
-            removable: true,
-            collapsible: true,
-            editable: true
+            movable: true
         },
         widgetIndividual : {
             intro : {
-                movable: false,
-                removable: false,
-                collapsible: false,
-                editable: false
+                movable: false
             }
         }
     },
@@ -71,6 +64,18 @@ RPI._("component").drag = {
                 $(this).parent().css({width:''});
             } else {
                 $(settings.columns).sortable('disable');
+            }
+        });
+
+        $(settings.columns).droppable({
+            drop: function(event, ui) {
+                $(this).removeClass("ui-state-highlight");
+            },
+            out: function(event, ui) {
+                $(this).removeClass("ui-state-highlight");
+            },
+            over: function(event, ui) {
+                $(this).addClass("ui-state-highlight");
             }
         });
 

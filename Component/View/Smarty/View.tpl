@@ -20,21 +20,28 @@
 {/if}
 
 <section class="{$className}"{$sectionAttributes}>
-    {if ($controller->editable)}
-        <ul class="options">
-            {if ($controller->editMode)}
-                <li data-option="save" class="d">
-                    Save
-                </li>
-                <li data-option="cancel" class="l" title ="Complete">
-                    X
-                </li>
-            {else}
-                <li data-option="edit" class="l">
-                    Edit
-                </li>
+    {if ($controller->editable || $controller->isDraggable)}
+        <div class="options-c">
+            {if ($controller->editable)}
+                <ul class="options">
+                    {if ($controller->editMode)}
+                        <li data-option="save" class="d">
+                            Save
+                        </li>
+                        <li data-option="cancel" class="l" title ="Complete">
+                            X
+                        </li>
+                    {else}
+                        <li data-option="edit" class="l">
+                            Edit
+                        </li>
+                    {/if}
+                </ul>
             {/if}
-        </ul>
+            {if ($controller->isDraggable)}
+                <div class="drag-move"> </div>
+            {/if}
+        </div>
     {/if}
 
     {include file='file:Framework/Controller/Message/View/Smarty/View.tpl'}

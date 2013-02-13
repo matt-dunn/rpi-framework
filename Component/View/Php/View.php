@@ -58,14 +58,22 @@ EOT;
                     }
                     $sectionOptionsHTML .= "</ul>";
                 }
-            }
-
-            if ($controller->isDragable) {
-                $sectionOptionsHTML .= <<<EOT
-        <div class="component-move"> </div>
+                
+                if ($controller->isDraggable) {
+                    $sectionOptionsHTML .= <<<EOT
+            <div class="drag-move"> </div>
 EOT;
+                }
             }
             
+            if ($sectionOptionsHTML != "") {
+                $sectionOptionsHTML = <<<EOT
+                    <div class="options-c">
+                        {$sectionOptionsHTML}
+                    </div>
+EOT;
+            }
+
             if ($componentRendition !== false) {
                 $rendition = <<<EOT
     <section class="$className"$sectionAttributes>

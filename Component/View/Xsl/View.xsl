@@ -25,6 +25,7 @@
         </xsl:choose>
     </xsl:variable>
 
+    <!--<textarea cols="80" rows="20" style="width:80%;margin-top:10em;"><xsl:copy-of select="."/></textarea>-->
     <section>
         <xsl:attribute name="class">
             <xsl:text>component </xsl:text>
@@ -54,30 +55,34 @@
             
         <xsl:apply-templates select="options/node()[optionType='data']" mode="component-componentAttributes"/>
         
-        <xsl:if test="boolean(number(isDragable))">
-            <div class="component-move">
-                <xsl:text> </xsl:text>
-           </div>
-        </xsl:if>
-        
-        <xsl:if test="boolean(number(editable))">
-            <ul class="options">
-                <xsl:choose>
-                    <xsl:when test="boolean(number(editMode))">
-                        <li data-option="save" class="d">
-                            Save
-                        </li>
-                        <li data-option="cancel" class="l" title ="Complete">
-                            X
-                        </li>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <li data-option="edit" class="l">
-                            Edit
-                        </li>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </ul>
+        <xsl:if test="boolean(number(editable)) or boolean(number(isDraggable))">
+            <div class="options-c">
+                <xsl:if test="boolean(number(editable))">
+                    <ul class="options">
+                        <xsl:choose>
+                            <xsl:when test="boolean(number(editMode))">
+                                <li data-option="save" class="d">
+                                    Save
+                                </li>
+                                <li data-option="cancel" class="l" title ="Complete">
+                                    X
+                                </li>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <li data-option="edit" class="l">
+                                    Edit
+                                </li>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </ul>
+                </xsl:if>
+
+                <xsl:if test="boolean(number(isDraggable))">
+                    <div class="drag-move">
+                        <xsl:text> </xsl:text>
+                   </div>
+                </xsl:if>
+            </div>
         </xsl:if>
 
         <xsl:apply-templates select="messages" mode="component">

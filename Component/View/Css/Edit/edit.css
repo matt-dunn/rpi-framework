@@ -40,6 +40,10 @@ body.component_js .component-editable select.editable {
     border-radius: 0;
 }
 
+.component .options-c {
+    position:relative;
+}
+
 .component-editable ul.options {
     display: none;
 }
