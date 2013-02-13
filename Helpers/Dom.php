@@ -232,10 +232,21 @@ class Dom
                 $propertyList = $obj->__sleep();
             }
             if (method_exists($obj, '__invoke')) {
+                $invokedObject = $obj->__invoke();
+                $invokedObjectDefaultElementName = $defaultElementName;
+                
+                if (is_array($invokedObject) &&
+                    isset($invokedObject["defaultElementName"]) &&
+                    isset($invokedObject["object"])
+                ) {
+                    $invokedObjectDefaultElementName = $invokedObject["defaultElementName"];
+                    $invokedObject = $invokedObject["object"];
+                }
+
                 self::simpleSerialize(
                     $elementName,
-                    $defaultElementName,
-                    $obj->__invoke(),
+                    $invokedObjectDefaultElementName,
+                    $invokedObject,
                     $xml,
                     $endLine,
                     $namespace,
