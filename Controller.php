@@ -53,6 +53,10 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
      */
     protected $app = null;
     
+    /**
+     *
+     * @var boolean
+     */
     private $controllerActionProcessed = false;
     
     /**
@@ -66,8 +70,13 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
      * @var \RPI\Framework\Controller
      */
     private $parentController = null;
-
     
+    /**
+     *
+     * @var \RPI\Framework\Model\Types 
+     */
+    public $types;
+
     /**
      * Initialise the controller
      * @return bool Boolean to indicate if processing should continue. Return FALSE to stop processing
@@ -115,6 +124,8 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
         unset ($properties["rootController"]);
         unset ($properties["parent"]);
         unset ($properties["config"]);
+        
+        $this->types = $this->getTypes();
         
         return $properties;
     }
@@ -296,6 +307,18 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
         return $this->type;
     }
 
+    /**
+     * @return \RPI\Framework\Model\Types
+     */
+    public function getTypes()
+    {
+        if (!isset($this->types)) {
+            $this->types = new \RPI\Framework\Model\Types(get_called_class());
+        }
+        
+        return $this->types;
+    }
+    
     /**
      * 
      * @return \RPI\Framework\Controller
