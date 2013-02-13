@@ -96,7 +96,7 @@ RPI._("component").edit = (function() {
                                     if(_self.autosave) {
                                         var o = container.clone();
                                         if(beforeSaveComponent(component, o, container.data("bind"), "autosave")) {
-                                            RPI.webService.call(getServiceUrl(component), "autoSave", {id : component.data("id"), bind: container.data("bind"), content: getElementValue(jQuery(this))}, 
+                                            RPI.webService.call(getServiceUrl(component), "autoSave", {id : component.data("id"), bind: container.data("bind"), content: getElementValue(container)}, 
                                                 function(data, response, sourceData) {
                                                     if(_self.isDirty) {
                                                         _self.isDirty = false;
