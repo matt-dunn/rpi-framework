@@ -13,12 +13,35 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
         //$this->aceMap = $aceMap;
         
         $this->aceMap = array(
+            "RPI\Controllers\HTMLFront\Controller" => array(
+                "access" => array(
+                    "roles" => array(
+                        "_default" => array(
+                            "operations" => array(
+                                "*" => Acl::READ
+                            )
+                        )
+                    )
+                )
+            ),
+            
+            "RPI\Controllers\Rss\Controller" => array(
+                "access" => array(
+                    "roles" => array(
+                        "_default" => array(
+                            "operations" => array(
+                                "*" => Acl::READ
+                            )
+                        )
+                    )
+                )
+            ),
+            
             "RPI\WebServices\Image\Service" => array(
                 "access" => array(
                     "roles" => array(
                         "_default" => array(
-                            "aggregate" => Acl::CREATE,
-                            "permissions" => array(
+                            "operations" => array(
                                 "*" => Acl::CREATE
                             )
                         )
@@ -30,8 +53,7 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                 "access" => array(
                     "roles" => array(
                         "_default" => array(
-                            "aggregate" => Acl::READ,
-                            "permissions" => array(
+                            "operations" => array(
                                 "*" => Acl::READ
                             )
                         )
@@ -42,28 +64,34 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
             "RPI\Services\Navigation\Model\Navigation" => array(
                 "access" => array(
                     "roles" => array(
-                        "user" => array(
-                            "aggregate" => Acl::READ,
-                            "permissions" => array(
-                                "*" => Acl::READ,
-                            )
-                        ),
                         "owner" => array(
-                            "aggregate" => Acl::ALL,
-                            "permissions" => array(
-                                "*" => Acl::ALL,
-                            )
-                        ),
-                        "_default" => array(
-                            "aggregate" => Acl::READ,
-                            "permissions" => array(
-                                "*" => Acl::READ
+                            "operations" => array(
+                                "*" => Acl::CREATE | Acl::DELETE | Acl::READ | Acl::UPDATE
+                            ),
+                            "properties" => array(
+                                "title" => Acl::READ | Acl::UPDATE,
+                                "url" => Acl::READ | Acl::UPDATE,
+                                "rel" => Acl::READ | Acl::UPDATE
                             )
                         ),
                         "admin" => array(
-                            "aggregate" => Acl::ALL,
-                            "permissions" => array(
+                            "operations" => array(
                                 "*" => Acl::ALL
+                            ),
+                            "properties" => array(
+                                "title" => Acl::ALL,
+                                "url" => Acl::ALL,
+                                "rel" => Acl::ALL
+                            )
+                        ),
+                        "_default" => array(
+                            "operations" => array(
+                                "*" => Acl::READ
+                            ),
+                            "properties" => array(
+                                "title" => Acl::READ,
+                                "url" => Acl::READ,
+                                "rel" => Acl::READ
                             )
                         )
                     )
@@ -75,54 +103,73 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                 "access" => array(
                     "roles" => array(
                         "owner" => array(
-                            "aggregate" => Acl::ALL,
-                            "permissions" => array(
-                                "commonDocument:createdBy" => Acl::ALL,
-                                "commonDocument:title" => Acl::ALL,
-                                "commonDocument:summary/xhtml:body" => Acl::READ,
-                                "commonDocument:content/xhtml:body" => Acl::ALL,
-                            )
-                        ),
-                        "_default" => array(
-                            "aggregate" => Acl::READ,
-                            "permissions" => array(
-                                "commonDocument:createdBy" => Acl::READ,
-                                "commonDocument:title" => Acl::READ,
-                                "commonDocument:summary/xhtml:body" => Acl::READ,
+                            "operations" => array(
+                                "*" => Acl::READ | Acl::UPDATE
+                            ),
+                            "properties" => array(
+                                "commonDocument:createdBy" => Acl::READ | Acl::UPDATE,
+                                "commonDocument:title" => Acl::READ | Acl::UPDATE,
+                                "commonDocument:summary/xhtml:body" => Acl::READ | Acl::UPDATE,
+                                "commonDocument:content/xhtml:body" => Acl::READ | Acl::UPDATE,
                             )
                         ),
                         "admin" => array(
-                            "aggregate" => Acl::ALL,
-                            "permissions" => array(
+                            "operations" => array(
+                                "*" => Acl::ALL
+                            ),
+                            "properties" => array(
                                 "*" => Acl::ALL,
+                            )
+                        ),
+                        "_default" => array(
+                            "operations" => array(
+                                "*" => Acl::READ
+                            ),
+                            "properties" => array(
+                                "commonDocument:createdBy" => Acl::READ,
+                                "commonDocument:title" => Acl::READ,
+                                "commonDocument:summary/xhtml:body" => Acl::READ,
                             )
                         )
                     )
                 )
             ),
+            
             "Sites\Template\Model\Document\Location" => array(
                 "access" => array(
                     "roles" => array(
                         "owner" => array(
-                            "aggregate" => Acl::ALL,
-                            "permissions" => array(
+                            "operations" => array(
+                                "*" => Acl::READ | Acl::UPDATE
+                            ),
+                            "properties" => array(
                                 "commonDocument:createdBy" => Acl::READ | Acl::UPDATE,
                                 "commonDocument:title" => Acl::READ | Acl::UPDATE,
-                                "commonDocument:summary/xhtml:body" => Acl::ALL,
-                                "commonDocument:content/xhtml:body" => Acl::ALL,
+                                "commonDocument:summary/xhtml:body" => Acl::READ | Acl::UPDATE,
+                                "commonDocument:content/xhtml:body" => Acl::READ | Acl::UPDATE,
                                 "testDocument:details/testDocument:type" => Acl::READ | Acl::UPDATE,
-                                "db:address/db:city" => Acl::ALL,
-                                "db:address/db:postcode" => Acl::ALL,
-                                "db:address/db:country" => Acl::ALL,
-                                "db:address/db:phone" => Acl::ALL
+                                "db:address/db:city" => Acl::READ | Acl::UPDATE,
+                                "db:address/db:postcode" => Acl::READ | Acl::UPDATE,
+                                "db:address/db:country" => Acl::READ | Acl::UPDATE,
+                                "db:address/db:phone" => Acl::READ | Acl::UPDATE
+                            )
+                        ),
+                        "admin" => array(
+                            "operations" => array(
+                                "*" => Acl::ALL
+                            ),
+                            "properties" => array(
+                                "*" => Acl::ALL,
                             )
                         ),
                         "_default" => array(
-                            "aggregate" => Acl::READ,
-                            "permissions" => array(
+                            "operations" => array(
+                                "*" => Acl::READ
+                            ),
+                            "properties" => array(
                                 "commonDocument:createdBy" => Acl::READ,
                                 "commonDocument:title" => Acl::READ,
-//                                "commonDocument:content/xhtml:body" => Acl::READ,
+                                //"commonDocument:content/xhtml:body" => Acl::READ,
                                 "commonDocument:summary/xhtml:body" => Acl::READ,
                                 "db:address/db:city" => Acl::READ,
                                 "db:address/db:postcode" => Acl::READ,
@@ -130,12 +177,6 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                                 "db:address/db:phone" => Acl::READ
                             )
                         ),
-                        "admin" => array(
-                            "aggregate" => Acl::ALL,
-                            "permissions" => array(
-                                "*" => Acl::ALL,
-                            )
-                        )
                     )
                 )
             )

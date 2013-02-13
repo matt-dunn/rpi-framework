@@ -29,6 +29,12 @@ class Acl
      */
     private $user = null;
     
+    /**
+     * 
+     * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+     * @param \RPI\Framework\Services\Authentication\IAuthentication $authentication
+     * @param \RPI\Framework\App\Security\Acl\Model\IProvider $provider
+     */
     public function __construct(
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         \RPI\Framework\Services\Authentication\IAuthentication $authentication,
@@ -39,48 +45,81 @@ class Acl
         $this->provider = $provider;
     }
     
+    /**
+     * Check for access against a property/properties (*)
+     * 
+     * @param enum $access      Acl constant
+     * @param string $property
+     * 
+     * @return boolean
+     */
     public function check($access, $property = null)
     {
-        return $this->checkRoles($access, $property);
+        return $this->checkRoles($access, $property, "properties");
     }
     
     /**
+     * Check for access to a specified operation
+     * 
+     * @param enum $access      Acl constant
+     * @param string $operation
+     * 
+     * @return boolean
+     */
+    public function checkOperation($access, $operation = null)
+    {
+        return $this->checkRoles($access, $operation, "operations");
+    }
+    
+    /**
+     * Check for READ access operation
+     * 
+     * This is a shortcut for checkOperation(Acl::READ)
      * 
      * @return boolean
      */
     public function canRead()
     {
-        return $this->checkRoles(Acl::READ, null, "aggregate");
+        return $this->checkRoles(Acl::READ, null, "operations");
     }
     
     /**
+     * Check for UPDATE access operation
+     * 
+     * This is a shortcut for checkOperation(Acl::UPDATE)
      * 
      * @return boolean
      */
     public function canUpdate()
     {
-        return $this->checkRoles(Acl::UPDATE, null, "aggregate");
+        return $this->checkRoles(Acl::UPDATE, null, "operations");
     }
     
     /**
+     * Check for DELETE access operation
+     * 
+     * This is a shortcut for checkOperation(Acl::DELETE)
      * 
      * @return boolean
      */
     public function canDelete()
     {
-        return $this->checkRoles(Acl::DELETE, null, "aggregate");
+        return $this->checkRoles(Acl::DELETE, null, "operations");
     }
     
     /**
+     * Check for CREATE access operation
+     * 
+     * This is a shortcut for checkOperation(Acl::CREATE)
      * 
      * @return boolean
      */
     public function canCreate()
     {
-        return $this->checkRoles(Acl::CREATE, null, "aggregate");
+        return $this->checkRoles(Acl::CREATE, null, "operations");
     }
     
-    private function checkRoles($access, $property = null, $type = "permissions")
+    private function checkRoles($access, $property, $type)
     {
         $canAccess = false;
         
@@ -121,14 +160,12 @@ class Acl
     
     private function checkPermission(array $ace, $access, $property, $role, $type)
     {
-        if (isset($ace["access"]["roles"][$role])) {
+        if (isset($ace["access"]["roles"][$role], $ace["access"]["roles"][$role][$type])) {
             $permissions = $ace["access"]["roles"][$role][$type];
 
-            if ($type == "aggregate" && ($permissions & $access)) {
+            if (isset($property) && isset($permissions[$property]) && ($permissions[$property] & $access)) {
                 return true;
             } elseif (isset($permissions["*"]) && ($permissions["*"] & $access)) {
-                return true;
-            } elseif (isset($property) && isset($permissions[$property]) && ($permissions[$property] & $access)) {
                 return true;
             }
         }
