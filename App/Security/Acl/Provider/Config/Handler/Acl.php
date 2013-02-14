@@ -46,7 +46,7 @@ class Acl implements \RPI\Framework\App\Config\IHandler
     
     function readSection(array $role, $section, $sectionItem)
     {
-        if (isset($role[$section])) {
+        if (isset($role[$section], $role[$section][$sectionItem])) {
             if (isset($role[$section][$sectionItem]["@"])) {
                 $role[$section][$sectionItem] = array($role[$section][$sectionItem]);
             }
