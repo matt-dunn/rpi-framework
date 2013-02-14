@@ -16,11 +16,13 @@ class Acl implements \RPI\Framework\App\Config\IHandler
             $config["access"]["roles"][$roleName] = $role;
             
             if (isset($config["access"]["roles"][$roleName]["operations"])) {
-                $config["access"]["roles"][$roleName]["operations"] = $this->readSection($config["access"]["roles"][$roleName], "operations", "operation");
+                $config["access"]["roles"][$roleName]["operations"] =
+                    $this->readSection($config["access"]["roles"][$roleName], "operations", "operation");
             }
             
             if (isset($config["access"]["roles"][$roleName]["properties"])) {
-                $config["access"]["roles"][$roleName]["properties"] = $this->readSection($config["access"]["roles"][$roleName], "properties", "property");
+                $config["access"]["roles"][$roleName]["properties"] =
+                    $this->readSection($config["access"]["roles"][$roleName], "properties", "property");
             }
         }
         
@@ -44,7 +46,7 @@ class Acl implements \RPI\Framework\App\Config\IHandler
         }
     }
     
-    function readSection(array $role, $section, $sectionItem)
+    private function readSection(array $role, $section, $sectionItem)
     {
         if (isset($role[$section], $role[$section][$sectionItem])) {
             if (isset($role[$section][$sectionItem]["@"])) {

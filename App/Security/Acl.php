@@ -138,7 +138,8 @@ class Acl
                 }
 
                 if ($canAccess === false &&
-                    ($domainObject->getOwnerId() == $this->user->uuid || $this->provider->isOwner($domainObject, $this->user)
+                    ($domainObject->getOwnerId() == $this->user->uuid
+                        || $this->provider->isOwner($domainObject, $this->user)
                 )) {
                     $canAccess = $this->checkPermission($ace, $access, $property, "owner", $type);
                 }
