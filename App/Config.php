@@ -167,7 +167,8 @@ class Config
                                 "Config item '{$processedConfig["name"]}' already exists. Check your config definition."
                             );
                         }
-                        $configData[$processedConfig["name"]] = $this->processConfig($processedConfig["value"], $cacheKey);
+                        $configData[$processedConfig["name"]] =
+                            $this->processConfig($processedConfig["value"], $cacheKey);
                     } else {
                         $configData[$name] = $this->processConfig($processedConfig, $cacheKey);
                     }
