@@ -28,7 +28,6 @@ class Acl implements \RPI\Framework\App\Config\IHandler
         
         unset($config["access"]["roles"]["role"]);
         
-
         if (isset($config["@"]["name"])) {
             $name = $config["@"]["name"];
             unset($config["@"]["name"]);

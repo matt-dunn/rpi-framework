@@ -88,7 +88,9 @@ class Config
         
         try {
             if (file_exists($file)) {
-                $config = $this->store->fetch("PHP_RPI_CONFIG-".$file);
+                $cacheKey = "PHP_RPI_CONFIG-".realpath($file);
+                
+                $config = $this->store->fetch($cacheKey);
                 if ($config === false) {
                     $domDataConfig = new \DOMDocument();
                     $domDataConfig->load($file);
@@ -113,11 +115,12 @@ class Config
                         throw new \RPI\Framework\Exceptions\RuntimeException($root->getMessage());
                     }
                     
-                    $config = self::processConfig(
-                        self::parseTypes($root->toArray())
+                    $config = $this->processConfig(
+                        self::parseTypes($root->toArray()),
+                        $cacheKey
                     );
 
-                    $this->store->store("PHP_RPI_CONFIG-".$file, $config, $file);
+                    $this->store->store($cacheKey, $config, $file);
 
                     \RPI\Framework\Helpers\Locking::release($seg);
 
@@ -142,7 +145,7 @@ class Config
         }
     }
     
-    private static function processConfig(array $config)
+    private function processConfig(array $config, $cacheKey)
     {
         $configData = array();
         foreach ($config as $name => $configItem) {
@@ -164,13 +167,13 @@ class Config
                                 "Config item '{$processedConfig["name"]}' already exists. Check your config definition."
                             );
                         }
-                        $configData[$processedConfig["name"]] = self::processConfig($processedConfig["value"]);
+                        $configData[$processedConfig["name"]] = $this->processConfig($processedConfig["value"], $cacheKey);
                     } else {
-                        $configData[$name] = self::processConfig($processedConfig);
+                        $configData[$name] = $this->processConfig($processedConfig, $cacheKey);
                     }
                 }
             } elseif (is_array($configItem)) {
-                $configData[$name] = self::processConfig($configItem);
+                $configData[$name] = $this->processConfig($configItem, $cacheKey);
             } else {
                 $configData[$name] = $configItem;
             }
@@ -179,7 +182,7 @@ class Config
         return $configData;
     }
 
-    private static function parseTypes($config)
+    private function parseTypes($config)
     {
         if (is_array($config)) {
             foreach ($config as $name => $value) {
