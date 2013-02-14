@@ -14,6 +14,11 @@ class Dependencies implements \RPI\Framework\App\Config\IHandler
         $dependencyConfig = array();
         foreach ($dependencies as $dependencyInfo) {
             $className = trim(ltrim($dependencyInfo["@"]["class"], "\\"));
+            if (isset($dependencyInfo["@"]["singleton"])) {
+                $dependencyInfo["class"]["@"]["isSingleton"] = $dependencyInfo["@"]["singleton"];
+            } else {
+                $dependencyInfo["class"]["@"]["isSingleton"] = true;
+            }
             
             if (interface_exists($className)) {
                 $dependencyInfo["class"]["@"]["isInterface"] = true;

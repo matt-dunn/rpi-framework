@@ -118,8 +118,13 @@ class Reflection
 
         $dependencies = $app->getConfig()->getValue("config/dependencies");
         if (isset($dependencies) && isset($dependencies[$className])) {
-            self::$objects[$className] = self::createObjectByClassInfo($app, $dependencies[$className]);
-            return self::$objects[$className];
+            $object = self::createObjectByClassInfo($app, $dependencies[$className]);
+            
+            if ($dependencies[$className]["@"]["isSingleton"]) {
+                self::$objects[$className] = $object;
+            }
+            
+            return $object;
         } else {
             self::$objects[$className] = false;
         }
@@ -194,10 +199,5 @@ class Reflection
         } else {
             throw new \RPI\Framework\Exceptions\RuntimeException("Invalid class information");
         }
-    }
-    
-    public static function clearInstance()
-    {
-        self::$objects = null;
     }
 }
