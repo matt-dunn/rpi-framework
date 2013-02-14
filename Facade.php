@@ -4,8 +4,6 @@ namespace RPI\Framework;
 
 class Facade
 {
-    private static $acls = array();
-        
     private function __construct()
     {
     }
@@ -44,32 +42,5 @@ class Facade
     public static function app()
     {
         return $GLOBALS["RPI_APP"];
-    }
-    
-    /**
-     * @return \RPI\Framework\App\Security\Acl
-     */
-    public static function acl(\RPI\Framework\App\Security\Acl\Model\IDomainObject $object)
-    {
-        $aclName = $object->getType();
-        
-        if (isset(self::$acls[$aclName])) {
-            return self::$acls[$aclName];
-        }
-
-        self::$acls[$aclName] = \RPI\Framework\Helpers\Reflection::createObject(
-            self::app(),
-            "RPI\Framework\App\Security\Acl",
-            array(
-                "domainObject" => $object
-            )
-        );
-        
-        return self::$acls[$aclName];
-    }
-    
-    public static function clearInstance()
-    {
-        self::$acls = null;
     }
 }

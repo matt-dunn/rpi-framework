@@ -13,12 +13,6 @@ class Acl
     
     /**
      *
-     * @var \RPI\Framework\App\Security\Acl\Model\IDomainObject 
-     */
-    private $domainObject = null;
-    
-    /**
-     *
      * @var \RPI\Framework\App\Security\Acl\Model\IProvider
      */
     private $provider = null;
@@ -36,11 +30,9 @@ class Acl
      * @param \RPI\Framework\App\Security\Acl\Model\IProvider $provider
      */
     public function __construct(
-        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         \RPI\Framework\Services\Authentication\IAuthentication $authentication,
         \RPI\Framework\App\Security\Acl\Model\IProvider $provider = null
     ) {
-        $this->domainObject = $domainObject;
         $this->user = $authentication->getAuthenticatedUser();
         $this->provider = $provider;
     }
@@ -53,9 +45,9 @@ class Acl
      * 
      * @return boolean
      */
-    public function check($access, $property = null)
+    public function check(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject, $access, $property = null)
     {
-        return $this->checkRoles($access, $property, "properties");
+        return $this->checkRoles($domainObject, $access, $property, "properties");
     }
     
     /**
@@ -66,9 +58,12 @@ class Acl
      * 
      * @return boolean
      */
-    public function checkOperation($access, $operation = null)
-    {
-        return $this->checkRoles($access, $operation, "operations");
+    public function checkOperation(
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
+        $access,
+        $operation = null
+    ) {
+        return $this->checkRoles($domainObject, $access, $operation, "operations");
     }
     
     /**
@@ -78,9 +73,9 @@ class Acl
      * 
      * @return boolean
      */
-    public function canRead()
+    public function canRead(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
     {
-        return $this->checkRoles(Acl::READ, null, "operations");
+        return $this->checkRoles($domainObject, Acl::READ, null, "operations");
     }
     
     /**
@@ -90,9 +85,9 @@ class Acl
      * 
      * @return boolean
      */
-    public function canUpdate()
+    public function canUpdate(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
     {
-        return $this->checkRoles(Acl::UPDATE, null, "operations");
+        return $this->checkRoles($domainObject, Acl::UPDATE, null, "operations");
     }
     
     /**
@@ -102,9 +97,9 @@ class Acl
      * 
      * @return boolean
      */
-    public function canDelete()
+    public function canDelete(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
     {
-        return $this->checkRoles(Acl::DELETE, null, "operations");
+        return $this->checkRoles($domainObject, Acl::DELETE, null, "operations");
     }
     
     /**
@@ -114,17 +109,21 @@ class Acl
      * 
      * @return boolean
      */
-    public function canCreate()
+    public function canCreate(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
     {
-        return $this->checkRoles(Acl::CREATE, null, "operations");
+        return $this->checkRoles($domainObject, Acl::CREATE, null, "operations");
     }
     
-    private function checkRoles($access, $property, $type)
-    {
+    private function checkRoles(
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
+        $access,
+        $property,
+        $type
+    ) {
         $canAccess = false;
         
         if (isset($this->provider)) {
-            $ace = $this->provider->getAce($this->domainObject->getType());
+            $ace = $this->provider->getAce($domainObject->getType());
             if (isset($ace)) {
                 if (!$this->user->isAuthenticated && !$this->user->isAnonymous) {
                     //throw new \RPI\Framework\Exceptions\Authorization();
@@ -138,7 +137,7 @@ class Acl
                     $canAccess = $this->checkPermission($ace, $access, $property, $this->user->role, $type);
                 }
 
-                if ($canAccess === false && $this->provider->isOwner($this->domainObject, $this->user)) {
+                if ($canAccess === false && $this->provider->isOwner($domainObject, $this->user)) {
                     $canAccess = $this->checkPermission($ace, $access, $property, "owner", $type);
                 }
 

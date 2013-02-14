@@ -69,16 +69,28 @@ abstract class Component extends \RPI\Framework\Controller\HTML
      */
     private $visible = true;
     
+    /**
+     *
+     * @var \RPI\Framework\Cache\IFront 
+     */
     protected $frontStore = null;
+    
+    /**
+     *
+     * @var \RPI\Framework\App\Security\Acl 
+     */
+    private $acl = null;
     
     public function __construct(
         $id,
         \RPI\Framework\App $app,
         \RPI\Framework\Cache\IFront $frontStore,
+        \RPI\Framework\App\Security\Acl $acl = null,
         \RPI\Framework\Views\IView $viewRendition = null,
         array $options = null
     ) {
         $this->frontStore = $frontStore;
+        $this->acl = $acl;
         
         parent::__construct($id, $app, $options, $viewRendition);
     }
@@ -151,8 +163,10 @@ abstract class Component extends \RPI\Framework\Controller\HTML
             if (!$this->validateCache()) {
                 $this->model = $this->getModel();
                 
-                if ($this->editable && $this->model instanceof \RPI\Framework\App\Security\Acl\Model\IDomainObject) {
-                    $this->editable = \RPI\Framework\Facade::acl($this->model)->canUpdate();
+                if (isset($this->acl)
+                    && $this->editable
+                    && $this->model instanceof \RPI\Framework\App\Security\Acl\Model\IDomainObject) {
+                    $this->editable = $this->acl->canUpdate($this->model);
                 }
             }
 

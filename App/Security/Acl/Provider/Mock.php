@@ -8,7 +8,7 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
 {
     private $aceMap = null;
     
-    public function __construct(array $aceMap)
+    public function __construct(array $aceMap = null)
     {
         //$this->aceMap = $aceMap;
         

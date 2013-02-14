@@ -24,15 +24,27 @@ abstract class Server extends \RPI\Framework\Controller
     
     private $clientEvents = array();
 
+    /**
+     *
+     * @var \RPI\Framework\App\Security 
+     */
     protected $security = null;
+    
+    /**
+     *
+     * @var \RPI\Framework\App\Security\Acl 
+     */
+    protected $acl = null;
     
     public function __construct(
         $id,
         \RPI\Framework\App $app,
         \RPI\Framework\App\Security $security,
+        \RPI\Framework\App\Security\Acl $acl = null,
         array $options = null
     ) {
         $this->security = $security;
+        $this->acl = $acl;
         
         parent::__construct($id, $app, $options);
     }
