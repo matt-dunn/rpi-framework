@@ -20,10 +20,20 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
     private $cookieDetectionEnabled = true;
     
     private $authenticatedUserSessionName = null;
+    
+    /**
+     *
+     * @var \RPI\Framework\Services\User\IUser
+     */
+    protected $userService = null;
 
-    public function __construct(\RPI\Framework\App $app, array $options)
-    {
+    public function __construct(
+        \RPI\Framework\App $app,
+        \RPI\Framework\Services\User\IUser $userService,
+        array $options
+    ) {
         $this->app = $app;
+        $this->userService = $userService;
         
         $this->authenticatedUserSessionName = __CLASS__."-authenticatedUser";
 

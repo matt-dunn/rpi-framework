@@ -7,7 +7,6 @@ namespace RPI\Framework\Services\Authentication;
  */
 interface IAuthentication
 {
-    public function __construct(\RPI\Framework\App $app, array $options);
     /**
      * Authenticate user login details
      * 
