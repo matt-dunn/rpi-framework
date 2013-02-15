@@ -8,7 +8,7 @@ namespace RPI\Framework\Cache\Data;
  *
  * @author Matt Dunn
  */
-class Mock implements \RPI\Framework\Cache\IData
+class Mock implements \RPI\Framework\Cache\IData, \RPI\Framework\Cache\Data\ISupportsPatternDelete
 {
     private $data = array();
     
@@ -77,9 +77,13 @@ class Mock implements \RPI\Framework\Cache\IData
                     $fileDepMod[] = filemtime($file);
                 }
 
-                return $this->data[$key] = array("expire" => $expire, "value" => $value, "fileDep" => $fileDep, "fileDep_mod" => $fileDepMod);
+                return $this->data[$key] = array(
+                    "expire" => $expire, "value" => $value, "fileDep" => $fileDep, "fileDep_mod" => $fileDepMod
+                );
             } else {
-                return $this->data[$key] = array("expire" => $expire, "value" => $value, "fileDep" => $fileDep, "fileDep_mod" => filemtime($fileDep));
+                return $this->data[$key] = array(
+                    "expire" => $expire, "value" => $value, "fileDep" => $fileDep, "fileDep_mod" => filemtime($fileDep)
+                );
             }
         } else {
             return false;

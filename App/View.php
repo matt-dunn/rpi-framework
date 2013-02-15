@@ -15,12 +15,19 @@ class View
     
     /**
      * 
-     * @param \RPI\Framework\Cache\IData $store
+     * @param \RPI\Framework\Cache\IData $store     Store must use class thatimplements
+     *                                              \RPI\Framework\Cache\Data\ISupportsPatternDelete
      * @param string $configFile
      * @return \RPI\Framework\App\Router
      */
     public function __construct(\RPI\Framework\Cache\IData $store, $configFile)
     {
+        if (!$store instanceof \RPI\Framework\Cache\Data\ISupportsPatternDelete) {
+            throw new \RPI\Framework\Exceptions\Exception(
+                "Store '".get_class($store)."' must implement '\RPI\Framework\Cache\Data\ISupportsPatternDelete'."
+            );
+        }
+        
         $this->store = $store;
         $this->file = \RPI\Framework\Helpers\Utils::buildFullPath($configFile);
         
@@ -230,7 +237,9 @@ class View
                     );
                     
                     // Clear the view keys in the store
-                    if ($this->store->deletePattern("#^".preg_quote("PHP_RPI_CONTENT_VIEWS-{$file}", "#").".*#") === false) {
+                    if ($this->store->deletePattern(
+                        "#^".preg_quote("PHP_RPI_CONTENT_VIEWS-{$file}", "#").".*#"
+                    ) === false) {
                         \RPI\Framework\Exception\Handler::logMessage("Unable to clear data store", LOG_WARNING);
                     }
 
