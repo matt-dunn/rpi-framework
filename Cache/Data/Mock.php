@@ -117,6 +117,12 @@ class Mock implements \RPI\Framework\Cache\IData
      */
     public function getData()
     {
-        return $this->data;
+        $data = array();
+        
+        foreach ($this->data as $key => $value) {
+            $data[$key] = $value["value"];
+        }
+        
+        return $data;
     }
 }
