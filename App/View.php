@@ -230,7 +230,7 @@ class View
                     );
                     
                     // Clear the view keys in the store
-                    if ($this->store->deletePattern("/^PHP_RPI_CONTENT_VIEWS-{$file}.*/") === false) {
+                    if ($this->store->deletePattern("#^".preg_quote("PHP_RPI_CONTENT_VIEWS-{$file}", "#").".*#") === false) {
                         \RPI\Framework\Exception\Handler::logMessage("Unable to clear data store", LOG_WARNING);
                     }
 
