@@ -139,7 +139,7 @@ class MemCached implements \RPI\Framework\Cache\IData
      */
     public function deletePattern($pattern)
     {
-        // TODO: how can this work with memcached??
-        throw new \RPI\Framework\Exceptions\NotImplemented();
+        // TODO: can this work with memcached?? for now throw NotSupported.
+        throw new \RPI\Framework\Exceptions\NotSupported();
     }
 }
