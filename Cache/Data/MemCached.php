@@ -19,7 +19,7 @@ class MemCached implements \RPI\Framework\Cache\IData
         $this->port = $port;
     }
 
-    private function getMemcahed()
+    private function getMemcached()
     {
         if (!isset($this->memCached)) {
             $this->memCached = new \Memcached();
@@ -49,7 +49,7 @@ class MemCached implements \RPI\Framework\Cache\IData
     public function fetch($key, $autoDelete = true, &$existingCacheData = null)
     {
         if ($this->isAvailable() === true) {
-            $data = $this->getMemcahed()->get($key);
+            $data = $this->getMemcached()->get($key);
             if ($data === false) {
                 return false;
             }
@@ -97,13 +97,13 @@ class MemCached implements \RPI\Framework\Cache\IData
                     $fileDepMod[] = filemtime($file);
                 }
                 
-                $this->getMemcahed()->set(
+                $this->getMemcached()->set(
                     $key,
                     array("value" => $value, "fileDep" => $fileDep, "fileDep_mod" => $fileDepMod),
                     $ttl
                 );
             } else {
-                $this->getMemcahed()->set(
+                $this->getMemcached()->set(
                     $key,
                     array("value" => $value, "fileDep" => $fileDep, "fileDep_mod" => filemtime($fileDep)),
                     $ttl
@@ -120,7 +120,7 @@ class MemCached implements \RPI\Framework\Cache\IData
     public function clear()
     {
         if ($this->isAvailable() === true) {
-            return $this->getMemcahed()->flush(0);
+            return $this->getMemcached()->flush(0);
         }
     }
 
@@ -130,7 +130,7 @@ class MemCached implements \RPI\Framework\Cache\IData
     public function delete($key)
     {
         if ($this->isAvailable() === true) {
-            return $this->getMemcahed()->delete($key);
+            return $this->getMemcached()->delete($key);
         }
     }
 
