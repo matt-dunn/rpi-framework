@@ -175,7 +175,7 @@ class Config
             if (isset($configItem["@"]) && isset($configItem["@"]["handler"])) {
                 $handler = $configItem["@"]["handler"];
                 
-                $handlerInstance = new $handler($this->store, $cacheKey);
+                $handlerInstance = new $handler($this->store, $cacheKey."-");
                 if (!$handlerInstance instanceof \RPI\Framework\App\Config\IHandler) {
                     throw new \RPI\Framework\Exceptions\RuntimeException(
                         "Handler '$handler' must implement interface 'RPI\Framework\App\Config\IHandler'."

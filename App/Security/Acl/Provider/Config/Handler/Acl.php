@@ -54,7 +54,7 @@ class Acl implements \RPI\Framework\App\Config\IHandler
                 unset($config["@"]);
             }
             
-            $this->store->store($this->cacheKeyPrefix."-".$name, $config);
+            $this->store->store($this->cacheKeyPrefix.$name, $config);
             
             return null;
         } else {
