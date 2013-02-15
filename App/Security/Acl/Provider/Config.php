@@ -2,8 +2,6 @@
 
 namespace RPI\Framework\App\Security\Acl\Provider;
 
-use RPI\Framework\App\Security\Acl;
-
 class Config extends \RPI\Framework\App\Config implements \RPI\Framework\App\Security\Acl\Model\IProvider
 {
     private $aceMap = array();
@@ -19,8 +17,10 @@ class Config extends \RPI\Framework\App\Config implements \RPI\Framework\App\Sec
         return $this->aceMap[$objectType];
     }
 
-    public function isOwner(Acl\Model\IDomainObject $domainObject, \RPI\Framework\Model\User $user)
-    {
+    public function isOwner(
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
+        \RPI\Framework\Model\User $user
+    ) {
         return false;
         
         // TODO: need to implement this storage...

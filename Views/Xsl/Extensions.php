@@ -12,7 +12,7 @@ class Extensions
     {
         return \RPI\Framework\Helpers\Reflection::getDependency(
             \RPI\Framework\Facade::app(),
-            "RPI\Framework\App\Security\Acl"
+            "RPI\Framework\App\Security\Acl\Model\IAcl"
         );
     }
 
@@ -27,7 +27,7 @@ class Extensions
         if (isset($acl)) {
             return $acl->check(
                 \RPI\Framework\Views\Xsl\View::getModel(),
-                \RPI\Framework\App\Security\Acl::UPDATE,
+                \RPI\Framework\App\Security\Acl\Model\IAcl::UPDATE,
                 $bind
             );
         }

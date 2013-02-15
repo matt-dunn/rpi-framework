@@ -2,15 +2,10 @@
 
 namespace RPI\Framework\App\Security;
 
-class Acl
+use RPI\Framework\App\Security\Acl\Model\IAcl;
+
+class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
 {
-    const CREATE = 1;
-    const READ = 2;
-    const UPDATE = 4;
-    const DELETE = 8;
-    
-    const ALL = 15;
-    
     /**
      *
      * @var \RPI\Framework\App\Security\Acl\Model\IProvider
@@ -38,12 +33,7 @@ class Acl
     }
     
     /**
-     * Check for access against a property/properties (*)
-     * 
-     * @param enum $access      Acl constant
-     * @param string $property
-     * 
-     * @return boolean
+     * {@inheritdoc}
      */
     public function check(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject, $access, $property = null)
     {
@@ -51,12 +41,7 @@ class Acl
     }
     
     /**
-     * Check for access to a specified operation
-     * 
-     * @param enum $access      Acl constant
-     * @param string $operation
-     * 
-     * @return boolean
+     * {@inheritdoc}
      */
     public function checkOperation(
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
@@ -67,51 +52,35 @@ class Acl
     }
     
     /**
-     * Check for READ access operation
-     * 
-     * This is a shortcut for checkOperation(Acl::READ)
-     * 
-     * @return boolean
+     * {@inheritdoc}
      */
     public function canRead(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
     {
-        return $this->checkRoles($domainObject, Acl::READ, null, "operations");
+        return $this->checkRoles($domainObject, IAcl::READ, null, "operations");
     }
     
     /**
-     * Check for UPDATE access operation
-     * 
-     * This is a shortcut for checkOperation(Acl::UPDATE)
-     * 
-     * @return boolean
+     * {@inheritdoc}
      */
     public function canUpdate(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
     {
-        return $this->checkRoles($domainObject, Acl::UPDATE, null, "operations");
+        return $this->checkRoles($domainObject, IAcl::UPDATE, null, "operations");
     }
     
     /**
-     * Check for DELETE access operation
-     * 
-     * This is a shortcut for checkOperation(Acl::DELETE)
-     * 
-     * @return boolean
+     * {@inheritdoc}
      */
     public function canDelete(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
     {
-        return $this->checkRoles($domainObject, Acl::DELETE, null, "operations");
+        return $this->checkRoles($domainObject, IAcl::DELETE, null, "operations");
     }
     
     /**
-     * Check for CREATE access operation
-     * 
-     * This is a shortcut for checkOperation(Acl::CREATE)
-     * 
-     * @return boolean
+     * {@inheritdoc}
      */
     public function canCreate(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
     {
-        return $this->checkRoles($domainObject, Acl::CREATE, null, "operations");
+        return $this->checkRoles($domainObject, IAcl::CREATE, null, "operations");
     }
     
     private function checkRoles(

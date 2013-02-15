@@ -106,7 +106,7 @@ abstract class Form extends \RPI\Framework\Component
         \RPI\Framework\App $app,
         \RPI\Framework\Cache\IFront $frontStore,
         \RPI\Framework\App\Security $security,
-        \RPI\Framework\App\Security\Acl $acl = null,
+        \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null,
         \RPI\Framework\Views\IView $viewRendition = null,
         array $options = null
     ) {

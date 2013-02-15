@@ -77,7 +77,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     
     /**
      *
-     * @var \RPI\Framework\App\Security\Acl 
+     * @var \RPI\Framework\App\Security\Acl\Model\IAcl 
      */
     private $acl = null;
     
@@ -85,7 +85,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
         $id,
         \RPI\Framework\App $app,
         \RPI\Framework\Cache\IFront $frontStore,
-        \RPI\Framework\App\Security\Acl $acl = null,
+        \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null,
         \RPI\Framework\Views\IView $viewRendition = null,
         array $options = null
     ) {

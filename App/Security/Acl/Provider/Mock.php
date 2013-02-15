@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\App\Security\Acl\Provider;
 
-use RPI\Framework\App\Security\Acl;
+use RPI\Framework\App\Security\Acl\Model\IAcl;
 
 class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
 {
@@ -18,7 +18,7 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                     "roles" => array(
                         "_default" => array(
                             "operations" => array(
-                                "*" => Acl::READ
+                                "*" => IAcl::READ
                             )
                         )
                     )
@@ -30,7 +30,7 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                     "roles" => array(
                         "_default" => array(
                             "operations" => array(
-                                "*" => Acl::READ
+                                "*" => IAcl::READ
                             )
                         )
                     )
@@ -42,7 +42,7 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                     "roles" => array(
                         "_default" => array(
                             "operations" => array(
-                                "*" => Acl::CREATE
+                                "*" => IAcl::CREATE
                             )
                         )
                     )
@@ -54,7 +54,7 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                     "roles" => array(
                         "_default" => array(
                             "operations" => array(
-                                "*" => Acl::READ
+                                "*" => IAcl::READ
                             )
                         )
                     )
@@ -66,32 +66,32 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                     "roles" => array(
                         "owner" => array(
                             "operations" => array(
-                                "*" => Acl::CREATE | Acl::DELETE | Acl::READ | Acl::UPDATE
+                                "*" => IAcl::CREATE | IAcl::DELETE | IAcl::READ | IAcl::UPDATE
                             ),
                             "properties" => array(
-                                "title" => Acl::READ | Acl::UPDATE,
-                                "url" => Acl::READ | Acl::UPDATE,
-                                "rel" => Acl::READ | Acl::UPDATE
+                                "title" => IAcl::READ | IAcl::UPDATE,
+                                "url" => IAcl::READ | IAcl::UPDATE,
+                                "rel" => IAcl::READ | IAcl::UPDATE
                             )
                         ),
                         "admin" => array(
                             "operations" => array(
-                                "*" => Acl::ALL
+                                "*" => IAcl::ALL
                             ),
                             "properties" => array(
-                                "title" => Acl::ALL,
-                                "url" => Acl::ALL,
-                                "rel" => Acl::ALL
+                                "title" => IAcl::ALL,
+                                "url" => IAcl::ALL,
+                                "rel" => IAcl::ALL
                             )
                         ),
                         "_default" => array(
                             "operations" => array(
-                                "*" => Acl::READ
+                                "*" => IAcl::READ
                             ),
                             "properties" => array(
-                                "title" => Acl::READ,
-                                "url" => Acl::READ,
-                                "rel" => Acl::READ
+                                "title" => IAcl::READ,
+                                "url" => IAcl::READ,
+                                "rel" => IAcl::READ
                             )
                         )
                     )
@@ -104,31 +104,31 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                     "roles" => array(
                         "owner" => array(
                             "operations" => array(
-                                "*" => Acl::READ | Acl::UPDATE
+                                "*" => IAcl::READ | IAcl::UPDATE
                             ),
                             "properties" => array(
-                                "commonDocument:createdBy" => Acl::READ | Acl::UPDATE,
-                                "commonDocument:title" => Acl::READ | Acl::UPDATE,
-                                "commonDocument:summary/xhtml:body" => Acl::READ | Acl::UPDATE,
-                                "commonDocument:content/xhtml:body" => Acl::READ | Acl::UPDATE,
+                                "commonDocument:createdBy" => IAcl::READ | IAcl::UPDATE,
+                                "commonDocument:title" => IAcl::READ | IAcl::UPDATE,
+                                "commonDocument:summary/xhtml:body" => IAcl::READ | IAcl::UPDATE,
+                                "commonDocument:content/xhtml:body" => IAcl::READ | IAcl::UPDATE,
                             )
                         ),
                         "admin" => array(
                             "operations" => array(
-                                "*" => Acl::ALL
+                                "*" => IAcl::ALL
                             ),
                             "properties" => array(
-                                "*" => Acl::ALL,
+                                "*" => IAcl::ALL,
                             )
                         ),
                         "_default" => array(
                             "operations" => array(
-                                "*" => Acl::READ
+                                "*" => IAcl::READ
                             ),
                             "properties" => array(
-                                "commonDocument:createdBy" => Acl::READ,
-                                "commonDocument:title" => Acl::READ,
-                                "commonDocument:summary/xhtml:body" => Acl::READ,
+                                "commonDocument:createdBy" => IAcl::READ,
+                                "commonDocument:title" => IAcl::READ,
+                                "commonDocument:summary/xhtml:body" => IAcl::READ,
                             )
                         )
                     )
@@ -140,41 +140,41 @@ class Mock implements \RPI\Framework\App\Security\Acl\Model\IProvider
                     "roles" => array(
                         "owner" => array(
                             "operations" => array(
-                                "*" => Acl::READ | Acl::UPDATE
+                                "*" => IAcl::READ | IAcl::UPDATE
                             ),
                             "properties" => array(
-                                "commonDocument:createdBy" => Acl::READ | Acl::UPDATE,
-                                "commonDocument:title" => Acl::READ | Acl::UPDATE,
-                                "commonDocument:summary/xhtml:body" => Acl::READ | Acl::UPDATE,
-                                "commonDocument:content/xhtml:body" => Acl::READ | Acl::UPDATE,
-                                "testDocument:details/testDocument:type" => Acl::READ | Acl::UPDATE,
-                                "db:address/db:city" => Acl::READ | Acl::UPDATE,
-                                "db:address/db:postcode" => Acl::READ | Acl::UPDATE,
-                                "db:address/db:country" => Acl::READ | Acl::UPDATE,
-                                "db:address/db:phone" => Acl::READ | Acl::UPDATE
+                                "commonDocument:createdBy" => IAcl::READ | IAcl::UPDATE,
+                                "commonDocument:title" => IAcl::READ | IAcl::UPDATE,
+                                "commonDocument:summary/xhtml:body" => IAcl::READ | IAcl::UPDATE,
+                                "commonDocument:content/xhtml:body" => IAcl::READ | IAcl::UPDATE,
+                                "testDocument:details/testDocument:type" => IAcl::READ | IAcl::UPDATE,
+                                "db:address/db:city" => IAcl::READ | IAcl::UPDATE,
+                                "db:address/db:postcode" => IAcl::READ | IAcl::UPDATE,
+                                "db:address/db:country" => IAcl::READ | IAcl::UPDATE,
+                                "db:address/db:phone" => IAcl::READ | IAcl::UPDATE
                             )
                         ),
                         "admin" => array(
                             "operations" => array(
-                                "*" => Acl::ALL
+                                "*" => IAcl::ALL
                             ),
                             "properties" => array(
-                                "*" => Acl::ALL,
+                                "*" => IAcl::ALL,
                             )
                         ),
                         "_default" => array(
                             "operations" => array(
-                                "*" => Acl::READ
+                                "*" => IAcl::READ
                             ),
                             "properties" => array(
-                                "commonDocument:createdBy" => Acl::READ,
-                                "commonDocument:title" => Acl::READ,
-                                //"commonDocument:content/xhtml:body" => Acl::READ,
-                                "commonDocument:summary/xhtml:body" => Acl::READ,
-                                "db:address/db:city" => Acl::READ,
-                                "db:address/db:postcode" => Acl::READ,
-                                "db:address/db:country" => Acl::READ,
-                                "db:address/db:phone" => Acl::READ
+                                "commonDocument:createdBy" => IAcl::READ,
+                                "commonDocument:title" => IAcl::READ,
+                                //"commonDocument:content/xhtml:body" => IAcl::READ,
+                                "commonDocument:summary/xhtml:body" => IAcl::READ,
+                                "db:address/db:city" => IAcl::READ,
+                                "db:address/db:postcode" => IAcl::READ,
+                                "db:address/db:country" => IAcl::READ,
+                                "db:address/db:phone" => IAcl::READ
                             )
                         ),
                     )
