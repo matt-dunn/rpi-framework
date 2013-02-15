@@ -72,7 +72,11 @@ class Acl implements \RPI\Framework\App\Config\IHandler
             foreach ($role[$section][$sectionItem] as $operation) {
                 $operationName = $operation["@"]["name"];
                 
-                $permissions = str_replace("Acl::", "RPI\Framework\App\Security\Acl\Model\IAcl::", $operation["@"]["permissions"]);
+                $permissions = str_replace(
+                    "Acl::",
+                    "RPI\Framework\App\Security\Acl\Model\IAcl::",
+                    $operation["@"]["permissions"]
+                );
                
                 $role[$section][$operationName] = eval("return ".$permissions.";");
             }
