@@ -4,6 +4,24 @@ namespace RPI\Framework\App\Security\Acl\Provider\Config\Handler;
 
 class Acl implements \RPI\Framework\App\Config\IHandler
 {
+    /**
+     *
+     * @var \RPI\Framework\Cache\IData
+     */
+    private $store = null;
+    
+    /**
+     *
+     * @var string
+     */
+    private $cacheKeyPrefix = null;
+    
+    public function __construct(\RPI\Framework\Cache\IData $store, $cacheKeyPrefix)
+    {
+        $this->store = $store;
+        $this->cacheKeyPrefix = $cacheKeyPrefix;
+    }
+    
     public function process(array $config)
     {
         if (isset($config["access"]["roles"]["role"]["@"])) {
@@ -36,12 +54,11 @@ class Acl implements \RPI\Framework\App\Config\IHandler
                 unset($config["@"]);
             }
             
-            return array(
-                "name" => $name,
-                "value" => $config
-            );
+            $this->store->store($this->cacheKeyPrefix."-".$name, $config);
+            
+            return null;
         } else {
-            return $config;
+            throw new \RPI\Framework\Exceptions\Exception("Invalid data format.");
         }
     }
     

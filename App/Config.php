@@ -13,6 +13,12 @@ namespace RPI\Framework\App;
 class Config
 {
     /**
+     *
+     * @var string
+     */
+    private $cacheKey = null;
+    
+    /**
      * Config data
      * @var array
      */
@@ -33,9 +39,13 @@ class Config
      */
     public function __construct(\RPI\Framework\Cache\IData $store, $file)
     {
+        $configFile = \RPI\Framework\Helpers\Utils::buildFullPath($file);
+        
+        $this->cacheKey = "PHP_RPI_CONFIG-".realpath($configFile);
+        
         $this->store = $store;
         
-        $this->config = $this->init(\RPI\Framework\Helpers\Utils::buildFullPath($file));
+        $this->config = $this->init($configFile);
     }
 
     /**
@@ -50,28 +60,33 @@ class Config
             return $this->valueCache[$keyPath];
         }
 
-        $basePath = $this->config["root"];
-        $keys = explode(
-            "@",
-            join(
+        // The item is stored in the container config file
+        if (substr($keyPath, 0, 7) == "config/") {
+            $basePath = $this->config["root"];
+            $keys = explode(
                 "@",
-                explode(
-                    "/",
-                    $keyPath
+                join(
+                    "@",
+                    explode(
+                        "/",
+                        $keyPath
+                    )
                 )
-            )
-        );
+            );
 
-        foreach ($keys as $key) {
-            if ($key == "") {
-                $key = "@";
+            foreach ($keys as $key) {
+                if ($key == "") {
+                    $key = "@";
+                }
+                if (isset($basePath[$key])) {
+                    $basePath = $basePath[$key];
+                } else {
+                    $basePath = $default;
+                    break;
+                }
             }
-            if (isset($basePath[$key])) {
-                $basePath = $basePath[$key];
-            } else {
-                $basePath = $default;
-                break;
-            }
+        } else {    // The item is stored in it's own cache entry
+            $basePath = $this->store->fetch($this->cacheKey."-".$keyPath);
         }
 
         $this->valueCache[$keyPath] = $basePath;
@@ -88,10 +103,12 @@ class Config
         
         try {
             if (file_exists($file)) {
-                $cacheKey = "PHP_RPI_CONFIG-".realpath($file);
-                
-                $config = $this->store->fetch($cacheKey);
+                $config = $this->store->fetch($this->cacheKey);
                 if ($config === false) {
+                    if ($this->store->deletePattern("#^".preg_quote($this->cacheKey, "#").".*#") === false) {
+                        \RPI\Framework\Exception\Handler::logMessage("Unable to clear data store", LOG_WARNING);
+                    }
+
                     $domDataConfig = new \DOMDocument();
                     $domDataConfig->load($file);
                     
@@ -117,10 +134,10 @@ class Config
                     
                     $config = $this->processConfig(
                         self::parseTypes($root->toArray()),
-                        $cacheKey
+                        $this->cacheKey
                     );
 
-                    $this->store->store($cacheKey, $config, $file);
+                    $this->store->store($this->cacheKey, $config, $file);
 
                     \RPI\Framework\Helpers\Locking::release($seg);
 
@@ -152,7 +169,7 @@ class Config
             if (isset($configItem["@"]) && isset($configItem["@"]["handler"])) {
                 $handler = $configItem["@"]["handler"];
                 
-                $handlerInstance = new $handler();
+                $handlerInstance = new $handler($this->store, $cacheKey);
                 if (!$handlerInstance instanceof \RPI\Framework\App\Config\IHandler) {
                     throw new \RPI\Framework\Exceptions\RuntimeException(
                         "Handler '$handler' must implement interface 'RPI\Framework\App\Config\IHandler'."

@@ -6,23 +6,17 @@ use RPI\Framework\App\Security\Acl;
 
 class Config extends \RPI\Framework\App\Config implements \RPI\Framework\App\Security\Acl\Model\IProvider
 {
-    private $aceMap = null;
+    private $aceMap = array();
     
-    public function __construct(\RPI\Framework\Cache\IData $store, $file)
-    {
-        parent::__construct($store, $file);
-        
-        $this->aceMap = $this->getValue("config/acl/ace");
-    }
-
-
     public function getAce($objectType)
     {
         if (isset($this->aceMap[$objectType])) {
             return $this->aceMap[$objectType];
         }
         
-        return null;
+        $this->aceMap[$objectType] = $this->getValue($objectType);
+        
+        return $this->aceMap[$objectType];
     }
 
     public function isOwner(Acl\Model\IDomainObject $domainObject, \RPI\Framework\Model\User $user)
