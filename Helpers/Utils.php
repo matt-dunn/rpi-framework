@@ -121,71 +121,6 @@ class Utils
         return $result;
     }
 
-    /**
-     * Build a lucene style query from a url style syntax
-     * @param  string      $query
-     * @param  array       $facet
-     * @return associative array
-     */
-    public static function buildSearchQuery($query, $facet = null)
-    {
-        if (!is_array($facet)) {
-            $facet = array($facet);
-        }
-        $facetQuery = array();
-        $mainQuery = array();
-
-        $queryParts = explode("/", $query);
-        $count = count($queryParts);
-        $complexQuery = false;
-        for ($i = 0; $i < $count; $i++) {
-            $termParts = preg_split("/[=:]/", $queryParts[$i]);
-            if (count($termParts) >= 2) {
-                if (in_array($termParts[0], $facet)) {
-                    $facetQuery[] = $termParts[0].":".$termParts[1];
-                } else {
-                    $complexQuery = true;
-                    $mainQuery[] = $termParts[0].":".$termParts[1];
-                }
-            } else {
-                $simpleQuery = $termParts[0];
-                if (substr($simpleQuery, 0, 1) == "\"" && substr($simpleQuery, strlen($simpleQuery) - 1, 1) !== "\"") {
-                    $simpleQuery .= "\"";
-                }
-                $mainQuery[] = $simpleQuery;
-            }
-        }
-
-        return array(
-                "query" => join(" AND ", $mainQuery),
-                "facet" => $facet,
-                "facetQuery" => join(" AND ", $facetQuery),
-                "complexQuery" => $complexQuery,
-                "mainQueryParts" => $mainQuery
-        );
-    }
-
-    public static function appendMatchingArrayKeys(
-        $regex,
-        array $sourceArray,
-        array &$destinationArray = array(),
-        $skipEmptyValues = false
-    ) {
-        if (!isset($destinationArray)) {
-            $destinationArray = array();
-        }
-
-        $keys = preg_grep($regex, array_keys($sourceArray));
-
-        foreach ($keys as $key) {
-            if (!$skipEmptyValues || ($skipEmptyValues && trim($sourceArray[$key]) !== "")) {
-                $destinationArray[$key] = $sourceArray[$key];
-            }
-        }
-
-        return $destinationArray;
-    }
-
     public static function implodeWithKey($assoc, $inglue = '=', $outglue = '&')
     {
         $return = null;
@@ -204,12 +139,15 @@ class Utils
 
         $stringParts = explode(" ", trim($string));
 
-        return implode(" ", array_filter($stringParts, "self::normalizeStringTest"));
-    }
-
-    private static function normalizeStringTest($string)
-    {
-        return ($string !== "");
+        return implode(
+            " ",
+            array_filter(
+                $stringParts,
+                function ($string) {
+                    return ($string !== "");
+                }
+            )
+        );
     }
 
     /**

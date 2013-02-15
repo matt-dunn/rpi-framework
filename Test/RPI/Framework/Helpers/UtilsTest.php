@@ -20,10 +20,6 @@ class UtilsTest extends \RPI\Framework\Test\Base
     protected function setUp()
     {
         parent::setUp();
-        
-        $_POST["testString"] = "stringValue";
-        $_POST["testNumber"] = 45;
-        $_POST["testUnsafeString"] = "<script type=\"text/javascript\">alert('unsafe');</script>";
     }
 
     /**
@@ -39,10 +35,26 @@ class UtilsTest extends \RPI\Framework\Test\Base
      */
     public function testIsAssoc()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
+        $array1 = array(1, 2, "three", "four", 5);
+        $this->assertFalse(\RPI\Framework\Helpers\Utils::isAssoc($array1));
+        
+        $array2 = array("item1" => 1, "item2" => 2, "item3" => "three", "item4" => "four", "item5" => 5);
+        $this->assertTrue(\RPI\Framework\Helpers\Utils::isAssoc($array2));
+        
+        $array3 = array(
+            "item1" => 1, "item2" => 2, "item3" => "three", "item4" => "four", "item5" => 5, array(1, 2, 3)
         );
+        $this->assertTrue(\RPI\Framework\Helpers\Utils::isAssoc($array3));
+        
+        $array4 = array(
+            array(1, 2, 3), "item1" => 1, "item2" => 2, "item3" => "three", "item4" => "four", "item5" => 5
+        );
+        $this->assertTrue(\RPI\Framework\Helpers\Utils::isAssoc($array4));
+        
+        $array5 = array(
+            "item0" => array(1, 2, 3), "item1" => 1, "item2" => 2, "item3" => "three", "item4" => "four", "item5" => 5
+        );
+        $this->assertTrue(\RPI\Framework\Helpers\Utils::isAssoc($array5));
     }
 
     /**
@@ -80,6 +92,8 @@ class UtilsTest extends \RPI\Framework\Test\Base
 
     public function testGetSafeValue()
     {
+        $_POST["testUnsafeString"] = "<script type=\"text/javascript\">alert('unsafe');</script>";
+        
         $this->assertEquals(
             "&lt;script type=&quot;text/javascript&quot;&gt;alert('unsafe');&lt;/script&gt;",
             \RPI\Framework\Helpers\Utils::GetSafeValue($_POST["testUnsafeString"])
@@ -88,6 +102,8 @@ class UtilsTest extends \RPI\Framework\Test\Base
 
     public function testGetNamedValueValidNoDefaultValue()
     {
+        $_POST["testString"] = "stringValue";
+        
         $this->assertEquals("stringValue", \RPI\Framework\Helpers\Utils::getNamedValue($_POST, "testString"));
     }
 
@@ -160,28 +176,6 @@ class UtilsTest extends \RPI\Framework\Test\Base
     }
 
     /**
-     * @todo Implement testBuildSearchQuery().
-     */
-    public function testBuildSearchQuery()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @todo Implement testAppend_matching_array_keys().
-     */
-    public function testAppendMatchingArrayKeys()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
      * @todo Implement testImplode_with_key().
      */
     public function testImplodeWithKey()
@@ -192,47 +186,13 @@ class UtilsTest extends \RPI\Framework\Test\Base
         );
     }
 
-    /**
-     * @todo Implement testNormalizeString().
-     */
     public function testNormalizeString()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @todo Implement testIsValidActionId().
-     */
-    public function testIsValidActionId()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @todo Implement testGetActionId().
-     */
-    public function testGetActionId()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @todo Implement testDetectOSVariant().
-     */
-    public function testDetectOSVariant()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
+        $this->assertEquals(
+            "test string with extra spaces and spaces at beginning and end",
+            \RPI\Framework\Helpers\Utils::normalizeString(
+                "  test string   with   extra  spaces and  spaces at   beginning and  end   "
+            )
         );
     }
 
