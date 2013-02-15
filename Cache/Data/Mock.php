@@ -3,7 +3,7 @@
 namespace RPI\Framework\Cache\Data;
 
 /**
- * APC cache support wrapper
+ * Mock cache support wrapper
  * Supports file dependencies and time to live on cached data
  *
  * @author Matt Dunn
@@ -19,20 +19,74 @@ class Mock implements \RPI\Framework\Cache\IData
 
     public function fetch($key, $autoDelete = true, &$existingCacheData = null)
     {
-        if (isset($this->data[$key])) {
-            return $this->data[$key];
+        if ($this->isAvailable() === true) {
+            if (!isset($this->data[$key])) {
+                return false;
+            }
+            
+            $data = $this->data[$key];
+
+            $existingCacheData = $data["value"];
+            
+            if (isset($data["expire"]) && microtime(true) > $data["expire"]) {
+                $this->delete($key);
+                
+                return false;
+            }
+
+            if (isset($data["fileDep"]) && isset($data["fileDep_mod"])) {
+                if (is_array($data["fileDep"])) {
+                    $fileCount = count($data["fileDep"]);
+                    for ($i = 0; $i < $fileCount; $i++) {
+                        if ($data["fileDep_mod"][$i] != filemtime($data["fileDep"][$i])) {
+                            if ($autoDelete) {
+                                $this->delete($key);
+                            }
+
+                            return false;
+                        }
+                    }
+                } else {
+                    if ($data["fileDep_mod"] != filemtime($data["fileDep"])) {
+                        if ($autoDelete) {
+                            $this->delete($key);
+                        }
+
+                        return false;
+                    }
+                }
+            }
+
+            return $data["value"];
+        } else {
+            return false;
         }
-        
-        return false;
     }
 
     public function store($key, $value, $fileDep = null, $ttl = 0)
     {
-        $this->data[$key] = $value;
-        return true;
+        if ($this->isAvailable() === true) {
+            $expire = null;
+            if (isset($ttl) && $ttl > 0) {
+                $expire = microtime(true) + $ttl;
+            }
+            
+            if (is_array($fileDep)) {
+                $fileDepMod = array();
+                foreach ($fileDep as $file) {
+                    $fileDepMod[] = filemtime($file);
+                }
+
+                return $this->data[$key] = array("expire" => $expire, "value" => $value, "fileDep" => $fileDep, "fileDep_mod" => $fileDepMod);
+            } else {
+                return $this->data[$key] = array("expire" => $expire, "value" => $value, "fileDep" => $fileDep, "fileDep_mod" => filemtime($fileDep));
+            }
+        } else {
+            return false;
+        }
     }
 
-    public function clear($cache_type = null, $keyPrefix = null)
+    public function clear()
     {
         $this->data = array();
     }
@@ -46,7 +100,21 @@ class Mock implements \RPI\Framework\Cache\IData
         
         return false;
     }
+
+    public function deletePattern($pattern)
+    {
+        foreach ($this->data as $key => $value) {
+            if (preg_match($pattern, $key) !== 0) {
+                unset($this->data[$key]);
+            }
+        }
+    }
     
+    /**
+     * Helper method for unit testing
+     * 
+     * @return mixed
+     */
     public function getData()
     {
         return $this->data;

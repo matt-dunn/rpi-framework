@@ -32,8 +32,7 @@ class MemCached implements \RPI\Framework\Cache\IData
     }
 
     /**
-     * Check to see if MemCached is available
-     * @return boolean True if MemCached is available.
+     * {@inheritdoc}
      */
     public function isAvailable()
     {
@@ -45,14 +44,7 @@ class MemCached implements \RPI\Framework\Cache\IData
     }
 
     /**
-     * Fetch an item from the MemCached cache
-     * @param  string  $key                 Unique key to identify a cache item
-     * @param  boolean $autoDelete          Indicate if an invalidated cache item
-     *                                      should be removed from the cache. Defaults to true.
-     * @param  object  $existingCacheData   A reference to the existing cache item
-     *                                      reguardless to the invalidation state
-     * @return object  or false				An object from the cache or false if
-     *                                      cache item does not exist or has been invalidated
+     * {@inheritdoc}
      */
     public function fetch($key, $autoDelete = true, &$existingCacheData = null)
     {
@@ -70,7 +62,7 @@ class MemCached implements \RPI\Framework\Cache\IData
                     for ($i = 0; $i < $fileCount; $i++) {
                         if ($data["fileDep_mod"][$i] != filemtime($data["fileDep"][$i])) {
                             if ($autoDelete) {
-                                $this->getMemcahed()->delete($key);
+                                $this->delete($key);
                             }
 
                             return false;
@@ -79,7 +71,7 @@ class MemCached implements \RPI\Framework\Cache\IData
                 } else {
                     if ($data["fileDep_mod"] != filemtime($data["fileDep"])) {
                         if ($autoDelete) {
-                            $this->getMemcahed()->delete($key);
+                            $this->delete($key);
                         }
 
                         return false;
@@ -94,12 +86,7 @@ class MemCached implements \RPI\Framework\Cache\IData
     }
 
     /**
-     * Store an item in the MemCached
-     * @param  string          $key     Unique key to identify a cache item
-     * @param  object          $value   Object to store in the cache
-     * @param  string or array $fileDep Filename or array of filenames to watch for changes
-     * @param  integer         $ttl     Time to live in seconds. See MemCached documentation.
-     * @return boolean         True if successful
+     * {@inheritdoc}
      */
     public function store($key, $value, $fileDep = null, $ttl = 0)
     {
@@ -128,28 +115,31 @@ class MemCached implements \RPI\Framework\Cache\IData
     }
 
     /**
-     * Remove all item from the MemCached
-     * @param string $cache_type See MemCached documentation
+     * {@inheritdoc}
      */
-    public function clear($cache_type = null, $keyPrefix = null)
+    public function clear()
     {
         if ($this->isAvailable() === true) {
-            if (isset($keyPrefix)) {
-                // Do anything? or let any old items drop off the end of the LRU?
-            } else {
-                return $this->getMemcahed()->flush(0);
-            }
+            return $this->getMemcahed()->flush(0);
         }
     }
 
     /**
-     * Remove an item from the MemCached
-     * @param string $cache_type See MemCached documentation
+     * {@inheritdoc}
      */
     public function delete($key)
     {
         if ($this->isAvailable() === true) {
             return $this->getMemcahed()->delete($key);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deletePattern($pattern)
+    {
+        // TODO: how can this work with memcached??
+        throw new \RPI\Framework\Exceptions\NotImplemented();
     }
 }
