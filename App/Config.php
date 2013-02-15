@@ -172,9 +172,13 @@ class Config
     {
         $configData = array();
         foreach ($config as $name => $configItem) {
+            if (is_array($configItem)) {
+                $configItem = $this->processConfig($configItem, $cacheKey);
+            }
+            
             if (isset($configItem["@"]) && isset($configItem["@"]["handler"])) {
                 $handler = $configItem["@"]["handler"];
-                
+
                 $handlerInstance = new $handler($this->store, $cacheKey."-");
                 if (!$handlerInstance instanceof \RPI\Framework\App\Config\IHandler) {
                     throw new \RPI\Framework\Exceptions\RuntimeException(
@@ -190,14 +194,11 @@ class Config
                                 "Config item '{$processedConfig["name"]}' already exists. Check your config definition."
                             );
                         }
-                        $configData[$processedConfig["name"]] =
-                            $this->processConfig($processedConfig["value"], $cacheKey);
+                        $configData[$processedConfig["name"]] = $processedConfig["value"];
                     } else {
-                        $configData[$name] = $this->processConfig($processedConfig, $cacheKey);
+                        $configData[$name] = $processedConfig;
                     }
                 }
-            } elseif (is_array($configItem)) {
-                $configData[$name] = $this->processConfig($configItem, $cacheKey);
             } else {
                 $configData[$name] = $configItem;
             }
