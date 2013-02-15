@@ -28,7 +28,7 @@ class Utils
             foreach ($pieces as $key => $r_pieces) {
                 $value = ($includeKey ? $key."=" : "").$r_pieces;
                 if (is_array($r_pieces)) {
-                    $retVal[] = self::r_implode($glue, $value);
+                    $retVal[] = self::rimplode($glue, $value);
                 } else {
                     $retVal[] = $value;
                 }
@@ -74,7 +74,7 @@ class Utils
      */
     public static function isEnumValue($enumClass, $value)
     {
-        $x = new ReflectionClass($enumClass);
+        $x = new \ReflectionClass($enumClass);
 
         return (array_search($value, array_values($x->getConstants())) !== false);
     }
