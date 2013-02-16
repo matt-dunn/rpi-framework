@@ -103,6 +103,8 @@ class Apc implements \RPI\Framework\Cache\IData
         if ($this->isAvailable() === true) {
             return apc_clear_cache("user");
         }
+        
+        return false;
     }
 
     /**
@@ -113,6 +115,8 @@ class Apc implements \RPI\Framework\Cache\IData
         if ($this->isAvailable() === true) {
             return apc_delete($key);
         }
+        
+        return false;
     }
 
     /**
@@ -120,8 +124,17 @@ class Apc implements \RPI\Framework\Cache\IData
      */
     public function deletePattern($pattern)
     {
-        foreach (new \APCIterator("user", $pattern) as $counter) {
-            $this->delete($counter["key"]);
+        if ($this->isAvailable() === true) {
+            $deleteCount = 0;
+            foreach (new \APCIterator("user", $pattern) as $counter) {
+                if ($this->delete($counter["key"]) !== false) {
+                    $deleteCount++;
+                }
+            }
+            
+            return $deleteCount;
         }
+        
+        return false;
     }
 }

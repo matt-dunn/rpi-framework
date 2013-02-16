@@ -33,12 +33,14 @@ interface IData
      * @param  string or array $fileDep Filename or array of filenames to watch for changes
      * @param  integer         $ttl     Time to live in seconds.
      * 
-     * @return boolean         True if successful
+     * @return boolean True on success
      */
     public function store($key, $value, $fileDep = null, $ttl = 0);
 
     /**
      * Remove all item from the cache
+     * 
+     * @return boolean True on success
      */
     public function clear();
 
@@ -46,6 +48,8 @@ interface IData
      * Remove an item from the cache
      * 
      * @param string $key
+     * 
+     * @return boolean True on success
      */
     public function delete($key);
     
@@ -53,6 +57,8 @@ interface IData
      *  Delete items in the cache that match $pattern
      * 
      * @param string $pattern   Regex pattern
+     * 
+     * @return boolean|int False on failure or an integer count of the number of items removed from cache
      */
     public function deletePattern($pattern);
 }

@@ -12,11 +12,17 @@ class Mock implements \RPI\Framework\Cache\IData
 {
     private $data = array();
     
+    /**
+     * {@inheritdoc}
+     */
     public function isAvailable()
     {
         return true;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function fetch($key, $autoDelete = true, &$existingCacheData = null)
     {
         if ($this->isAvailable() === true) {
@@ -63,6 +69,9 @@ class Mock implements \RPI\Framework\Cache\IData
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function store($key, $value, $fileDep = null, $ttl = 0)
     {
         if ($this->isAvailable() === true) {
@@ -90,28 +99,52 @@ class Mock implements \RPI\Framework\Cache\IData
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function clear()
     {
-        $this->data = array();
-    }
-
-    public function delete($key)
-    {
-        if (isset($this->data[$key])) {
-            unset($this->data[$key]);
+        if ($this->isAvailable() === true) {
+            $this->data = array();
             return true;
         }
         
         return false;
     }
 
-    public function deletePattern($pattern)
+    /**
+     * {@inheritdoc}
+     */
+    public function delete($key)
     {
-        foreach ($this->data as $key => $value) {
-            if (preg_match($pattern, $key) !== 0) {
+        if ($this->isAvailable() === true) {
+            if (isset($this->data[$key])) {
                 unset($this->data[$key]);
+                return true;
             }
         }
+        
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deletePattern($pattern)
+    {
+        if ($this->isAvailable() === true) {
+            $deleteCount = 0;
+            foreach ($this->data as $key => $value) {
+                if (preg_match($pattern, $key) !== 0) {
+                    unset($this->data[$key]);
+                    $deleteCount++;
+                }
+            }
+            
+            return $deleteCount;
+        }
+        
+        return false;
     }
     
     /**
