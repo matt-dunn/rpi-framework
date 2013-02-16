@@ -93,7 +93,7 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
         
         if (isset($this->provider)) {
             $ace = $this->provider->getAce($domainObject->getType());
-            if (isset($ace)) {
+            if (isset($ace) && is_array($ace)) {
                 if (!$this->user->isAuthenticated && !$this->user->isAnonymous) {
                     //throw new \RPI\Framework\Exceptions\Authorization();
                 }
