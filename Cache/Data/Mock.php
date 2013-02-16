@@ -8,7 +8,7 @@ namespace RPI\Framework\Cache\Data;
  *
  * @author Matt Dunn
  */
-class Mock implements \RPI\Framework\Cache\IData, \RPI\Framework\Cache\Data\ISupportsPatternDelete
+class Mock implements \RPI\Framework\Cache\IData
 {
     private $data = array();
     

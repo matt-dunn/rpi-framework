@@ -8,7 +8,7 @@ namespace RPI\Framework\Cache\Data;
  *
  * @author Matt Dunn
  */
-class Apc implements \RPI\Framework\Cache\IData, \RPI\Framework\Cache\Data\ISupportsPatternDelete
+class Apc implements \RPI\Framework\Cache\IData
 {
     private $isAvailable = null;
 

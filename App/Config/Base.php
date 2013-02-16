@@ -34,12 +34,6 @@ abstract class Base
      */
     public function __construct(\RPI\Framework\Cache\IData $store, $file)
     {
-        if (!$store instanceof \RPI\Framework\Cache\Data\ISupportsPatternDelete) {
-            throw new \RPI\Framework\Exceptions\Exception(
-                "Store '".get_class($store)."' must implement '\RPI\Framework\Cache\Data\ISupportsPatternDelete'."
-            );
-        }
-        
         $configFile = \RPI\Framework\Helpers\Utils::buildFullPath($file);
         
         $this->cacheKey = "PHP_RPI_CONFIG-".realpath($configFile);

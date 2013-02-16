@@ -11,21 +11,48 @@ namespace RPI\Framework\Cache\Data;
 class MemCached implements \RPI\Framework\Cache\IData
 {
     private $isAvailable = null;
+    
+    /**
+     *
+     * @var \Memcached
+     */
     private $memCached;
     
-    public function __construct($host = "localhost", $port = 11211)
+    private $host = null;
+    private $port = null;
+    private $persistentId = null;
+    
+    public function __construct($host = null, $port = null, $persistentId = null)
     {
-        $this->host = $host;
-        $this->port = $port;
+        $this->host = (isset($host) ? $host : "localhost");
+        $this->port = (isset($port) ? $port : 11211);
+        $this->persistentId = (isset($persistentId) ? $persistentId : "default_pool:".get_class());
     }
 
     private function getMemcached()
     {
         if (!isset($this->memCached)) {
-            $this->memCached = new \Memcached();
-            //var_dump($this->memCached->getServerList());
-            //echo "[{$this->host}][{$this->port}]";
-            $this->memCached->addServer($this->host, $this->port);
+            $this->memCached = new \Memcached($this->persistentId);
+
+            if(count($this->memCached->getServerList()) == 0) {
+                $this->memCached->setOption(\Memcached::OPT_RECV_TIMEOUT, 1000);
+                $this->memCached->setOption(\Memcached::OPT_SEND_TIMEOUT, 1000);
+                $this->memCached->setOption(\Memcached::OPT_TCP_NODELAY, true);
+                $this->memCached->setOption(\Memcached::OPT_SERVER_FAILURE_LIMIT, 50);
+                $this->memCached->setOption(\Memcached::OPT_CONNECT_TIMEOUT, 500);
+                $this->memCached->setOption(\Memcached::OPT_RETRY_TIMEOUT, 300);
+                //$this->memCached->setOption(\Memcached::OPT_DISTRIBUTION, \Memcached::DISTRIBUTION_CONSISTENT);
+                $this->memCached->setOption(\Memcached::OPT_REMOVE_FAILED_SERVERS, true);
+                $this->memCached->setOption(\Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
+
+                $this->memCached->addServer($this->host, $this->port);
+                
+                $stats = $this->memCached->getStats();
+                var_dump($stats);
+                if (isset($stats, $stats[$this->host.":".$this->port]) && $stats[$this->host.":".$this->port]["version"] == "") {
+                    throw new \RPI\Framework\Exceptions\Exception("Memcached server not found '".$this->host.":".$this->port."'");
+                }
+            }
         }
 
         return $this->memCached;
@@ -139,7 +166,14 @@ class MemCached implements \RPI\Framework\Cache\IData
      */
     public function deletePattern($pattern)
     {
-        // TODO: can this work with memcached?? for now throw NotSupported.
-        throw new \RPI\Framework\Exceptions\NotSupported();
+        $keys = new \RegexIterator(
+            new \ArrayIterator($this->getMemcached()->getAllKeys()),
+            $pattern,
+            \RegexIterator::MATCH
+        ); 
+
+        foreach ($keys as $key) {
+            $this->delete($key);
+        }
     }
 }
