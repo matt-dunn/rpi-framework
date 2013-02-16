@@ -26,7 +26,7 @@ class MemCached implements \RPI\Framework\Cache\IData
     {
         $this->host = (isset($host) ? $host : "localhost");
         $this->port = (isset($port) ? $port : 11211);
-        $this->persistentId = (isset($persistentId) ? $persistentId : "default_pool:".get_class());
+        $this->persistentId = null;//(isset($persistentId) ? $persistentId : "default_pool:".get_class());
     }
 
     private function getMemcached()
@@ -47,11 +47,11 @@ class MemCached implements \RPI\Framework\Cache\IData
 
                 $this->memCached->addServer($this->host, $this->port);
                 
-                $stats = $this->memCached->getStats();
-                var_dump($stats);
-                if (isset($stats, $stats[$this->host.":".$this->port]) && $stats[$this->host.":".$this->port]["version"] == "") {
-                    throw new \RPI\Framework\Exceptions\Exception("Memcached server not found '".$this->host.":".$this->port."'");
-                }
+                // TODO: this needs to check for a valid connection
+                //$stats = $this->memCached->getStats();
+                //if (isset($stats, $stats[$this->host.":".$this->port]) && $stats[$this->host.":".$this->port]["version"] == "") {
+                //    throw new \RPI\Framework\Exceptions\Exception("Memcached server not found '".$this->host.":".$this->port."'");
+                //}
             }
         }
 
@@ -166,14 +166,16 @@ class MemCached implements \RPI\Framework\Cache\IData
      */
     public function deletePattern($pattern)
     {
-        $keys = new \RegexIterator(
-            new \ArrayIterator($this->getMemcached()->getAllKeys()),
-            $pattern,
-            \RegexIterator::MATCH
-        ); 
+        if ($this->isAvailable() === true) {
+            $keys = new \RegexIterator(
+                new \ArrayIterator($this->getMemcached()->getAllKeys()),
+                $pattern,
+                \RegexIterator::MATCH
+            ); 
 
-        foreach ($keys as $key) {
-            $this->delete($key);
+            foreach ($keys as $key) {
+                $this->delete($key);
+            }
         }
     }
 }
