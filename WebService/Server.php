@@ -259,9 +259,9 @@ abstract class Server extends \RPI\Framework\Controller
 
                 $responseMethod = call_user_func_array(array($this, $request->method->name), $params);
             } catch (\RPI\Framework\Exceptions\Authorization $ex) {
-                throw new \RPI\Framework\WebService\Exceptions\Authorization();
+                throw new \RPI\Framework\WebService\Exceptions\Authorization(null, null, $ex);
             } catch (\RPI\Framework\Exceptions\Forbidden $ex) {
-                throw new \RPI\Framework\WebService\Exceptions\Forbidden();
+                throw new \RPI\Framework\WebService\Exceptions\Forbidden(null, null, $ex);
             } catch (\Exception $ex) {
                 throw $ex;
             }
