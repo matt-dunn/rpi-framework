@@ -319,7 +319,7 @@ class Dom
                 $children[$elementName] = array();
             }
             
-            $element= array_merge($element, self::toArray($child, $xml));
+            $element = array_merge($element, self::toArray($child, $xml));
             
             if (trim((string)$child) != "") {
                 if (count($element) == 0) {
