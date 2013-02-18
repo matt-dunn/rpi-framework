@@ -9,7 +9,7 @@ class File implements \RPI\Framework\Cache\IFront
     public function getFileCachePath()
     {
         if (!isset($this->fileCachePath)) {
-            $this->setFileCachePath($_SERVER["DOCUMENT_ROOT"]."/../.cache/");
+            $this->setFileCachePath($_SERVER["DOCUMENT_ROOT"]."/../var/cache/");
         }
 
         return $this->fileCachePath;
