@@ -510,7 +510,7 @@ class View
     private function parseController($controllerUUID, \DOMXPath $xpath, \DOMNode $controllerElement)
     {
         if (!isset($controllerUUID)) {
-            $controllerUUID = \RPI\Framework\Helpers\Uuid::v4();
+            $controllerUUID = $controllerElement->getAttribute("id");
         }
         
         $options = null;
