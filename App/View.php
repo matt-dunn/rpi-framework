@@ -538,18 +538,7 @@ class View
         $viewRendition = null;
         $viewRenditionElements = $xpath->query("RPI:viewRendition", $controllerElement);
         if ($viewRenditionElements->length > 0) {
-            $viewRenditionElements = $viewRenditionElements->item(0);
-            require_once($GLOBALS["RPI_PATH_VENDOR"]."/PEAR/XML/Unserializer.php");
-            $serializer = new \XML_Unserializer(
-                array(
-                    "parseAttributes" => true
-                )
-            );
-            if ($serializer->unserialize(
-                $viewRenditionElements->ownerDocument->saveXML($viewRenditionElements)
-            ) === true) {
-                $viewRendition = $serializer->getUnserializedData();
-            }
+            $viewRendition = \RPI\Framework\Helpers\Dom::toArray(simplexml_import_dom($viewRenditionElements->item(0)));
         }
         
         $controller = array(

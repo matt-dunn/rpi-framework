@@ -57,7 +57,7 @@ abstract class Base
 
         // The item is stored in the container config file
         if (substr($keyPath, 0, 7) == "config/") {
-            $basePath = $this->config["root"];
+            $basePath = $this->config;
             $keys = explode(
                 "@",
                 join(
@@ -114,24 +114,13 @@ abstract class Base
                     
                     $seg = \RPI\Framework\Helpers\Locking::lock(__CLASS__);
 
-                    require_once($GLOBALS["RPI_PATH_VENDOR"]."/PEAR/Config.php");
-                    $c = new \Config();
-                    $root = $c->parseConfig(
-                        $file,
-                        "Xml",
-                        array(
-                            "encoding" => "UTF-8"
+                    $config = array(
+                        "config" => $this->processConfig(
+                            self::parseTypes(\RPI\Framework\Helpers\Dom::toArray(simplexml_load_file($file))),
+                            $this->cacheKey
                         )
                     );
-                    if ($root instanceof \PEAR_Error) {
-                        throw new \RPI\Framework\Exceptions\RuntimeException($root->getMessage());
-                    }
                     
-                    $config = $this->processConfig(
-                        self::parseTypes($root->toArray()),
-                        $this->cacheKey
-                    );
-
                     $this->store->store($this->cacheKey, $config, $file);
 
                     \RPI\Framework\Helpers\Locking::release($seg);

@@ -110,23 +110,6 @@ class DomTest extends \RPI\Framework\Test\Base
         );
     }
 
-    public function testDeserializeToArray()
-    {
-        $this->assertEquals(
-            array(
-                "item" => array(
-                    "item 1",
-                    "item 2"
-                ),
-                "property2" => "prop 2"
-            ),
-            \RPI\Framework\Helpers\Dom::deserializeToArray(
-                "<options><item>item 1</item><item>item 2</item><property2>prop 2</property2></options>",
-                array()
-            )
-        );
-    }
-
     public function testGetInnerXMLDomDocument()
     {
         // Remove the following lines when you implement this test.

@@ -121,40 +121,6 @@ class Dom
     }
 
     /**
-     * Serialize an object to a DomDocument using the PEAR serializer and optionally import result into a DomElement
-     * @param object     $o                    Object to serialize
-     * @param array      $serializationOptions Options to pass to the XML_Serializer
-     * @param DomElement $node                 (optional) Element to import the serialized XML
-     * @param string     $namespace            XML namespace
-     *
-     * @return DomDocument Serialized object
-     *
-     * NOTE:	This uses the robust PEAR serializer but is not high performance. Use serializeToDom
-     *          for simple serialization
-     *			where performance is critical
-     *
-     * @author Matt Dunn
-     */
-    public static function serializeToDomPear($o, $serializerOptions, \DomElement $node = null, $namespace = null)
-    {
-        require_once($GLOBALS["RPI_PATH_VENDOR"]."/PEAR/XML/Serializer.php");
-        $serializer = new \XML_Serializer($serializerOptions);
-        if ($namespace != null) {
-            $serializer->setOption("namespace", $namespace);
-        }
-        $serializer->serialize($o);
-        $oXml = $serializer->getSerializedData();
-        $oDoc = new \DomDocument();
-        $oDoc->loadXml($oXml);
-        if (isset($node)) {
-            $importNode = $node->ownerDocument->importNode($oDoc->documentElement, true);
-            $node->appendChild($importNode);
-        }
-
-        return $oDoc;
-    }
-
-    /**
      * Serialize an object to a DomDocument using the simple serializer and optionally import result into a DomElement
      * @param  object      $o                    Object to serialize
      * @param  array       $serializationOptions Options to pass to the XML_Serializer
@@ -163,7 +129,7 @@ class Dom
      * @return DomDocument Serialized object
      *
      * NOTE:	This should be used for performance critical serialization but does NOT perform any character encoding
-     *			or any other checking etc. For more complex/robust serialization use serializeToDomPear
+     *			or any other checking etc.
      *
      * @author Matt Dunn
      */
@@ -211,7 +177,6 @@ class Dom
         $tagOutput = false;
         
         // TODO: this need to be a more accurate test for valid element names....
-        // (and performant!). e.g. (PEAR) XML_Util::isValidName
         if (is_numeric(substr($elementName, 0, 1))
             || is_numeric($elementName)
             || $elementName == "@"
@@ -328,20 +293,67 @@ class Dom
             $xml .= '</'.$elementNameClose.'>'.$endLine;
         }
     }
-
+    
     /**
-     * Deserialize XML into an array
-     * @param  string $xml               XML Document
-     * @param  array  $serializerOptions Serializeation options
+     * 
+     * @param \SimpleXMLElement $xml
+     * 
      * @return array
      */
-    public static function deserializeToArray($xml, $serializerOptions)
+    public static function toArray(\SimpleXMLElement $xml, \SimpleXMLElement $parent = null)
     {
-        require_once($GLOBALS["RPI_PATH_VENDOR"]."/PEAR/XML/Unserializer.php");
-        $serializer = new \XML_Unserializer($serializerOptions);
-        $status = $serializer->unserialize($xml);
-
-        return $serializer->getUnserializedData();
+        $children = array();
+        
+        foreach ($xml->children() as $elementName => $child) {
+            $element = array();
+            
+            $attributes = array();
+            foreach ($child->attributes() as $name => $value) {
+                $attributes[$name] = trim($value);
+            }
+            if (count($attributes) > 0) {
+                $element["@"] = $attributes;
+            }
+            
+            if (!isset($children[$elementName])) {
+                $children[$elementName] = array();
+            }
+            
+            $element= array_merge($element, self::toArray($child, $xml));
+            
+            if (trim((string)$child) != "") {
+                if (count($element) == 0) {
+                    $element = trim((string)$child);
+                } else {
+                    $element["#"] = trim((string)$child);
+                }
+            }
+            
+            $children[$elementName][] = $element;
+        }
+        
+        foreach ($children as $key => $child) {
+            if (count($child) == 1) {
+                $children[$key] = $child[0];
+            }
+        }
+        
+        if (!isset($parent)) {
+            $attributes = array();
+            foreach ($xml->attributes() as $name => $value) {
+                $attributes[$name] = trim($value);
+            }
+            
+            $parentElement = array("#NAME" => $xml->getName());
+            
+            if (count($attributes) > 0) {
+                $parentElement["@"] = $attributes;
+            }
+            
+            return array_merge($parentElement, $children);
+        }
+        
+        return $children;
     }
 
     /**

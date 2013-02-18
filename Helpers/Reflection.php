@@ -142,16 +142,18 @@ class Reflection
             }
             $params = array();
             foreach ($paramArgs as $param) {
-                if (isset($param["type"])) {
-                    $params[$param["name"]] = self::createObjectByTypeInfo($app, $param);
-                } elseif (isset($param["value"])) {
-                    $params[$param["name"]] = $param["value"];
+                if (isset($param["@"], $param["@"]["name"])) {
+                    if (isset($param["@"], $param["@"]["type"])) {
+                        $params[$param["@"]["name"]] = self::createObjectByTypeInfo($app, $param);
+                    } elseif (isset($param["@"], $param["@"]["value"])) {
+                        $params[$param["@"]["name"]] = $param["@"]["value"];
+                    }
                 }
             }
         }
 
-        if (isset($typeInfo["type"])) {
-            return  self::createObject($app, $typeInfo["type"], $params);
+        if (isset($typeInfo["@"], $typeInfo["@"]["type"])) {
+            return  self::createObject($app, $typeInfo["@"]["type"], $params);
         } else {
             return $params;
         }
