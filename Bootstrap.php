@@ -31,6 +31,7 @@ require(__DIR__."/Autoload.php");
 // Event listeners:
 
 // Listen for ViewUpdated event to see if the front cache needs to be emptied
+// TODO: is this needed anymore - the component IDs are now fixed...
 \RPI\Framework\Event\Manager::addEventListener(
     "RPI\Framework\Events\ViewUpdated",
     function (\RPI\Framework\Event $event, $params) {
