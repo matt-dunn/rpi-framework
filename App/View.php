@@ -51,15 +51,9 @@ class View
         $type = null,
         array $controllerOptions = null
     ) {
-        if (!isset($this->file)) {
-            throw new \RPI\Framework\Exceptions\RuntimeException(
-                __CLASS__."::init must be called before '".__METHOD__."' can be called."
-            );
-        }
-        
         $controllerData = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-".$this->file."-controller-$uuid");
         if ($controllerData !== false) {
-            $controller = self::createComponentFromViewData($controllerData, $app, $controllerOptions);
+            $controller = $this->createComponentFromViewData($controllerData, $app, $controllerOptions);
             if (isset($type) && !$controller instanceof $type) {
                 throw new \InvalidArgumentException(
                     "Component '$uuid' (".get_class($controller).") must be an instance of '$type'."
@@ -74,12 +68,6 @@ class View
     
     public function getDecoratorView(\stdClass $decoratorDetails)
     {
-        if (!isset($this->file)) {
-            throw new \RPI\Framework\Exceptions\RuntimeException(
-                __CLASS__."::init must be called before '".__METHOD__."' can be called."
-            );
-        }
-        
         $decoratorData = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-".$this->file."-decorators");
         if ($decoratorData !== false) {
             $properties = get_object_vars($decoratorDetails);
@@ -90,7 +78,7 @@ class View
                 $normalizedProperties[$name.":".$value] = true;
             }
             
-            return self::testDecorators($decoratorData, $normalizedProperties);
+            return $this->testDecorators($decoratorData, $normalizedProperties);
         }
 
         return false;
@@ -107,7 +95,7 @@ class View
             if ($name != "#") {
                 if (isset($properties[$name])) {
                     if (is_array($decoratorData[$name])) {
-                        $view = self::testDecorators($decoratorData[$name], $properties);
+                        $view = $this->testDecorators($decoratorData[$name], $properties);
                     } else {
                         $view = $value;
                     }
