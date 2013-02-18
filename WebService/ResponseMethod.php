@@ -17,7 +17,7 @@ class ResponseMethod
             $format = "json";
         }
         $this->data = $data;
-        \RPI\Framework\Helpers\Utils::validateOption($format, array("xml", "json"));
+        // TODO: validate format against valid hander classes
         $this->format = $format;
         $this->params = $params;
     }

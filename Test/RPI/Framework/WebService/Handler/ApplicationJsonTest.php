@@ -21,7 +21,7 @@ class ApplicationJsonTest extends \RPI\Framework\Test\Base
     {
         parent::setUp();
         
-        $this->object = new \RPI\Framework\WebService\Handler\ApplicationXml;
+        $this->object = new \RPI\Framework\WebService\Handler\ApplicationJson;
     }
 
     /**
