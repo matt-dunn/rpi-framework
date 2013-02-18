@@ -407,6 +407,7 @@ class Dom
     {
         $xpath = new \DomXPath($doc);
         $xpath->registerNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        $xpath->registerNamespace("xi", "http://www.w3.org/2001/XInclude");
         $xpath->registerNamespace("services", "http://www.rpi.co.uk/presentation/services");
         $xpath->registerNamespace("commonDocument", "http://www.rpi.co.uk/presentation/common/document");
         $xpath->registerNamespace("xhtml", "http://www.w3.org/1999/xhtml");
@@ -418,17 +419,11 @@ class Dom
      * 
      * @param \DOMDocument $doc
      * @param string $xpath
-     * @return \DOMNode
+     * @return \DOMNodeList
      */
-    public static function getElementByXPath(\DOMDocument $doc, $xpath)
+    public static function getElementsByXPath(\DOMDocument $doc, $xpath)
     {
-        $xp = new \DomXPath($doc);
-        $xp->registerNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        $xp->registerNamespace("services", "http://www.rpi.co.uk/presentation/services");
-        $xp->registerNamespace("commonDocument", "http://www.rpi.co.uk/presentation/common/document");
-        $xp->registerNamespace("xhtml", "http://www.w3.org/1999/xhtml");
-
-        return $xp->evaluate($xpath);
+        return self::getXPath($doc)->evaluate($xpath);
     }
     
     /**
