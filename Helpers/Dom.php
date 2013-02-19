@@ -315,7 +315,7 @@ class Dom
             
             $attributes = array();
             foreach ($child->attributes() as $name => $value) {
-                $attributes[$name] = trim($value);
+                $attributes[$name] = self::parseType($value);
             }
             if (count($attributes) > 0) {
                 $element["@"] = $attributes;
@@ -329,9 +329,9 @@ class Dom
             
             if (trim((string)$child) != "") {
                 if (count($element) == 0) {
-                    $element = trim((string)$child);
+                    $element = self::parseType((string)$child);
                 } else {
-                    $element["#"] = trim((string)$child);
+                    $element["#"] = self::parseType((string)$child);
                 }
             }
             
@@ -360,6 +360,25 @@ class Dom
         }
         
         return $children;
+    }
+    
+    public static function parseType($value)
+    {
+        $value = trim($value);
+        
+        if (strtolower($value) == "null") {
+            $value = null;
+        } elseif (strtolower($value) == "true") {
+            $value = true;
+        } elseif (strtolower($value) == "false") {
+            $value = false;
+        } elseif (ctype_digit($value)) {
+            $value = (int) $value;
+        } elseif (is_numeric($value)) {
+            $value = (double) $value;
+        }
+        
+        return $value;
     }
 
     /**

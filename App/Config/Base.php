@@ -131,15 +131,13 @@ abstract class Base
 
                     $config = array(
                         "config" => $this->processConfig(
-                            self::parseTypes(
-                                \RPI\Framework\Helpers\Dom::toArray(
-                                    simplexml_import_dom($domDataConfig)
-                                )
+                            \RPI\Framework\Helpers\Dom::toArray(
+                                simplexml_import_dom($domDataConfig)
                             ),
                             $this->cacheKey
                         )
                     );
-
+                    
                     $this->store->store($this->cacheKey, $config, $fileDeps);
 
                     \RPI\Framework\Helpers\Locking::release($seg);
@@ -205,29 +203,6 @@ abstract class Base
         return $configData;
     }
 
-    private function parseTypes($config)
-    {
-        if (is_array($config)) {
-            foreach ($config as $name => $value) {
-                if (is_array($value)) {
-                    $config[$name] = self::parseTypes($value);
-                } else {
-                    if (trim($value) == "true") {
-                        $config[$name] = true;
-                    } elseif (trim($value) == "false") {
-                        $config[$name] = false;
-                    } elseif (ctype_digit($value)) {
-                        $config[$name] = (int) $value;
-                    } elseif (is_numeric($value)) {
-                        $config[$name] = (double) $value;
-                    }
-                }
-            }
-        }
-
-        return $config;
-    }
-    
     /**
      * @return string
      */
