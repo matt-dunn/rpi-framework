@@ -9,9 +9,29 @@ namespace RPI\Framework\App;
  */
 class View
 {
+    /**
+     *
+     * @var \RPI\Framework\Cache\IData 
+     */
     private $store = null;
+    
+    /**
+     *
+     * @var string
+     */
     private $file = null;
+    
+    /**
+     *
+     * @var \RPI\Framework\App\Router 
+     */
     private $router = null;
+    
+    /**
+     *
+     * @var array
+     */
+    private $decoratorData = null;
     
     /**
      * 
@@ -68,8 +88,11 @@ class View
     
     public function getDecoratorView(\stdClass $decoratorDetails)
     {
-        $decoratorData = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-".$this->file."-decorators");
-        if ($decoratorData !== false) {
+        if (!isset($this->decoratorData)) {
+            $this->decoratorData = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-".$this->file."-decorators");
+        }
+        
+        if ($this->decoratorData !== false) {
             $properties = get_object_vars($decoratorDetails);
 
             // TODO: Optimise this...
@@ -78,7 +101,7 @@ class View
                 $normalizedProperties[$name.":".$value] = true;
             }
             
-            return $this->testDecorators($decoratorData, $normalizedProperties);
+            return $this->testDecorators($this->decoratorData, $normalizedProperties);
         }
 
         return false;
