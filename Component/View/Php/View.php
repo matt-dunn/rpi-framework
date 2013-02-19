@@ -60,6 +60,10 @@ EOT;
                 }
                 
                 if ($controller->isDraggable) {
+                        $className .= " component-draggable";
+                }
+                
+                if ($controller->isDraggable) {
                     $sectionOptionsHTML .= <<<EOT
             <div class="drag-move"> </div>
 EOT;

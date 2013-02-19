@@ -156,9 +156,6 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     public function process()
     {
         if ($this->visible) {
-            $parent = $this->getParent();
-            $this->isDraggable = (isset($parent) && $parent instanceof \RPI\Framework\Component\IDraggableContainer);
-
             $this->processAction();
   
             if (!$this->validateCache()) {
@@ -168,6 +165,11 @@ abstract class Component extends \RPI\Framework\Controller\HTML
                     && $this->editable
                     && $this->model instanceof \RPI\Framework\App\Security\Acl\Model\IDomainObject) {
                     $this->editable = $this->acl->canUpdate($this->model);
+                }
+                
+                if (!$this->isDraggable) {
+                    $parent = $this->getParent();
+                    $this->isDraggable = !$this->editMode && (isset($parent) && $parent instanceof \RPI\Framework\Component\IDraggableContainer);
                 }
             }
 

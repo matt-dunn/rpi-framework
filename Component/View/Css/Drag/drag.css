@@ -1,16 +1,20 @@
-body.component_js .drag-move {
-    border:2px solid #ccc;
-    background-color: #eee;
-    width:10px;
-    height:10px;
+body.component_js .component-draggable:hover > .options-c .drag-move {
+    border-right:2px solid #555;
+    border-top:2px solid #555;
+    border-bottom:2px solid #555;
+    /*border-left:1px solid #555;*/
+    background-color: #d5d5d5;
+    width:30px;
+    height:50px;
     /*margin:0 5px 5px -10px;*/
     /*float:left;*/
     position:absolute;
-    top:0;
-    left:0;
+    top:5px;
+    left:0px;
     cursor:move;
-    border-radius:0 0 10px 0;
+    border-radius:0 10px 10px 0;
     z-index: 99999999;
+    opacity:0.85;
 }
 
 .ui-state-highlight {

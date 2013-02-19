@@ -17,6 +17,9 @@
     {if ($controller->editMode)}
         {assign var=className value="{$className} component-editmode"}
     {/if}
+    {if ($controller->isDraggable)}
+        {assign var=className value="{$className} component-draggable"}
+    {/if}
 {/if}
 
 <section class="{$className}"{$sectionAttributes}>

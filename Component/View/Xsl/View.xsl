@@ -38,6 +38,10 @@
                 </xsl:if>
             </xsl:if>
             
+            <xsl:if test="boolean(number(isDraggable))">
+                <xsl:text> component-draggable</xsl:text>
+            </xsl:if>
+            
             <xsl:if test="string-length(normalize-space(options/className)) &gt; 0">
                 <xsl:text> </xsl:text>
                 <xsl:value-of select="options/className"/>
