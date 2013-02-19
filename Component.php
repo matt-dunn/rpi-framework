@@ -156,7 +156,8 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     public function process()
     {
         if ($this->visible) {
-            //$this->isDraggable = $this->isContainedWithin("RPI\Components\MultiColumn\Component");
+            $parent = $this->getParent();
+            $this->isDraggable = (isset($parent) && $parent instanceof \RPI\Framework\Component\IDraggableContainer);
 
             $this->processAction();
   
