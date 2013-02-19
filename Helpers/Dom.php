@@ -35,7 +35,7 @@ class Dom
         
         try {
             $isValid = $doc->schemaValidate($schemaFile);
-        } catch(\Exception $ex) {
+        } catch (\Exception $ex) {
             // Allow the code to continue and pick up the errors below
         }
         
