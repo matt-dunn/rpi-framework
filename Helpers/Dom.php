@@ -31,7 +31,13 @@ class Dom
             throw new \Exception("Cannot locate schema '$schemaFile'");
         }
         
-        $isValid = $doc->schemaValidate($schemaFile);
+        $isValid = false;
+        
+        try {
+            $isValid = $doc->schemaValidate($schemaFile);
+        } catch(\Exception $ex) {
+            // Allow the code to continue and pick up the errors below
+        }
         
         if (!$isValid) {
             $errors = libxml_get_errors();
