@@ -212,6 +212,21 @@ class View
                     $domDataViews = new \DOMDocument();
                     $domDataViews->load($file);
                     
+                    $fileDeps = $file;
+                    
+                    $xincludes = \RPI\Framework\Helpers\Dom::getElementsByXPath(
+                        $domDataViews,
+                        "//xi:include[@parse='xml']/@href"
+                    );
+                    if ($xincludes->length > 0) {
+                        $fileDeps = array($fileDeps);
+                        foreach ($xincludes as $xinclude) {
+                            $fileDeps[] = dirname($file)."/".$xinclude->nodeValue;
+                        }
+                    }
+                    
+                    $domDataViews->xinclude();
+                    
                     \RPI\Framework\Helpers\Dom::validateSchema(
                         $domDataViews,
                         __DIR__."/../../Schemas/Conf/Views.2.0.0.xsd"
@@ -229,7 +244,7 @@ class View
                     );
 
                     $xpath = new \DomXPath($domDataViews);
-                    $xpath->registerNamespace("RPI", "http://www.rpi.co.uk/presentation/config/");
+                    $xpath->registerNamespace("RPI", "http://www.rpi.co.uk/presentation/config/views/");
                     
                     $viewConfig = $this->parseRoutes(
                         $xpath,
@@ -251,11 +266,11 @@ class View
                         $this->store->store("PHP_RPI_CONTENT_VIEWS-$file-controller-$id", $controller);
                     }
                     
-                    $this->store->store("PHP_RPI_CONTENT_VIEWS-".$file."-routermap", $router->getMap(), $file);
+                    $this->store->store("PHP_RPI_CONTENT_VIEWS-".$file."-routermap", $router->getMap(), $fileDeps);
 
                     $decorators = $this->parseDecorators($xpath->query("/RPI:views/RPI:decorator"));
 
-                    $this->store->store("PHP_RPI_CONTENT_VIEWS-".$file."-decorators", $decorators, $file);
+                    $this->store->store("PHP_RPI_CONTENT_VIEWS-".$file."-decorators", $decorators, $fileDeps);
                     
                     \RPI\Framework\Helpers\Locking::release($seg);
                 } catch (\Exception $ex) {

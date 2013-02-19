@@ -107,6 +107,21 @@ abstract class Base
                     $domDataConfig = new \DOMDocument();
                     $domDataConfig->load($file);
                     
+                    $fileDeps = $file;
+                    
+                    $xincludes = \RPI\Framework\Helpers\Dom::getElementsByXPath(
+                        $domDataConfig,
+                        "//xi:include[@parse='xml']/@href"
+                    );
+                    if ($xincludes->length > 0) {
+                        $fileDeps = array($fileDeps);
+                        foreach ($xincludes as $xinclude) {
+                            $fileDeps[] = dirname($file)."/".$xinclude->nodeValue;
+                        }
+                    }
+                    
+                    $domDataConfig->xinclude();
+                    
                     \RPI\Framework\Helpers\Dom::validateSchema(
                         $domDataConfig,
                         $this->getSchema()
@@ -116,12 +131,16 @@ abstract class Base
 
                     $config = array(
                         "config" => $this->processConfig(
-                            self::parseTypes(\RPI\Framework\Helpers\Dom::toArray(simplexml_load_file($file))),
+                            self::parseTypes(
+                                \RPI\Framework\Helpers\Dom::toArray(
+                                    simplexml_import_dom($domDataConfig)
+                                )
+                            ),
                             $this->cacheKey
                         )
                     );
-                    
-                    $this->store->store($this->cacheKey, $config, $file);
+
+                    $this->store->store($this->cacheKey, $config, $fileDeps);
 
                     \RPI\Framework\Helpers\Locking::release($seg);
 
