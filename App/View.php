@@ -227,6 +227,8 @@ class View
             try {
                 $seg = \RPI\Framework\Helpers\Locking::lock(__CLASS__);
 
+                $fileDeps = realpath($file);
+
                 try {
                     if (!file_exists($file)) {
                         throw new \RPI\Framework\Exceptions\RuntimeException("Unable to locate '$file'");
@@ -235,8 +237,6 @@ class View
                     $domDataViews = new \DOMDocument();
                     $domDataViews->load($file);
                     
-                    $fileDeps = $file;
-                    
                     $xincludes = \RPI\Framework\Helpers\Dom::getElementsByXPath(
                         $domDataViews,
                         "//xi:include[@parse='xml']/@href"
@@ -244,7 +244,7 @@ class View
                     if ($xincludes->length > 0) {
                         $fileDeps = array($fileDeps);
                         foreach ($xincludes as $xinclude) {
-                            $fileDeps[] = dirname($file)."/".$xinclude->nodeValue;
+                            $fileDeps[] = realpath(dirname($file)."/".$xinclude->nodeValue);
                         }
                     }
                     
@@ -304,7 +304,8 @@ class View
 
                 if ($this->store->isAvailable()) {
                     \RPI\Framework\Exception\Handler::logMessage(
-                        __CLASS__."::parseViewConfig - View data read from '".$file."'",
+                        __CLASS__."::parseViewConfig - View data read from:\n".
+                        (is_array($fileDeps) ? implode("\n", $fileDeps) : $fileDeps),
                         LOG_NOTICE
                     );
                 }

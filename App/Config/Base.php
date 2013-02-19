@@ -107,7 +107,7 @@ abstract class Base
                     $domDataConfig = new \DOMDocument();
                     $domDataConfig->load($file);
                     
-                    $fileDeps = $file;
+                    $fileDeps = realpath($file);
                     
                     $xincludes = \RPI\Framework\Helpers\Dom::getElementsByXPath(
                         $domDataConfig,
@@ -116,7 +116,7 @@ abstract class Base
                     if ($xincludes->length > 0) {
                         $fileDeps = array($fileDeps);
                         foreach ($xincludes as $xinclude) {
-                            $fileDeps[] = dirname($file)."/".$xinclude->nodeValue;
+                            $fileDeps[] = realpath(dirname($file)."/".$xinclude->nodeValue);
                         }
                     }
                     
@@ -146,7 +146,8 @@ abstract class Base
 
                     if ($this->store->isAvailable()) {
                         \RPI\Framework\Exception\Handler::logMessage(
-                            __CLASS__."::".__METHOD__." - Config read from '".$file."'",
+                            __CLASS__."::".__METHOD__." - Config read from:\n".
+                            (is_array($fileDeps) ? implode("\n", $fileDeps) : $fileDeps),
                             LOG_NOTICE
                         );
                     }
