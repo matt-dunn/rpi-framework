@@ -543,17 +543,21 @@ class View
         $options = null;
         $optionElements = $xpath->query("RPI:option", $controllerElement);
         foreach ($optionElements as $option) {
-            $value = $option->getAttribute("value");
-            if ($value == "null") {
-                $value = null;
-            } elseif ($value == "true") {
-                $value = true;
-            } elseif ($value == "false") {
-                $value = false;
-            } elseif (ctype_digit($value)) {
-                $value = (int) $value;
-            } elseif (is_numeric($value)) {
-                $value = (double) $value;
+            if ($option->childNodes->length > 0) {
+                $value = \RPI\Framework\Helpers\Dom::toArray(simplexml_import_dom($option));
+            } else {
+                $value = trim($option->getAttribute("value"));
+                if ($value == "null" || $value == "") {
+                    $value = null;
+                } elseif ($value == "true") {
+                    $value = true;
+                } elseif ($value == "false") {
+                    $value = false;
+                } elseif (ctype_digit($value)) {
+                    $value = (int) $value;
+                } elseif (is_numeric($value)) {
+                    $value = (double) $value;
+                }
             }
             
             if (!isset($options)) {
