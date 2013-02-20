@@ -348,13 +348,6 @@ class Dom
             $elementValue = null;
             $attributes = null;
 
-            $elementName = $name;
-            if (is_numeric($elementName)) {
-                $elementName = $parentElementName;
-            } else {
-                $parentElementName = $name;
-            }
-
             if (is_array($value)) {
                 if (isset($value["@"])) {
                     $attributes = $value["@"];
@@ -362,26 +355,29 @@ class Dom
                 }
 
                 if (isset($value["#"])) {
-                    $elementValue = $value["#"];
+                    $elementValue = self::parseValue($value["#"]);
                     unset($value["#"]);
                 }
             } else {
-                $elementValue = $value;
+                $elementValue = self::parseValue($value);
             }
 
-            if (isset($elementValue) || isset($attributes)) {
-                if (isset($elementValue)) {
-                    $elementValue  = self::parseValue($elementValue);
-                }
-                $element = $parent->addChild($elementName, $elementValue, $namespace);
-
-                if (isset($attributes)) {
-                    foreach ($attributes as $attributeName => $attributeValue) {
-                        $element->addAttribute($attributeName, self::parseValue($attributeValue));
-                    }
-                }
+            if (is_numeric($name)) {
+                $element = $parent->addChild($parentElementName, $elementValue, $namespace);
             } else {
-                $element = $parent;
+                $parentElementName = $name;
+                
+                if (is_array($value) && isset($value[0])) {
+                    $element = $parent;
+                } else {
+                    $element = $parent->addChild($name, $elementValue, $namespace);
+                }
+            }
+
+            if (isset($attributes)) {
+                foreach ($attributes as $attributeName => $attributeValue) {
+                    $element->addAttribute($attributeName, self::parseValue($attributeValue));
+                }
             }
             
             if (is_array($value)) {

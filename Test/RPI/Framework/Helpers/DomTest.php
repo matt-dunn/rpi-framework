@@ -72,6 +72,66 @@ class DomTest extends \RPI\Framework\Test\Base
         $this->assertEquals("test string", $this->xpathText($doc, "/root"));
     }
 
+    public function testDeserialize()
+    {
+        $xml = <<<EOT
+            <option name="model">
+                <row x="moose">
+                    <col>8f0a1c20-2575-440f-b0e8-b5391289f492</col>
+                    <col>a65aa09a-6a23-4654-b7f2-99c90c7a6fb1</col>
+                </row>
+                <row>
+                    <col>db363a40-28e8-462b-82d9-8d3321dc93ee</col>
+                    <col z="true">c700f4a3-15b2-4d85-a528-bf698732e32c</col>
+                    <col>7874d4e2-4111-4009-b591-b443d4048b87</col>
+                </row>
+                <row>
+                    <col>true</col>
+                </row>
+                <item/>
+                <item1 attr1="a" attr2="true" attr3="false" attr4="null"/>
+                <item11 attr1="a" attr2="true" attr3="false" attr4="null"/>
+                <item11 attr1="b" attr2="false" attr3="true" attr4="3" attr5="another">
+                    <item2></item2>
+                    <item3>text</item3>
+                    <item4>text</item4>
+                    <item4>text</item4>
+                    <item5>
+                        text1
+                        <item5 attr="a">text2</item5>
+                        text3
+                    </item5>
+                    <item5>text</item5>
+                    <item5>text</item5>
+                    <item5>text</item5>
+                    <item6 attr1="x1">text</item6>
+                    <item6 attr1="x1" attr2="x2">text</item6>
+                </item11>
+                <item2></item2>
+                <item3>text</item3>
+                <item4>text</item4>
+                <item4>text</item4>
+                <item5>text</item5>
+                <item5>text</item5>
+                <item5>text</item5>
+                <item5>text</item5>
+                <item6 attr1="x1">text</item6>
+                <item6 attr1="x1" attr2="x2">text</item6>
+            </option>
+EOT;
+        $doc = new \DOMDocument();
+        $doc->loadXML($xml);
+        
+        $object = \RPI\Framework\Helpers\Dom::deserialize(simplexml_import_dom($doc));
+        var_dump($object);
+        
+        $docSerialized = \RPI\Framework\Helpers\Dom::serialize($object);
+        var_dump($docSerialized->asXML());
+        
+        $this->assertEqualXMLStructure($doc->documentElement, dom_import_simplexml($docSerialized), true);
+        $this->assertXmlStringEqualsXmlString($doc->saveXML(), $docSerialized->asXML(), true);
+    }
+    
     public function testToXml()
     {
         $obj = (object) array(
