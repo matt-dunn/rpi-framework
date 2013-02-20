@@ -186,6 +186,7 @@ class Dom
         if (is_numeric(substr($elementName, 0, 1))
             || is_numeric($elementName)
             || $elementName == "@"
+            || $elementName == "#"
             || $elementName == "") {
             $elementName = $defaultElementName;
         }
@@ -300,6 +301,83 @@ class Dom
         }
     }
     
+    public static function toXml(array $object, $parentElementName = null, $namespace = null, \SimpleXMLElement $parent = null)
+    {
+        if (!isset($parentElementName)) {
+            if (isset($object["#NAME"])) {
+                $parentElementName = $object["#NAME"];
+            } else {
+                $parentElementName = "root";
+            }
+        }
+        
+        if (isset($object["#NS"])) {
+            $namespace = $object["#NS"];
+            unset($object["#NS"]);
+        }
+        
+        if (!isset($parent)) {
+            $root = new \SimpleXMLElement("<root/>");
+            $parent = $root->addChild($parentElementName, null, $namespace);
+            
+            if (isset($object["@"])) {
+                foreach ($object["@"] as $attributeName => $attributeValue) {
+                    $parent->addAttribute($attributeName, $attributeValue);
+                }
+                
+                unset($object["@"]);
+            }
+        }
+        
+        unset($object["#NAME"]);
+        
+        foreach ($object as $name => $value) {
+            $elementValue = null;
+            $attributes = null;
+
+            $elementName = $name;
+            if (is_numeric($elementName)) {
+                $elementName = $parentElementName;
+            } else {
+                $parentElementName = $name;
+            }
+
+            if (is_array($value)) {
+                if (isset($value["@"])) {
+                    $attributes = $value["@"];
+                    unset($value["@"]);
+                }
+
+                if (isset($value["#"])) {
+                    $elementValue = $value["#"];
+                    unset($value["#"]);
+                }
+            } else {
+                $elementValue = $value;
+            }
+
+            if (isset($elementValue) || isset($attributes)) {
+                if (isset($elementValue)) {
+                    $elementValue  = self::parseValue($elementValue);
+                }
+                $element = $parent->addChild($elementName, $elementValue, $namespace);
+
+                if (isset($attributes)) {
+                    foreach ($attributes as $attributeName => $attributeValue) {
+                        $element->addAttribute($attributeName, self::parseValue($attributeValue));
+                    }
+                }
+            } else {
+                $element = $parent;
+            }
+            
+            if (is_array($value)) {
+                self::toXml($value, $parentElementName, $namespace, $element);
+            }
+        }
+        
+        return $parent;
+    }
     /**
      * 
      * @param \SimpleXMLElement $xml
@@ -352,6 +430,11 @@ class Dom
             
             $parentElement = array("#NAME" => $xml->getName());
             
+            $namespaces = $xml->getNamespaces();
+            if (count($namespaces) > 0) {
+                $parentElement["#NS"] = reset($namespaces);
+            }
+            
             if (count($attributes) > 0) {
                 $parentElement["@"] = $attributes;
             }
@@ -376,6 +459,17 @@ class Dom
             $value = (int) $value;
         } elseif (is_numeric($value)) {
             $value = (double) $value;
+        }
+        
+        return $value;
+    }
+    
+    public static function parseValue($value)
+    {
+        if ($value === null) {
+            $value = "null";
+        } elseif (is_bool($value)) {
+            $value = ($value === true ? "true" : "false");
         }
         
         return $value;
