@@ -72,7 +72,7 @@ class DomTest extends \RPI\Framework\Test\Base
         $this->assertEquals("test string", $this->xpathText($doc, "/root"));
     }
 
-    public function testSerializeToDom()
+    public function testToXml()
     {
         $obj = (object) array(
             "test-property-1" => "value 1",
@@ -94,7 +94,7 @@ class DomTest extends \RPI\Framework\Test\Base
             "test-propert-value-encoding" => "value & ' \" £ < >",
         );
 
-        $result = \RPI\Framework\Helpers\Dom::serializeToDom(
+        $result = \RPI\Framework\Helpers\Dom::toXml(
             $obj,
             array(
             "rootName" => "test",

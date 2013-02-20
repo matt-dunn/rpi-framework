@@ -131,7 +131,7 @@ abstract class Base
 
                     $config = array(
                         "config" => $this->processConfig(
-                            \RPI\Framework\Helpers\Dom::toArray(
+                            \RPI\Framework\Helpers\Dom::deserialize(
                                 simplexml_import_dom($domDataConfig)
                             ),
                             $this->cacheKey

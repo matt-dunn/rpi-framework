@@ -54,7 +54,7 @@ class ObjectTest extends \RPI\Framework\Test\Base
 
         var_dump(unserialize($s));
 
-        var_dump(\RPI\Framework\Helpers\Dom::serializeToDom(
+        var_dump(\RPI\Framework\Helpers\Dom::toXml(
             $o,
             array()
         )->saveXML());
@@ -92,7 +92,7 @@ class ObjectTest extends \RPI\Framework\Test\Base
         var_dump($u);
         var_dump($u->prop4->saveXML());
 
-        var_dump(\RPI\Framework\Helpers\Dom::serializeToDom(
+        var_dump(\RPI\Framework\Helpers\Dom::toXml(
             $o,
             array()
         )->saveXML());

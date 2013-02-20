@@ -544,7 +544,7 @@ class View
         $optionElements = $xpath->query("RPI:option", $controllerElement);
         foreach ($optionElements as $option) {
             if ($option->childNodes->length > 0) {
-                $value = \RPI\Framework\Helpers\Dom::toArray(simplexml_import_dom($option));
+                $value = \RPI\Framework\Helpers\Dom::deserialize(simplexml_import_dom($option));
             } else {
                 $value = trim($option->getAttribute("value"));
                 if ($value == "null" || $value == "") {
@@ -569,7 +569,7 @@ class View
         $viewRendition = null;
         $viewRenditionElements = $xpath->query("RPI:viewRendition", $controllerElement);
         if ($viewRenditionElements->length > 0) {
-            $viewRendition = \RPI\Framework\Helpers\Dom::toArray(simplexml_import_dom($viewRenditionElements->item(0)));
+            $viewRendition = \RPI\Framework\Helpers\Dom::deserialize(simplexml_import_dom($viewRenditionElements->item(0)));
         }
         
         $controller = array(

@@ -139,7 +139,7 @@ class Dom
      *
      * @author Matt Dunn
      */
-    public static function serializeToDom($o, $serializerOptions, \DomElement $node = null, $namespace = null)
+    public static function toXml($o, $serializerOptions, \DomElement $node = null, $namespace = null)
     {
         if (!isset($o)) {
             return false;
@@ -310,7 +310,7 @@ class Dom
      * 
      * @return \SimpleXMLElement
      */
-    public static function toXml(
+    public static function serialize(
         array $object,
         $parentElementName = null,
         $namespace = null,
@@ -385,7 +385,7 @@ class Dom
             }
             
             if (is_array($value)) {
-                self::toXml($value, $parentElementName, $namespace, $element);
+                self::serialize($value, $parentElementName, $namespace, $element);
             }
         }
         
@@ -398,7 +398,7 @@ class Dom
      * 
      * @return array
      */
-    public static function toArray(\SimpleXMLElement $xml, \SimpleXMLElement $parent = null)
+    public static function deserialize(\SimpleXMLElement $xml, \SimpleXMLElement $parent = null)
     {
         $children = array();
         
@@ -417,7 +417,7 @@ class Dom
                 $children[$elementName] = array();
             }
             
-            $element = array_merge($element, self::toArray($child, $xml));
+            $element = array_merge($element, self::deserialize($child, $xml));
             
             if (trim((string)$child) != "") {
                 if (count($element) == 0) {
