@@ -569,7 +569,9 @@ class View
         $viewRendition = null;
         $viewRenditionElements = $xpath->query("RPI:viewRendition", $controllerElement);
         if ($viewRenditionElements->length > 0) {
-            $viewRendition = \RPI\Framework\Helpers\Dom::deserialize(simplexml_import_dom($viewRenditionElements->item(0)));
+            $viewRendition = \RPI\Framework\Helpers\Dom::deserialize(
+                simplexml_import_dom($viewRenditionElements->item(0))
+            );
         }
         
         $controller = array(
