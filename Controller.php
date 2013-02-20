@@ -156,6 +156,10 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
      */
     protected function setup($id, \RPI\Framework\App $app, array $options = null)
     {
+        if (!isset($id) || $id == "") {
+            throw new \RPI\Framework\Exceptions\Exception("No valid ID passed to '".get_called_class()."'");
+        }
+        
         $this->id = $id;
         $this->app = $app;
         $this->type = get_called_class();
