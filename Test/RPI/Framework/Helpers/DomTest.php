@@ -88,6 +88,9 @@ class DomTest extends \RPI\Framework\Test\Base
                 <row>
                     <col>true</col>
                 </row>
+                <row>
+                    <col id="1b519541-24a2-40af-9fe3-4d87fe39b026"/>
+                </row>
                 <item/>
                 <item1 attr1="a" attr2="true" attr3="false" attr4="null"/>
                 <item11 attr1="a" attr2="true" attr3="false" attr4="null"/>
@@ -129,7 +132,7 @@ EOT;
         var_dump($docSerialized->asXML());
         
         $this->assertEqualXMLStructure($doc->documentElement, dom_import_simplexml($docSerialized), true);
-        $this->assertXmlStringEqualsXmlString($doc->saveXML(), $docSerialized->asXML(), true);
+        $this->assertXmlStringEqualsXmlString($doc->saveXML(), $docSerialized->asXML());
     }
     
     public function testToXml()
