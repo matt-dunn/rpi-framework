@@ -324,12 +324,12 @@ class Dom
             }
         }
         
-        if (isset($object["#NS"])) {
-            $namespace = $object["#NS"];
-            unset($object["#NS"]);
-        }
-        
         if (!isset($parent)) {
+            if (isset($object["#NS"])) {
+                $namespace = $object["#NS"];
+                unset($object["#NS"]);
+            }
+
             $root = new \SimpleXMLElement("<root/>");
             $parent = $root->addChild($parentElementName, null, $namespace);
             
@@ -349,6 +349,11 @@ class Dom
             $attributes = null;
 
             if (is_array($value)) {
+                if (isset($value["#NS"])) {
+                    $namespace = $value["#NS"];
+                    unset($value["#NS"]);
+                }
+
                 if (isset($value["@"])) {
                     $attributes = $value["@"];
                     unset($value["@"]);
@@ -401,12 +406,27 @@ class Dom
         foreach ($xml->children() as $elementName => $child) {
             $element = array();
             
+            $parentElement = $child->xpath("parent::*");
+            if (isset($parentElement) && $parentElement !== false) {
+                $parentElement = $parentElement[0];
+            } else {
+                $parentElement = null;
+            }
+            
             $attributes = array();
             foreach ($child->attributes() as $name => $value) {
                 $attributes[$name] = self::parseType($value);
             }
             if (count($attributes) > 0) {
                 $element["@"] = $attributes;
+            }
+            
+            $namespaces = $child->getNamespaces();
+            if (count($namespaces) > 0) {
+                $namespace = reset($namespaces);
+                if (!isset($parent) || $namespace != reset($parentElement->getNamespaces())) {
+                    $element["#NS"] = $namespace;
+                }
             }
             
             if (!isset($children[$elementName])) {

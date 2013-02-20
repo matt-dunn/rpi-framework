@@ -91,6 +91,15 @@ class DomTest extends \RPI\Framework\Test\Base
                 <row>
                     <col id="1b519541-24a2-40af-9fe3-4d87fe39b026"/>
                 </row>
+                <row xmlns="http://www.rpi.co.uk/presentation/config/views/model/">
+                    <col id="1">
+                        <component id="8f0a1c20-2575-440f-b0e8-b5391289f492"/>
+                    </col>
+                    <col id="2">
+                        <component id="fe35fdc5-d9d9-4e86-a50b-c5492fba1de2"/>
+                        <component id="a65aa09a-6a23-4654-b7f2-99c90c7a6fb1"/>
+                    </col>
+                </row>
                 <item/>
                 <item1 attr1="a" attr2="true" attr3="false" attr4="null"/>
                 <item11 attr1="a" attr2="true" attr3="false" attr4="null"/>
