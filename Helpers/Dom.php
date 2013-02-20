@@ -301,8 +301,21 @@ class Dom
         }
     }
     
-    public static function toXml(array $object, $parentElementName = null, $namespace = null, \SimpleXMLElement $parent = null)
-    {
+    /**
+     * 
+     * @param array $object
+     * @param string $parentElementName
+     * @param string $namespace
+     * @param \SimpleXMLElement $parent
+     * 
+     * @return \SimpleXMLElement
+     */
+    public static function toXml(
+        array $object,
+        $parentElementName = null,
+        $namespace = null,
+        \SimpleXMLElement $parent = null
+    ) {
         if (!isset($parentElementName)) {
             if (isset($object["#NAME"])) {
                 $parentElementName = $object["#NAME"];
@@ -381,6 +394,7 @@ class Dom
     /**
      * 
      * @param \SimpleXMLElement $xml
+     * @param \SimpleXMLElement $parent
      * 
      * @return array
      */
@@ -445,6 +459,13 @@ class Dom
         return $children;
     }
     
+    /**
+     * Cast a value to its type
+     * 
+     * @param mixed $value
+     * 
+     * @return mixed
+     */
     public static function parseType($value)
     {
         $value = trim($value);
@@ -464,6 +485,13 @@ class Dom
         return $value;
     }
     
+    /**
+     * Convert a type to a string representation
+     * 
+     * @param mixed $value
+     * 
+     * @return string
+     */
     public static function parseValue($value)
     {
         if ($value === null) {
@@ -472,7 +500,7 @@ class Dom
             $value = ($value === true ? "true" : "false");
         }
         
-        return $value;
+        return (string)$value;
     }
 
     /**

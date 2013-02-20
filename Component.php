@@ -169,7 +169,9 @@ abstract class Component extends \RPI\Framework\Controller\HTML
                 
                 if (!$this->isDraggable) {
                     $parent = $this->getParent();
-                    $this->isDraggable = !$this->editMode && (isset($parent) && $parent instanceof \RPI\Framework\Component\IDraggableContainer);
+                    $this->isDraggable =
+                        (!$this->editMode
+                            && (isset($parent) && $parent instanceof \RPI\Framework\Component\IDraggableContainer));
                 }
             }
 
