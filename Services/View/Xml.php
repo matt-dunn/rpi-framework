@@ -774,12 +774,13 @@ class Xml implements IView
             try {
                 $modifiedTime = filemtime($this->file);
                 $domDataViews->save($this->file);
-                touch($this->file, $modifiedTime);
+                // Touch the file to a second earlier to fix any issue with time precision
+                touch($this->file, $modifiedTime - 1);
                 
                 $xpath = new \DomXPath($domDataViews);
                 $xpath->registerNamespace("RPI", "http://www.rpi.co.uk/presentation/config/views/");
                 $componentData = $this->parseController(null, $xpath, $component);
-                
+
                 $this->store->store(
                     "PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-$uuid",
                     $componentData["controller"]
