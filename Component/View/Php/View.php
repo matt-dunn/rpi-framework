@@ -63,6 +63,10 @@ EOT;
                         $className .= " component-draggable";
                 }
                 
+                if ($controller instanceof \RPI\Framework\Component\IDraggableContainer) {
+                        $className .= " draggable-container";
+                }
+                
                 if ($controller->isDraggable) {
                     $sectionOptionsHTML .= <<<EOT
             <div class="drag-move"> </div>

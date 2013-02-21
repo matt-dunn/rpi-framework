@@ -14,7 +14,7 @@ RPI._("component").drag = {
     jQuery : $,
     
     settings : {
-        columns : '.RPI_Components_MultiColumn_Component .mc-c',
+        columns : '.component-editmode.draggable-container .draggable-section',
         widgetSelector: '.component',
         handleSelector: '.drag-move',
         widgetDefault : {
@@ -101,4 +101,9 @@ RPI._("component").drag = {
   
 };
 
-RPI.component.drag.init();
+jQuery(document).on(
+    "load.RPI.component.edit",
+    function(e, component, option) {
+        RPI.component.drag.init();
+    }
+);
