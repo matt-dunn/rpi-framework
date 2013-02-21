@@ -306,48 +306,33 @@ RPI.core.locale = (function() {
 
 RPI.DOM.helpers = (function() {
 	return {
-		makeSameHeight : function(elements, offsetIndex, offsetLength) {
-			if(!offsetIndex) {
-				offsetIndex = 0;
-			}
-			if(!offsetLength) {
-				offsetLength = elements.length;
-			} else {
-				offsetLength += offsetIndex;
-			}
+		makeSameHeight : function(columns) {
 			var maxHeight = 0;
-			for(var i = offsetIndex; i < offsetLength; i++) {
-				if(elements[i]) {
-					elementHeight = jQuery(elements[i]).height();
+            
+            columns.each(
+                function() {
+					var elementHeight = jQuery(this).height();
 					if(elementHeight > maxHeight) {
 						maxHeight = elementHeight;
 					}
-				}
-			}
-
-			for(var i = offsetIndex; i < offsetLength; i++) {
-				jQuery(elements[i]).height(maxHeight);
-			}
+                }
+            );
+                
+            columns.each(
+                function() {
+//    				jQuery(this).height(maxHeight);
+    				jQuery(this).css("min-height", maxHeight + "px");
+                }
+            );
 		},
-		makeRowSameHeight : function(elements, columns) {
-			if(elements && elements.length > 0) {
-				if(!columns) {
-					var matches = elements[0].className.match(/columns-(\d*)/i);
-					if(matches && matches.length > 1) {
-						columns = parseInt(matches[1]);
-					} else {
-						columns = 1;
-					}
-				}
-
-				if(isNaN(columns) || columns < 1) {
-					columns = 1;
-				}
-
-				for(var i = 0; i < elements.length; i += columns) {
-					this.makeSameHeight(elements, i, columns);
-				}
-			}
+        
+		makeRowSameHeight : function(rows, columnClassSelector) {
+            var _self = this;
+            rows.each(
+                function() {
+                    _self.makeSameHeight(jQuery(this).find(columnClassSelector));
+                }
+            );
 		}
 	};
 })();
