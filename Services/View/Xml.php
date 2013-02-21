@@ -1,13 +1,13 @@
 <?php
 
-namespace RPI\Framework\App;
+namespace RPI\Framework\Services\View;
 
 /**
  * Helper functions to work with view config file
  *
  * @author Matt Dunn
  */
-class View
+class Xml implements IView
 {
     /**
      *
@@ -62,7 +62,9 @@ class View
      * @param \RPI\Framework\App $app
      * @param string $type
      * @param array $controllerOptions
+     * 
      * @return \RPI\Framework\Controller|boolean
+     * 
      * @throws \Exception
      */
     public function createControllerByUUID(
@@ -86,6 +88,12 @@ class View
         return false;
     }
     
+    /**
+     * 
+     * @param \stdClass $decoratorDetails
+     * 
+     * @return boolean
+     */
     public function getDecoratorView(\stdClass $decoratorDetails)
     {
         if (!isset($this->decoratorData)) {
@@ -252,7 +260,7 @@ class View
                     
                     \RPI\Framework\Helpers\Dom::validateSchema(
                         $domDataViews,
-                        __DIR__."/../../Schemas/Conf/Views.2.0.0.xsd"
+                        __DIR__."/../../../Schemas/Conf/Views.2.0.0.xsd"
                     );
                     
                     // Clear the view keys in the store
@@ -318,8 +326,10 @@ class View
     }
     
     /**
-     * Normalize all order information in ["components"] collections
+     * Normalize order information in ["components"] collections
+     * 
      * @param array $componentList
+     * 
      * @return array
      */
     private function normalizeComponentList(array $componentList)

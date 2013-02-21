@@ -45,7 +45,7 @@ class App extends \RPI\Framework\Helpers\Object
     
     /**
      *
-     * @var \RPI\Framework\App\View 
+     * @var \RPI\Framework\Services\View\IView 
      */
     private $view = null;
     
@@ -88,7 +88,7 @@ class App extends \RPI\Framework\Helpers\Object
     /**
      * 
      * @param string $webConfigFile
-     * @param \RPI\Framework\App\View $view
+     * @param \RPI\Framework\Services\View\IView $view
      * @param \RPI\Framework\Cache\IData $dataStore
      * @param \RPI\Framework\App\Security $security
      * @param \RPI\Framework\App\Session $session
@@ -96,7 +96,7 @@ class App extends \RPI\Framework\Helpers\Object
      */
     public function __construct(
         $webConfigFile,
-        \RPI\Framework\App\View $view = null,
+        \RPI\Framework\Services\View\IView $view = null,
         \RPI\Framework\Cache\IData $dataStore = null,
         \RPI\Framework\App\Security $security = null,
         \RPI\Framework\App\Session $session = null,
@@ -180,12 +180,12 @@ class App extends \RPI\Framework\Helpers\Object
     
     /**
      * 
-     * @return \RPI\Framework\App\View
+     * @return \RPI\Framework\Services\View\IView
      */
     public function getView()
     {
         if (!isset($this->view)) {
-            $this->view = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\App\View");
+            $this->view = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\Services\View\IView");
         }
         return $this->view;
     }
