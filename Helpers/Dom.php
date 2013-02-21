@@ -581,7 +581,7 @@ class Dom
      * @param \DOMDocument $doc
      * @return \DomXPath
      */
-    public static function getXPath(\DOMDocument $doc)
+    public static function getXPath(\DOMDocument $doc, array $namespaces = null)
     {
         $xpath = new \DomXPath($doc);
         $xpath->registerNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
@@ -589,6 +589,12 @@ class Dom
         $xpath->registerNamespace("services", "http://www.rpi.co.uk/presentation/services");
         $xpath->registerNamespace("commonDocument", "http://www.rpi.co.uk/presentation/common/document");
         $xpath->registerNamespace("xhtml", "http://www.w3.org/1999/xhtml");
+        
+        if (isset($namespaces)) {
+            foreach ($namespaces as $prefix => $namespace) {
+                $xpath->registerNamespace($prefix, $namespace);
+            }
+        }
 
         return $xpath;
     }
@@ -599,9 +605,9 @@ class Dom
      * @param string $xpath
      * @return \DOMNodeList
      */
-    public static function getElementsByXPath(\DOMDocument $doc, $xpath)
+    public static function getElementsByXPath(\DOMNode $doc, $xpath, array $namespaces = null)
     {
-        return self::getXPath($doc)->evaluate($xpath);
+        return self::getXPath($doc->ownerDocument, $namespaces)->evaluate($xpath, $doc);
     }
     
     /**

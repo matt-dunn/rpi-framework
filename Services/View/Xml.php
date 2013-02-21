@@ -246,7 +246,7 @@ class Xml implements IView
                     $domDataViews->load($file);
                     
                     $xincludes = \RPI\Framework\Helpers\Dom::getElementsByXPath(
-                        $domDataViews,
+                        $domDataViews->documentElement,
                         "//xi:include[@parse='xml']/@href"
                     );
                     if ($xincludes->length > 0) {
@@ -723,5 +723,58 @@ class Xml implements IView
         }
         
         return $decorators;
+    }
+
+    public function updateComponentModel($uuid, array $model)
+    {
+        $domDataViews = new \DOMDocument();
+        $domDataViews->formatOutput = true;
+        $domDataViews->preserveWhiteSpace = false;
+        $domDataViews->load($this->file);
+        
+        $components = \RPI\Framework\Helpers\Dom::getElementsByXPath(
+            $domDataViews->documentElement,
+            "/config:views//config:component[@id = '$uuid']",
+            array(
+                "config" => "http://www.rpi.co.uk/presentation/config/views/"
+            )
+        );
+
+        if ($components->length > 0) {
+            $component = $components->item(0);
+            
+            $optionsModel = \RPI\Framework\Helpers\Dom::getElementsByXPath(
+                $component,
+                "./config:option[@name='model']",
+                array(
+                    "config" => "http://www.rpi.co.uk/presentation/config/views/"
+                )
+            );
+            
+            if ($optionsModel->length > 0) {
+                $optionsModel->item(0)->parentNode->removeChild($optionsModel->item(0));
+            }
+            
+            $modelXml = dom_import_simplexml(\RPI\Framework\Helpers\Dom::serialize($model));
+            
+            $option = $domDataViews->createElementNS("http://www.rpi.co.uk/presentation/config/views/", "option");
+            $option->setAttribute("name", "model");
+            $options = \RPI\Framework\Helpers\Dom::getElementsByXPath(
+                $component,
+                "./*[1]"
+            );
+            $component->insertBefore($option, $options->item(0));
+
+            foreach ($modelXml->childNodes as $child) {
+                $importNode = $domDataViews->importNode($child, true);
+                $option->appendChild($importNode);
+            }
+
+            $domDataViews->save($this->file);
+            
+            return true;
+        }
+        
+        return false;
     }
 }

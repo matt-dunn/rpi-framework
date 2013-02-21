@@ -35,4 +35,13 @@ interface IView
      * @return boolean
      */
     public function getDecoratorView(\stdClass $decoratorDetails);
+    
+    /**
+     * 
+     * @param string $uuid
+     * @param array $model
+     * 
+     * @return boolean
+     */
+    public function updateComponentModel($uuid, array $model);
 }

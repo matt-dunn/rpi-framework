@@ -110,7 +110,7 @@ abstract class Base
                     $fileDeps = realpath($file);
                     
                     $xincludes = \RPI\Framework\Helpers\Dom::getElementsByXPath(
-                        $domDataConfig,
+                        $domDataConfig->documentElement,
                         "//xi:include[@parse='xml']/@href"
                     );
                     if ($xincludes->length > 0) {
