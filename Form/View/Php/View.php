@@ -75,9 +75,8 @@ EOT;
                         <input type="hidden" name="formName" value="{$controller->id}" />
                         {$stateFormItem}
                     </div>
-                    {$validatorRendition}
-
                     {$this->renderFormView($model, $controller, $options)}
+                    {$validatorRendition}
                 </form>
 EOT;
         }

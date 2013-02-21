@@ -45,6 +45,8 @@
                     {/if}
                 {/foreach}
             {/capture}
+
+            {block name="formRendition"}{/block}
             
             <script type="text/javascript">
             //<![CDATA[
@@ -55,8 +57,6 @@
                 });
             // ]]>
             </script>
-
-            {block name="formRendition"}{/block}
         </form>
     {/if}
 {/block}
