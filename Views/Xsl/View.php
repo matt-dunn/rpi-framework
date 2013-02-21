@@ -61,7 +61,7 @@ class View implements \RPI\Framework\Views\IView
             $defaultTagName = "item";
         }
 
-        $model = \RPI\Framework\Helpers\Dom::toXml(
+        $model = \RPI\Framework\Helpers\Dom::serializeObject(
             $controller,
             array(
                 "rootName" => $rootName,

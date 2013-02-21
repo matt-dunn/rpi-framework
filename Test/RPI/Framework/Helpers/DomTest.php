@@ -72,6 +72,65 @@ class DomTest extends \RPI\Framework\Test\Base
         $this->assertEquals("test string", $this->xpathText($doc, "/root"));
     }
 
+    public function testSerialize()
+    {
+        $simpleArray = array(
+            1, 2, 3, array(4, 5, 6)
+        );
+        
+        $xml = \RPI\Framework\Helpers\Dom::serialize($simpleArray);
+        var_dump($xml->asXML());
+        
+        $array = \RPI\Framework\Helpers\Dom::deserialize($xml);
+        var_dump($array);
+        
+        unset($array["#NAME"]);
+        
+        $this->assertEquals($simpleArray, $array);
+        
+        $simpleArray = array(
+            "a", "b", "c", array("d", "e", "f")
+        );
+        
+        $xml = \RPI\Framework\Helpers\Dom::serialize($simpleArray);
+        var_dump($xml->asXML());
+        
+        $array = \RPI\Framework\Helpers\Dom::deserialize($xml);
+        var_dump($array);
+        
+        unset($array["#NAME"]);
+        
+        $this->assertEquals($simpleArray, $array);
+        
+        $simpleArray = array(
+            "a" => 1, "b" => "b2", "c" => array("d", "e", "f")
+        );
+        
+        $xml = \RPI\Framework\Helpers\Dom::serialize($simpleArray);
+        var_dump($xml->asXML());
+        
+        $array = \RPI\Framework\Helpers\Dom::deserialize($xml);
+        var_dump($array);
+        
+        unset($array["#NAME"]);
+        
+        $this->assertEquals($simpleArray, $array);
+        
+        $simpleArray = array(
+            "a" => 1, "b" => "b2", "c" => array("d" => true, "e" => "ee", "f" => 3.1415)
+        );
+        
+        $xml = \RPI\Framework\Helpers\Dom::serialize($simpleArray);
+        var_dump($xml->asXML());
+        
+        $array = \RPI\Framework\Helpers\Dom::deserialize($xml);
+        var_dump($array);
+        
+        unset($array["#NAME"]);
+        
+        $this->assertEquals($simpleArray, $array);
+    }
+    
     public function testDeserialize()
     {
         $xml = <<<EOT
@@ -142,9 +201,60 @@ EOT;
         
         $this->assertEqualXMLStructure($doc->documentElement, dom_import_simplexml($docSerialized), true);
         $this->assertXmlStringEqualsXmlString($doc->saveXML(), $docSerialized->asXML());
+        
+        $xml = <<<EOT
+            <items>
+                <item>1</item>
+                <item>2</item>
+                <item>3</item>
+            </items>
+EOT;
+        $doc = new \DOMDocument();
+        $doc->loadXML($xml);
+        
+        $object = \RPI\Framework\Helpers\Dom::deserialize(simplexml_import_dom($doc));
+        var_dump($object);
+        
+        $docSerialized = \RPI\Framework\Helpers\Dom::serialize($object);
+        var_dump($docSerialized->asXML());
+        
+        $this->assertEqualXMLStructure($doc->documentElement, dom_import_simplexml($docSerialized), true);
+        $this->assertXmlStringEqualsXmlString($doc->saveXML(), $docSerialized->asXML());
+        
+        $xml = <<<EOT
+            <items attr="1"/>
+EOT;
+        $doc = new \DOMDocument();
+        $doc->loadXML($xml);
+        
+        $object = \RPI\Framework\Helpers\Dom::deserialize(simplexml_import_dom($doc));
+        var_dump($object);
+        
+        $docSerialized = \RPI\Framework\Helpers\Dom::serialize($object);
+        var_dump($docSerialized->asXML());
+        
+        $this->assertEqualXMLStructure($doc->documentElement, dom_import_simplexml($docSerialized), true);
+        $this->assertXmlStringEqualsXmlString($doc->saveXML(), $docSerialized->asXML());
+        
+        $xml = <<<EOT
+            <items attr="1">
+                <item attr2="2"/>
+            </items>
+EOT;
+        $doc = new \DOMDocument();
+        $doc->loadXML($xml);
+        
+        $object = \RPI\Framework\Helpers\Dom::deserialize(simplexml_import_dom($doc));
+        var_dump($object);
+        
+        $docSerialized = \RPI\Framework\Helpers\Dom::serialize($object);
+        var_dump($docSerialized->asXML());
+        
+        $this->assertEqualXMLStructure($doc->documentElement, dom_import_simplexml($docSerialized), true);
+        $this->assertXmlStringEqualsXmlString($doc->saveXML(), $docSerialized->asXML());
     }
     
-    public function testToXml()
+    public function testSerializeObject()
     {
         $obj = (object) array(
             "test-property-1" => "value 1",
@@ -166,7 +276,7 @@ EOT;
             "test-propert-value-encoding" => "value & ' \" £ < >",
         );
 
-        $result = \RPI\Framework\Helpers\Dom::toXml(
+        $result = \RPI\Framework\Helpers\Dom::serializeObject(
             $obj,
             array(
             "rootName" => "test",

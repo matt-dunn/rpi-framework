@@ -139,7 +139,7 @@ class Dom
      *
      * @author Matt Dunn
      */
-    public static function toXml($o, $serializerOptions, \DomElement $node = null, $namespace = null)
+    public static function serializeObject($o, $serializerOptions, \DomElement $node = null, $namespace = null)
     {
         if (!isset($o)) {
             return false;
@@ -320,7 +320,7 @@ class Dom
             if (isset($object["#NAME"])) {
                 $parentElementName = $object["#NAME"];
             } else {
-                $parentElementName = "root";
+                $parentElementName = "_root";
             }
         }
         
@@ -340,6 +340,10 @@ class Dom
                 
                 unset($object["@"]);
             }
+        }
+        
+        if ($parentElementName == "_root") {
+            $parentElementName = "_item";
         }
         
         unset($object["#NAME"]);
@@ -424,13 +428,16 @@ class Dom
             $namespaces = $child->getNamespaces();
             if (count($namespaces) > 0) {
                 $namespace = reset($namespaces);
-                if (!isset($parent) || $namespace != reset($parentElement->getNamespaces())) {
+                $parentNamespaces = $parentElement->getNamespaces();
+                if (!isset($parent) || $namespace != reset($parentNamespaces)) {
                     $element["#NS"] = $namespace;
                 }
             }
             
-            if (!isset($children[$elementName])) {
+            if (!isset($children[$elementName]) && substr($elementName, 0, 1) != "_") {
                 $children[$elementName] = array();
+            } elseif (!isset($children)) {
+                $children = array();
             }
             
             $element = array_merge($element, self::deserialize($child, $xml));
@@ -443,11 +450,15 @@ class Dom
                 }
             }
             
-            $children[$elementName][] = $element;
+            if (substr($elementName, 0, 1) != "_") {
+                $children[$elementName][] = $element;
+            } else {
+                $children[] = $element;
+            }
         }
         
         foreach ($children as $key => $child) {
-            if (count($child) == 1) {
+            if (is_array($child) && count($child) == 1) {
                 $children[$key] = $child[0];
             }
         }
@@ -458,7 +469,11 @@ class Dom
                 $attributes[$name] = trim($value);
             }
             
-            $parentElement = array("#NAME" => $xml->getName());
+            if (substr($xml->getName(), 0, 1) != "_") {
+                $parentElement = array("#NAME" => $xml->getName());
+            } else {
+                $parentElement = array();
+            }
             
             $namespaces = $xml->getNamespaces();
             if (count($namespaces) > 0) {
@@ -497,7 +512,7 @@ class Dom
         } elseif (is_numeric($value)) {
             $value = (double) $value;
         }
-        
+
         return $value;
     }
     
