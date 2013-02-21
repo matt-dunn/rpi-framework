@@ -544,8 +544,12 @@ class Xml implements IView
         );
     }
     
-    private function parseController($controllerUUID, \DOMXPath $xpath, \DOMNode $controllerElement)
-    {
+    private function parseController(
+        $controllerUUID,
+        \DOMXPath $xpath,
+        \DOMNode $controllerElement,
+        $parseChildComponents = true
+    ) {
         if (!isset($controllerUUID)) {
             $controllerUUID = $controllerElement->getAttribute("id");
         }
@@ -663,23 +667,26 @@ class Xml implements IView
             $controller["order"] = $controllerElement->getAttribute("order");
         }
         
-        $components = array();
-        $childComponentElements = $xpath->query("RPI:component", $controllerElement);
-        if ($childComponentElements->length > 0) {
-            $controller["components"] = array();
-            foreach ($childComponentElements as $childComponentElement) {
-                $childController = $this->parseController(null, $xpath, $childComponentElement);
-                
-                $order = 1;
-                if (isset($childController["controller"]["order"])) {
-                    $order = $childController["controller"]["order"];
+        $components = null;
+        if ($parseChildComponents) {
+            $components = array();
+            $childComponentElements = $xpath->query("RPI:component", $controllerElement);
+            if ($childComponentElements->length > 0) {
+                $controller["components"] = array();
+                foreach ($childComponentElements as $childComponentElement) {
+                    $childController = $this->parseController(null, $xpath, $childComponentElement);
+
+                    $order = 1;
+                    if (isset($childController["controller"]["order"])) {
+                        $order = $childController["controller"]["order"];
+                    }
+
+                    $controller["components"][$order][] = $childController["controller"]["id"];
+
+                    $components = array_merge($components, $childController["components"]);
+
+                    $components[$childController["controller"]["id"]] = $childController["controller"];
                 }
-
-                $controller["components"][$order][] = $childController["controller"]["id"];
-
-                $components = array_merge($components, $childController["components"]);
-
-                $components[$childController["controller"]["id"]] = $childController["controller"];
             }
         }
         
@@ -779,7 +786,7 @@ class Xml implements IView
                 
                 $xpath = new \DomXPath($domDataViews);
                 $xpath->registerNamespace("RPI", "http://www.rpi.co.uk/presentation/config/views/");
-                $componentData = $this->parseController(null, $xpath, $component);
+                $componentData = $this->parseController(null, $xpath, $component, false);
 
                 $this->store->store(
                     "PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-$uuid",
