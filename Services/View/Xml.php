@@ -770,7 +770,25 @@ class Xml implements IView
                 $option->appendChild($importNode);
             }
 
-            $domDataViews->save($this->file);
+            $seg = \RPI\Framework\Helpers\Locking::lock(__CLASS__);
+            try {
+                $modifiedTime = filemtime($this->file);
+                $domDataViews->save($this->file);
+                touch($this->file, $modifiedTime);
+                
+                $xpath = new \DomXPath($domDataViews);
+                $xpath->registerNamespace("RPI", "http://www.rpi.co.uk/presentation/config/views/");
+                $componentData = $this->parseController(null, $xpath, $component);
+                
+                $this->store->store(
+                    "PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-$uuid",
+                    $componentData["controller"]
+                );
+            } catch (\Exception $ex) {
+                \RPI\Framework\Helpers\Locking::release($seg);
+                throw $ex;
+            }
+            \RPI\Framework\Helpers\Locking::release($seg);
             
             return true;
         }
