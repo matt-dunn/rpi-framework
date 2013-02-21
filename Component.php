@@ -161,6 +161,10 @@ abstract class Component extends \RPI\Framework\Controller\HTML
             if (!$this->validateCache()) {
                 $this->model = $this->getModel();
                 
+                if ($this->editable && !$this instanceof \RPI\Framework\Component\IEdit) {
+                    $this->editable = false;
+                }
+                
                 if (isset($this->acl)
                     && $this->editable
                     && $this->model instanceof \RPI\Framework\App\Security\Acl\Model\IDomainObject) {
