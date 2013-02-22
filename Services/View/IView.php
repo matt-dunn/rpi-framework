@@ -48,4 +48,10 @@ interface IView
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $optionName = "model"
     );
+    
+    /**
+     * 
+     * @param \RPI\Framework\Component $component
+     */
+    public function getComponentTimestamp(\RPI\Framework\Component $component);
 }

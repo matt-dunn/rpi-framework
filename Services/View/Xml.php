@@ -54,7 +54,7 @@ class Xml implements IView
         $this->file = \RPI\Framework\Helpers\Utils::buildFullPath($configFile);
         $this->acl = $acl;
         
-        $this->parseViewConfig();
+        $this->router = $this->parseViewConfig();
     }
     
     /**
@@ -250,11 +250,15 @@ class Xml implements IView
         $router = new \RPI\Framework\App\Router();
 
         $file = $this->file;
-        
-        $routerMap = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-".$file."-routermap");
-        
-        if ($routerMap !== false) {
-            $router->setMap($routerMap);
+
+        $config = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-".$file);
+
+        if ($config !== false) {
+            $routerMap = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-".$file."-routermap");
+
+            if ($routerMap !== false) {
+                $router->setMap($routerMap);
+            }
         } else {
             try {
                 $seg = \RPI\Framework\Helpers\Locking::lock(__CLASS__);
@@ -268,25 +272,12 @@ class Xml implements IView
 
                     $domDataViews = new \DOMDocument();
                     $domDataViews->load($file);
-                    
-                    $xincludes = \RPI\Framework\Helpers\Dom::getElementsByXPath(
-                        $domDataViews->documentElement,
-                        "//xi:include[@parse='xml']/@href"
-                    );
-                    if ($xincludes->length > 0) {
-                        $fileDeps = array($fileDeps);
-                        foreach ($xincludes as $xinclude) {
-                            $fileDeps[] = realpath(dirname($file)."/".$xinclude->nodeValue);
-                        }
-                    }
-                    
-                    $domDataViews->xinclude();
-                    
+
                     \RPI\Framework\Helpers\Dom::validateSchema(
                         $domDataViews,
                         __DIR__."/../../../Schemas/Conf/Views.2.0.0.xsd"
                     );
-                    
+
                     // Clear the view keys in the store
                     if ($this->store->deletePattern(
                         "#^".preg_quote("PHP_RPI_CONTENT_VIEWS-{$file}", "#").".*#"
@@ -300,19 +291,19 @@ class Xml implements IView
 
                     $xpath = new \DomXPath($domDataViews);
                     $xpath->registerNamespace("RPI", "http://www.rpi.co.uk/presentation/config/views/");
-                    
+
                     $viewConfig = $this->parseRoutes(
                         $xpath,
                         $xpath->query("/RPI:views/RPI:route | /RPI:views/RPI:errorDocument")
                     );
-                    
+
                     $viewConfig["controllerMap"] = $this->normalizeComponentList($viewConfig["controllerMap"]);
                     $viewConfig["components"] = $this->normalizeComponentList($viewConfig["components"]);
 
                     $router->loadMap(
                         $viewConfig["routeMap"]
                     );
-                    
+
                     foreach ($viewConfig["controllerMap"] as $id => $controller) {
                         $this->store->store("PHP_RPI_CONTENT_VIEWS-$file-controller-$id", $controller);
                     }
@@ -320,13 +311,16 @@ class Xml implements IView
                     foreach ($viewConfig["components"] as $id => $controller) {
                         $this->store->store("PHP_RPI_CONTENT_VIEWS-$file-controller-$id", $controller);
                     }
-                    
-                    $this->store->store("PHP_RPI_CONTENT_VIEWS-".$file."-routermap", $router->getMap(), $fileDeps);
+
+                    $this->store->store("PHP_RPI_CONTENT_VIEWS-".$file."-routermap", $router->getMap());
 
                     $decorators = $this->parseDecorators($xpath->query("/RPI:views/RPI:decorator"));
 
-                    $this->store->store("PHP_RPI_CONTENT_VIEWS-".$file."-decorators", $decorators, $fileDeps);
-                    
+                    $this->store->store("PHP_RPI_CONTENT_VIEWS-".$file."-decorators", $decorators);
+
+                    // Reference to config file so that the cache can be invalidated on file modification
+                    $this->store->store("PHP_RPI_CONTENT_VIEWS-".$file, null, $file);
+
                     \RPI\Framework\Helpers\Locking::release($seg);
                 } catch (\Exception $ex) {
                     \RPI\Framework\Helpers\Locking::release($seg);
@@ -346,7 +340,7 @@ class Xml implements IView
             }
         }
 
-        $this->router = $router;
+        return $router;
     }
     
     /**
@@ -760,9 +754,6 @@ class Xml implements IView
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $optionName = "model"
     ) {
-        $uuid = $domainObject->getId();
-        $model = (array)$domainObject;
-        
         if (isset($this->acl)
             && $this->acl->canUpdate($domainObject) !== true) {
             throw new \RPI\Framework\App\Security\Acl\Exceptions\PermissionDenied(
@@ -770,6 +761,9 @@ class Xml implements IView
                 $domainObject
             );
         }
+        
+        $uuid = $domainObject->getId();
+        $model = (array)$domainObject;
         
         $domDataViews = new \DOMDocument();
         $domDataViews->formatOutput = true;
@@ -794,7 +788,6 @@ class Xml implements IView
                     "config" => "http://www.rpi.co.uk/presentation/config/views/"
                 )
             );
-            
             if ($optionsModel->length > 0) {
                 $optionsModel->item(0)->parentNode->removeChild($optionsModel->item(0));
             }
@@ -818,17 +811,16 @@ class Xml implements IView
             try {
                 $modifiedTime = filemtime($this->file);
                 $domDataViews->save($this->file);
-                // Touch the file to a second earlier to fix any issue with time precision
-                touch($this->file, $modifiedTime - 1);
-                
-                $xpath = new \DomXPath($domDataViews);
-                $xpath->registerNamespace("RPI", "http://www.rpi.co.uk/presentation/config/views/");
-                $componentData = $this->parseController(null, $xpath, $component, false);
+                touch($this->file, $modifiedTime);
 
-                $this->store->store(
-                    "PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-$uuid",
-                    $componentData["controller"]
-                );
+                $controllerData = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-$uuid");
+                if ($controllerData !== false) {
+                    $controllerData["options"][$optionName] = $model;
+                    $this->store->store(
+                        "PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-$uuid",
+                        $controllerData
+                    );
+                }
             } catch (\Exception $ex) {
                 \RPI\Framework\Helpers\Locking::release($seg);
                 throw $ex;
@@ -839,5 +831,12 @@ class Xml implements IView
         }
         
         return false;
+    }
+
+    public function getComponentTimestamp(\RPI\Framework\Component $component)
+    {
+        return $this->store->getItemModifiedTime(
+            "PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-{$component->id}"
+        );
     }
 }

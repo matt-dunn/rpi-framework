@@ -11,23 +11,34 @@ interface IEdit
 {
     /**
      * Create a data item
+     * 
      * @param $bind     string      String which defines the path to the data item being created
      * @param $content  mixed       String or markup content
+     * 
      * @return False on failure (or if there is no implementation required) or True for success
      */
     public function create($bind, $data);
 
     /**
+     * @return False on failure (or if there is no implementation required) or True for success
+     */
+    public function read();
+    
+    /**
      * Update a data item
+     * 
      * @param $bind     string      String which defines the path to the data item being created
      * @param $content  mixed       String or markup content
+     * 
      * @return False on failure (or if there is no implementation required) or True for success
      */
     public function update($bind, $content);
 
     /**
      * Delete a data item
+     * 
      * @param $bind     string      String which defines the path to the data item being created
+     * 
      * @return False on failure (or if there is no implementation required) or True for success
      */
     public function delete($bind);
