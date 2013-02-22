@@ -24,6 +24,12 @@ interface IData
      *                                      item does not exist or has been invalidated
      */
     public function fetch($key, $autoDelete = true, &$existingCacheData = null);
+    
+    /**
+     * 
+     * @param string $key
+     */
+    public function getItemModifiedTime($key);
 
     /**
      * Store an item in the cache
