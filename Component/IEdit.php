@@ -18,11 +18,6 @@ interface IEdit
      * @return False on failure (or if there is no implementation required) or True for success
      */
     public function create($bind, $data);
-
-    /**
-     * @return False on failure (or if there is no implementation required) or True for success
-     */
-    public function read();
     
     /**
      * Update a data item

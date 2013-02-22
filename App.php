@@ -381,7 +381,7 @@ class App extends \RPI\Framework\Helpers\Object
             "\RPI\Framework\Controller"
         );
         
-        if ($controller !== false) {
+        if (isset($controller) && $controller !== false) {
             $controller->process();
             
             if (!isset($method) || strtolower($method) != "head") {

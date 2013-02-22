@@ -1366,10 +1366,16 @@ var nicUploadButton = nicEditorAdvancedButton.extend({
         }
         this.onUploaded(res.result.upload);
       } catch(e) {
-        var res = JSON.parse(xhr.responseText);
-        var msg = null;
-        if(res.error) {
-            msg = res.error.message;
+        if(xhr.status == 401) {
+            // TODO:
+        } else if(xhr.status == 403) {
+            return this.onError("You do not have permission to perform this action");
+        } else {
+            var res = JSON.parse(xhr.responseText);
+            var msg = null;
+            if(res.error) {
+                msg = res.error.message;
+            }
         }
         return this.onError(msg);
       }

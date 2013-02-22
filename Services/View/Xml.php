@@ -88,9 +88,9 @@ class Xml implements IView
         if ($controllerData !== false) {
             $domainObject = new \RPI\Framework\App\Security\Acl\Model\DomainObject($controllerData["type"]);
             
-            if (isset($acl) && $acl->canRead($domainObject) === false) {
+            if (isset($acl) && $acl->canCreate($domainObject) === false) {
                 throw new \RPI\Framework\App\Security\Acl\Exceptions\PermissionDenied(
-                    \RPI\Framework\App\Security\Acl\Model\IAcl::READ,
+                    \RPI\Framework\App\Security\Acl\Model\IAcl::CREATE,
                     $domainObject
                 );
             }
