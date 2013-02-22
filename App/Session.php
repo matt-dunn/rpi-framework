@@ -27,10 +27,15 @@ class Session
                 false,
                 true
             );
-            // TODO: this needs to be set if on a shared server
-            //$sessionPath = RPI_Framework_App::$RPI_APP_DIRECTORY."/../../../.session";
+
+            //$sessionPath = $_SERVER["DOCUMENT_ROOT"]."/../var/session";
+            //if (!file_exists($sessionPath)) {
+            //    mkdir($sessionPath, 0777, true);
+            //}
             //session_save_path($sessionPath);
+            
             session_cache_limiter("private_no_expire, must-revalidate");
+            
             session_start();
             
             // Reset the session expiry:
