@@ -89,7 +89,7 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
         $property,
         $type
     ) {
-        $canAccess = false;
+        $canAccess = null;
         
         if (isset($this->provider)) {
             $ace = $this->provider->getAce($domainObject->getType());

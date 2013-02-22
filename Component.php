@@ -8,10 +8,12 @@
 
 namespace RPI\Framework;
 
+use RPI\Framework\App\Security\Acl\Model\IDomainObject;
+
 /**
  * Base class for all components
  */
-abstract class Component extends \RPI\Framework\Controller\HTML
+abstract class Component extends \RPI\Framework\Controller\HTML implements IDomainObject
 {
     /**
      * The component can be edited
@@ -79,7 +81,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
      *
      * @var \RPI\Framework\App\Security\Acl\Model\IAcl 
      */
-    private $acl = null;
+    protected $acl = null;
     
     public function __construct(
         $id,
@@ -208,7 +210,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
 <?php
 // Component: {$this->type}
 \$GLOBALS["RPI_COMPONENTS"]["{$this->id}"]
-    = \$GLOBALS["RPI_APP"]->getView()->createControllerByUUID("{$this->id}", \$GLOBALS["RPI_APP"]);
+    = \$GLOBALS["RPI_APP"]->getView()->createController(\$GLOBALS["RPI_APP"]->getAcl(), "{$this->id}", \$GLOBALS["RPI_APP"]);
 \$GLOBALS["RPI_COMPONENTS"]["{$this->id}"]->process();
 ?>
 EOT;
@@ -320,5 +322,10 @@ EOT;
     protected function isCacheable()
     {
         return true;
+    }
+
+    public function getOwnerId()
+    {
+        return null;
     }
 }

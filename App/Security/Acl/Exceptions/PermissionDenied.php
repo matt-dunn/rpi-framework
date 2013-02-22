@@ -35,7 +35,7 @@ class PermissionDenied extends \RPI\Framework\Exceptions\Forbidden implements \R
         
         $this->message =
             "Permission denied accessing '".
-            get_class($object).
+            $object->getType().
             "' (".implode(", ", $permission).(isset($propertyName) ? ":$propertyName" : "").
             ")";
     }

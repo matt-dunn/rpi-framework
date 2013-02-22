@@ -67,15 +67,25 @@ class Xml implements IView
      * 
      * @throws \Exception
      */
-    public function createControllerByUUID(
+    public function createController(
+        \RPI\Framework\App\Security\Acl\Model\IAcl $acl,
         $uuid,
-        \RPI\Framework\App $app = null,
+        \RPI\Framework\App $app,
         $type = null,
         array $controllerOptions = null
     ) {
         $controllerData = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-".$this->file."-controller-$uuid");
         if ($controllerData !== false) {
-            $controller = $this->createComponentFromViewData($controllerData, $app, $controllerOptions);
+            $domainObject = new \RPI\Framework\App\Security\Acl\Model\DomainObject($controllerData["type"]);
+            
+            if (isset($acl) && $acl->canRead($domainObject) === false) {
+                throw new \RPI\Framework\App\Security\Acl\Exceptions\PermissionDenied(
+                    \RPI\Framework\App\Security\Acl\Model\IAcl::READ,
+                    $domainObject
+                );
+            }
+            
+            $controller = $this->createComponentFromViewData($acl, $controllerData, $app, $controllerOptions);
             if (isset($type) && !$controller instanceof $type) {
                 throw new \InvalidArgumentException(
                     "Component '$uuid' (".get_class($controller).") must be an instance of '$type'."
@@ -152,6 +162,7 @@ class Xml implements IView
      * @throws \Exception
      */
     private function createComponentFromViewData(
+        \RPI\Framework\App\Security\Acl\Model\IAcl $acl,
         array $controllerData,
         \RPI\Framework\App $app = null,
         array $additionalControllerOptions = null
@@ -203,12 +214,15 @@ class Xml implements IView
             if ($controller instanceof \RPI\Framework\Controller\HTML) {
                 if ($controller->canCreateComponents()) {
                     foreach ($controllerData["components"] as $childControllerUUID) {
-                        $controller->addComponent(
-                            $this->createControllerByUUID(
-                                $childControllerUUID,
-                                $app
-                            )
+                        $component =  $this->createController(
+                            $acl,
+                            $childControllerUUID,
+                            $app
                         );
+
+                        if (isset($component) && $component !== false) {
+                            $controller->addComponent($component);
+                        }
                     }
                 }
             } else {

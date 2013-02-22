@@ -11,7 +11,7 @@ interface IView
     public function getRouter();
     
     /**
-     * 
+     * @param \RPI\Framework\App\Security\Acl\Model\IAcl $acl
      * @param string $uuid
      * @param \RPI\Framework\App $app
      * @param string $type
@@ -21,9 +21,10 @@ interface IView
      * 
      * @throws \Exception
      */
-    public function createControllerByUUID(
+    public function createController(
+        \RPI\Framework\App\Security\Acl\Model\IAcl $acl,
         $uuid,
-        \RPI\Framework\App $app = null,
+        \RPI\Framework\App $app,
         $type = null,
         array $controllerOptions = null
     );

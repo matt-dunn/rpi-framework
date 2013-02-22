@@ -4,6 +4,7 @@ namespace RPI\Framework\App\Security\Acl\Model;
 
 interface IAcl
 {
+    const NONE = 0;
     const CREATE = 1;
     const READ = 2;
     const UPDATE = 4;
@@ -17,7 +18,7 @@ interface IAcl
      * @param enum $access      Acl constant
      * @param string $property
      * 
-     * @return boolean
+     * @return boolean|null Null is returned if no permissions have been defined
      */
     public function check(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject, $access, $property = null);
     
@@ -27,7 +28,7 @@ interface IAcl
      * @param enum $access      Acl constant
      * @param string $operation
      * 
-     * @return boolean
+     * @return boolean|null Null is returned if no permissions have been defined
      */
     public function checkOperation(
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
@@ -40,7 +41,7 @@ interface IAcl
      * 
      * This is a shortcut for checkOperation(IAcl::READ)
      * 
-     * @return boolean
+     * @return boolean|null Null is returned if no permissions have been defined
      */
     public function canRead(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject);
     
@@ -49,7 +50,7 @@ interface IAcl
      * 
      * This is a shortcut for checkOperation(IAcl::UPDATE)
      * 
-     * @return boolean
+     * @return boolean|null Null is returned if no permissions have been defined
      */
     public function canUpdate(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject);
     
@@ -58,7 +59,7 @@ interface IAcl
      * 
      * This is a shortcut for checkOperation(IAcl::DELETE)
      * 
-     * @return boolean
+     * @return boolean|null Null is returned if no permissions have been defined
      */
     public function canDelete(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject);
     
@@ -67,7 +68,7 @@ interface IAcl
      * 
      * This is a shortcut for checkOperation(IAcl::CREATE)
      * 
-     * @return boolean
+     * @return boolean|null Null is returned if no permissions have been defined
      */
     public function canCreate(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject);
 }

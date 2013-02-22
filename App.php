@@ -51,6 +51,12 @@ class App extends \RPI\Framework\Helpers\Object
     
     /**
      *
+     * @var \RPI\Framework\App\Security\Acl\Model\IAcl
+     */
+    private $acl = null;
+    
+    /**
+     *
      * @var \RPI\Framework\App\Router\Action 
      */
     private $action = null;
@@ -188,6 +194,18 @@ class App extends \RPI\Framework\Helpers\Object
             $this->view = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\Services\View\IView");
         }
         return $this->view;
+    }
+    
+    /**
+     * 
+     * @return \RPI\Framework\App\Security\Acl\Model\IAcl
+     */
+    public function getAcl()
+    {
+        if (!isset($this->acl)) {
+            $this->acl = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\App\Security\Acl\Model\IAcl");
+        }
+        return $this->acl;
     }
     
     /**
@@ -351,7 +369,8 @@ class App extends \RPI\Framework\Helpers\Object
     {
         $this->action = $route->action;
         
-        $controller = $this->view->createControllerByUUID(
+        $controller = $this->view->createController(
+            $this->getAcl(),
             $route->uuid,
             $this,
             "\RPI\Framework\Controller"
