@@ -165,7 +165,7 @@ class File implements \RPI\Framework\Cache\IFront
             $cacheFile = $cacheFile.".".self::normalizeName($group);
         }
         if (file_exists($cacheFile)) {
-            if (isset($timestamp) && $timestamp >= filectime($cacheFile)) {
+            if (isset($timestamp) && $timestamp !== false && $timestamp >= filectime($cacheFile)) {
                 self::delete($key, $group);
 
                 return false;
