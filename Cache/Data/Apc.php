@@ -11,6 +11,7 @@ namespace RPI\Framework\Cache\Data;
 class Apc implements \RPI\Framework\Cache\IData
 {
     private $isAvailable = null;
+    private $data = array();
 
     /**
      * {@inheritdoc}
@@ -30,7 +31,7 @@ class Apc implements \RPI\Framework\Cache\IData
     public function fetch($key, $autoDelete = true, &$existingCacheData = null)
     {
         if ($this->isAvailable() === true) {
-            $data = apc_fetch($key);
+            $data = $this->getItem($key);
             if ($data === false) {
                 return false;
             }
@@ -41,7 +42,7 @@ class Apc implements \RPI\Framework\Cache\IData
                 if (is_array($data["fileDep"])) {
                     $fileCount = count($data["fileDep"]);
                     for ($i = 0; $i < $fileCount; $i++) {
-                        if ($data["fileDep_mod"][$i] != filemtime($data["fileDep"][$i])) {
+                        if (filemtime($data["fileDep"][$i]) > $data["fileDep_mod"][$i]) {
                             if ($autoDelete && function_exists("apc_delete")) {
                                 $this->delete($key);
                             }
@@ -50,7 +51,7 @@ class Apc implements \RPI\Framework\Cache\IData
                         }
                     }
                 } else {
-                    if ($data["fileDep_mod"] != filemtime($data["fileDep"])) {
+                    if (filemtime($data["fileDep"]) > $data["fileDep_mod"]) {
                         if ($autoDelete && function_exists("apc_delete")) {
                             $this->delete($key);
                         }
@@ -78,15 +79,33 @@ class Apc implements \RPI\Framework\Cache\IData
                     $fileDepMod[] = filemtime($file);
                 }
 
+                $data = array(
+                    "value" => $value,
+                    "modified" => microtime(true),
+                    "fileDep" => $fileDep,
+                    "fileDep_mod" => $fileDepMod
+                );
+
+                $this->data[$key] = $data;
+                
                 return apc_store(
                     $key,
-                    array("value" => $value, "fileDep" => $fileDep, "fileDep_mod" => $fileDepMod),
+                    $data,
                     $ttl
                 );
             } else {
+                $data = array(
+                    "value" => $value,
+                    "modified" => microtime(true),
+                    "fileDep" => $fileDep,
+                    "fileDep_mod" => filemtime($fileDep)
+                );
+
+                $this->data[$key] = $data;
+                
                 return apc_store(
                     $key,
-                    array("value" => $value, "fileDep" => $fileDep, "fileDep_mod" => filemtime($fileDep)),
+                    $data,
                     $ttl
                 );
             }
@@ -101,6 +120,8 @@ class Apc implements \RPI\Framework\Cache\IData
     public function clear()
     {
         if ($this->isAvailable() === true) {
+            unset($this->data);
+            $this->data = array();
             return apc_clear_cache("user");
         }
         
@@ -113,6 +134,7 @@ class Apc implements \RPI\Framework\Cache\IData
     public function delete($key)
     {
         if ($this->isAvailable() === true) {
+            unset($this->data[$key]);
             return apc_delete($key);
         }
         
@@ -136,5 +158,38 @@ class Apc implements \RPI\Framework\Cache\IData
         }
         
         return false;
+    }
+
+    public function getItemModifiedTime($key)
+    {
+        if ($this->isAvailable() === true) {
+            $data = $this->getItem($key);
+            if ($data === false) {
+                return false;
+            }
+            
+            if (isset($data["modified"])) {
+                return (double)$data["modified"];
+            }
+        }
+        
+        return false;
+    }
+    
+    
+    
+    
+    private function getItem($key)
+    {
+        $data = false;
+        
+        if (isset($this->data[$key])) {
+            $data = $this->data[$key];
+        } else {
+            $data = apc_fetch($key);
+            $this->data[$key] = $data;
+        }
+        
+        return $data;
     }
 }

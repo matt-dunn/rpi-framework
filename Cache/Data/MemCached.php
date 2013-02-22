@@ -90,7 +90,7 @@ class MemCached implements \RPI\Framework\Cache\IData
                 if (is_array($data["fileDep"])) {
                     $fileCount = count($data["fileDep"]);
                     for ($i = 0; $i < $fileCount; $i++) {
-                        if ($data["fileDep_mod"][$i] != filemtime($data["fileDep"][$i])) {
+                        if (filemtime($data["fileDep"][$i]) > $data["fileDep_mod"][$i]) {
                             if ($autoDelete) {
                                 $this->delete($key);
                             }
@@ -99,7 +99,7 @@ class MemCached implements \RPI\Framework\Cache\IData
                         }
                     }
                 } else {
-                    if ($data["fileDep_mod"] != filemtime($data["fileDep"])) {
+                    if (filemtime($data["fileDep"]) > $data["fileDep_mod"]) {
                         if ($autoDelete) {
                             $this->delete($key);
                         }
@@ -129,13 +129,23 @@ class MemCached implements \RPI\Framework\Cache\IData
                 
                 $this->getMemcached()->set(
                     $key,
-                    array("value" => $value, "fileDep" => $fileDep, "fileDep_mod" => $fileDepMod),
+                    array(
+                        "value" => $value,
+                        "modified" => microtime(true),
+                        "fileDep" => $fileDep,
+                        "fileDep_mod" => $fileDepMod
+                    ),
                     $ttl
                 );
             } else {
                 $this->getMemcached()->set(
                     $key,
-                    array("value" => $value, "fileDep" => $fileDep, "fileDep_mod" => filemtime($fileDep)),
+                    array(
+                        "value" => $value,
+                        "modified" => microtime(true),
+                        "fileDep" => $fileDep,
+                        "fileDep_mod" => filemtime($fileDep)
+                    ),
                     $ttl
                 );
             }
@@ -193,6 +203,22 @@ class MemCached implements \RPI\Framework\Cache\IData
                 throw new \RPI\Framework\Exceptions\Exception(
                     "Memcached server not found '".$this->host.":".$this->port."'"
                 );
+            }
+        }
+        
+        return false;
+    }
+
+    public function getItemModifiedTime($key)
+    {
+        if ($this->isAvailable() === true) {
+            $data = $this->getMemcached()->get($key);
+            if ($data === false) {
+                return false;
+            }
+            
+            if (isset($data["modified"])) {
+                return (double)$data["modified"];
             }
         }
         

@@ -44,7 +44,7 @@ class Mock implements \RPI\Framework\Cache\IData
                 if (is_array($data["fileDep"])) {
                     $fileCount = count($data["fileDep"]);
                     for ($i = 0; $i < $fileCount; $i++) {
-                        if ($data["fileDep_mod"][$i] != filemtime($data["fileDep"][$i])) {
+                        if (filemtime($data["fileDep"][$i]) > $data["fileDep_mod"][$i]) {
                             if ($autoDelete) {
                                 $this->delete($key);
                             }
@@ -53,7 +53,7 @@ class Mock implements \RPI\Framework\Cache\IData
                         }
                     }
                 } else {
-                    if ($data["fileDep_mod"] != filemtime($data["fileDep"])) {
+                    if (filemtime($data["fileDep"]) > $data["fileDep_mod"]) {
                         if ($autoDelete) {
                             $this->delete($key);
                         }
@@ -87,11 +87,19 @@ class Mock implements \RPI\Framework\Cache\IData
                 }
 
                 return $this->data[$key] = array(
-                    "expire" => $expire, "value" => $value, "fileDep" => $fileDep, "fileDep_mod" => $fileDepMod
+                    "expire" => $expire,
+                    "value" => $value,
+                    "modified" => microtime(true),
+                    "fileDep" => $fileDep,
+                    "fileDep_mod" => $fileDepMod
                 );
             } else {
                 return $this->data[$key] = array(
-                    "expire" => $expire, "value" => $value, "fileDep" => $fileDep, "fileDep_mod" => filemtime($fileDep)
+                    "expire" => $expire,
+                    "value" => $value,
+                    "modified" => microtime(true),
+                    "fileDep" => $fileDep,
+                    "fileDep_mod" => filemtime($fileDep)
                 );
             }
         } else {
@@ -161,5 +169,22 @@ class Mock implements \RPI\Framework\Cache\IData
         }
         
         return $data;
+    }
+
+    public function getItemModifiedTime($key)
+    {
+        if ($this->isAvailable() === true) {
+            if (!isset($this->data[$key])) {
+                return false;
+            }
+            
+            $data = $this->data[$key];
+            
+            if (isset($data["modified"])) {
+                return (double)$data["modified"];
+            }
+        }
+        
+        return false;
     }
 }
