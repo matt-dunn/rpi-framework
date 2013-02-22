@@ -106,6 +106,7 @@ class App extends \RPI\Framework\Helpers\Object
         \RPI\Framework\Cache\IData $dataStore = null,
         \RPI\Framework\App\Security $security = null,
         \RPI\Framework\App\Session $session = null,
+        \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null,
         $characterEncoding = null
     ) {
         $GLOBALS["RPI_APP"] = $this;
@@ -115,6 +116,7 @@ class App extends \RPI\Framework\Helpers\Object
         $this->dataStore = $dataStore;
         $this->security = $security;
         $this->session = $session;
+        $this->acl = $acl;
         if (isset($characterEncoding)) {
             $this->characterEncoding = $characterEncoding;
         }
@@ -203,7 +205,10 @@ class App extends \RPI\Framework\Helpers\Object
     public function getAcl()
     {
         if (!isset($this->acl)) {
-            $this->acl = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\App\Security\Acl\Model\IAcl");
+            $this->acl = \RPI\Framework\Helpers\Reflection::getDependency(
+                $this,
+                "RPI\Framework\App\Security\Acl\Model\IAcl"
+            );
         }
         return $this->acl;
     }

@@ -44,5 +44,5 @@ interface IView
      * 
      * @return boolean
      */
-    public function updateComponentModel($uuid, array $model);
+    public function updateComponentModel(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject);
 }

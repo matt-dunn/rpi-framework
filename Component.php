@@ -8,12 +8,10 @@
 
 namespace RPI\Framework;
 
-use RPI\Framework\App\Security\Acl\Model\IDomainObject;
-
 /**
  * Base class for all components
  */
-abstract class Component extends \RPI\Framework\Controller\HTML implements IDomainObject
+abstract class Component extends \RPI\Framework\Controller\HTML
 {
     /**
      * The component can be edited
@@ -209,8 +207,11 @@ abstract class Component extends \RPI\Framework\Controller\HTML implements IDoma
             $rendition .= <<<EOT
 <?php
 // Component: {$this->type}
-\$GLOBALS["RPI_COMPONENTS"]["{$this->id}"]
-    = \$GLOBALS["RPI_APP"]->getView()->createController(\$GLOBALS["RPI_APP"]->getAcl(), "{$this->id}", \$GLOBALS["RPI_APP"]);
+\$GLOBALS["RPI_COMPONENTS"]["{$this->id}"] = \$GLOBALS["RPI_APP"]->getView()->createController(
+    \$GLOBALS["RPI_APP"]->getAcl(),
+    "{$this->id}",
+    \$GLOBALS["RPI_APP"]
+);
 \$GLOBALS["RPI_COMPONENTS"]["{$this->id}"]->process();
 ?>
 EOT;

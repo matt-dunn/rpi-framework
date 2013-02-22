@@ -34,15 +34,25 @@ class Xml implements IView
     private $decoratorData = null;
     
     /**
+     *
+     * @var \RPI\Framework\App\Security\Acl\Model\IAcl 
+     */
+    protected $acl = null;
+    
+    /**
      * 
      * @param \RPI\Framework\Cache\IData $store
      * @param string $configFile
      * @return \RPI\Framework\App\Router
      */
-    public function __construct(\RPI\Framework\Cache\IData $store, $configFile)
-    {
+    public function __construct(
+        \RPI\Framework\Cache\IData $store,
+        $configFile,
+        \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null
+    ) {
         $this->store = $store;
         $this->file = \RPI\Framework\Helpers\Utils::buildFullPath($configFile);
+        $this->acl = $acl;
         
         $this->parseViewConfig();
     }
@@ -746,8 +756,19 @@ class Xml implements IView
         return $decorators;
     }
 
-    public function updateComponentModel($uuid, array $model)
+    public function updateComponentModel(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
     {
+        $uuid = $domainObject->getId();
+        $model = (array)$domainObject;
+        
+        if (isset($this->acl)
+            && $this->acl->canUpdate($domainObject) !== true) {
+            throw new \RPI\Framework\App\Security\Acl\Exceptions\PermissionDenied(
+                \RPI\Framework\App\Security\Acl\Model\IAcl::UPDATE,
+                $domainObject
+            );
+        }
+        
         $domDataViews = new \DOMDocument();
         $domDataViews->formatOutput = true;
         $domDataViews->preserveWhiteSpace = false;
