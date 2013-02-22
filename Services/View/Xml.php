@@ -756,8 +756,10 @@ class Xml implements IView
         return $decorators;
     }
 
-    public function updateComponentModel(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
-    {
+    public function updateComponentModel(
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
+        $optionName = "model"
+    ) {
         $uuid = $domainObject->getId();
         $model = (array)$domainObject;
         
@@ -787,7 +789,7 @@ class Xml implements IView
             
             $optionsModel = \RPI\Framework\Helpers\Dom::getElementsByXPath(
                 $component,
-                "./config:option[@name='model']",
+                "./config:option[@name='$optionName']",
                 array(
                     "config" => "http://www.rpi.co.uk/presentation/config/views/"
                 )
@@ -800,7 +802,7 @@ class Xml implements IView
             $modelXml = dom_import_simplexml(\RPI\Framework\Helpers\Dom::serialize($model));
             
             $option = $domDataViews->createElementNS("http://www.rpi.co.uk/presentation/config/views/", "option");
-            $option->setAttribute("name", "model");
+            $option->setAttribute("name", $optionName);
             $options = \RPI\Framework\Helpers\Dom::getElementsByXPath(
                 $component,
                 "./*[1]"

@@ -39,10 +39,13 @@ interface IView
     
     /**
      * 
-     * @param string $uuid
-     * @param array $model
+     * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $model
+     * @param string $optionName
      * 
      * @return boolean
      */
-    public function updateComponentModel(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject);
+    public function updateComponentModel(
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
+        $optionName = "model"
+    );
 }
