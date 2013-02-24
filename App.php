@@ -98,6 +98,7 @@ class App extends \RPI\Framework\Helpers\Object
      * @param \RPI\Framework\Cache\IData $dataStore
      * @param \RPI\Framework\App\Security $security
      * @param \RPI\Framework\App\Session $session
+     * @param \RPI\Framework\App\Security\Acl\Model\IAcl $acl
      * @param string $characterEncoding
      */
     public function __construct(
