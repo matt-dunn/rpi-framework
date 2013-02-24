@@ -8,5 +8,9 @@ namespace RPI\Framework\WebService\Exceptions;
 class Authorization extends WebService
 {
     public $httpCode = 401;
-    protected $message = "Authorization error";
+    
+    public function __construct($previous)
+    {
+        parent::__construct("Authorization error", 0, $previous);
+    }
 }

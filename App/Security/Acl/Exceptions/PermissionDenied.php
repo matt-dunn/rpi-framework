@@ -34,9 +34,7 @@ class PermissionDenied extends \RPI\Framework\Exceptions\Forbidden implements \R
         }
         
         $this->message =
-            "Permission denied accessing '".
-            $object->getType().
-            "' (".implode(", ", $permission).(isset($propertyName) ? ":$propertyName" : "").
-            ")";
+            implode(", ", $permission).(isset($propertyName) ? ":$propertyName" : "").
+            " permission denied on object '".$object->getType()."'";
     }
 }
