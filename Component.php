@@ -324,29 +324,6 @@ EOT;
     {
         return true;
     }
-    
-    /**
-     * @return \RPI\Framework\Component\Model\Metadata
-     */
-    public function getMetadata()
-    {
-        $reflect = new \ReflectionClass($this);
-        $classPath = dirname($reflect->getFileName());
-        $filename = $classPath."/Metadata/Component.json";
-        
-        if (file_exists($filename)) {
-            $metadata = json_decode(file_get_contents($filename));
-
-            return new \RPI\Framework\Component\Model\Metadata(
-                $classPath."/Metadata/".$metadata->imageUri,
-                $metadata->name,
-                $metadata->version,
-                $metadata->description
-            );
-        }
-        
-        return null;
-    }
 
     public function getOwnerId()
     {

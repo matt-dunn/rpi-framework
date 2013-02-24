@@ -15,14 +15,36 @@ class Metadata extends \RPI\Framework\Helpers\Object
     private $version = null;
     private $description = null;
     
-    public function __construct($viewImageUri, $name, $version, $description)
+    /**
+     * 
+     * @param \RPI\Framework\Component|string $component
+     */
+    public function __construct($component)
     {
-        if (file_exists($viewImageUri)) {
-            $this->viewImageUri = $viewImageUri;
+        $classPath = null;
+        
+        if (is_object($component) && $component instanceof \RPI\Framework\Component) {
+            $reflect = new \ReflectionClass($component);
+            $classPath = dirname($reflect->getFileName());
+        } elseif (is_string($component)) {
+            $classPath = dirname(realpath(\RPI\Framework\Autoload::getClassPath($component)));
+        } else {
+            throw new \RPI\Framework\Exceptions\InvalidType($component, "\RPI\Framework\Component|string");
         }
-        $this->name = $name;
-        $this->version = $version;
-        $this->description = $description;
+        
+        $filename = $classPath."/Metadata/Component.json";
+        
+        if (file_exists($filename)) {
+            $metadata = json_decode(file_get_contents($filename));
+
+            $viewImageUri = $classPath."/Metadata/".$metadata->imageUri;
+            if (file_exists($viewImageUri)) {
+                $this->viewImageUri = $viewImageUri;
+            }
+            $this->name = $metadata->name;
+            $this->version = $metadata->version;
+            $this->description = $metadata->description;
+        }
     }
     
     public function getViewImageUri()
