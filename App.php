@@ -375,8 +375,8 @@ class App extends \RPI\Framework\Helpers\Object
         $this->action = $route->action;
         
         $controller = $this->view->createController(
-            $this->getAcl(),
             $route->uuid,
+            $this->getAcl(),
             $this,
             "\RPI\Framework\Controller"
         );

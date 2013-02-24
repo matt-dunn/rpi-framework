@@ -67,19 +67,17 @@ class Xml implements IView
     }
 
     /**
+     * {@inheritdoc}
      * 
-     * @param string $uuid
-     * @param \RPI\Framework\App $app
-     * @param string $type
-     * @param array $controllerOptions
+     * @return \RPI\Framework\Controller
      * 
-     * @return \RPI\Framework\Controller|boolean
-     * 
-     * @throws \Exception
+     * @throws \RPI\Framework\App\Security\Acl\Exceptions\PermissionDenied
+     * @throws \RPI\Framework\Services\View\Exceptions\NotFound
+     * @throws \RPI\Framework\Exceptions\InvalidType
      */
     public function createController(
-        \RPI\Framework\App\Security\Acl\Model\IAcl $acl,
         $uuid,
+        \RPI\Framework\App\Security\Acl\Model\IAcl $acl,
         \RPI\Framework\App $app,
         $type = null,
         array $controllerOptions = null
@@ -97,15 +95,13 @@ class Xml implements IView
             
             $controller = $this->createComponentFromViewData($acl, $controllerData, $app, $controllerOptions);
             if (isset($type) && !$controller instanceof $type) {
-                throw new \InvalidArgumentException(
-                    "Component '$uuid' (".get_class($controller).") must be an instance of '$type'."
-                );
+                throw new \RPI\Framework\Exceptions\InvalidType($controller, $type);
             }
             
             return $controller;
+        } else {
+            throw new \RPI\Framework\Services\View\Exceptions\NotFound($uuid);
         }
-
-        return false;
     }
     
     /**
@@ -225,8 +221,8 @@ class Xml implements IView
                 if ($controller->canCreateComponents()) {
                     foreach ($controllerData["components"] as $childControllerUUID) {
                         $component =  $this->createController(
-                            $acl,
                             $childControllerUUID,
+                            $acl,
                             $app
                         );
 

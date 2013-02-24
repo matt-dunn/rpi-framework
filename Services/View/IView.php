@@ -11,19 +11,21 @@ interface IView
     public function getRouter();
     
     /**
-     * @param \RPI\Framework\App\Security\Acl\Model\IAcl $acl
      * @param string $uuid
+     * @param \RPI\Framework\App\Security\Acl\Model\IAcl $acl
      * @param \RPI\Framework\App $app
      * @param string $type
      * @param array $controllerOptions
      * 
-     * @return \RPI\Framework\Controller|boolean
+     * @return \RPI\Framework\Controller
      * 
-     * @throws \Exception
+     * @throws \RPI\Framework\App\Security\Acl\Exceptions\PermissionDenied
+     * @throws \RPI\Framework\Services\View\Exceptions\NotFound
+     * @throws \RPI\Framework\Exceptions\InvalidType
      */
     public function createController(
-        \RPI\Framework\App\Security\Acl\Model\IAcl $acl,
         $uuid,
+        \RPI\Framework\App\Security\Acl\Model\IAcl $acl,
         \RPI\Framework\App $app,
         $type = null,
         array $controllerOptions = null
