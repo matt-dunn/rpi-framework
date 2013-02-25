@@ -461,8 +461,12 @@ class Dom
         }
         
         foreach ($children as $key => $child) {
-            if (!is_numeric($key) && is_array($child) && count($child) == 1) {
-                $children[$key] = reset($child);
+            if (is_array($child) && count($child) == 1) {
+                reset($child);
+                $firstKey = key($child);
+                if (is_numeric($firstKey)) {
+                    $children[$key] = $child[$firstKey];
+                }
             }
         }
         

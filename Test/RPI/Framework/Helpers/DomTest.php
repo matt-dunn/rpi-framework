@@ -113,7 +113,7 @@ class DomTest extends \RPI\Framework\Test\Base
         var_dump($array);
         
         unset($array["#NAME"]);
-        
+
         $this->assertEquals($simpleArray, $array);
         
         $simpleArray = array(
@@ -142,7 +142,7 @@ class DomTest extends \RPI\Framework\Test\Base
         var_dump($array);
         
         unset($array["#NAME"]);
-        
+
         $this->assertEquals(
             array(
                 array("B" => array(4, 5, 6)), array("C" => 7)
