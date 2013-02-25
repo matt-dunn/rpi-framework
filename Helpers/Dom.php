@@ -376,7 +376,10 @@ class Dom
             } else {
                 $parentElementName = $name;
                 
-                if (is_array($value) && isset($value[0])) {
+                if (is_array($value)) {
+                    reset($value);
+                }
+                if (is_array($value) && is_numeric(key($value))) {
                     $element = $parent;
                 } else {
                     $element = $parent->addChild($name, $elementValue, $namespace);
@@ -458,8 +461,8 @@ class Dom
         }
         
         foreach ($children as $key => $child) {
-            if (is_array($child) && count($child) == 1) {
-                $children[$key] = $child[0];
+            if (!is_numeric($key) && is_array($child) && count($child) == 1) {
+                $children[$key] = reset($child);
             }
         }
         

@@ -129,6 +129,98 @@ class DomTest extends \RPI\Framework\Test\Base
         unset($array["#NAME"]);
         
         $this->assertEquals($simpleArray, $array);
+        
+        $simpleArray = array(
+            array("A" => array(1, 2, 3)), array("B" => array(4, 5, 6)), array("C" => array(7))
+        );
+        
+        unset($simpleArray[0]);
+        $xml = \RPI\Framework\Helpers\Dom::serialize($simpleArray);
+        var_dump($xml->asXML());
+        
+        $array = \RPI\Framework\Helpers\Dom::deserialize($xml);
+        var_dump($array);
+        
+        unset($array["#NAME"]);
+        
+        $this->assertEquals(
+            array(
+                array("B" => array(4, 5, 6)), array("C" => 7)
+            ),
+            $array
+        );
+        
+        $simpleArray = array(
+            array("A" => array(1, 2, 3)), array("B" => array(4, 5, 6)), array("C" => array(7))
+        );
+        
+        unset($simpleArray[1]);
+        $xml = \RPI\Framework\Helpers\Dom::serialize($simpleArray);
+        var_dump($xml->asXML());
+        
+        $array = \RPI\Framework\Helpers\Dom::deserialize($xml);
+        var_dump($array);
+        
+        unset($array["#NAME"]);
+        
+        $this->assertEquals(
+            array(
+                array("A" => array(1, 2, 3)), array("C" => 7)
+            ),
+            $array
+        );
+        
+        $simpleArray = array(
+            array("A" => array(1, 2, 3)), array("B" => array(4, 5, 6)), array("C" => array(7))
+        );
+        
+        unset($simpleArray[2]);
+        $xml = \RPI\Framework\Helpers\Dom::serialize($simpleArray);
+        var_dump($xml->asXML());
+        
+        $array = \RPI\Framework\Helpers\Dom::deserialize($xml);
+        var_dump($array);
+        
+        unset($array["#NAME"]);
+        
+        $this->assertEquals(
+            array(
+                array("A" => array(1, 2, 3)), array("B" => array(4, 5, 6))
+            ),
+            $array
+        );
+        
+        $simpleArray = array(
+            "component" => array(
+                array("@" => array("id" => "1")),
+                array("@" => array("id" => "2")),
+                array("@" => array("id" => "3"))
+            )
+        );
+        
+        var_dump($simpleArray);
+        unset($simpleArray["component"][0]);
+//        $simpleArray["component"] = array_slice($simpleArray["component"], 1);
+        
+        var_dump($simpleArray);
+        
+        $xml = \RPI\Framework\Helpers\Dom::serialize($simpleArray);
+        var_dump($xml->asXML());
+        
+        $array = \RPI\Framework\Helpers\Dom::deserialize($xml);
+        
+//        unset($array["#NAME"]);
+        var_dump($array);
+        
+        $this->assertEquals(
+            array(
+                "component" => array(
+                    array("@" => array("id" => "2")),
+                    array("@" => array("id" => "3"))
+                )
+            ),
+            $array
+        );
     }
     
     public function testDeserialize()
