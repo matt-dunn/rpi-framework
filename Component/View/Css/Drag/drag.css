@@ -17,7 +17,7 @@ body.component_js .component-editmode.draggable-container .component-draggable:h
     opacity:0.85;
 }
 
-.ui-state-highlight {
-    /*border:1px solid red !important;*/
+/*.ui-state-highlight {
+    border:1px solid red !important;
     border:1px dashed #ddd !important;
-}
+}*/

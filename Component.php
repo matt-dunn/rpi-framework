@@ -171,11 +171,8 @@ abstract class Component extends \RPI\Framework\Controller\HTML
                     $this->editable = $this->acl->canUpdate($this->model);
                 }
                 
-                if (!$this->isDraggable) {
-                    $parent = $this->getParent();
-                    $this->isDraggable =
-                        (!$this->editMode
-                            && (isset($parent) && $parent instanceof \RPI\Framework\Component\IDraggableContainer));
+                if ($this->isDraggable || ($this->editable && $this->editMode)) {
+                    $this->isDynamic = true;
                 }
             }
 
@@ -193,6 +190,11 @@ abstract class Component extends \RPI\Framework\Controller\HTML
             if ($processChildren && isset($this->components)) {
                 foreach ($this->components as $component) {
                     if (isset($component)) {
+                        if ($this->editMode && $this instanceof \RPI\Framework\Component\IDraggableContainer) {
+                            $component["component"]->isDraggable = true;
+                            $component["component"]->editable = false;
+                        }
+
                         $component["component"]->process();
                     }
                 }

@@ -93,6 +93,21 @@ RPI._("component").drag = {
                 $(ui.helper).addClass('dragging');
             },
             stop: function (e,ui) {
+                if (ui.item) {
+                    var componentId = ui.item.parents(".draggable-container:first").data("id");
+                    var targetComponentId = ui.item.data("id");
+                    var cellBindId = ui.item.parents(".col:first").data("id");
+                    var position = ui.item.prevAll(".component").length;
+                    
+                    RPI.webService.call("/ws/component/", "update", {id : componentId, bind: cellBindId, data: {componentId: targetComponentId, position: position}}, 
+                        function(data, response, sourceData) {
+                        },
+                        function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
+                            console.log("There was a problem saving the data");
+                        }
+                    );
+                }
+                
                 $(ui.item).css({width:''}).removeClass('dragging');
                 $(settings.columns).sortable('enable');
             }

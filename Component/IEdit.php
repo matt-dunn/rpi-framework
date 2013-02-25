@@ -23,11 +23,11 @@ interface IEdit
      * Update a data item
      * 
      * @param $bind     string      String which defines the path to the data item being created
-     * @param $content  mixed       String or markup content
+     * @param $data  mixed       String or markup content
      * 
      * @return False on failure (or if there is no implementation required) or True for success
      */
-    public function update($bind, $content);
+    public function update($bind, $data);
 
     /**
      * Delete a data item
