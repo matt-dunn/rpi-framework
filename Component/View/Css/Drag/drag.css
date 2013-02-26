@@ -21,3 +21,17 @@ body.component_js .component-editmode.draggable-container .component-draggable:h
     border:1px solid red !important;
     border:1px dashed #ddd !important;
 }*/
+
+body.component_js .component-editmode.draggable-container .component-delete {
+    position:relative;
+}
+
+body.component_js .component-editmode.draggable-container .component-delete .option-delete {
+    border:1px solid red;
+    position:absolute;
+    top:0;
+    right:0;
+    width:15px;
+    height:15px;
+    cursor:pointer;
+}

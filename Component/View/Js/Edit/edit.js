@@ -182,7 +182,7 @@ RPI._("component").edit = (function() {
             jQuery.event.trigger(
                 "load.RPI.component.edit",
                 [
-                    jQuery(document).find(".component[data-id='"+ component.data("id") + "']"),
+                    jQuery(document).find(".component[data-id='"+ component.data("id") + "']:first"),
                     option
                 ]
             );
@@ -190,7 +190,7 @@ RPI._("component").edit = (function() {
             jQuery.event.trigger(
                 "load.RPI.component.edit",
                 [
-                    component,
+                    jQuery(component),
                     option
                 ]
             );

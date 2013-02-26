@@ -119,6 +119,26 @@ RPI._("component").drag = {
 jQuery(document).on(
     "load.RPI.component.edit",
     function(e, component, option) {
-        RPI.component.drag.init();
+        if (component.data("type") == "RPI\\Components\\Grid\\Component" && component.hasClass("component-editmode")) {
+            RPI.component.drag.init();
+            jQuery(component)
+                .find(".component.component-draggable")
+                .addClass("component-delete")
+                .prepend("<div class=\"option-delete\"></div>")
+                .click(
+                    function(e) {
+                        var targetComponent = jQuery(e.target).parents(".component:first");
+                        
+                        RPI.webService.call("/ws/component/", "delete", {id : component.data("id"), bind: targetComponent.data("id")}, 
+                            function(data, response, sourceData) {
+                                targetComponent.remove();
+                            },
+                            function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
+                                console.log("There was a problem saving the data");
+                            }
+                        );
+                    }
+                );
+        }
     }
 );

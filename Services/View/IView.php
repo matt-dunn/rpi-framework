@@ -53,6 +53,12 @@ interface IView
     
     /**
      * 
+     * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+     */
+    public function deleteComponent(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject);
+    
+    /**
+     * 
      * @param \RPI\Framework\Component $component
      */
     public function getComponentTimestamp(\RPI\Framework\Component $component);
