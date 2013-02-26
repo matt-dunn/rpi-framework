@@ -173,6 +173,11 @@ abstract class HTML extends \RPI\Framework\Controller\Cacheable
         return $this->messages;
     }
     
+    /**
+     * 
+     * @param string $componentClassName
+     * @return array
+     */
     public function findComponents($componentClassName)
     {
         $matchedComponents = array();
@@ -190,5 +195,26 @@ abstract class HTML extends \RPI\Framework\Controller\Cacheable
         }
 
         return $matchedComponents;
+    }
+    
+    /**
+     * 
+     * @param string $uuid
+     * @param string $type
+     * @return boolean|\RPI\Framework\Component
+     */
+    public function findChildComponent($uuid, $type = null)
+    {
+        foreach ($this->components as $component) {
+            if ($component["component"]->id == $uuid) {
+                if (!isset($type) || $component["component"] instanceof $type) {
+                    return $component["component"];
+                }
+                
+                return false;
+            }
+        }
+
+        return false;
     }
 }
