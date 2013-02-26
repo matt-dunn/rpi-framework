@@ -95,8 +95,9 @@ RPI._("component").drag = {
             stop: function (e,ui) {
                 if (ui.item) {
                     var componentId = ui.item.parents(".draggable-container:first").data("id");
-                    var targetComponentId = ui.item.data("id");
                     var cellBindId = ui.item.parents(".col:first").data("id");
+                    
+                    var targetComponentId = ui.item.data("id");
                     var position = ui.item.prevAll(".component").length;
                     
                     RPI.webService.call("/ws/component/", "update", {id : componentId, bind: cellBindId, data: {componentId: targetComponentId, position: position}}, 
@@ -121,10 +122,8 @@ jQuery(document).on(
     function(e, component, option) {
         if (component.data("type") == "RPI\\Components\\Grid\\Component" && component.hasClass("component-editmode")) {
             RPI.component.drag.init();
-            jQuery(component)
-                .find(".component.component-draggable")
-                .addClass("component-delete")
-                .prepend("<div class=\"option-delete\"></div>")
+            
+            var deleteOption = jQuery("<div class=\"option-delete\"></div>")
                 .click(
                     function(e) {
                         var targetComponent = jQuery(e.target).parents(".component:first");
@@ -139,6 +138,11 @@ jQuery(document).on(
                         );
                     }
                 );
+            
+            jQuery(component)
+                .find(".component.component-draggable")
+                .addClass("component-delete")
+                .prepend(deleteOption)
         }
     }
 );
