@@ -104,7 +104,7 @@ RPI._("component").drag = {
                         function(data, response, sourceData) {
                         },
                         function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
-                            console.log("There was a problem saving the data");
+                            alert("DEBUG: " + textStatus);
                         }
                     );
                 }
@@ -133,7 +133,7 @@ jQuery(document).on(
                                 targetComponent.remove();
                             },
                             function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
-                                console.log("There was a problem saving the data");
+                                alert("DEBUG: " + textStatus);
                             }
                         );
                     }

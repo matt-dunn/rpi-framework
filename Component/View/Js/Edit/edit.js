@@ -113,7 +113,7 @@ RPI._("component").edit = (function() {
                                                     _self.autosave = false;
                                                     updateAutoSaveMessage(component, "There was a problem saving the document");
                                                     if(!isAuthenticationException) {
-                                                        console.log("There was a problem saving the document");
+                                                        alert("DEBUG: " + textStatus);
                                                     }
                                                 }
                                             );
@@ -301,8 +301,9 @@ RPI._("component").edit = (function() {
                 removeEditorInstances(component);
 
                 loadComponent(component, data.xhtml, "view");
-           },
+            },
             function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
+                alert("DEBUG: " + textStatus);
             }
         );
     }
@@ -339,6 +340,7 @@ RPI._("component").edit = (function() {
                 jQuery(document).find("[data-id='"+ component.data("id") + "'] .editable:first").focus();
             },
             function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
+                alert("DEBUG: " + textStatus);
             }
         );
     }
@@ -389,7 +391,7 @@ RPI._("component").edit = (function() {
                     );
                     updateAutoSaveMessage(component, "There was a problem saving the document");
                     if(!isAuthenticationException) {
-                        console.log("There was a problem saving the document");
+                        alert("DEBUG: " + textStatus);
                     }
                 }
             );
@@ -417,8 +419,9 @@ RPI._("component").edit = (function() {
                 );
 
                 loadComponent(component, data.xhtml, "cancel");
-           },
+            },
             function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
+                alert("DEBUG: " + textStatus);
             }
         );
     }
@@ -447,6 +450,7 @@ RPI._("component").edit = (function() {
                     loadComponent(component, data.xhtml, "delete");
                 },
                 function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
+                    alert("DEBUG: " + textStatus);
                 }
             );
         }
@@ -476,6 +480,7 @@ RPI._("component").edit = (function() {
                     loadComponent(component, data.xhtml, "delete");
                 },
                 function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
+                    alert("DEBUG: " + textStatus);
                 }
             );
         }
