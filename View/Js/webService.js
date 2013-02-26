@@ -92,16 +92,14 @@ RPI.webService.call = function(service, methodName, params, callback, errorCallb
                     }
                 }
 
-                if(errorCallback) {
-                    errorCallback(XMLHttpRequest, (error ? error.message : null), errorThrown, null, sourceData);
-                }
-                
                 if(XMLHttpRequest.status == 401) {
 					alert(error.message || "Please press 'OK' to log-in.");
 					document.location.href = "/account/login/?from=" + (this.sourceUrl ? this.sourceUrl.URLEncode() : document.location.href.URLEncode());
 				} else if(XMLHttpRequest.status == 403) {
 					alert(error.message || "You do not have permission to perform this action");
-				}
+				} else if(errorCallback) {
+                    errorCallback(XMLHttpRequest, (error ? error.message : null), errorThrown, null, sourceData);
+                }
 			}
 		}
 	});
