@@ -120,7 +120,7 @@ RPI._("component").drag = {
 jQuery(document).on(
     "load.RPI.component.edit",
     function(e, component, option) {
-        if (component.data("type") == "RPI\\Components\\Grid\\Component" && component.hasClass("component-editmode")) {
+        if (component.hasClass("draggable-container") && component.hasClass("component-editmode")) {
             RPI.component.drag.init();
             
             var deleteOption = jQuery("<div class=\"option-delete\"></div>")
