@@ -200,7 +200,7 @@ class DomTest extends \RPI\Framework\Test\Base
         
         var_dump($simpleArray);
         unset($simpleArray["component"][0]);
-//        $simpleArray["component"] = array_slice($simpleArray["component"], 1);
+        //$simpleArray["component"] = array_slice($simpleArray["component"], 1);
         
         var_dump($simpleArray);
         
@@ -209,7 +209,7 @@ class DomTest extends \RPI\Framework\Test\Base
         
         $array = \RPI\Framework\Helpers\Dom::deserialize($xml);
         
-//        unset($array["#NAME"]);
+        //unset($array["#NAME"]);
         var_dump($array);
         
         $this->assertEquals(
