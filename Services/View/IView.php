@@ -53,13 +53,26 @@ interface IView
     
     /**
      * 
+     * @param type $uuid
      * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+     * @param type $optionName
+     * 
+     * @return boolean
+     * 
+     * @throws \RPI\Framework\App\Security\Acl\Exceptions\PermissionDenied
+     * @throws \RPI\Framework\Services\View\Exception
      */
-    public function deleteComponent(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject);
+    public function deleteComponent(
+        $uuid,
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
+        $optionName = "model"
+    );
     
     /**
      * 
      * @param \RPI\Framework\Component $component
+     * 
+     * @return int
      */
     public function getComponentTimestamp(\RPI\Framework\Component $component);
 }

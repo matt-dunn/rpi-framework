@@ -745,19 +745,17 @@ class Xml implements IView
         
         return $decorators;
     }
-
-    public function updateComponentModel(
+    
+    /**
+     * 
+     * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+     * @param string $optionName
+     * @return \DOMDocument|boolean
+     */
+    private function getUpdatedComponentDomDocument(
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $optionName = "model"
     ) {
-        if (isset($this->acl)
-            && $this->acl->canUpdate($domainObject) !== true) {
-            throw new \RPI\Framework\App\Security\Acl\Exceptions\PermissionDenied(
-                \RPI\Framework\App\Security\Acl\Model\IAcl::UPDATE,
-                $domainObject
-            );
-        }
-        
         $uuid = $domainObject->getId();
         $model = (array)$domainObject;
         
@@ -802,20 +800,47 @@ class Xml implements IView
                 $importNode = $domDataViews->importNode($child, true);
                 $option->appendChild($importNode);
             }
+            
+            return $domDataViews;
+        }
+        
+        return false;
+    }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function updateComponentModel(
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
+        $optionName = "model"
+    ) {
+        if (isset($this->acl)
+            && $this->acl->canUpdate($domainObject) !== true) {
+            throw new \RPI\Framework\App\Security\Acl\Exceptions\PermissionDenied(
+                \RPI\Framework\App\Security\Acl\Model\IAcl::UPDATE,
+                $domainObject
+            );
+        }
+        
+        $domDataViews = $this->getUpdatedComponentDomDocument($domainObject, $optionName);
+        if ($domDataViews !== false) {
             $seg = \RPI\Framework\Helpers\Locking::lock(__CLASS__);
             try {
                 $modifiedTime = filemtime($this->file);
-                $domDataViews->save($this->file);
-                touch($this->file, $modifiedTime);
+                if ($domDataViews->save($this->file) !== false) {
+                    touch($this->file, $modifiedTime);
 
-                $controllerData = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-$uuid");
-                if ($controllerData !== false) {
-                    $controllerData["options"][$optionName] = $model;
-                    $this->store->store(
-                        "PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-$uuid",
-                        $controllerData
-                    );
+                    $uuid = $domainObject->getId();
+                    $model = (array)$domainObject;
+
+                    $controllerData = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-$uuid");
+                    if ($controllerData !== false) {
+                        $controllerData["options"][$optionName] = $model;
+                        $this->store->store(
+                            "PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-$uuid",
+                            $controllerData
+                        );
+                    }
                 }
             } catch (\Exception $ex) {
                 \RPI\Framework\Helpers\Locking::release($seg);
@@ -829,8 +854,14 @@ class Xml implements IView
         return false;
     }
 
-    public function deleteComponent(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
-    {
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteComponent(
+        $uuid,
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
+        $optionName = "model"
+    ) {
         if (isset($this->acl)
             && $this->acl->canDelete($domainObject) !== true) {
             throw new \RPI\Framework\App\Security\Acl\Exceptions\PermissionDenied(
@@ -839,71 +870,69 @@ class Xml implements IView
             );
         }
         
-        $uuid = $domainObject->getId();
-        
-        $domDataViews = new \DOMDocument();
-        $domDataViews->formatOutput = true;
-        $domDataViews->preserveWhiteSpace = false;
-        $domDataViews->load($this->file);
-        
-        $components = \RPI\Framework\Helpers\Dom::getElementsByXPath(
-            $domDataViews->documentElement,
-            "/config:views//config:component[@id = '$uuid']",
-            array(
-                "config" => "http://www.rpi.co.uk/presentation/config/views/"
-            )
-        );
-
-        if ($components->length > 0) {
-            $component = $components->item(0);
-            
-            $parentComponents = \RPI\Framework\Helpers\Dom::getElementsByXPath(
-                $component,
-                "ancestor::config:component[1]",
+        $domDataViews = $this->getUpdatedComponentDomDocument($domainObject, $optionName);
+        if ($domDataViews !== false) {
+            $components = \RPI\Framework\Helpers\Dom::getElementsByXPath(
+                $domDataViews->documentElement,
+                "/config:views//config:component[@id = '$uuid']",
                 array(
                     "config" => "http://www.rpi.co.uk/presentation/config/views/"
                 )
             );
-            
-            $parentComponentUuid = null;
-            if ($parentComponents->length > 0) {
-                $parentComponentUuid = $parentComponents->item(0)->getAttribute("id");
-            }
-            
-            $component->parentNode->removeChild($component);
-            
-            $seg = \RPI\Framework\Helpers\Locking::lock(__CLASS__);
-            try {
-                $modifiedTime = filemtime($this->file);
-                $domDataViews->save($this->file);
-                touch($this->file, $modifiedTime);
 
-                if (isset($parentComponentUuid) && $parentComponentUuid !== "") {
-                    $controllerData = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-$parentComponentUuid");
-                    if ($controllerData !== false) {
-                        $components = $controllerData["components"];
-                        $index = array_search($uuid, $components);
-                        if ($index !== false) {
-                            array_splice($components, $index, 1);
-                            $controllerData["components"] = $components;
-                            
-                            $ret = $this->store->store(
-                                "PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-$parentComponentUuid",
-                                $controllerData
+            if ($components->length > 0) {
+                $component = $components->item(0);
+                $component->parentNode->removeChild($component);
+
+                $seg = \RPI\Framework\Helpers\Locking::lock(__CLASS__);
+                try {
+                    $modifiedTime = filemtime($this->file);
+                    if ($domDataViews->save($this->file) !== false) {
+                        touch($this->file, $modifiedTime);
+                        
+                        $model = (array)$domainObject;
+
+                        $parentComponentUuid = $domainObject->getId();
+                        if (isset($parentComponentUuid) && $parentComponentUuid !== "") {
+                            $controllerData = $this->store->fetch(
+                                "PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-$parentComponentUuid"
                             );
+                            if ($controllerData !== false) {
+                                $controllerData["options"][$optionName] = $model;
+
+                                $components = $controllerData["components"];
+                                $index = array_search($uuid, $components);
+                                if ($index !== false) {
+                                    array_splice($components, $index, 1);
+                                    $controllerData["components"] = $components;
+
+                                    if ($this->store->store(
+                                        "PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-$parentComponentUuid",
+                                        $controllerData
+                                    ) !== false) {
+                                        $this->store->delete("PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-$uuid");
+                                    }
+                                }
+                            }
                         }
                     }
+                } catch (\Exception $ex) {
+                    \RPI\Framework\Helpers\Locking::release($seg);
+                    throw $ex;
                 }
                 
-                $this->store->delete("PHP_RPI_CONTENT_VIEWS-{$this->file}-controller-$uuid");
-            } catch (\Exception $ex) {
                 \RPI\Framework\Helpers\Locking::release($seg);
-                throw $ex;
             }
-            \RPI\Framework\Helpers\Locking::release($seg);
+            
+            return true;
         }
+        
+        return false;
     }
     
+    /**
+     * {@inheritdoc}
+     */
     public function getComponentTimestamp(\RPI\Framework\Component $component)
     {
         return $this->store->getItemModifiedTime(
