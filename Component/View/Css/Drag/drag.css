@@ -27,11 +27,14 @@ body.component_js .component-editmode.draggable-container .component-delete {
 }
 
 body.component_js .component-editmode.draggable-container .component-delete .option-delete {
-    border:1px solid red;
+    border:2px solid #555;
+    background-color: #ccc;
     position:absolute;
+    border-radius:30px;
     top:0;
     right:0;
-    width:15px;
-    height:15px;
+    width:20px;
+    height:20px;
     cursor:pointer;
+    z-index:9999999;
 }
