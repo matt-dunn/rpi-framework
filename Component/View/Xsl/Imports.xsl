@@ -8,6 +8,8 @@
 	exclude-result-prefixes="xsi"
 >
 
+<xsl:import href="../../../View/Xsl/Metadata/User.xsl"/>
+
 <xsl:import href="../../../View/Xsl/Xhtml.xsl"/>
 <xsl:import href="../../../View/Xsl/Pagination.xsl"/>
 

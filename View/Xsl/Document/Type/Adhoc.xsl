@@ -34,12 +34,15 @@
         <p>
             <xsl:text>By </xsl:text>
             <cite>
+                <xsl:apply-templates select="commonDocument:createdBy/metadata:user" mode="fullname"/>
+                <!--
                 <xsl:apply-templates select="commonDocument:createdBy" mode="common_document-editableAttributes">
                     <xsl:with-param name="component" select="$component"/>
                     <xsl:with-param name="bind" select="string('commonDocument:createdBy')"/>
                 </xsl:apply-templates>
 
                 <xsl:value-of select="commonDocument:createdBy"/>
+                -->
             </cite>
         </p>
     </xsl:if>
