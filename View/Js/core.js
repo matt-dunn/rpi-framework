@@ -311,7 +311,9 @@ RPI.DOM.helpers = (function() {
             
             columns.each(
                 function() {
-					var elementHeight = jQuery(this).height();
+                    var element = jQuery(this);
+    				element.css("min-height", "auto");
+					var elementHeight = element.height();
 					if(elementHeight > maxHeight) {
 						maxHeight = elementHeight;
 					}
