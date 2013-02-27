@@ -48,25 +48,18 @@ abstract class Object implements \Serializable
         }
     }
     
+    /**
+     * 
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->getProperties(true);
+    }
+    
     public function __sleep()
     {
-        $properties = array();
-        
-        $reflect = new \ReflectionObject($this);
-        
-        foreach ($reflect->getMethods(\ReflectionProperty::IS_PUBLIC) as $method) {
-            $parameterCount = count($method->getParameters());
-            $methodName = $method->getName();
-            if ($parameterCount == 0 && substr($methodName, 0, 3) == "get") {
-                $properties[lcfirst(substr($methodName, 3))] = lcfirst(substr($method->getName(), 3));
-            }
-        }
-        
-        foreach ($reflect->getProperties(\ReflectionProperty::IS_PUBLIC) as $prop) {
-            $properties[$prop->getName()] = $prop->getName();
-        }
-
-        return $properties;
+        return $this->getProperties();
     }
     
     public function serialize()
@@ -101,5 +94,35 @@ abstract class Object implements \Serializable
                 $this->$name = $value;
             }
         }
+    }
+    
+    private function getProperties($getValue = false)
+    {
+        $properties = array();
+        
+        $reflect = new \ReflectionObject($this);
+        
+        foreach ($reflect->getMethods(\ReflectionProperty::IS_PUBLIC) as $method) {
+            $parameterCount = count($method->getParameters());
+            $methodName = $method->getName();
+            if ($parameterCount == 0 && substr($methodName, 0, 3) == "get") {
+                if ($getValue) {
+                    $properties[lcfirst(substr($methodName, 3))] = $this->$methodName();
+                } else {
+                    $properties[lcfirst(substr($methodName, 3))] = lcfirst(substr($method->getName(), 3));
+                }
+            }
+        }
+        
+        foreach ($reflect->getProperties(\ReflectionProperty::IS_PUBLIC) as $prop) {
+            $propertyName = $prop->getName();
+            if ($getValue) {
+                $properties[$propertyName] = $this->$propertyName;
+            } else {
+                $properties[$propertyName] = $propertyName;
+            }
+        }
+
+        return $properties;
     }
 }
