@@ -30,7 +30,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
     public function __construct(
         \RPI\Framework\App $app,
         \RPI\Framework\Services\User\IUser $userService,
-        array $options
+        array $options = null
     ) {
         $this->app = $app;
         $this->userService = $userService;
