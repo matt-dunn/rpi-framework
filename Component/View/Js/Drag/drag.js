@@ -91,6 +91,13 @@ RPI._("component").drag = {
             containment: 'document',
             start: function (e,ui) {
                 $(ui.helper).addClass('dragging');
+                
+                jQuery.event.trigger(
+                    "start.RPI.component.drag",
+                    [
+                        ui.item
+                    ]
+                );
             },
             stop: function (e,ui) {
                 if (ui.item) {
@@ -111,6 +118,13 @@ RPI._("component").drag = {
                 
                 $(ui.item).css({width:''}).removeClass('dragging');
                 $(settings.columns).sortable('enable');
+                
+                jQuery.event.trigger(
+                    "stop.RPI.component.drag",
+                    [
+                        ui.item
+                    ]
+                );
             }
         });
     }
@@ -130,6 +144,15 @@ jQuery(document).on(
                         
                         RPI.webService.call("/ws/component/", "delete", {id : component.data("id"), bind: targetComponent.data("id")}, 
                             function(data, response, sourceData) {
+                                targetComponent.hide();
+                                
+                                jQuery.event.trigger(
+                                    "delete.RPI.component.drag",
+                                    [
+                                        targetComponent
+                                    ]
+                                );
+                                    
                                 targetComponent.remove();
                             },
                             function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
