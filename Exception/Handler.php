@@ -105,7 +105,8 @@ class Handler
             $priority,
             $ident,
             $includeDebugInformation,
-            $ex->getMessage()
+            $ex->getMessage(),
+            $ex
         );
         
         if ($ex->getPrevious() !== null) {
@@ -282,7 +283,8 @@ class Handler
         $priority = LOG_CRIT,
         $ident = null,
         $includeDebugInformation = true,
-        $originalMessage = null
+        $originalMessage = null,
+        \Exception $ex = null
     ) {
         if (!isset($originalMessage)) {
             $originalMessage = $msg;
@@ -344,7 +346,7 @@ class Handler
                 closelog();
 
                 if (isset(self::$logMessageCallback)) {
-                    call_user_func(self::$logMessageCallback, $originalMessage, $priority, $ident);
+                    call_user_func(self::$logMessageCallback, $originalMessage, $priority, $ident, $ex);
                 }
             } else {
                 error_log($msg);
