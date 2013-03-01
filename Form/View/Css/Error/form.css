@@ -31,22 +31,16 @@ form fieldset p.success span.c {
 
 form fieldset.error:after,
 form fieldset p.error span.c:after {
-	background:url(I/Form/icons.png) no-repeat -20px 0;
-    content:'';
+    #sprite:../../../../View/Css/I/Sprites/cross.png;
     position:absolute;
     top:5px;
     right:0;
-    width:20px;
-    height:20px;
 }
 
 form fieldset.success:after,
 form fieldset p.success span.c:after {
-	background:url(I/Form/icons.png) no-repeat 0 0;
-    content:'';
+    #sprite:../../../../View/Css/I/Sprites/tick.png;
     position:absolute;
     top:5px;
     right:0;
-    width:20px;
-    height:20px;
 }
