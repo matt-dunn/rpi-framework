@@ -28,8 +28,12 @@ class AllTests
                 "",
                 str_replace("/", "\\", substr($file, strlen($basePath)))
             );
-            echo "Found test '$testClassName' (suite: '$suiteName')\n";
-            $suite->addTestSuite($testClassName);
+            
+            if (class_exists($testClassName)) {
+                echo "Found test '$testClassName' (suite: '$suiteName')\n";
+
+                $suite->addTestSuite($testClassName);
+            }
         }
 
         return $suite;
