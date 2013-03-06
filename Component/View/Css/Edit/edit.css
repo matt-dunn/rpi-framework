@@ -23,7 +23,7 @@ body.component_js .component-editable .editable {
     
     cursor:text !important;
     background-color:#f9f9f9 !important;
-    border:1px solid !section_border_color !important;
+    border:1px solid #ccc !important;
     border-radius:5px !important;
 }
 
@@ -53,9 +53,9 @@ body.component_js .component-editable ul.options {
     display: block;
     float:right;
 /*    margin:-0.5em -0.5em 0 0;*/
-/*    border-bottom:1px solid !section_border_color;
-    border-left:1px solid !section_border_color;*/
-    border:1px solid !section_border_color;
+/*    border-bottom:1px solid #ccc;
+    border-left:1px solid #ccc;*/
+    border:1px solid #ccc;
     border-radius:0 0 0 8px;
     -moz-border-radius:0 0 0 8px;
     -webkit-border-radius:0 0 0 8px;
@@ -66,7 +66,7 @@ body.component_js .component-editable ul.options {
 body.component_js .component-editable ul.options li {
     float:left;
     padding:0.25em 0.5em;
-    border-right:1px solid !section_border_color;
+    border-right:1px solid #ccc;
     cursor:pointer;
 }
 

@@ -1,5 +1,5 @@
 .document span.c-caption {
-	border:1px solid !section_border_color;
+	border:1px solid #ccc;
 	float:left;
 	margin:0.25em 0.75em 0.5em 0;
 }

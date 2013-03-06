@@ -15,7 +15,7 @@
 .document table td {
 	vertical-align: top;
 	padding:0.5em;
-/*	border-bottom:1px solid !section_border_color;*/
+/*	border-bottom:1px solid #ccc;*/
 }
 
 .document table tr.e td {
@@ -44,7 +44,7 @@
 .document table.b-list,
 .document table.b-list th,
 .document table.b-list td {
-	border:1px solid !section_border_color;
+	border:1px solid #ccc;
 }
 
 

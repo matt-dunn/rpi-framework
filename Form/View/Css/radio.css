@@ -27,6 +27,6 @@ form fieldset.r legend {
 	white-space:normal;
 	font-weight:bold;
 	font-size:1.1em;
-	font-family: !type_header_font_family;
-	color:!type_default_color;
+	font-family: Verdana, Arial, Tahoma, Helvetica, sans-serif;
+	color:#333;
 }

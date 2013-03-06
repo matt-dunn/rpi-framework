@@ -1,7 +1,7 @@
 form fieldset {
-	border:1px solid !form_border_color;
+	border:1px solid #ccc;
 /*	background:url(i/common/gradient-section.gif) repeat-x bottom;*/
-	background-color:!form_background_color;
+	background-color:#fbfbfb;
 	padding:0.75em;
 	margin:0 0 1em 0;
     border-radius:5px;
