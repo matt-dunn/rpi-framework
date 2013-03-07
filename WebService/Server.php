@@ -51,6 +51,8 @@ abstract class Server extends \RPI\Framework\Controller
     
     protected function initController()
     {
+        \RPI\Framework\Exception\Handler::$showFailSafeMessage = false;
+        
         ob_start();
         
         if ($this->getConfig()->getValue("config/debug/@enabled", false) === true) {
