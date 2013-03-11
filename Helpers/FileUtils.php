@@ -11,158 +11,52 @@ class FileUtils
     private function __construct()
     {
     }
-
-    public static $cacheEnabled = false;
-
-    //static class files
+    
     /**
-     * Recursively find files based on a search pattern
-     * @param string $path       Start path
-     * @param string $pattern    File match pattern
-     * @param array  $files      List of matched files
-     * @param bool   $recursive  (optional) Search $path recursively
-     * @param bool   $allowCache (optional)
-     *
-     * @author Matt Dunn
+     * 
+     * @param string $basePath
+     * @param string $includes      Pipe delimited list of patterns
+     * @param string $excludes      Pipe delimited list of patterns
+     * @param boolean $recursive
+     * 
+     * @return array
      */
     public static function find(
-        $path,
-        $pattern,
-        array &$files = null,
-        $recursive = true,
-        $allowCache = true
+        $basePath,
+        $includes,
+        $excludes = null,
+        $recursive = true
     ) {
-        $cacheId = false;
+        $files = array();
         
-        if (!isset($files)) {
-            $files = array();
-        }
-        
-        if (self::$cacheEnabled && $allowCache) {
-            $args = func_get_args();
-            $cacheId = \RPI\Framework\Cache\File::getCacheId(__CLASS__, __FUNCTION__, $args);
-            $buffer = \RPI\Framework\Cache\File::getContent($cacheId);
-            if ($buffer !== false) {
-                $files += unserialize($buffer);
-
-                return;
-            }
-        }
-
-        $searchArray = array();
-        if (parse_url($path, PHP_URL_SCHEME) == "ftp") {
-            $parts = parse_url($path);
-            $connect = ftp_connect($parts["host"]);
-            if ($connect !== false) {
-                $result = ftp_login($connect, $parts["user"], $parts["pass"]);
-                if ($result !== false) {
-                    self::findFilesFTP(
-                        "ftp://".$parts["user"].":".$parts["pass"]."@".$parts["host"],
-                        $connect,
-                        $parts["path"]."/",
-                        $pattern,
-                        $searchArray,
-                        $recursive
-                    );
-                } else {
-                    ftp_close($connect);
-                    throw new \RPI\Framework\Exceptions\RuntimeException(
-                        "Unable to connect to ftp server '".$parts["host"]."' (invalid credentials)"
-                    );
-                }
-                ftp_close($connect);
-            } else {
-                throw new \RPI\Framework\Exceptions\RuntimeException(
-                    "Unable to connect to ftp server '".$parts["host"]."'"
-                );
-            }
-        } else {
-            self::findFiles(realpath($path), $pattern, $searchArray, $recursive);
-        }
-        $files += $searchArray;
-
-        if (self::$cacheEnabled && $allowCache && $cacheId !== false) {
-            \RPI\Framework\Cache\File::setContent($cacheId, serialize($searchArray));
-        }
-    }
-
-    private static function findFiles($path, $pattern, array &$files, $recursive)
-    {
-        if (file_exists($path)) {
-            $path = rtrim(str_replace("\\", "/", $path), '/') . '/';
-            $dir = dir($path);
+        if (file_exists($basePath)) {
+            $dir = dir($basePath);
             while (false !== ($entry = $dir->read())) {
-                $fullname = $path . $entry;
+                $fullname = rtrim($basePath, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$entry;
                 if ($recursive && $entry != '.' && $entry != '..' && substr($entry, 0, 1) != "." && is_dir($fullname)) {
-                    self::findFiles($fullname, $pattern, $files, $recursive);
-                } elseif (is_file($fullname) && preg_match($pattern, $entry)) {
+                    $files += self::find($fullname, $includes, $excludes, $recursive);
+                } elseif (is_file($fullname)
+                    && self::isMatch(explode("|", $includes), $fullname)
+                    && (!isset($excludes) || (isset($excludes) && !self::isMatch(explode("|", $excludes), $fullname)))
+                ) {
                     $files[$fullname] = filemtime($fullname);
                 }
             }
             $dir->close();
         }
+        
+        return $files;
     }
-
-    private static function findFilesFTP($base, $connect, $path, $pattern, array &$files, $recursive)
+    
+    private static function isMatch(array $patterns, $file)
     {
-        ftp_chdir($connect, $path);
-        $remoteFiles = ftp_nlist($connect, ".");
-        if ($remoteFiles) {
-            foreach ($remoteFiles as $entry) {
-                $fullname = $path . $entry;
-                if ($recursive
-                        && $entry != '.'
-                        && $entry != '..'
-                        && substr($entry, 0, 1) != "."
-                        && self::ftpIsDir($connect, $fullname)) {
-                    self::findFilesFTP($base, $connect, $fullname."/", $pattern, $files, $recursive);
-                } elseif (preg_match($pattern, $entry)) {
-                    $files[$base.$fullname] = $entry;
-                }
-            }
-        }
-    }
-
-    private static function ftpIsDir($connect, $dir)
-    {
-        try {
-            if (ftp_chdir($connect, $dir)) {
+        foreach ($patterns as $pattern) {
+            if (fnmatch($pattern, $file)) {
                 return true;
-            } else {
-                return false;
             }
-        } catch (\Exception $ex) {
-            return false;
         }
-    }
-
-    /**
-     * Recursively find directories based on a search pattern
-     * @param string $path        Start path
-     * @param string $pattern     File match pattern
-     * @param array  $directories List of matched directories
-     * @param bool   $recursive   (optional) Search $path recursively
-     *
-     * @author Matt Dunn
-     */
-    public static function findDirectories($path, $pattern, array &$directories, $recursive = true)
-    {
-        if (file_exists($path)) {
-            $path = rtrim(str_replace("\\", "/", $path), '/') . '/';
-            $dir = dir($path);
-            while (false !== ($entry = $dir->read())) {
-                if ($entry != '.' && $entry != '..' && substr($entry, 0, 1) != "." ) {
-                    $fullname = $path . $entry;
-                    if ($recursive && is_dir($fullname)) {
-                        if (((isset($pattern) && preg_match($pattern, $entry)) || !isset($pattern))) {
-                            $directories[$fullname] = pathinfo($fullname, PATHINFO_FILENAME);
-                        }
-                        self::findDirectories($fullname, $pattern, $directories, $recursive);
-                    }
-                }
-            }
-            $dir->close();
-        }
+        
+        return false;
     }
 
     /**
@@ -370,13 +264,6 @@ class FileUtils
      */
     public static function trimSlashes($path)
     {
-        if (substr($path, 0, 1) == "/") {
-            $path = substr($path, 1);
-        }
-        if (substr($path, strlen($path) - 1, 1) == "/") {
-            $path = substr($path, 0, strlen($path) - 1);
-        }
-
-        return $path;
+        return trim($path, DIRECTORY_SEPARATOR);
     }
 }

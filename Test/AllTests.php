@@ -9,7 +9,7 @@ class AllTests
         $rootPath = realpath(__DIR__."/../../../");
         $basePath = realpath(__DIR__."/../../../");
         
-        \RPI\Framework\Helpers\FileUtils::find($basePath, "/.*Test\.php$/", $files, true, false);
+        $files = \RPI\Framework\Helpers\FileUtils::find($basePath, "*/*Test.php*", "*/vendor/*");
         $files = array_keys($files);
 
         $suites = array();
