@@ -20,6 +20,10 @@
         {
             "type": "composer",
             "url":  "http://packages.red-pixel.co.uk/"
+        },
+        {
+            "type": "composer",
+            "url":  "https://packagist.org/"
         }
     ],
     "require-dev": {
