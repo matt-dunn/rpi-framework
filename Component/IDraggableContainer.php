@@ -3,7 +3,7 @@
 namespace RPI\Framework\Component;
 
 /**
- * Marks a component as editable a draggable container.
+ * Marks a component as a draggable container.
  */
 interface IDraggableContainer
 {
