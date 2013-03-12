@@ -2,6 +2,7 @@
 
 namespace RPI\Framework\Cache\Front;
 
+// TOO: review locking
 class File implements \RPI\Framework\Cache\IFront
 {
     private $fileCachePath;
@@ -78,6 +79,7 @@ class File implements \RPI\Framework\Cache\IFront
 
     public function fetchContent($key, $timestamp = null, $group = null)
     {
+        // TOO: add locking??
         $filePath = self::fetch($key, $timestamp, $group);
         if ($filePath !== false) {
             return file_get_contents($filePath);
@@ -94,6 +96,7 @@ class File implements \RPI\Framework\Cache\IFront
      */
     public function store($key, $value, $group = null)
     {
+        // TOO: review locking
         $cacheFile = self::getFileCachePath().md5($key);
         if (isset($group)) {
             $cacheFile = $cacheFile.".".self::normalizeName($group);
@@ -127,6 +130,7 @@ class File implements \RPI\Framework\Cache\IFront
             throw new \RPI\Framework\Exceptions\PermissionDeniedFileWrite($cachePath);
         }
         
+        // TOO: review locking
         \RPI\Framework\Helpers\FileUtils::deleteFiles($cachePath, $filePattern);
     }
 
@@ -140,6 +144,7 @@ class File implements \RPI\Framework\Cache\IFront
             $cacheFile = $cacheFile.".".self::normalizeName($group);
         }
         
+        // TOO: review locking
         if (file_exists($cacheFile)) {
             if (!is_writable(dirname($cacheFile))) {
                 throw new \RPI\Framework\Exceptions\PermissionDeniedFileWrite($cacheFile);
