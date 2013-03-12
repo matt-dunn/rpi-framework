@@ -2,6 +2,7 @@
 
 namespace RPI\Framework\App;
 
+// TODO: move out of App?
 class Router
 {
     private $map = array();
