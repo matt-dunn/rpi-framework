@@ -14,8 +14,7 @@
     "require": {
         "php": ">=5.3.3",
         "firephp/firephp-core": "dev-master",
-        "smarty/smarty": "dev-trunk",
-        "rpi/components/carousel": "dev-master"
+        "smarty/smarty": "dev-trunk"
     },
     "repositories": [
         {
