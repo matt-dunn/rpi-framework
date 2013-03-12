@@ -2,12 +2,9 @@ body.component_js .component-editmode.draggable-container .component-draggable:h
     border-right:2px solid #555;
     border-top:2px solid #555;
     border-bottom:2px solid #555;
-    /*border-left:1px solid #555;*/
     background-color: #d5d5d5;
     width:30px;
     height:50px;
-    /*margin:0 5px 5px -10px;*/
-    /*float:left;*/
     position:absolute;
     top:0;
     left:0;
