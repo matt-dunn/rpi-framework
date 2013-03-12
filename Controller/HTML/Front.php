@@ -4,6 +4,8 @@ namespace RPI\Framework\Controller\HTML;
 
 abstract class Front extends \RPI\Framework\Controller\HTML
 {
+    const PAGE_TITLE_NO_CACHE = -1;
+    
     /**
      *
      * @var array
@@ -61,9 +63,9 @@ abstract class Front extends \RPI\Framework\Controller\HTML
      * wish to set the title as a default (i.e. if nothing else on the page has set a title)
      * then the priority should be set to 0. Other controllers may set this to any other value
      * between 1 and 99. Care must be taken to ensure there are no competing controllers are
-     * trying to set the priority to the same value on the same page. Setting a priority of -1
-     * will only set the title for the current request so can be used if there is for example
-     * a server error.
+     * trying to set the priority to the same value on the same page. Setting a priority of
+     * PAGE_TITLE_NO_CACHE will only set the title for the current request so can be used if
+     * there is for example a server error.
      * 
      * @param string $title Page title
      * @param int $priority Priority setting of setting the title. Value 0 to 100.
@@ -77,9 +79,10 @@ abstract class Front extends \RPI\Framework\Controller\HTML
         $title = \RPI\Framework\Facade::localisation()->t("site.controller.page.title", array($title));
         
         if (self::$pageTitleDetails["title"] != $title
-            && ($priority >= self::$pageTitleDetails["priority"]) || $priority === -1) {
+            && ($priority >= self::$pageTitleDetails["priority"]) || $priority === self::PAGE_TITLE_NO_CACHE) {
             // Do not overwrite a request priority title
-            if ($priority !== -1 && self::$pageTitleDetails["priority"] === -1) {
+            if ($priority !== self::PAGE_TITLE_NO_CACHE
+                && self::$pageTitleDetails["priority"] === self::PAGE_TITLE_NO_CACHE) {
                 return false;
             }
             
@@ -90,7 +93,7 @@ abstract class Front extends \RPI\Framework\Controller\HTML
                 new \RPI\Framework\Events\PageTitleUpdated(array("title" => $title))
             );
             
-            if ($priority !== -1) {
+            if ($priority !== self::PAGE_TITLE_NO_CACHE) {
                 $frontStore = \RPI\Framework\Helpers\Reflection::getDependency(
                     \RPI\Framework\Facade::app(),
                     "RPI\Framework\Cache\IFront"
