@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\App;
 
-// TODO: move out of App?
+// TODO: move out of App? This may need to be more self contained for better reuse...
 class Router
 {
     private $map = array();
