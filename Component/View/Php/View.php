@@ -38,25 +38,15 @@ abstract class View extends \RPI\Framework\Controller\Message\View\Php\View impl
                 }
 
                 if ($controller->editable) {
-                    $sectionOptionsHTML = "<ul class=\"options\">";
-                    $className .= " component-editable";
-                    if ($controller->editMode) {
-                        $sectionOptionsHTML .= <<<EOT
-                            <li data-option="save" class="d">
-                                Save
-                            </li>
-                            <li data-option="cancel" class="l" title ="Complete">
-                                X
-                            </li>
-EOT;
-                        $className .= " component-editmode";
-                    } else {
-                        $sectionOptionsHTML .= "
-                            <li data-option=\"edit\" class=\"l\">
-                                Edit
-                            </li>";
+                    $componentSectionOptionsHTML = $this->renderOptions($model, $controller, $options);
+                    if ($componentSectionOptionsHTML !== "") {
+                        $sectionOptionsHTML = "<ul class=\"options\">{$componentSectionOptionsHTML}</ul>";
+                        
+                        $className .= " component-editable";
+                        if ($controller->editMode) {
+                            $className .= " component-editmode";
+                        }
                     }
-                    $sectionOptionsHTML .= "</ul>";
                 }
                 
                 if ($controller->isDraggable) {
@@ -94,6 +84,29 @@ EOT;
         }
 
         return $rendition;
+    }
+    
+    protected function renderOptions($model, \RPI\Framework\Controller $controller, array $options)
+    {
+        // TODO: localise:
+        $sectionOptionsHTML = "";
+        if ($controller->editMode) {
+            $sectionOptionsHTML .= <<<EOT
+                <li data-option="save" class="d">
+                    Save
+                </li>
+                <li data-option="cancel" class="l" title ="Complete">
+                    X
+                </li>
+EOT;
+        } else {
+            $sectionOptionsHTML .= "
+                <li data-option=\"edit\" class=\"l\">
+                    Edit
+                </li>";
+        }
+        
+        return $sectionOptionsHTML;
     }
 
     protected function renderComponentView($model, \RPI\Framework\Controller $controller, array $options)
