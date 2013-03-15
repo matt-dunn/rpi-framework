@@ -11,6 +11,16 @@ class Utils
     private function __construct()
     {
     }
+    
+    public static function removeEmptyItems(array $array)
+    {
+        return array_filter(
+            $array,
+            function ($s) {
+                return (isset($s) && $s !== "");
+            }
+        );
+    }
 
     /**
      * Test if an object is an associative array
