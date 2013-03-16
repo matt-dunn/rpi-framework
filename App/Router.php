@@ -49,14 +49,16 @@ class Router
             }
             
             if (isset($details["via"])) {
-                $methodParts = array_map(
-                    function ($s) {
-                        return strtolower(trim($s));
-                    },
-                    explode(",", $details["via"])
+                $methodParts = \RPI\Framework\Helpers\Utils::removeEmptyItems(
+                    array_map(
+                        function ($s) {
+                            return strtolower(trim($s));
+                        },
+                        explode(",", $details["via"])
+                    )
                 );
             }
-            
+
             \RPI\Framework\Helpers\Utils::validateOption(
                 $methodParts,
                 array("all", "get", "post", "delete", "put", "head")
