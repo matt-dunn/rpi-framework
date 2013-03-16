@@ -24,7 +24,7 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
         $email = null,
         $accountCreated = null,
         $accountLastAccessed = null,
-        $role = "user"
+        array $role = array("user")
     ) {
         $this->uuid = $uuid;
         $this->firstname = $firstname;
@@ -71,7 +71,28 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
     {
         return $this->role;
     }
-
+    
+    public function addRole($role)
+    {
+        if (!in_array($role, $this->role)) {
+            $this->role[] = $role;
+            return true;
+        }
+        
+        return false;
+    }
+    
+    public function deleteRole($role)
+    {
+        $roleIndex = array_search($role, $this->role);
+        if ($roleIndex !== false) {
+            unset($this->role[$roleIndex]);
+            return true;
+        }
+        
+        return false;
+    }
+    
     public function getIsAuthenticated()
     {
         return $this->isAuthenticated;
