@@ -37,6 +37,15 @@ interface IAcl
     );
     
     /**
+     * Check for UPDATE | DELETE | CREATE access operation
+     * 
+     * This is a shortcut for checkOperation(IAcl::UPDATE | IAcl::DELETE | IAcl::CREATE)
+     * 
+     * @return boolean|null Null is returned if no permissions have been defined
+     */
+    public function canEdit(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject);
+    
+    /**
      * Check for READ access operation
      * 
      * This is a shortcut for checkOperation(IAcl::READ)

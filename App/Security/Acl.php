@@ -54,6 +54,14 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
     /**
      * {@inheritdoc}
      */
+    public function canEdit(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
+    {
+        return $this->checkRoles($domainObject, IAcl::UPDATE | IAcl::DELETE | IAcl::CREATE, null, "operations");
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
     public function canRead(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
     {
         return $this->checkRoles($domainObject, IAcl::READ, null, "operations");
