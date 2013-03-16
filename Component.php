@@ -217,8 +217,8 @@ abstract class Component extends \RPI\Framework\Controller\HTML
 // Component: {$this->type}
 \$GLOBALS["RPI_COMPONENTS"]["{$this->id}"] = \$GLOBALS["RPI_APP"]->getView()->createController(
     "{$this->id}",
-    \$GLOBALS["RPI_APP"]->getAcl(),
-    \$GLOBALS["RPI_APP"]
+    \$GLOBALS["RPI_APP"],
+    \$GLOBALS["RPI_APP"]->getAcl()
 );
 \$GLOBALS["RPI_COMPONENTS"]["{$this->id}"]->process();
 ?>

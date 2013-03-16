@@ -77,8 +77,8 @@ class Xml implements IView
      */
     public function createController(
         $uuid,
-        \RPI\Framework\App\Security\Acl\Model\IAcl $acl,
         \RPI\Framework\App $app,
+        \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null,
         $type = null,
         array $controllerOptions = null
     ) {
@@ -93,7 +93,7 @@ class Xml implements IView
                 );
             }
             
-            $controller = $this->createComponentFromViewData($acl, $controllerData, $app, $controllerOptions);
+            $controller = $this->createComponentFromViewData($controllerData, $acl, $app, $controllerOptions);
             if (isset($type) && !$controller instanceof $type) {
                 throw new \RPI\Framework\Exceptions\InvalidType($controller, $type);
             }
@@ -168,8 +168,8 @@ class Xml implements IView
      * @throws \Exception
      */
     private function createComponentFromViewData(
-        \RPI\Framework\App\Security\Acl\Model\IAcl $acl,
         array $controllerData,
+        \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null,
         \RPI\Framework\App $app = null,
         array $additionalControllerOptions = null
     ) {
@@ -222,8 +222,8 @@ class Xml implements IView
                     foreach ($controllerData["components"] as $childControllerUUID) {
                         $component =  $this->createController(
                             $childControllerUUID,
-                            $acl,
-                            $app
+                            $app,
+                            $acl
                         );
 
                         if (isset($component) && $component !== false) {

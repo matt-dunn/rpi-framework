@@ -25,8 +25,8 @@ interface IView
      */
     public function createController(
         $uuid,
-        \RPI\Framework\App\Security\Acl\Model\IAcl $acl,
         \RPI\Framework\App $app,
+        \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null,
         $type = null,
         array $controllerOptions = null
     );

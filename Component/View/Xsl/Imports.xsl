@@ -39,7 +39,7 @@
 
 <xsl:template match="components/item/component[ancestor::component[1][boolean(number(canRenderViewFromCache)) = true() and boolean(number(cacheEnabled)) = false()]] | controller/components/item/component">
     <xsl:text disable-output-escaping="yes">&lt;</xsl:text>?php
-    $component = $GLOBALS["RPI_APP"]->getView()->createController("<xsl:value-of select="id"/>", $GLOBALS["RPI_APP"]->getAcl(), $GLOBALS["RPI_APP"]);
+    $component = $GLOBALS["RPI_APP"]->getView()->createController("<xsl:value-of select="id"/>", $GLOBALS["RPI_APP"], $GLOBALS["RPI_APP"]->getAcl());
     $component-<xsl:text disable-output-escaping="yes">&gt;</xsl:text>process();
     \RPI\Framework\Helpers\Utils::processPHP($component-<xsl:text disable-output-escaping="yes">&gt;</xsl:text>renderView());
     ?<xsl:text disable-output-escaping="yes">&gt;</xsl:text>
