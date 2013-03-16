@@ -14,6 +14,8 @@
 <xsl:template match="/component">
     <xsl:param name="headingLevel" select="number(1)"/>
     
+    <!--<textarea cols="80" rows="20" style="width:80%;margin-top:10em;"><xsl:copy-of select="."/></textarea>-->
+    
     <xsl:variable name="_headingLevel">
         <xsl:choose>
             <xsl:when test="string-length(normalize-space(controllerOptions/headingLevel)) &gt; 0">
