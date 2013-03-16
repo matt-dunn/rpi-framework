@@ -265,7 +265,7 @@ class Utils
         }
     }
 
-    public static function getArrayItemByKeyPath($values, $keyPath)
+    public static function getArrayItemByKeyPath($values, $keyPath, $default = false)
     {
         if (!is_array($keyPath)) {
             $keys = explode("/", $keyPath);
@@ -283,9 +283,7 @@ class Utils
             }
         }
 
-        $ret = false;
-
-        return $ret;
+        return $default;
     }
 
     public static function buildFullPath($path)
