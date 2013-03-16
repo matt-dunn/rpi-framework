@@ -165,14 +165,20 @@ abstract class Component extends \RPI\Framework\Controller\HTML
                     $this->editable = false;
                 }
                 
-                if (isset($this->acl)
-                    && $this->editable
-                    && $this->model instanceof \RPI\Framework\App\Security\Acl\Model\IDomainObject) {
-                    $this->editable = $this->acl->canUpdate($this->model);
+                if (isset($this->acl)) {
+                    if ($this->model instanceof \RPI\Framework\App\Security\Acl\Model\IDomainObject && $this->editable) {
+                        $this->editable = $this->acl->canEdit($this->model);
+                    } else {
+                        $this->editable = false;
+                    }
                 }
                 
                 if ($this->isDraggable || ($this->editable && $this->editMode)) {
                     $this->isDynamic = true;
+                }
+                
+                if (!$this->editable) {
+                    $this->editMode = false;
                 }
             }
 
