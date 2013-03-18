@@ -4,21 +4,47 @@ namespace RPI\Framework\Services\Authentication;
 
 abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentication
 {
+    /**
+     *
+     * @var \RPI\Framework\App 
+     */
     protected $app = null;
     
     /**
      * Offset in seconds
+     * 
+     * @var integer 
      */
     private $authenticationExpiryOffset = 1800;
 
+    /**
+     *
+     * @var boolean
+     */
     private $forceSecureAuthenticationToken = false;
 
+    /**
+     *
+     * @var integer
+     */
     private $sslPort = 443;
 
+    /**
+     *
+     * @var \RPI\Framework\Model\IUser 
+     */
     private $authenticatedUser = null;
 
+    /**
+     *
+     * @var boolean
+     */
     private $cookieDetectionEnabled = true;
     
+    /**
+     *
+     * @var string
+     */
     private $authenticatedUserSessionName = null;
     
     /**
@@ -27,6 +53,12 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
      */
     protected $userService = null;
 
+    /**
+     * 
+     * @param \RPI\Framework\App $app
+     * @param \RPI\Framework\Services\User\IUser $userService
+     * @param array $options
+     */
     public function __construct(
         \RPI\Framework\App $app,
         \RPI\Framework\Services\User\IUser $userService,
@@ -69,7 +101,10 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         }
     }
 
-    public function authenticateUser($email, $password)
+    /**
+     * {@inherit-doc}
+     */
+    public function authenticateUser($userId, $password)
     {
         try {
             if ($this->cookieDetectionEnabled && $this->app->getRequest()->getCookies()->get("cd") == null) {
@@ -79,8 +114,8 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
             $this->app->getSession()->regenerate(true);
 
             return $this->authenticate(
-                $this->authenticateUserDetails(strtolower($email), $password),
-                strtolower($email)
+                $this->authenticateUserDetails(strtolower($userId), $password),
+                strtolower($userId)
             );
         } catch (\Exception $ex) {
             $this->logout(true);
@@ -88,6 +123,9 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         }
     }
 
+    /**
+     * {@inherit-doc}
+     */
     public function logout($complete = true)
     {
         $this->app->getRequest()->getCookies()->delete("a");
@@ -98,16 +136,25 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         }
     }
 
+    /**
+     * {@inherit-doc}
+     */
     public function isAuthenticatedUser()
     {
         return ($this->getAuthenticatedUser() !== false && $this->getAuthenticatedUser()->isAuthenticated);
     }
 
+    /**
+     * {@inherit-doc}
+     */
     public function isAnonymousUser()
     {
         return ($this->getAuthenticatedUser() !== false && $this->getAuthenticatedUser()->isAnonymous);
     }
 
+    /**
+     * {@inherit-doc}
+     */
     public function getAuthenticatedUser()
     {
         $user = false;
@@ -153,22 +200,22 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
     /**
      *
      * @param  \RPI\Framework\Model\IUser  $user
-     * @param string $email
+     * @param string $userId
      * 
      * @return boolean
      */
-    private function authenticate($user, $email)
+    private function authenticate(\RPI\Framework\Model\IUser $user, $userId)
     {
         if ($user !== false) {
             \RPI\Framework\Exception\Handler::logMessage(
-                __METHOD__." - [success] email: $email, name: ".$user->firstname." ".$user->surname,
+                __METHOD__." - [success] userId: $userId, name: ".$user->firstname." ".$user->surname,
                 LOG_AUTH,
                 "authentication"
             );
             $this->setUser(
                 $user,
-                $this->createUserToken($user->email),
-                $this->createAuthenticationToken($user->email, time() + $this->authenticationExpiryOffset)
+                $this->createUserToken($user->userId),
+                $this->createAuthenticationToken($user->userId, time() + $this->authenticationExpiryOffset)
             );
             $user->isAuthenticated = $this->checkAuthenticationState();
             $user->isAnonymous = false;
@@ -176,7 +223,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
             return $user;
         } else {
             \RPI\Framework\Exception\Handler::logMessage(
-                __METHOD__." - [failure] email: $email",
+                __METHOD__." - [failure] userId: $userId",
                 LOG_AUTH,
                 "authentication"
             );
@@ -188,7 +235,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     /**
      *
-     * @return <type>
+     * @return boolean
      */
     private function checkAuthenticationState()
     {
@@ -385,18 +432,18 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     /**
      *
-     * @param  string $email
+     * @param  string $userId
      * @param  string $password
      * 
      * @return \RPI\Framework\Model\IUser
      */
-    abstract protected function authenticateUserDetails($email, $password);
+    abstract protected function authenticateUserDetails($userId, $password);
 
     /**
      *
-     * @param  string $email
+     * @param  string $userId
      * 
      * @return \RPI\Framework\Model\IUser
      */
-    abstract protected function getCurrentUser($email);
+    abstract protected function getCurrentUser($userId);
 }

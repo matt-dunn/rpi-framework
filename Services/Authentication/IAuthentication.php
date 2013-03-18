@@ -10,12 +10,12 @@ interface IAuthentication
     /**
      * Authenticate user login details
      * 
-     * @param  string            $email
-     * @param  string            $password Password hash
+     * @param  string            $userId
+     * @param  string            $password
      * 
      * @return AuthenticatedUser or false on error
      */
-    public function authenticateUser($email, $password);
+    public function authenticateUser($userId, $password);
 
     /**
      * @return boolean

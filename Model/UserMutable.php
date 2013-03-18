@@ -4,12 +4,16 @@ namespace RPI\Framework\Model;
 
 class UserMutable extends \RPI\Framework\Model\User
 {
-    public function __construct(\RPI\Framework\Model\User $user)
+    /**
+     * 
+     * @param \RPI\Framework\Model\IUser $user
+     */
+    public function __construct(\RPI\Framework\Model\IUser $user)
     {
         $this->uuid = $user->uuid;
         $this->firstname = $user->firstname;
         $this->surname = $user->surname;
-        $this->email = $user->email;
+        $this->userId = $user->userId;
 
         $this->accountCreated = $user->accountCreated;
         $this->accountLastAccessed = $user->accountLastAccessed;
@@ -17,6 +21,11 @@ class UserMutable extends \RPI\Framework\Model\User
         $this->role = $user->role;
     }
     
+    /**
+     * 
+     * @param string $uuid
+     * @return \RPI\Framework\Model\IUser
+     */
     public function setUuid($uuid)
     {
         $this->uuid = $uuid;
@@ -24,6 +33,11 @@ class UserMutable extends \RPI\Framework\Model\User
         return $this;
     }
 
+    /**
+     * 
+     * @param string $firstname
+     * @return \RPI\Framework\Model\IUser
+     */
     public function setFirstname($firstname)
     {
         $this->firstname = $firstname;
@@ -31,6 +45,11 @@ class UserMutable extends \RPI\Framework\Model\User
         return $this;
     }
 
+    /**
+     * 
+     * @param string $surname
+     * @return \RPI\Framework\Model\IUser
+     */
     public function setSurname($surname)
     {
         $this->surname = $surname;
@@ -38,13 +57,23 @@ class UserMutable extends \RPI\Framework\Model\User
         return $this;
     }
 
-    public function setEmail($email)
+    /**
+     * 
+     * @param string $userId
+     * @return \RPI\Framework\Model\IUser
+     */
+    public function setUserId($userId)
     {
-        $this->email = $email;
+        $this->userId = $userId;
         
         return $this;
     }
 
+    /**
+     * 
+     * @param string $accountCreated
+     * @return \RPI\Framework\Model\IUser
+     */
     public function setAccountCreated($accountCreated)
     {
         $this->accountCreated = $accountCreated;
@@ -52,6 +81,11 @@ class UserMutable extends \RPI\Framework\Model\User
         return $this;
     }
 
+    /**
+     * 
+     * @param type $accountLastAccessed
+     * @return \RPI\Framework\Model\IUser
+     */
     public function setAccountLastAccessed($accountLastAccessed)
     {
         $this->accountLastAccessed = $accountLastAccessed;
@@ -59,7 +93,12 @@ class UserMutable extends \RPI\Framework\Model\User
         return $this;
     }
 
-    public function setRole($role)
+    /**
+     * 
+     * @param array $role
+     * @return \RPI\Framework\Model\IUser
+     */
+    public function setRole(array $role)
     {
         $this->role = $role;
         

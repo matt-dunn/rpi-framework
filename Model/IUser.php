@@ -6,10 +6,10 @@ namespace RPI\Framework\Model;
  * @property-read string $uuid
  * @property-read string $firstname
  * @property-read string $surname
- * @property-read string $email
- * @property-read datetime $accountCreated
- * @property-read datetime $accountLastAccessed
- * @property-read array|string $role
+ * @property-read string $userId
+ * @property-read \DateTime $accountCreated
+ * @property-read \DateTime $accountLastAccessed
+ * @property-read array $role
  * @property boolean $isAuthenticated
  * @property boolean $isAnonymous
  */
@@ -33,22 +33,34 @@ interface IUser
     /**
      * @return string
      */
-    public function getEmail();
+    public function getUserId();
     
     /**
-     * @return ISO 8601 date
+     * @return \DateTime date
      */
     public function getAccountCreated();
     
     /**
-     * @return ISO 8601 date
+     * @return \DateTime date
      */
     public function getAccountLastAccessed();
     
     /**
-     * @return string|array
+     * @return array
      */
     public function getRole();
+    
+    /**
+     * 
+     * @param boolean $role
+     */
+    public function addRole($role);
+    
+    /**
+     * 
+     * @param boolean $role
+     */
+    public function deleteRole($role);
     
     /**
      * @return boolean
