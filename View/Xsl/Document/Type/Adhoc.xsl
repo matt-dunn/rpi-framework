@@ -77,7 +77,7 @@
                 </xsl:apply-templates>
             </div>
         </xsl:when>
-        <xsl:when test="commonDocument:summary/xhtml:body">
+        <xsl:when test="commonDocument:summary/xhtml:body and not(boolean(number($component/editMode)))">
             <div>
                 <xsl:apply-templates select="commonDocument:summary/xhtml:body" mode="common_document-editableAttributes">
                     <xsl:with-param name="component" select="$component"/>
