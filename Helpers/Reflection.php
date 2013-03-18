@@ -96,15 +96,7 @@ class Reflection
     
     public static function getDependency(\RPI\Framework\App $app, $className)
     {
-        $dependency = self::getDependencyObject($app, $className);
-        
-        if (!isset($dependency)) {
-            throw new \RPI\Framework\Exceptions\RuntimeException(
-                "Unable to create dependency '$className'. Check configuration settings"
-            );
-        }
-        
-        return $dependency;
+        return self::getDependencyObject($app, $className);
     }
 
     private static function getDependencyObject(\RPI\Framework\App $app, $className)
