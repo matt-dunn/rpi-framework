@@ -199,12 +199,12 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     /**
      *
-     * @param  \RPI\Framework\Model\IUser  $user
+     * @param  \RPI\Framework\Model\IUser|boolean  $user
      * @param string $userId
      * 
      * @return boolean
      */
-    private function authenticate(\RPI\Framework\Model\IUser $user, $userId)
+    private function authenticate($user, $userId)
     {
         if ($user !== false) {
             \RPI\Framework\Exception\Handler::logMessage(
