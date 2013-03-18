@@ -22,6 +22,10 @@ class Custom extends \RPI\Framework\Form\Validator
         }
         $this->hasError = ($this->message !== true);
 
+        if (!$this->hasError) {
+            $this->message = null;
+        }
+        
         return !$this->hasError;
     }
 
