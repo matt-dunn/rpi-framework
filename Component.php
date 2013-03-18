@@ -166,7 +166,8 @@ abstract class Component extends \RPI\Framework\Controller\HTML
                 }
                 
                 if (isset($this->acl)) {
-                    if ($this->model instanceof \RPI\Framework\App\Security\Acl\Model\IDomainObject && $this->editable) {
+                    if ($this->model instanceof \RPI\Framework\App\Security\Acl\Model\IDomainObject
+                        && $this->editable) {
                         $this->editable = $this->acl->canEdit($this->model);
                     } else {
                         $this->editable = false;
