@@ -536,6 +536,8 @@ class Dom
             $value = "null";
         } elseif (is_bool($value)) {
             $value = ($value === true ? "true" : "false");
+        } elseif ($value instanceof \DateTime) {
+            $value = $value->format("c");
         }
         
         return (string)$value;
