@@ -142,8 +142,8 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
         if (isset($ace["access"]["roles"][$role], $ace["access"]["roles"][$role][$type])) {
             $permissions = $ace["access"]["roles"][$role][$type];
 
-            if (isset($property) && isset($permissions[$property]) && ($permissions[$property] & $access)) {
-                return true;
+            if (isset($property) && isset($permissions[$property])) {
+                return ($permissions[$property] & $access);
             } elseif (isset($permissions["*"]) && ($permissions["*"] & $access)) {
                 return true;
             }
