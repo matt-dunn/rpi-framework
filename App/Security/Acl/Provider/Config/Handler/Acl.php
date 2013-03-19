@@ -33,14 +33,19 @@ class Acl implements \RPI\Framework\App\Config\IHandler
             unset($role["@"]);
             $config["access"]["roles"][$roleName] = $role;
             
-            if (isset($config["access"]["roles"][$roleName]["operations"])) {
-                $config["access"]["roles"][$roleName]["operations"] =
-                    $this->readSection($config["access"]["roles"][$roleName], "operations", "operation");
-            }
-            
             if (isset($config["access"]["roles"][$roleName]["properties"])) {
                 $config["access"]["roles"][$roleName]["properties"] =
                     $this->readSection($config["access"]["roles"][$roleName], "properties", "property");
+            }
+            
+            if (isset($config["access"]["roles"][$roleName]["operations"])) {
+                $config["access"]["roles"][$roleName]["operations"] =
+                    $this->readSection($config["access"]["roles"][$roleName], "operations", "operation");
+            } else {
+                $config["access"]["roles"][$roleName]["operations"] = array("*" => null);
+                foreach ($config["access"]["roles"][$roleName]["properties"] as $property) {
+                    $config["access"]["roles"][$roleName]["operations"]["*"] |= $property;
+                }
             }
         }
         
