@@ -298,7 +298,7 @@ class Utils
             $includePath = $path;
         } else {
             // Relative to RPI
-            $includePath = __DIR__."/../../".$path;
+            $includePath = __DIR__."/../../".ltrim($path, "/");
         }
 
         return $includePath;
