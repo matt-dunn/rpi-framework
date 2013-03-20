@@ -56,7 +56,7 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
      */
     public function canEdit(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
     {
-        return $this->checkRoles($domainObject, IAcl::UPDATE | IAcl::DELETE | IAcl::CREATE, null, "operations");
+        return $this->canUpdate($domainObject) || $this->canDelete($domainObject) || $this->canCreate($domainObject);
     }
     
     /**
@@ -91,6 +91,15 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
         return $this->checkRoles($domainObject, IAcl::CREATE, null, "operations");
     }
     
+    /**
+     * 
+     * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+     * @param integer $access
+     * @param string $property
+     * @param string $type
+     * 
+     * @return boolean
+     */
     private function checkRoles(
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $access,
@@ -137,15 +146,25 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
         }
     }
     
+    /**
+     * 
+     * @param array $ace
+     * @param integer $access
+     * @param string $property
+     * @param string $role
+     * @param string $type
+     * 
+     * @return boolean
+     */
     private function checkPermission(array $ace, $access, $property, $role, $type)
     {
         if (isset($ace["access"]["roles"][$role], $ace["access"]["roles"][$role][$type])) {
             $permissions = $ace["access"]["roles"][$role][$type];
 
             if (isset($property) && isset($permissions[$property])) {
-                return ($permissions[$property] & $access);
-            } elseif (isset($permissions["*"]) && ($permissions["*"] & $access)) {
-                return true;
+                return (($permissions[$property] & $access) == $access);
+            } elseif (isset($permissions["*"])) {
+                return (($permissions["*"] & $access) == $access);
             }
         }
         
