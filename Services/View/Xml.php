@@ -97,7 +97,12 @@ class Xml implements IView
                 );
             }
             
-            $controller = $this->createComponentFromViewData($controllerData, $this->acl, $this->app, $controllerOptions);
+            $controller = $this->createComponentFromViewData(
+                $controllerData,
+                $this->acl,
+                $this->app,
+                $controllerOptions
+            );
             if (isset($type) && !$controller instanceof $type) {
                 throw new \RPI\Framework\Exceptions\InvalidType($controller, $type);
             }

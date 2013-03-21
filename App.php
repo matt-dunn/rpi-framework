@@ -152,7 +152,11 @@ class App extends \RPI\Framework\Helpers\Object
     public function getSecurity()
     {
         if (!isset($this->security)) {
-            $this->security = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\App\Security", true);
+            $this->security = \RPI\Framework\Helpers\Reflection::getDependency(
+                $this,
+                "RPI\Framework\App\Security",
+                true
+            );
         }
         
         return $this->security;
@@ -203,7 +207,11 @@ class App extends \RPI\Framework\Helpers\Object
     public function getView()
     {
         if (!isset($this->view)) {
-            $this->view = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\Services\View\IView", true);
+            $this->view = \RPI\Framework\Helpers\Reflection::getDependency(
+                $this,
+                "RPI\Framework\Services\View\IView",
+                true
+            );
         }
         return $this->view;
     }
