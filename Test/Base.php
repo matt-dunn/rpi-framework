@@ -29,7 +29,7 @@ abstract class Base extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $_SERVER["DOCUMENT_ROOT"] = $filename."/Mocks";
+        $_SERVER["DOCUMENT_ROOT"] = $filename;
         
         $_SERVER["REQUEST_URI"] = "/";
         $_SERVER["HTTP_HOST"] = "phpunit";
