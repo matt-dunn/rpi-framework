@@ -34,6 +34,11 @@ class Xml implements IView
     private $decoratorData = null;
     
     /**
+     * @var \RPI\Framework\App
+     */
+    private $app = null;
+    
+    /**
      *
      * @var \RPI\Framework\App\Security\Acl\Model\IAcl 
      */
@@ -48,12 +53,13 @@ class Xml implements IView
     public function __construct(
         \RPI\Framework\Cache\IData $store,
         $configFile,
+        \RPI\Framework\App $app,
         \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null
     ) {
         $this->store = $store;
         $this->file = \RPI\Framework\Helpers\Utils::buildFullPath($configFile);
+        $this->app = $app;
         $this->acl = $acl;
-        
         $this->router = $this->parseViewConfig();
     }
     
@@ -77,8 +83,6 @@ class Xml implements IView
      */
     public function createController(
         $uuid,
-        \RPI\Framework\App $app,
-        \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null,
         $type = null,
         array $controllerOptions = null
     ) {
@@ -86,14 +90,14 @@ class Xml implements IView
         if ($controllerData !== false) {
             $domainObject = new \RPI\Framework\App\Security\Acl\Model\DomainObject($controllerData["type"]);
             
-            if (isset($acl) && $acl->canCreate($domainObject) === false) {
+            if (isset($this->acl) && $this->acl->canCreate($domainObject) === false) {
                 throw new \RPI\Framework\App\Security\Acl\Exceptions\PermissionDenied(
                     \RPI\Framework\App\Security\Acl\Model\IAcl::CREATE,
                     $domainObject
                 );
             }
             
-            $controller = $this->createComponentFromViewData($controllerData, $acl, $app, $controllerOptions);
+            $controller = $this->createComponentFromViewData($controllerData, $this->acl, $this->app, $controllerOptions);
             if (isset($type) && !$controller instanceof $type) {
                 throw new \RPI\Framework\Exceptions\InvalidType($controller, $type);
             }
@@ -221,9 +225,7 @@ class Xml implements IView
                 if ($controller->canCreateComponents()) {
                     foreach ($controllerData["components"] as $childControllerUUID) {
                         $component =  $this->createController(
-                            $childControllerUUID,
-                            $app,
-                            $acl
+                            $childControllerUUID
                         );
 
                         if (isset($component) && $component !== false) {

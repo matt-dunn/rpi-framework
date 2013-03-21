@@ -17,7 +17,8 @@ class Facade
     {
         return \RPI\Framework\Helpers\Reflection::getDependency(
             $GLOBALS["RPI_APP"],
-            "RPI\Framework\Services\Localisation\ILocalisation"
+            "RPI\Framework\Services\Localisation\ILocalisation",
+            true
         );
     }
     
@@ -30,7 +31,8 @@ class Facade
     {
         return \RPI\Framework\Helpers\Reflection::getDependency(
             $GLOBALS["RPI_APP"],
-            "RPI\Framework\Services\Authentication\IAuthentication"
+            "RPI\Framework\Services\Authentication\IAuthentication",
+            true
         );
     }
     

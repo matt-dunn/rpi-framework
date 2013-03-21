@@ -16,8 +16,10 @@ class Reflection
 
     /**
      * Cast the top level object to type
+     * 
      * @param object $obj
      * @param string $type
+     * 
      * @return object|boolean
      */
     public static function cast($obj, $type)
@@ -38,7 +40,11 @@ class Reflection
      * @param type $className
      * @param array $params
      * @param string $type
-     * @return boolean
+     * 
+     * @return object
+     * 
+     * @throws \InvalidArgumentException
+     * @throws \RPI\Framework\Exceptions\RuntimeException
      */
     public static function createObject(
         \RPI\Framework\App $app,
@@ -63,14 +69,10 @@ class Reflection
                     $class = $reflectionParameter->getClass();
                     if (isset($class)) {
                         $className = $class->getName();
-                        if ($className == "RPI\Framework\App") {
-                            $param = $app;
-                        } else {
-                            $param = self::getDependencyObject(
-                                $app,
-                                $className
-                            );
-                        }
+                        $param = self::getDependencyObject(
+                            $app,
+                            $className
+                        );
                     }
                 }
                 
@@ -94,11 +96,58 @@ class Reflection
         return $o;
     }
     
-    public static function getDependency(\RPI\Framework\App $app, $className)
+    /**
+     * 
+     * @param object $object
+     * @param string $className
+     * 
+     * @return boolean
+     */
+    public static function addDependency($object, $className = null)
     {
-        return self::getDependencyObject($app, $className);
+        if (isset($object) && is_object($object)) {
+            if (!isset($className)) {
+                $className = get_class($object);
+            }
+            
+            self::$objects[ltrim($className, "\\")] = $object;
+
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * 
+     * @param \RPI\Framework\App $app
+     * @param string $className
+     * @param boolean $throwsException
+     * 
+     * @return object|null
+     * 
+     * @throws \RPI\Framework\Exceptions\RuntimeException
+     */
+    public static function getDependency(\RPI\Framework\App $app, $className, $throwsException = false)
+    {
+        $dependency = self::getDependencyObject($app, ltrim($className, "\\"));
+        
+        if ($throwsException === true && !isset($dependency)) {
+            throw new \RPI\Framework\Exceptions\RuntimeException(
+                "Unable to create dependency '$className'. Check configuration settings"
+            );
+        }
+        
+        return $dependency;
     }
 
+    /**
+     * 
+     * @param \RPI\Framework\App $app
+     * @param string $className
+     * 
+     * @return object|null
+     */
     private static function getDependencyObject(\RPI\Framework\App $app, $className)
     {
         if (isset(self::$objects[$className])) {
@@ -124,7 +173,14 @@ class Reflection
         return null;
     }
 
-    public static function createObjectByTypeInfo(\RPI\Framework\App $app, $typeInfo)
+    /**
+     * 
+     * @param \RPI\Framework\App $app
+     * @param array $typeInfo
+     * 
+     * @return object|array
+     */
+    public static function createObjectByTypeInfo(\RPI\Framework\App $app, array $typeInfo)
     {
         $params = null;
         if (isset($typeInfo["param"])) {
@@ -153,10 +209,14 @@ class Reflection
 
     /**
      * Create an object using reflection based on array information
+     * 
      * @param  array  $classInfo Class information used to create the object
      * @param  string $basePath  Base path to the location of the class file
      * @param  string $type      Type of object to create
+     * 
      * @return object
+     * 
+     * @throws \RPI\Framework\Exceptions\RuntimeException
      */
     private static function createObjectByClassInfo(\RPI\Framework\App $app, $classInfo, $type = null)
     {

@@ -17,79 +17,79 @@ class App extends \RPI\Framework\Helpers\Object
      * Default character coding set to 'utf-8'
      * @var string
      */
-    private $characterEncoding = "utf-8";
+    protected $characterEncoding = "utf-8";
     
     /**
      *
      * @var string
      */
-    private $webConfigFile;
+    protected $webConfigFile;
     
     /**
      *
      * @var \RPI\Framework\Cache\IData 
      */
-    private $dataStore;
+    protected $dataStore;
     
     /**
      *
      * @var \RPI\Framework\App\Router 
      */
-    private $router = null;
+    protected $router = null;
     
     /**
      *
      * @var \RPI\Framework\App\Config 
      */
-    private $config = null;
+    protected $config = null;
     
     /**
      *
      * @var \RPI\Framework\Services\View\IView 
      */
-    private $view = null;
+    protected $view = null;
     
     /**
      *
      * @var \RPI\Framework\App\Security\Acl\Model\IAcl
      */
-    private $acl = null;
+    protected $acl = null;
     
     /**
      *
      * @var \RPI\Framework\App\Router\Action 
      */
-    private $action = null;
+    protected $action = null;
     
     /**
      *
      * @var \RPI\Framework\App\Debug
      */
-    private $debug = null;
+    protected $debug = null;
 
     /**
      *
      * @var \RPI\Framework\HTTP\IRequest
      */
-    private $request = null;
+    protected $request = null;
     
     /**
      *
      * @var \RPI\Framework\HTTP\IResponse 
      */
-    private $response = null;
+    protected $response = null;
     
     /**
      *
      * @var \RPI\Framework\App\Session
      */
-    private $session = null;
+    protected $session = null;
     
     /**
      * 
      * @var \RPI\Framework\App\Security
      */
-    private $security = null;
+    protected $security = null;
     
     /**
      * 
@@ -123,6 +123,14 @@ class App extends \RPI\Framework\Helpers\Object
         }
         
         mb_internal_encoding($this->characterEncoding);
+        
+        \RPI\Framework\Helpers\Reflection::addDependency($this);
+
+        \RPI\Framework\Helpers\Reflection::addDependency($this->view, "RPI\Framework\Services\View\IView");
+        \RPI\Framework\Helpers\Reflection::addDependency($this->dataStore, "RPI\Framework\Cache\IData");
+        \RPI\Framework\Helpers\Reflection::addDependency($this->security, "RPI\Framework\App\Security");
+        \RPI\Framework\Helpers\Reflection::addDependency($this->session, "RPI\Framework\App\Session");
+        \RPI\Framework\Helpers\Reflection::addDependency($this->acl, "RPI\Framework\App\Security\Acl\Model\IAcl");
     }
     
     /**
@@ -131,7 +139,7 @@ class App extends \RPI\Framework\Helpers\Object
     public function getSession()
     {
         if (!isset($this->session)) {
-            $this->session = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\App\Session");
+            $this->session = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\App\Session", true);
         }
         
         return $this->session;
@@ -144,7 +152,7 @@ class App extends \RPI\Framework\Helpers\Object
     public function getSecurity()
     {
         if (!isset($this->security)) {
-            $this->security = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\App\Security");
+            $this->security = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\App\Security", true);
         }
         
         return $this->security;
@@ -154,10 +162,11 @@ class App extends \RPI\Framework\Helpers\Object
      * 
      * @return \RPI\Framework\Cache\IData
      */
-    private function getDataStore()
+    protected function getDataStore()
     {
         if (!isset($this->dataStore)) {
             $this->dataStore = new \RPI\Framework\Cache\Data\Apc();
+            \RPI\Framework\Helpers\Reflection::addDependency($this->dataStore, "RPI\Framework\Cache\IData");
         }
         
         return $this->dataStore;
@@ -194,7 +203,7 @@ class App extends \RPI\Framework\Helpers\Object
     public function getView()
     {
         if (!isset($this->view)) {
-            $this->view = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\Services\View\IView");
+            $this->view = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\Services\View\IView", true);
         }
         return $this->view;
     }
@@ -208,7 +217,8 @@ class App extends \RPI\Framework\Helpers\Object
         if (!isset($this->acl)) {
             $this->acl = \RPI\Framework\Helpers\Reflection::getDependency(
                 $this,
-                "RPI\Framework\App\Security\Acl\Model\IAcl"
+                "RPI\Framework\App\Security\Acl\Model\IAcl",
+                true
             );
         }
         return $this->acl;
@@ -227,7 +237,7 @@ class App extends \RPI\Framework\Helpers\Object
      * 
      * @return \RPI\Framework\App\Router
      */
-    private function getRouter()
+    protected function getRouter()
     {
         if (!isset($this->router)) {
             $this->router = $this->getView()->getRouter();
@@ -261,6 +271,10 @@ class App extends \RPI\Framework\Helpers\Object
         return $this->request;
     }
     
+    /**
+     * 
+     * @param \RPI\Framework\HTTP\IRequest $request
+     */
     public function setRequest(\RPI\Framework\HTTP\IRequest $request)
     {
         $this->request = $request;
@@ -371,14 +385,12 @@ class App extends \RPI\Framework\Helpers\Object
      * @param type $method
      * @return \RPI\Framework\Controller|null
      */
-    private function runRouteController(\RPI\Framework\App\Router\Route $route, $method)
+    protected function runRouteController(\RPI\Framework\App\Router\Route $route, $method)
     {
         $this->action = $route->action;
         
         $controller = $this->view->createController(
             $route->uuid,
-            $this,
-            $this->getAcl(),
             "\RPI\Framework\Controller"
         );
         
