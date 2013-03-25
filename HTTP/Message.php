@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\HTTP;
 
-abstract class Message implements \RPI\Framework\HTTP\IMessage
+abstract class Message extends \RPI\Framework\Helpers\Object implements \RPI\Framework\HTTP\IMessage
 {
     private $protocolVersion = null;
 

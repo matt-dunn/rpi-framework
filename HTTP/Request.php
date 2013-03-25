@@ -246,7 +246,7 @@ class Request extends Message implements \RPI\Framework\HTTP\IRequest
     {
         if (!isset($this->mimetype)) {
             $contentType = $this->getContentType();
-            $this->mimetype = $contentType["contenttype"]["mimetype"];
+            $this->mimetype = $contentType["mimetype"];
         }
         
         return $this->mimetype;

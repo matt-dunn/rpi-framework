@@ -106,7 +106,9 @@ class HTTP
         }
         
         return array(
-            "contenttype" => $mimeTypeDetails,
+            "mimetype" => $mimeTypeDetails["mimetype"],
+            "type" => $mimeTypeDetails["type"],
+            "subtype" => $mimeTypeDetails["subtype"],
             "charset" => $charset,
             "parameters" => $parameter
         );

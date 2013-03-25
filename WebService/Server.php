@@ -99,8 +99,8 @@ abstract class Server extends \RPI\Framework\Controller
 
     public function process()
     {
-        $contentType = $this->getApp()->getRequest()->getContentType();
-        $format = $contentType["contenttype"]["subtype"];
+        $contentType = $this->getApp()->request->contentType;
+        $format = $contentType["subtype"];
 
         try {
             $request = null;
@@ -110,7 +110,7 @@ abstract class Server extends \RPI\Framework\Controller
 
                 $request = $this->getRequest(
                     $this->app->getRequest()->getBody(),
-                    $contentType["contenttype"]["mimetype"]
+                    $contentType["mimetype"]
                 );
                 
                 $this->context = new Context($request->timestamp, $request->method->format);

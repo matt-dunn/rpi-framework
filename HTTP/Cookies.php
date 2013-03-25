@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\HTTP;
 
-class Cookies implements ICookies
+class Cookies extends \RPI\Framework\Helpers\Object implements ICookies
 {
     private $cookies = null;
     private $domain = null;
