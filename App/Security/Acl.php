@@ -127,10 +127,10 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
         
                 $message =
                     implode(", ", $permission).(isset($property) ? ":$property" : "").
-                    " permission granted on object '".$domainObject->getType()."'";
+                    " permission granted on object '{$domainObject->getType()}' (ID: {$domainObject->getId()})";
                 
                 \RPI\Framework\Exception\Handler::logMessage(
-                    "ROOT user access: UUID: {$this->user->uuid} - {$message}",
+                    "ROOT user [{$this->user->uuid} ({$this->user->fullname})]: {$message}",
                     LOG_AUTH,
                     "authentication"
                 );
