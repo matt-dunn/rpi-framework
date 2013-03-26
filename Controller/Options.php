@@ -118,19 +118,26 @@ class Options
             if (isset($this->availableOptions[$name])) {
                 $optionDetails = $this->availableOptions[$name];
                 
-                if ($optionDetails["type"] != "string") {
-                    if (call_user_func("is_".$optionDetails["type"], $value)) {
-                        if (isset($optionDetails["values"])
-                            && !in_array($value, $optionDetails["values"], true)) {
-                            throw new \InvalidArgumentException(
-                                "Invalid value '$value'. Must be one of [".
-                                implode(", ", array_keys($optionDetails["values"]))."]"
-                            );
-                        }
-                    } else {
+                if ($optionDetails["type"] == "bool") {
+                    if (!($value == "true" || $value == "false")) {
                         throw new \InvalidArgumentException(
-                            "Invalid type '".gettype($value)."' for '$name'. Must be of type '".
+                            "Invalid type '".gettype($value)."' ($value) for '$name'. Must be of type '".
                             $optionDetails["type"]."'"
+                        );
+                    }
+                } else {
+                    if ($optionDetails["type"] != "string" && !call_user_func("is_".$optionDetails["type"], $value)) {
+                        throw new \InvalidArgumentException(
+                            "Invalid type '".gettype($value)."' ($value) for '$name'. Must be of type '".
+                            $optionDetails["type"]."'"
+                        );
+                    }
+
+                    if (isset($optionDetails["values"])
+                        && !in_array($value, $optionDetails["values"], true)) {
+                        throw new \InvalidArgumentException(
+                            "Invalid value '$value'. Must be one of [".
+                            implode(", ", array_values($optionDetails["values"]))."]"
                         );
                     }
                 }
