@@ -68,6 +68,10 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
         \DateTime $accountLastAccessed = null,
         array $role = array(\RPI\Framework\Model\IUser::USER)
     ) {
+        if (!\RPI\Framework\Helpers\Uuid::isValid($uuid)) {
+            throw new \RPI\Framework\Exceptions\InvalidArgument($uuid);
+        }
+        
         $this->uuid = $uuid;
         $this->firstname = $firstname;
         $this->surname = $surname;
