@@ -62,6 +62,14 @@ abstract class Object implements \Serializable
         return $this->getProperties();
     }
     
+    public function __toString()
+    {
+        return print_r(\RPI\Framework\Helpers\Reflection::cast($this->toArray(), get_called_class()), true);
+    }
+    
+    /**
+     * {@inherit-doc}
+     */
     public function serialize()
     {
         $properties = array();
@@ -83,6 +91,9 @@ abstract class Object implements \Serializable
         return serialize($properties);
     }
     
+    /**
+     * {@inherit-doc}
+     */
     public function unserialize($data)
     {
         $data = unserialize($data);
