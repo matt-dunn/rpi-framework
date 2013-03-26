@@ -38,6 +38,11 @@ interface IUser
     /**
      * @return string
      */
+    public function getFullname();
+    
+    /**
+     * @return string
+     */
     public function getUserId();
     
     /**

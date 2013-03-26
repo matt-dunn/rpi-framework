@@ -106,6 +106,14 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
     /**
      * {@inherit-doc}
      */
+    public function getFullname()
+    {
+        return trim($this->firstname." ".$this->surname);
+    }
+    
+    /**
+     * {@inherit-doc}
+     */
     public function getUserId()
     {
         return $this->userId;
