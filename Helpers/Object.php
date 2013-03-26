@@ -64,7 +64,7 @@ abstract class Object implements \Serializable
     
     public function __toString()
     {
-        return print_r(\RPI\Framework\Helpers\Reflection::cast($this->toArray(), get_called_class()), true);
+        return print_r($this->toArray(), true);
     }
     
     /**
