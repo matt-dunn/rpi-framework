@@ -97,12 +97,14 @@ abstract class Object implements \Serializable
     public function unserialize($data)
     {
         $data = unserialize($data);
-        
+            
         foreach ($data as $name => $value) {
-            if ($value instanceof \RPI\Framework\Helpers\Dom\SerializableDomDocumentWrapper) {
-                $this->$name = $value->getDocument();
-            } else {
-                $this->$name = $value;
+            if (!$this->isReadOnly($name)) {
+                if ($value instanceof \RPI\Framework\Helpers\Dom\SerializableDomDocumentWrapper) {
+                    $this->$name = $value->getDocument();
+                } else {
+                    $this->$name = $value;
+                }
             }
         }
     }
@@ -135,5 +137,16 @@ abstract class Object implements \Serializable
         }
 
         return $properties;
+    }
+    
+    /**
+     * 
+     * @param string $name
+     * 
+     * @return boolean
+     */
+    private function isReadOnly($name)
+    {
+        return !(method_exists($this, "set".ucfirst($name)) || property_exists($this, $name));
     }
 }
