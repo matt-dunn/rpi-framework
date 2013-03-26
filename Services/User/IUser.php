@@ -29,11 +29,11 @@ interface IUser
 
     /**
      * 
-     * @param UUID $role
+     * @param array $role
      * 
-     * @return bool True on success
+     * @return \RPI\Framework\Model\IUser[]|boolean
      */
-    public function getUsers($role = null);
+    public function getUsers(array $role = null);
     
     /**
      * 
