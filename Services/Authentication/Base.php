@@ -354,7 +354,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
             \RPI\Framework\Exception\Handler::logMessage(
                 __METHOD__." - Authentication tamper detected (validateUserToken): 
                     [TOKEN: $token] [IP:". $this->app->getRequest()->getRemoteAddress()."]",
-                LOG_ERR,
+                LOG_AUTH,
                 "authentication"
             );
             $this->logout(true);
@@ -409,7 +409,9 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         if (!$validToken) {
             \RPI\Framework\Exception\Handler::logMessage(
                 __METHOD__." - Authentication tamper detected (validateAuthenticationToken): 
-                    [TOKEN: $token] [IP:". $this->app->getRequest()->getRemoteAddress()."]"
+                    [TOKEN: $token] [IP:". $this->app->getRequest()->getRemoteAddress()."]",
+                LOG_AUTH,
+                "authentication"
             );
             $this->logout(true);
         }
