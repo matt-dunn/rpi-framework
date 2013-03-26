@@ -109,6 +109,34 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
         $canAccess = null;
         
         if (isset($this->provider)) {
+            if (in_array(\RPI\Framework\Model\IUser::ROOT, $this->user->role)) {
+                $permission = array();
+
+                if ($access & \RPI\Framework\App\Security\Acl\Model\IAcl::CREATE) {
+                    $permission[] = "CREATE";
+                }
+                if ($access & \RPI\Framework\App\Security\Acl\Model\IAcl::READ) {
+                    $permission[] = "READ";
+                }
+                if ($access & \RPI\Framework\App\Security\Acl\Model\IAcl::UPDATE) {
+                    $permission[] = "UPDATE";
+                }
+                if ($access & \RPI\Framework\App\Security\Acl\Model\IAcl::DELETE) {
+                    $permission[] = "DELETE";
+                }
+        
+                $message =
+                    implode(", ", $permission).(isset($property) ? ":$property" : "").
+                    " permission granted on object '".$domainObject->getType()."'";
+                
+                \RPI\Framework\Exception\Handler::logMessage(
+                    "ROOT user access: UUID: {$this->user->uuid} - {$message}",
+                    LOG_AUTH,
+                    "authentication"
+                );
+                return true;
+            }
+            
             $ace = $this->provider->getAce($domainObject->getType());
             if (isset($ace) && is_array($ace)) {
                 if (!$this->user->isAuthenticated && !$this->user->isAnonymous) {
