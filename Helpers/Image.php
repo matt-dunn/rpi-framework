@@ -33,7 +33,7 @@ class Image
      * @param  boolean $keepRatio         Keep the aspect ration of the image when using fixed canvas size
      * @param  integer $outputImageFormat Required output image format. One of IMG_PNG (default), IMG_GIF, IMG_JPG
      * @param  string  $outputFilename
-     * @return array   Associate array if image information on success, or false if there is an error.
+     * @return object|false              Object if image information on success, or false if there is an error.
      *											"mime" => Mime type of the output image
      *											"image" => Output image buffer
      *											"fileExtension"	=> File extension of the output file
