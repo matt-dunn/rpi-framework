@@ -40,7 +40,7 @@ class Image
      */
     public static function resizeAndConvert(
         $filename,
-        $width,
+        $width = null,
         $height = null,
         $keepRatio = true,
         $outputImageFormat = IMG_PNG,
@@ -76,6 +76,9 @@ class Image
                 $imageSaveFunction = "image".$format;
 
                 if (isset($format) && function_exists($imageCreateFunc) && function_exists($imageSaveFunction)) {
+                    if (!isset($width)) {
+                        $width = $orig_width;
+                    }
                     if (!isset($height)) {
                         $height = ((float) $width / (float) $orig_width) * $orig_height;
                     }
