@@ -66,7 +66,7 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
         $userId = null,
         \DateTime $accountCreated = null,
         \DateTime $accountLastAccessed = null,
-        array $role = array("user")
+        array $role = array(\RPI\Framework\Model\IUser::USER)
     ) {
         $this->uuid = $uuid;
         $this->firstname = $firstname;

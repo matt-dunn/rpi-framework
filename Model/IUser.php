@@ -15,6 +15,11 @@ namespace RPI\Framework\Model;
  */
 interface IUser
 {
+    const ROOT = "root";
+    const ADMIN = "admin";
+    const SITE_ADMIN = "site-admin";
+    const USER = "user";
+    
     /**
      * @return string
      */
