@@ -133,12 +133,17 @@ class Options
                         );
                     }
 
-                    if (isset($optionDetails["values"])
-                        && !in_array($value, $optionDetails["values"], true)) {
-                        throw new \InvalidArgumentException(
-                            "Invalid value '$value'. Must be one of [".
-                            implode(", ", array_values($optionDetails["values"]))."]"
-                        );
+                    if (isset($optionDetails["values"])) {
+                        if (is_array($optionDetails["values"]) && !in_array($value, $optionDetails["values"], true)) {
+                            throw new \InvalidArgumentException(
+                                "Invalid value '$value'. Must be one of [".
+                                implode(", ", array_values($optionDetails["values"]))."]"
+                            );
+                        } elseif (preg_match($optionDetails["values"], $value) !== 1) {
+                            throw new \InvalidArgumentException(
+                                "Invalid value '$value'. Must match regular expression '{$optionDetails["values"]}"
+                            );
+                        }
                     }
                 }
             } else {
