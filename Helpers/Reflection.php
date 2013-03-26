@@ -25,6 +25,9 @@ class Reflection
     public static function cast($obj, $type)
     {
         if (class_exists($type)) {
+            if (!is_object($obj)) {
+                $obj = (object)$obj;
+            }
             $serializedObject = serialize($obj);
             $unserializedObject =
                 'O:' . strlen($type) . ':"' . $type . '":' . substr($serializedObject, $serializedObject[2] + 7);
