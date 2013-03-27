@@ -71,17 +71,17 @@ class Reflection
                 } else {
                     $class = $reflectionParameter->getClass();
                     if (isset($class)) {
-                        $className = $class->getName();
+                        $paramClassName = $class->getName();
                         $param = self::getDependencyObject(
                             $app,
-                            $className
+                            $paramClassName
                         );
                     }
                 }
                 
                 if (!isset($param) && !$reflectionParameter->isDefaultValueAvailable()) {
                     throw new \RPI\Framework\Exceptions\RuntimeException(
-                        "Class '$className' constructor parameter '".$reflectionParameter->getName().
+                        "Class '$paramClassName' constructor parameter '".$reflectionParameter->getName().
                         "' must be defined as a dependency. Check the application configuration settings."
                     );
                 }
