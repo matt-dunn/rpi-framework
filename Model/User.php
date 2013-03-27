@@ -152,7 +152,12 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
      */
     public function addRole($role)
     {
-        $role = strtolower($role);
+        $role = trim(strtolower($role));
+        
+        if ($role == \RPI\Framework\Model\IUser::ROOT) {
+            throw new \RPI\Framework\Exceptions\InvalidArgument($role, null, "User '$role' cannot be added to a user");
+        }
+        
         if (!in_array($role, $this->role)) {
             $this->role[] = $role;
             return true;
@@ -166,7 +171,7 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
      */
     public function deleteRole($role)
     {
-        $role = strtolower($role);
+        $role = trim(strtolower($role));
         $roleIndex = array_search($role, $this->role);
         if ($roleIndex !== false) {
             unset($this->role[$roleIndex]);
