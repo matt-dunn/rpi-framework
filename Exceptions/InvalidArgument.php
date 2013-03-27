@@ -6,7 +6,7 @@ class InvalidArgument extends \InvalidArgumentException implements \RPI\Framewor
 {
     protected $value;
 
-    public function __construct($value, $availableOptions = null, $previous = null)
+    public function __construct($value, $availableOptions = null, $additionalMessage = null, $previous = null)
     {
         $message = "";
         
@@ -19,6 +19,10 @@ class InvalidArgument extends \InvalidArgumentException implements \RPI\Framewor
 
         if (isset($availableOptions)) {
             $message .= ". Available options: '".implode("', '", $availableOptions)."'";
+        }
+        
+        if (isset($additionalMessage)) {
+            $message .= " - ".$additionalMessage;
         }
         
         parent::__construct($message, 0, $previous);
