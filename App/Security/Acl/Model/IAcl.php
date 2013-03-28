@@ -5,6 +5,7 @@ namespace RPI\Framework\App\Security\Acl\Model;
 interface IAcl
 {
     const NONE = 0;
+    
     const CREATE = 1;
     const READ = 2;
     const UPDATE = 4;

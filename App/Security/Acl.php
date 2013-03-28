@@ -13,13 +13,10 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
     private $provider = null;
     
     /**
-     * 
-     * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
-     * @param \RPI\Framework\Services\Authentication\IAuthentication $authentication
      * @param \RPI\Framework\App\Security\Acl\Model\IProvider $provider
      */
     public function __construct(
-        \RPI\Framework\App\Security\Acl\Model\IProvider $provider = null
+        \RPI\Framework\App\Security\Acl\Model\IProvider $provider
     ) {
         $this->provider = $provider;
     }
@@ -117,74 +114,56 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
         $property,
         $type
     ) {
-        if (isset($this->provider)) {
-            if (in_array(\RPI\Framework\Model\IUser::ROOT, $user->role)) {
-                $permission = array();
+        if (in_array(\RPI\Framework\Model\IUser::ROOT, $user->role)) {
+            $permission = array();
 
-                if ($access & \RPI\Framework\App\Security\Acl\Model\IAcl::CREATE) {
-                    $permission[] = "CREATE";
-                }
-                if ($access & \RPI\Framework\App\Security\Acl\Model\IAcl::READ) {
-                    $permission[] = "READ";
-                }
-                if ($access & \RPI\Framework\App\Security\Acl\Model\IAcl::UPDATE) {
-                    $permission[] = "UPDATE";
-                }
-                if ($access & \RPI\Framework\App\Security\Acl\Model\IAcl::DELETE) {
-                    $permission[] = "DELETE";
-                }
-        
-                $message =
-                    implode(", ", $permission).(isset($property) ? ":$property" : "").
-                    " permission granted on object '{$domainObject->getType()}' (ID: {$domainObject->getId()})";
-                
-                \RPI\Framework\Exception\Handler::logMessage(
-                    "ROOT user [{$user->uuid} ({$user->fullname})]: {$message}",
-                    LOG_AUTH,
-                    "authentication"
-                );
-                    
-                return true;
+            if ($access & \RPI\Framework\App\Security\Acl\Model\IAcl::CREATE) {
+                $permission[] = "CREATE";
             }
-            
-            $canAccess = false;
-        
-            $ace = $this->provider->getAce($domainObject->getType());
-            if (isset($ace) && is_array($ace)) {
-                if (!$user->isAuthenticated && !$user->isAnonymous) {
-                    //throw new \RPI\Framework\Exceptions\Authorization();
-                }
-
-                // TODO: role should always be an array so can remove this test:
-                if (is_array($user->role)) {
-                    foreach ($user->role as $role) {
-                        $canAccess = $this->checkPermission($ace, $access, $property, $role, $type);
-                        if ($canAccess === true) {
-                            break;
-                        }
-                    }
-                } else {
-                    $canAccess = $this->checkPermission($ace, $access, $property, $user->role, $type);
-                }
-
-                if ($canAccess === false && $this->provider->isOwner($user, $domainObject)) {
-                    $canAccess = $this->checkPermission($ace, $access, $property, "_owner", $type);
-                }
-
-                //if (!$user->isAnonymous && $canAccess === false) {
-                //    $canAccess = $this->checkPermission($ace, $access, $property, "anonymous", $type);
-                //}
-                
-                if (!$canAccess) {
-                    $canAccess = $this->checkPermission($ace, $access, $property, "_default", $type);
-                }
+            if ($access & \RPI\Framework\App\Security\Acl\Model\IAcl::READ) {
+                $permission[] = "READ";
+            }
+            if ($access & \RPI\Framework\App\Security\Acl\Model\IAcl::UPDATE) {
+                $permission[] = "UPDATE";
+            }
+            if ($access & \RPI\Framework\App\Security\Acl\Model\IAcl::DELETE) {
+                $permission[] = "DELETE";
             }
 
-            return $canAccess;
-        } else {
-            // TODO: should this add a warning to the log?
+            $message =
+                implode(", ", $permission).(isset($property) ? ":$property" : "").
+                " permission granted on object '{$domainObject->getType()}' (ID: {$domainObject->getId()})";
+
+            \RPI\Framework\Exception\Handler::logMessage(
+                "ROOT user [{$user->uuid} ({$user->fullname})]: {$message}",
+                LOG_AUTH,
+                "authentication"
+            );
+
             return true;
         }
+
+        $canAccess = false;
+
+        $ace = $this->provider->getAce($domainObject->getType());
+        if (isset($ace) && is_array($ace)) {
+            foreach ($user->role as $role) {
+                $canAccess = $this->checkPermission($ace, $access, $property, $role, $type);
+                if ($canAccess === true) {
+                    break;
+                }
+            }
+
+            if (!$canAccess && $this->provider->isOwner($user, $domainObject)) {
+                $canAccess = $this->checkPermission($ace, $access, $property, "_owner", $type);
+            }
+
+            if (!$canAccess) {
+                $canAccess = $this->checkPermission($ace, $access, $property, "_default", $type);
+            }
+        }
+
+        return $canAccess;
     }
     
     /**
