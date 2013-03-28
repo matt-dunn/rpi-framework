@@ -18,10 +18,10 @@ final class Config extends \RPI\Framework\App\Config\Base implements \RPI\Framew
     }
 
     public function isOwner(
-        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
-        \RPI\Framework\Model\User $user
+        \RPI\Framework\Model\User $user,
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
     ) {
-        return false;
+        return ($user->uuid == $domainObject->getOwnerId());
     }
 
     protected function getSchema()

@@ -167,11 +167,8 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
                     $canAccess = $this->checkPermission($ace, $access, $property, $user->role, $type);
                 }
 
-                if ($canAccess === false &&
-                    ($domainObject->getOwnerId() == $user->uuid
-                        || $this->provider->isOwner($domainObject, $user)
-                )) {
-                    $canAccess = $this->checkPermission($ace, $access, $property, "owner", $type);
+                if ($canAccess === false && $this->provider->isOwner($user, $domainObject)) {
+                    $canAccess = $this->checkPermission($ace, $access, $property, "_owner", $type);
                 }
 
                 //if (!$user->isAnonymous && $canAccess === false) {
