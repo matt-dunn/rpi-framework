@@ -114,7 +114,7 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
         $property,
         $type
     ) {
-        if (in_array(\RPI\Framework\Model\IUser::ROOT, $user->role)) {
+        if (in_array(\RPI\Framework\Model\IUser::ROOT, $user->roles)) {
             $permission = array();
 
             if ($access & \RPI\Framework\App\Security\Acl\Model\IAcl::CREATE) {
@@ -147,7 +147,7 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
 
         $ace = $this->provider->getAce($domainObject->getType());
         if (isset($ace) && is_array($ace)) {
-            foreach ($user->role as $role) {
+            foreach ($user->roles as $role) {
                 $canAccess = $this->checkPermission($ace, $access, $property, $role, $type);
                 if ($canAccess === true) {
                     break;

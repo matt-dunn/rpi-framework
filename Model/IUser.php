@@ -9,7 +9,7 @@ namespace RPI\Framework\Model;
  * @property-read string $userId
  * @property-read \DateTime $accountCreated
  * @property-read \DateTime $accountLastAccessed
- * @property-read array $role
+ * @property-read array $roles
  * @property boolean $isAuthenticated
  * @property boolean $isAnonymous
  */
@@ -58,17 +58,17 @@ interface IUser
     /**
      * @return array
      */
-    public function getRole();
+    public function getRoles();
     
     /**
      * 
-     * @param boolean $role
+     * @param string $role
      */
     public function addRole($role);
     
     /**
      * 
-     * @param boolean $role
+     * @param string $role
      */
     public function deleteRole($role);
     
@@ -79,6 +79,8 @@ interface IUser
     
     /**
      * @param boolean $isAuthenticated
+     * 
+     * @return \RPI\Framework\Model\IUser
      */
     public function setIsAuthenticated($isAuthenticated);
     
@@ -90,6 +92,8 @@ interface IUser
     /**
      * 
      * @param boolean $isAnonymous
+     * 
+     * @return \RPI\Framework\Model\IUser
      */
     public function setIsAnonymous($isAnonymous);
 }

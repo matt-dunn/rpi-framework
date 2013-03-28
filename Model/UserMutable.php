@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\Model;
 
-class UserMutable extends \RPI\Framework\Model\User
+class UserMutable extends \RPI\Framework\Model\User implements \RPI\Framework\Model\IUserMutable
 {
     /**
      * 
@@ -18,13 +18,11 @@ class UserMutable extends \RPI\Framework\Model\User
         $this->accountCreated = $user->accountCreated;
         $this->accountLastAccessed = $user->accountLastAccessed;
 
-        $this->role = $user->role;
+        $this->roles = $user->roles;
     }
     
     /**
-     * 
-     * @param string $uuid
-     * @return \RPI\Framework\Model\IUser
+     * {@inherit-doc}
      */
     public function setUuid($uuid)
     {
@@ -34,9 +32,7 @@ class UserMutable extends \RPI\Framework\Model\User
     }
 
     /**
-     * 
-     * @param string $firstname
-     * @return \RPI\Framework\Model\IUser
+     * {@inherit-doc}
      */
     public function setFirstname($firstname)
     {
@@ -46,9 +42,7 @@ class UserMutable extends \RPI\Framework\Model\User
     }
 
     /**
-     * 
-     * @param string $surname
-     * @return \RPI\Framework\Model\IUser
+     * {@inherit-doc}
      */
     public function setSurname($surname)
     {
@@ -58,9 +52,7 @@ class UserMutable extends \RPI\Framework\Model\User
     }
 
     /**
-     * 
-     * @param string $userId
-     * @return \RPI\Framework\Model\IUser
+     * {@inherit-doc}
      */
     public function setUserId($userId)
     {
@@ -70,11 +62,9 @@ class UserMutable extends \RPI\Framework\Model\User
     }
 
     /**
-     * 
-     * @param string $accountCreated
-     * @return \RPI\Framework\Model\IUser
+     * {@inherit-doc}
      */
-    public function setAccountCreated($accountCreated)
+    public function setAccountCreated(\DateTime $accountCreated)
     {
         $this->accountCreated = $accountCreated;
         
@@ -82,11 +72,9 @@ class UserMutable extends \RPI\Framework\Model\User
     }
 
     /**
-     * 
-     * @param type $accountLastAccessed
-     * @return \RPI\Framework\Model\IUser
+     * {@inherit-doc}
      */
-    public function setAccountLastAccessed($accountLastAccessed)
+    public function setAccountLastAccessed(\DateTime $accountLastAccessed)
     {
         $this->accountLastAccessed = $accountLastAccessed;
         
@@ -94,13 +82,11 @@ class UserMutable extends \RPI\Framework\Model\User
     }
 
     /**
-     * 
-     * @param array $role
-     * @return \RPI\Framework\Model\IUser
+     * {@inherit-doc}
      */
-    public function setRole(array $role)
+    public function setRoles(array $roles)
     {
-        $this->role = $role;
+        $this->roles = $roles;
         
         return $this;
     }

@@ -97,7 +97,7 @@ abstract class Cacheable extends \RPI\Framework\Controller
             $this->cacheKey = serialize(array("id" => $id, "options" =>$options));
             // TODO: should the role be used in the key??
             //$this->cacheKey = $id."_".implode("_o:", $options).
-            //"_userrole:".\RPI\Framework\Facade::authentication()->getAuthenticatedUser()->role;
+            //"_userrole:".\RPI\Framework\Facade::authentication()->getAuthenticatedUser()->roles;
         }
         
         if (isset($viewRendition)) {

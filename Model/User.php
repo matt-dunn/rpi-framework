@@ -37,7 +37,7 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
     /**
      * @var array
      */
-    protected $role;
+    protected $roles;
 
     /**
      * @var boolean
@@ -57,7 +57,7 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
      * @param string $userId
      * @param \DateTime $accountCreated
      * @param \DateTime $accountLastAccessed
-     * @param array $role
+     * @param array $roles
      */
     public function __construct(
         $uuid = null,
@@ -66,7 +66,7 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
         $userId = null,
         \DateTime $accountCreated = null,
         \DateTime $accountLastAccessed = null,
-        array $role = array(\RPI\Framework\Model\IUser::USER)
+        array $roles = array(\RPI\Framework\Model\IUser::USER)
     ) {
         if (!\RPI\Framework\Helpers\Uuid::isValid($uuid)) {
             throw new \RPI\Framework\Exceptions\InvalidArgument($uuid);
@@ -80,7 +80,7 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
         $this->accountCreated = $accountCreated;
         $this->accountLastAccessed = $accountLastAccessed;
 
-        $this->role = $role;
+        $this->roles = $roles;
     }
     
     /**
@@ -142,9 +142,9 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
     /**
      * {@inherit-doc}
      */
-    public function getRole()
+    public function getRoles()
     {
-        return $this->role;
+        return $this->roles;
     }
     
     /**
@@ -158,8 +158,8 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
             throw new \RPI\Framework\Exceptions\InvalidArgument($role, null, "User '$role' cannot be added to a user");
         }
         
-        if (!in_array($role, $this->role)) {
-            $this->role[] = $role;
+        if (!in_array($role, $this->roles)) {
+            $this->roles[] = $role;
             return true;
         }
         
@@ -172,9 +172,9 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
     public function deleteRole($role)
     {
         $role = trim(strtolower($role));
-        $roleIndex = array_search($role, $this->role);
+        $roleIndex = array_search($role, $this->roles);
         if ($roleIndex !== false) {
-            unset($this->role[$roleIndex]);
+            unset($this->roles[$roleIndex]);
             return true;
         }
         
