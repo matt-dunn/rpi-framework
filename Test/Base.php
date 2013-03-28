@@ -10,6 +10,7 @@ abstract class Base extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->setUpGlobals();
+        $GLOBALS["RPI_FRAMEWORK_RUNNING_TEST"] = get_called_class();
     }
     
     protected function setUpGlobals()
