@@ -36,14 +36,22 @@ abstract class Server extends \RPI\Framework\Controller
      */
     protected $acl = null;
     
+    /**
+     *
+     * @var \RPI\Framework\Services\Authentication\IAuthentication 
+     */
+    protected $authenticationService = null;
+    
     public function __construct(
         $id,
         \RPI\Framework\App $app,
         \RPI\Framework\App\Security $security,
+        \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,
         \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null,
         array $options = null
     ) {
         $this->security = $security;
+        $this->authenticationService = $authenticationService;
         $this->acl = $acl;
         
         parent::__construct($id, $app, $options);

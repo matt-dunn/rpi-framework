@@ -6,7 +6,7 @@ class Extensions
 {
     /**
      * 
-     * @return \RPI\Framework\App\Security\Acl\Model\IDomainObject|null
+     * @return \RPI\Framework\App\Security\Acl|null
      */
     private static function getAcl()
     {
@@ -26,6 +26,7 @@ class Extensions
         $acl = self::getAcl();
         if (isset($acl)) {
             return $acl->check(
+                \RPI\Framework\Facade::authentication()->getAuthenticatedUser(),
                 \RPI\Framework\Views\Xsl\View::getModel(),
                 \RPI\Framework\App\Security\Acl\Model\IAcl::UPDATE,
                 $bind

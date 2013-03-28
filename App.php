@@ -322,7 +322,13 @@ class App extends \RPI\Framework\Helpers\Object
                 if (isset($route->secure)) {
                     $forceSecure = $route->secure;
                 } elseif (!$this->getRequest()->isAjax()) {
-                    $forceSecure = !\RPI\Framework\Facade::authentication()->getAuthenticatedUser()->isAnonymous;
+                    $authenticationService = \RPI\Framework\Helpers\Reflection::getDependency(
+                        $this,
+                        "RPI\Framework\Services\Authentication\IAuthentication",
+                        true
+                    );
+
+                    $forceSecure = !$authenticationService->getAuthenticatedUser()->isAnonymous;
                 }
 
                 if (isset($forceSecure)) {

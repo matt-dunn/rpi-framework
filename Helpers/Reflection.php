@@ -155,9 +155,6 @@ class Reflection
     private static function getDependencyObject(\RPI\Framework\App $app, $className)
     {
         if (isset(self::$objects[$className])) {
-            if (self::$objects[$className] === false) {
-                return null;
-            }
             return self::$objects[$className];
         }
 
@@ -170,8 +167,6 @@ class Reflection
             }
             
             return $object;
-        } else {
-            self::$objects[$className] = false;
         }
 
         return null;

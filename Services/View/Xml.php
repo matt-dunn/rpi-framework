@@ -45,6 +45,12 @@ class Xml implements IView
     protected $acl = null;
     
     /**
+     *
+     * @var \RPI\Framework\Services\Authentication\IAuthentication 
+     */
+    protected $authenticationService = null;
+    
+    /**
      * 
      * @param \RPI\Framework\Cache\IData $store
      * @param string $configFile
@@ -54,11 +60,13 @@ class Xml implements IView
         \RPI\Framework\Cache\IData $store,
         $configFile,
         \RPI\Framework\App $app,
+        \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,
         \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null
     ) {
         $this->store = $store;
         $this->file = \RPI\Framework\Helpers\Utils::buildFullPath($configFile);
         $this->app = $app;
+        $this->authenticationService = $authenticationService;
         $this->acl = $acl;
         $this->router = $this->parseViewConfig();
     }
@@ -90,7 +98,12 @@ class Xml implements IView
         if ($controllerData !== false) {
             $domainObject = new \RPI\Framework\App\Security\Acl\Model\DomainObject($controllerData["type"]);
             
-            if (isset($this->acl) && $this->acl->canCreate($domainObject) === false) {
+            if (isset($this->acl, $this->authenticationService)
+                && $this->acl->canCreate(
+                    $this->authenticationService->getAuthenticatedUser(),
+                    $domainObject
+                ) === false
+            ) {
                 throw new \RPI\Framework\App\Security\Acl\Exceptions\PermissionDenied(
                     \RPI\Framework\App\Security\Acl\Model\IAcl::CREATE,
                     $domainObject
@@ -821,8 +834,8 @@ class Xml implements IView
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $optionName = "model"
     ) {
-        if (isset($this->acl)
-            && $this->acl->canUpdate($domainObject) !== true) {
+        if (isset($this->acl, $this->authenticationService)
+            && $this->acl->canUpdate($this->authenticationService->getAuthenticatedUser(), $domainObject) !== true) {
             throw new \RPI\Framework\App\Security\Acl\Exceptions\PermissionDenied(
                 \RPI\Framework\App\Security\Acl\Model\IAcl::UPDATE,
                 $domainObject
@@ -869,8 +882,8 @@ class Xml implements IView
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $optionName = "model"
     ) {
-        if (isset($this->acl)
-            && $this->acl->canDelete($domainObject) !== true) {
+        if (isset($this->acl, $this->authenticationService)
+            && $this->acl->canDelete($this->authenticationService->getAuthenticatedUser(), $domainObject) !== true) {
             throw new \RPI\Framework\App\Security\Acl\Exceptions\PermissionDenied(
                 \RPI\Framework\App\Security\Acl\Model\IAcl::DELETE,
                 $domainObject

@@ -81,15 +81,23 @@ abstract class Component extends \RPI\Framework\Controller\HTML
      */
     protected $acl = null;
     
+    /**
+     *
+     * @var \RPI\Framework\Services\Authentication\IAuthentication 
+     */
+    protected $authenticationService = null;
+    
     public function __construct(
         $id,
         \RPI\Framework\App $app,
         \RPI\Framework\Cache\IFront $frontStore,
+        \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,
         \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null,
         \RPI\Framework\Views\IView $viewRendition = null,
         array $options = null
     ) {
         $this->frontStore = $frontStore;
+        $this->authenticationService = $authenticationService;
         $this->acl = $acl;
         
         parent::__construct($id, $app, $options, $viewRendition);
@@ -165,10 +173,13 @@ abstract class Component extends \RPI\Framework\Controller\HTML
                     $this->editable = false;
                 }
                 
-                if (isset($this->acl)) {
+                if (isset($this->acl, $this->authenticationService)) {
                     if ($this->model instanceof \RPI\Framework\App\Security\Acl\Model\IDomainObject
                         && $this->editable) {
-                        $this->editable = $this->acl->canEdit($this->model);
+                        $this->editable = $this->acl->canEdit(
+                            $this->authenticationService->getAuthenticatedUser(),
+                            $this->model
+                        );
                     } else {
                         $this->editable = false;
                     }

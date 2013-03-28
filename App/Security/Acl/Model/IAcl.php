@@ -15,22 +15,32 @@ interface IAcl
     /**
      * Check for access against a property/properties (*)
      * 
+     * @param \RPI\Framework\Model\IUser $user
+     * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
      * @param enum $access      Acl constant
      * @param string $property
      * 
      * @return boolean|null Null is returned if no permissions have been defined
      */
-    public function check(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject, $access, $property = null);
+    public function check(
+        \RPI\Framework\Model\IUser $user,
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
+        $access,
+        $property = null
+    );
     
     /**
      * Check for access to a specified operation
      * 
+     * @param \RPI\Framework\Model\IUser $user
+     * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
      * @param enum $access      Acl constant
      * @param string $operation
      * 
      * @return boolean|null Null is returned if no permissions have been defined
      */
     public function checkOperation(
+        \RPI\Framework\Model\IUser $user,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $access,
         $operation = null
@@ -41,43 +51,73 @@ interface IAcl
      * 
      * This is a shortcut for checkOperation(IAcl::UPDATE | IAcl::DELETE | IAcl::CREATE)
      * 
+     * @param \RPI\Framework\Model\IUser $user
+     * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+     * 
      * @return boolean|null Null is returned if no permissions have been defined
      */
-    public function canEdit(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject);
+    public function canEdit(
+        \RPI\Framework\Model\IUser $user,
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+    );
     
     /**
      * Check for READ access operation
      * 
      * This is a shortcut for checkOperation(IAcl::READ)
      * 
+     * @param \RPI\Framework\Model\IUser $user
+     * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+     * 
      * @return boolean|null Null is returned if no permissions have been defined
      */
-    public function canRead(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject);
+    public function canRead(
+        \RPI\Framework\Model\IUser $user,
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+    );
     
     /**
      * Check for UPDATE access operation
      * 
      * This is a shortcut for checkOperation(IAcl::UPDATE)
-     * 
+     *
+     * @param \RPI\Framework\Model\IUser $user
+     * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+     *  
      * @return boolean|null Null is returned if no permissions have been defined
      */
-    public function canUpdate(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject);
+    public function canUpdate(
+        \RPI\Framework\Model\IUser $user,
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+    );
     
     /**
      * Check for DELETE access operation
      * 
      * This is a shortcut for checkOperation(IAcl::DELETE)
      * 
+     * @param \RPI\Framework\Model\IUser $user
+     * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+     * 
      * @return boolean|null Null is returned if no permissions have been defined
      */
-    public function canDelete(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject);
+    public function canDelete(
+        \RPI\Framework\Model\IUser $user,
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+    );
     
     /**
      * Check for CREATE access operation
      * 
      * This is a shortcut for checkOperation(IAcl::CREATE)
      * 
+     * @param \RPI\Framework\Model\IUser $user
+     * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+     * 
      * @return boolean|null Null is returned if no permissions have been defined
      */
-    public function canCreate(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject);
+    public function canCreate(
+        \RPI\Framework\Model\IUser $user,
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+    );
 }

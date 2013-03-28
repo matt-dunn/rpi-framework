@@ -13,86 +13,96 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
     private $provider = null;
     
     /**
-     *
-     * @var \RPI\Framework\Model\IUser
-     */
-    private $user = null;
-    
-    /**
      * 
      * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
      * @param \RPI\Framework\Services\Authentication\IAuthentication $authentication
      * @param \RPI\Framework\App\Security\Acl\Model\IProvider $provider
      */
     public function __construct(
-        \RPI\Framework\Services\Authentication\IAuthentication $authentication,
         \RPI\Framework\App\Security\Acl\Model\IProvider $provider = null
     ) {
-        $this->user = $authentication->getAuthenticatedUser();
         $this->provider = $provider;
     }
     
     /**
      * {@inheritdoc}
      */
-    public function check(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject, $access, $property = null)
-    {
-        return $this->checkRoles($domainObject, $access, $property, "properties");
+    public function check(
+        \RPI\Framework\Model\IUser $user,
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
+        $access,
+        $property = null
+    ) {
+        return $this->checkRoles($user, $domainObject, $access, $property, "properties");
     }
     
     /**
      * {@inheritdoc}
      */
     public function checkOperation(
+        \RPI\Framework\Model\IUser $user,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $access,
         $operation = null
     ) {
-        return $this->checkRoles($domainObject, $access, $operation, "operations");
+        return $this->checkRoles($user, $domainObject, $access, $operation, "operations");
     }
     
     /**
      * {@inheritdoc}
      */
-    public function canEdit(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
-    {
-        return $this->canUpdate($domainObject) || $this->canDelete($domainObject) || $this->canCreate($domainObject);
+    public function canEdit(
+        \RPI\Framework\Model\IUser $user,
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+    ) {
+        return $this->canUpdate($user, $domainObject)
+            || $this->canDelete($user, $domainObject)
+            || $this->canCreate($user, $domainObject);
     }
     
     /**
      * {@inheritdoc}
      */
-    public function canRead(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
-    {
-        return $this->checkRoles($domainObject, IAcl::READ, null, "operations");
+    public function canRead(
+        \RPI\Framework\Model\IUser $user,
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+    ) {
+        return $this->checkRoles($user, $domainObject, IAcl::READ, null, "operations");
     }
     
     /**
      * {@inheritdoc}
      */
-    public function canUpdate(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
-    {
-        return $this->checkRoles($domainObject, IAcl::UPDATE, null, "operations");
+    public function canUpdate(
+        \RPI\Framework\Model\IUser $user,
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+    ) {
+        return $this->checkRoles($user, $domainObject, IAcl::UPDATE, null, "operations");
     }
     
     /**
      * {@inheritdoc}
      */
-    public function canDelete(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
-    {
-        return $this->checkRoles($domainObject, IAcl::DELETE, null, "operations");
+    public function canDelete(
+        \RPI\Framework\Model\IUser $user,
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+    ) {
+        return $this->checkRoles($user, $domainObject, IAcl::DELETE, null, "operations");
     }
     
     /**
      * {@inheritdoc}
      */
-    public function canCreate(\RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject)
-    {
-        return $this->checkRoles($domainObject, IAcl::CREATE, null, "operations");
+    public function canCreate(
+        \RPI\Framework\Model\IUser $user,
+        \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
+    ) {
+        return $this->checkRoles($user, $domainObject, IAcl::CREATE, null, "operations");
     }
     
     /**
      * 
+     * @param \RPI\Framework\Model\IUser $user
      * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
      * @param integer $access
      * @param string $property
@@ -101,15 +111,14 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
      * @return boolean
      */
     private function checkRoles(
+        \RPI\Framework\Model\IUser $user,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $access,
         $property,
         $type
     ) {
-        $canAccess = null;
-        
         if (isset($this->provider)) {
-            if (in_array(\RPI\Framework\Model\IUser::ROOT, $this->user->role)) {
+            if (in_array(\RPI\Framework\Model\IUser::ROOT, $user->role)) {
                 $permission = array();
 
                 if ($access & \RPI\Framework\App\Security\Acl\Model\IAcl::CREATE) {
@@ -130,35 +139,42 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
                     " permission granted on object '{$domainObject->getType()}' (ID: {$domainObject->getId()})";
                 
                 \RPI\Framework\Exception\Handler::logMessage(
-                    "ROOT user [{$this->user->uuid} ({$this->user->fullname})]: {$message}",
+                    "ROOT user [{$user->uuid} ({$user->fullname})]: {$message}",
                     LOG_AUTH,
                     "authentication"
                 );
+                    
                 return true;
             }
             
+            $canAccess = false;
+        
             $ace = $this->provider->getAce($domainObject->getType());
             if (isset($ace) && is_array($ace)) {
-                if (!$this->user->isAuthenticated && !$this->user->isAnonymous) {
+                if (!$user->isAuthenticated && !$user->isAnonymous) {
                     //throw new \RPI\Framework\Exceptions\Authorization();
                 }
 
-                if (is_array($this->user->role)) {
-                    foreach ($this->user->role as $role) {
+                // TODO: role should always be an array so can remove this test:
+                if (is_array($user->role)) {
+                    foreach ($user->role as $role) {
                         $canAccess = $this->checkPermission($ace, $access, $property, $role, $type);
+                        if ($canAccess === true) {
+                            break;
+                        }
                     }
                 } else {
-                    $canAccess = $this->checkPermission($ace, $access, $property, $this->user->role, $type);
+                    $canAccess = $this->checkPermission($ace, $access, $property, $user->role, $type);
                 }
 
                 if ($canAccess === false &&
-                    ($domainObject->getOwnerId() == $this->user->uuid
-                        || $this->provider->isOwner($domainObject, $this->user)
+                    ($domainObject->getOwnerId() == $user->uuid
+                        || $this->provider->isOwner($domainObject, $user)
                 )) {
                     $canAccess = $this->checkPermission($ace, $access, $property, "owner", $type);
                 }
 
-                //if (!$this->user->isAnonymous && $canAccess === false) {
+                //if (!$user->isAnonymous && $canAccess === false) {
                 //    $canAccess = $this->checkPermission($ace, $access, $property, "anonymous", $type);
                 //}
                 

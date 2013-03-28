@@ -106,14 +106,14 @@ abstract class Form extends \RPI\Framework\Component
         \RPI\Framework\App $app,
         \RPI\Framework\Cache\IFront $frontStore,
         \RPI\Framework\App\Security $security,
+        \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,
         \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null,
         \RPI\Framework\Views\IView $viewRendition = null,
         array $options = null
     ) {
-        $this->frontStore = $frontStore;
         $this->security = $security;
         
-        parent::__construct($id, $app, $frontStore, $acl, $viewRendition, $options);
+        parent::__construct($id, $app, $frontStore, $authenticationService, $acl, $viewRendition, $options);
     }
     
     /**
