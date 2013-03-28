@@ -81,8 +81,9 @@ class Reflection
                 
                 if (!isset($param) && !$reflectionParameter->isDefaultValueAvailable()) {
                     throw new \RPI\Framework\Exceptions\RuntimeException(
-                        "Class '$paramClassName' constructor parameter '".$reflectionParameter->getName().
-                        "' must be defined as a dependency. Check the application configuration settings."
+                        "Class '$className' constructor parameter '".$reflectionParameter->getName().
+                        "' ($paramClassName) must be defined as a dependency. Check the application".
+                        " configuration settings."
                     );
                 }
                 
