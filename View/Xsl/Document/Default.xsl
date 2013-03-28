@@ -26,6 +26,13 @@
                 <xsl:value-of select="metadata:view"/>
             </xsl:attribute>
         </xsl:if>
+        
+        <xsl:if test="not(boolean(number(metadata:permissions/metadata:permission[@property = 'commonDocument:content/xhtml:body']/@canRead)))">
+            <xsl:attribute name="class">
+                <xsl:text>locked</xsl:text>
+            </xsl:attribute>
+        </xsl:if>
+        
         <xsl:apply-templates select="." mode="common_document_type">
             <xsl:with-param name="component" select="$component"/>
             <xsl:with-param name="headingLevel" select="$headingLevel"/>
