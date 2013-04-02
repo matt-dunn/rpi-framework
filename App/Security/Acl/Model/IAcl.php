@@ -4,6 +4,7 @@ namespace RPI\Framework\App\Security\Acl\Model;
 
 interface IAcl
 {
+    // TODO: move to ENUM
     const NONE = 0;
     
     const CREATE = 1;
@@ -14,7 +15,7 @@ interface IAcl
     const ALL = 15;
     
     /**
-     * Check for access against a property/properties (*)
+     * Check for access against a property
      * 
      * @param \RPI\Framework\Model\IUser $user
      * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
@@ -23,7 +24,7 @@ interface IAcl
      * 
      * @return boolean|null Null is returned if no permissions have been defined
      */
-    public function check(
+    public function checkProperty(
         \RPI\Framework\Model\IUser $user,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $access,
@@ -31,7 +32,7 @@ interface IAcl
     );
     
     /**
-     * Check for access to a specified operation
+     * Check for access to an operation
      * 
      * @param \RPI\Framework\Model\IUser $user
      * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject

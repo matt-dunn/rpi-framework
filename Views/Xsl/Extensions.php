@@ -25,7 +25,7 @@ class Extensions
     {
         $acl = self::getAcl();
         if (isset($acl)) {
-            return $acl->check(
+            return $acl->checkProperty(
                 \RPI\Framework\Facade::authentication()->getAuthenticatedUser(),
                 \RPI\Framework\Views\Xsl\View::getModel(),
                 \RPI\Framework\App\Security\Acl\Model\IAcl::UPDATE,

@@ -24,7 +24,7 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
     /**
      * {@inheritdoc}
      */
-    public function check(
+    public function checkProperty(
         \RPI\Framework\Model\IUser $user,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $access,
