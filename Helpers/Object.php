@@ -76,7 +76,7 @@ abstract class Object implements \Serializable
         
         $reflect = new \ReflectionObject($this);
         
-        foreach ($reflect->getMethods(\ReflectionProperty::IS_PUBLIC) as $method) {
+        foreach ($reflect->getMethods(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED) as $method) {
             $parameterCount = count($method->getParameters());
             $methodName = $method->getName();
             if ($parameterCount == 0 && substr($methodName, 0, 3) == "get") {
@@ -115,7 +115,7 @@ abstract class Object implements \Serializable
         
         $reflect = new \ReflectionObject($this);
         
-        foreach ($reflect->getMethods(\ReflectionProperty::IS_PUBLIC) as $method) {
+        foreach ($reflect->getMethods(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED) as $method) {
             $parameterCount = count($method->getParameters());
             $methodName = $method->getName();
             if ($parameterCount == 0 && substr($methodName, 0, 3) == "get") {
