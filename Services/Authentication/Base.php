@@ -169,7 +169,10 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
                     if ($currentUser !== false) {
                         $this->logout(false);
 
-                        $user = $this->setUser($currentUser, $this->createUserToken($tokenParts["u"], $tokenParts["s"]));
+                        $user = $this->setUser(
+                            $currentUser,
+                            $this->createUserToken($tokenParts["u"], $tokenParts["s"])
+                        );
                     }
                 }
             }
@@ -358,7 +361,8 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
             $user = $tokenParts["u"];
             $digest = $tokenParts["d"];
             $crc = sprintf("%u", crc32("u=$user&d=$digest&s={$tokenParts["s"]}"));
-            $validToken = ($crc == $tokenParts["c"] && $token == $this->createUserToken($tokenParts["u"], $tokenParts["s"]));
+            $validToken =
+                ($crc == $tokenParts["c"] && $token == $this->createUserToken($tokenParts["u"], $tokenParts["s"]));
         }
         
         if (!$validToken) {
