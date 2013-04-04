@@ -162,16 +162,16 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
                 if (isset($this->app->getSession()->$authenticatedUserSessionName)) {
                     $user = $this->setUser(
                         $this->app->getSession()->$authenticatedUserSessionName,
-                        $this->createUserToken($tokenParts["u"], $tokenParts["s"])
+                        $this->createUserToken(new \RPI\Framework\Model\UUID($tokenParts["u"]), $tokenParts["s"])
                     );
                 } else {
-                    $currentUser = $this->getUser($tokenParts["u"]);
+                    $currentUser = $this->getUser(new \RPI\Framework\Model\UUID($tokenParts["u"]));
                     if ($currentUser !== false) {
                         $this->logout(false);
 
                         $user = $this->setUser(
                             $currentUser,
-                            $this->createUserToken($tokenParts["u"], $tokenParts["s"])
+                            $this->createUserToken(new \RPI\Framework\Model\UUID($tokenParts["u"]), $tokenParts["s"])
                         );
                     }
                 }
@@ -183,7 +183,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         if ($user !== false) {
             $this->setAuthenticationState($user);
         } else {
-            $uuid = \RPI\Framework\Helpers\Uuid::v4();
+            $uuid = new \RPI\Framework\Model\UUID();
             $user = $this->setUser($this->createAnonymousUser($uuid), $this->createUserToken($uuid, true));
         }
 
@@ -329,12 +329,12 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     /**
      *
-     * @param string $uuid
+     * @param \RPI\Framework\Model\UUID $uuid
      * @param boolean $isAnonymous
      * 
      * @return string Unencrypted token
      */
-    private function createUserToken($uuid, $isAnonymous = false)
+    private function createUserToken(\RPI\Framework\Model\UUID $uuid, $isAnonymous = false)
     {
         // TODO: add agent string?
         $agent = "";
@@ -362,7 +362,12 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
             $digest = $tokenParts["d"];
             $crc = sprintf("%u", crc32("u=$user&d=$digest&s={$tokenParts["s"]}"));
             $validToken =
-                ($crc == $tokenParts["c"] && $token == $this->createUserToken($tokenParts["u"], $tokenParts["s"]));
+                ($crc == $tokenParts["c"]
+                    && $token == $this->createUserToken(
+                        new \RPI\Framework\Model\UUID($tokenParts["u"]),
+                        $tokenParts["s"]
+                    )
+                );
         }
         
         if (!$validToken) {
@@ -380,12 +385,12 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     /**
      *
-     * @param  string    $uuid
-     * @param  timestamp $expiry
+     * @param \RPI\Framework\Model\UUID $uuid
+     * @param integer $expiry
      * 
      * @return string    Unencrypted token
      */
-    private function createAuthenticationToken($uuid, $expiry)
+    private function createAuthenticationToken(\RPI\Framework\Model\UUID $uuid, $expiry)
     {
         // TODO: store something in the token from the identification token to ensure it is valid for this server
         // TODO: add an absolute expiry. e.g. not only have the inactivity expiry currentl implemented but also
@@ -420,7 +425,12 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
             $digest = $tokenParts["d"];
             $crc = sprintf("%u", crc32("e=$expiry&u=$user&d=$digest"));
             $validToken =
-                ($crc == $tokenParts["c"] && $token == $this->createAuthenticationToken($tokenParts["u"], $expiry));
+                ($crc == $tokenParts["c"]
+                    && $token == $this->createAuthenticationToken(
+                        new \RPI\Framework\Model\UUID($tokenParts["u"]),
+                        $expiry
+                    )
+                );
         }
 
         if (!$validToken) {
@@ -438,11 +448,11 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     /**
      * 
-     * @param string $uuid
+     * @param \RPI\Framework\Model\UUID $uuid
      * 
      * @return \RPI\Framework\Model\IUser
      */
-    protected function createAnonymousUser($uuid)
+    protected function createAnonymousUser(\RPI\Framework\Model\UUID $uuid)
     {
         return new \RPI\Framework\Model\User(
             $uuid
@@ -460,9 +470,9 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     /**
      *
-     * @param  string $uuid
+     * @param \RPI\Framework\Model\UUID $uuid
      * 
      * @return \RPI\Framework\Model\IUser|boolean
      */
-    abstract protected function getUser($uuid);
+    abstract protected function getUser(\RPI\Framework\Model\UUID $uuid);
 }

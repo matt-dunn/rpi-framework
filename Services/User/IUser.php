@@ -6,11 +6,11 @@ interface IUser
 {
     /**
      * 
-     * @param string $uuid
+     * @param \RPI\Framework\Model\UUID $uuid
      * 
      * @return \RPI\Framework\Model\IUser|boolean
      */
-    public function getUser($uuid);
+    public function getUser(\RPI\Framework\Model\UUID $uuid);
     
     /**
      * 

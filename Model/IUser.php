@@ -3,7 +3,7 @@
 namespace RPI\Framework\Model;
 
 /**
- * @property-read string $uuid
+ * @property-read \RPI\Framework\Model\UUID $uuid
  * @property-read string $firstname
  * @property-read string $surname
  * @property-read string $userId
@@ -21,7 +21,7 @@ interface IUser
     const USER = "user";
     
     /**
-     * @return string
+     * @return \RPI\Framework\Model\UUID
      */
     public function getUuid();
     

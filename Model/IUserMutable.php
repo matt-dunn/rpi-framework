@@ -6,11 +6,11 @@ interface IUserMutable extends \RPI\Framework\Model\IUser
 {
     /**
      * 
-     * @param string $uuid
+     * @param \RPI\Framework\Model\UUID $uuid
      * 
      * @return \RPI\Framework\Model\IUser
      */
-    public function setUuid($uuid);
+    public function setUuid(\RPI\Framework\Model\UUID $uuid);
 
     /**
      * 

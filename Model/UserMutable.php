@@ -24,7 +24,7 @@ class UserMutable extends \RPI\Framework\Model\User implements \RPI\Framework\Mo
     /**
      * {@inherit-doc}
      */
-    public function setUuid($uuid)
+    public function setUuid(\RPI\Framework\Model\UUID $uuid)
     {
         $this->uuid = $uuid;
         
