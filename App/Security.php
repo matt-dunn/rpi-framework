@@ -41,6 +41,8 @@ class Security
      * 
      * @param string $token
      * 
+     * @return boolean
+     * 
      * @throws \RPI\Framework\Exceptions\Forbidden
      */
     public function validateToken($token)
@@ -49,5 +51,7 @@ class Security
             \RPI\Framework\Exception\Handler::logMessage("Possible CSRF attack detected", LOG_CRIT, "CSRF");
             throw new \RPI\Framework\Exceptions\Forbidden();
         }
+        
+        return true;
     }
 }
