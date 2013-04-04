@@ -199,11 +199,11 @@ abstract class HTML extends \RPI\Framework\Controller\Cacheable
     
     /**
      * 
-     * @param string $uuid
+     * @param \RPI\Framework\Model\UUID $uuid
      * @param string $type
      * @return boolean|\RPI\Framework\Component
      */
-    public function findChildComponent($uuid, $type = null)
+    public function findChildComponent(\RPI\Framework\Model\UUID $uuid, $type = null)
     {
         foreach ($this->components as $component) {
             if ($component["component"]->id == $uuid) {
