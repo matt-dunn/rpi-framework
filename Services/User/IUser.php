@@ -6,7 +6,7 @@ interface IUser
 {
     /**
      * 
-     * @param UUID $uuid
+     * @param string $uuid
      * 
      * @return \RPI\Framework\Model\IUser|boolean
      */
@@ -21,11 +21,11 @@ interface IUser
     public function getUserByUserId($userId);
     /**
      * 
-     * @param UUID $uuid
+     * @param \RPI\Framework\Model\IUser $user
      * 
      * @return bool True on success
      */
-    public function deleteUser($uuid);
+    public function deleteUser(\RPI\Framework\Model\IUser $user);
 
     /**
      * 
