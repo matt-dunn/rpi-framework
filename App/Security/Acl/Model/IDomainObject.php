@@ -5,7 +5,7 @@ namespace RPI\Framework\App\Security\Acl\Model;
 interface IDomainObject
 {
     /**
-     * @return string
+     * @return \RPI\Framework\Model\UUID
      */
     public function getId();
     
@@ -15,7 +15,7 @@ interface IDomainObject
     public function getType();
     
     /**
-     * @return UUID
+     * @return \RPI\Framework\Model\UUID
      */
     public function getOwnerId();
 }

@@ -21,7 +21,7 @@ final class Config extends \RPI\Framework\App\Config\Base implements \RPI\Framew
         \RPI\Framework\Model\User $user,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
     ) {
-        return ($user->uuid == $domainObject->getOwnerId());
+        return ((string)$user->uuid == (string)$domainObject->getOwnerId());
     }
 
     protected function getSchema()
