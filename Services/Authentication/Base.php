@@ -11,7 +11,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
     protected $app = null;
     
     /**
-     * Offset in seconds
+     * Absolute expiry offset in seconds
      * 
      * @var integer 
      */
@@ -21,13 +21,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
      *
      * @var boolean
      */
-    private $forceSecureAuthenticationToken = false;
-
-    /**
-     *
-     * @var integer
-     */
-    private $sslPort = 443;
+    private $forceSecureAuthenticationToken = true;
 
     /**
      *
@@ -75,17 +69,13 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
                 "authenticationExpiryOffset",
                 $this->authenticationExpiryOffset
             );
+        
         $this->forceSecureAuthenticationToken =
             \RPI\Framework\Helpers\Utils::getNamedValue(
                 $options,
                 "forceSecureAuthenticationToken",
                 $this->forceSecureAuthenticationToken
             );
-        $this->sslPort = \RPI\Framework\Helpers\Utils::getNamedValue(
-            $options,
-            "sslPort",
-            $this->sslPort
-        );
 
         $this->cookieDetectionEnabled =
             \RPI\Framework\Helpers\Utils::getNamedValue(
@@ -161,7 +151,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         $tokenParts = null;
 
         if (isset($this->authenticatedUser)) {
-            $user = $this->authenticatedUser;
+            return $this->authenticatedUser;
         } elseif ($this->app->getRequest()->getCookies()->get("u") !== null) {
             $token = \RPI\Framework\Helpers\Crypt::decrypt(
                 $this->app->getConfig()->getValue("config/keys/userTokenSession"),
@@ -172,14 +162,14 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
                 if (isset($this->app->getSession()->$authenticatedUserSessionName)) {
                     $user = $this->setUser(
                         $this->app->getSession()->$authenticatedUserSessionName,
-                        $this->createUserToken($tokenParts["u"])
+                        $this->createUserToken($tokenParts["u"], $tokenParts["s"])
                     );
                 } else {
-                    $currentUser = $this->getCurrentUser($tokenParts["u"]);
+                    $currentUser = $this->getUser($tokenParts["u"]);
                     if ($currentUser !== false) {
                         $this->logout(false);
 
-                        $user = $this->setUser($currentUser, $this->createUserToken($tokenParts["u"]));
+                        $user = $this->setUser($currentUser, $this->createUserToken($tokenParts["u"], $tokenParts["s"]));
                     }
                 }
             }
@@ -188,10 +178,10 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         }
 
         if ($user !== false) {
-            $user->isAuthenticated = $this->checkAuthenticationState();
+            $this->setAuthenticationState($user);
         } else {
             $uuid = \RPI\Framework\Helpers\Uuid::v4();
-            $user = $this->setUser($this->createAnonymousUser($uuid), $this->createUserToken($uuid));
+            $user = $this->setUser($this->createAnonymousUser($uuid), $this->createUserToken($uuid, true));
         }
 
         return $user;
@@ -204,7 +194,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
      * 
      * @return boolean
      */
-    private function authenticate($user, $userId)
+    private function authenticate(\RPI\Framework\Model\IUser $user, $userId)
     {
         if ($user !== false) {
             \RPI\Framework\Exception\Handler::logMessage(
@@ -214,11 +204,10 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
             );
             $this->setUser(
                 $user,
-                $this->createUserToken($user->userId),
-                $this->createAuthenticationToken($user->userId, time() + $this->authenticationExpiryOffset)
+                $this->createUserToken($user->uuid),
+                $this->createAuthenticationToken($user->uuid, time() + $this->authenticationExpiryOffset)
             );
-            $user->isAuthenticated = $this->checkAuthenticationState();
-            $user->isAnonymous = false;
+            $this->setAuthenticationState($user);
 
             return $user;
         } else {
@@ -234,28 +223,44 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
     }
 
     /**
-     *
-     * @return boolean
+     * {@inherit-doc}
      */
-    private function checkAuthenticationState()
+    public function setAuthenticationState(\RPI\Framework\Model\IUser $user)
     {
+        $user->isAuthenticated = false;
+        $user->isAnonymous = true;
+        
         if ($this->app->getRequest()->getCookies()->get("a") != null) {
             $token = \RPI\Framework\Helpers\Crypt::decrypt(
                 $this->app->getConfig()->getValue("config/keys/authenticationTokenSession"),
                 $this->app->getRequest()->getCookies()->getValue("a")
             );
             $expiry = null;
-            if ($this->validateAuthenticationToken($token, $expiry)) {
-                if ($expiry > time()) {
+            $tokenParts = null;
+            if ($this->validateAuthenticationToken($token, $expiry, $tokenParts)) {
+                if ($tokenParts["u"] == $user->uuid && $expiry > time()) {
                     // TODO: do we need to check to see if the (unencrypted) token is in the session
                     // (to test if a new session user has been created by getAuthenticatedUser but
                     // not authenticated)?
-                    return true;
+                    $user->isAuthenticated = true;
+                }
+            }
+        }
+        
+        if ($this->app->getRequest()->getCookies()->get("u") !== null) {
+            $token = \RPI\Framework\Helpers\Crypt::decrypt(
+                $this->app->getConfig()->getValue("config/keys/userTokenSession"),
+                $this->app->getRequest()->getCookies()->getValue("u")
+            );
+            $tokenParts = null;
+            if ($this->validateUserToken($token, $tokenParts)) {
+                if (($tokenParts["u"] == $user->uuid)) {
+                    $user->isAnonymous = ($tokenParts["s"] == true);
                 }
             }
         }
 
-        return false;
+        return $user->isAuthenticated;
     }
 
     /**
@@ -263,6 +268,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
      * @param  string                    $user
      * @param  string                    $userToken
      * @param  string                    $authenticationToken
+     * 
      * @return \RPI\Framework\Model\IUser
      */
     private function setUser(\RPI\Framework\Model\IUser $user, $userToken = null, $authenticationToken = null)
@@ -303,7 +309,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
                 time() + $this->authenticationExpiryOffset + 3600,
                 null,
                 null,
-                true
+                $this->forceSecureAuthenticationToken
             );
             $this->app->getRequest()->getCookies()->set(
                 "a",
@@ -311,7 +317,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
                 time() + $this->authenticationExpiryOffset + 3600,
                 null,
                 null,
-                true
+                $this->forceSecureAuthenticationToken
             );
         }
 
@@ -320,14 +326,18 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     /**
      *
-     * @param  string $uuid
+     * @param string $uuid
+     * @param boolean $isAnonymous
+     * 
      * @return string Unencrypted token
      */
-    private function createUserToken($uuid)
+    private function createUserToken($uuid, $isAnonymous = false)
     {
         // TODO: add agent string?
         $agent = "";
-        $token = "u=$uuid&d=".hash("sha256", $this->app->getConfig()->getValue("config/keys/userToken").$uuid.$agent);
+        $token = "u=$uuid";
+        $token .= "&d=".hash("sha256", $this->app->getConfig()->getValue("config/keys/userToken").$uuid.$agent);
+        $token .= "&s=".($isAnonymous ? 1 : 0);
         $token .= "&c=".sprintf("%u", crc32($token));
 
         return $token;
@@ -337,19 +347,20 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
      *
      * @param  string            $token      Unencrypted token
      * @param  associative array $tokenParts
+     * 
      * @return bool
      */
     private function validateUserToken($token, &$tokenParts = null)
     {
         $validToken = false;
         parse_str($token, $tokenParts);
-        if (isset($tokenParts["u"]) && isset($tokenParts["d"]) && isset($tokenParts["c"])) {
+        if (isset($tokenParts["u"], $tokenParts["d"], $tokenParts["c"], $tokenParts["s"])) {
             $user = $tokenParts["u"];
             $digest = $tokenParts["d"];
-            $crc = sprintf("%u", crc32("u=$user&d=$digest"));
-            $validToken = ($crc == $tokenParts["c"] && $token == $this->createUserToken($tokenParts["u"]));
+            $crc = sprintf("%u", crc32("u=$user&d=$digest&s={$tokenParts["s"]}"));
+            $validToken = ($crc == $tokenParts["c"] && $token == $this->createUserToken($tokenParts["u"], $tokenParts["s"]));
         }
-
+        
         if (!$validToken) {
             \RPI\Framework\Exception\Handler::logMessage(
                 __METHOD__." - Authentication tamper detected (validateUserToken): 
@@ -367,6 +378,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
      *
      * @param  string    $uuid
      * @param  timestamp $expiry
+     * 
      * @return string    Unencrypted token
      */
     private function createAuthenticationToken($uuid, $expiry)
@@ -390,14 +402,15 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
      *
      * @param  string            $token      Unencrypted token
      * @param  timestamp         $expiry
-     * @param  associative array $tokenParts
+     * @param  array $tokenParts
+     * 
      * @return boolean
      */
     private function validateAuthenticationToken($token, &$expiry = null, &$tokenParts = null)
     {
         $validToken = false;
         parse_str($token, $tokenParts);
-        if (isset($tokenParts["e"]) && isset($tokenParts["u"]) && isset($tokenParts["d"]) && isset($tokenParts["c"])) {
+        if (isset($tokenParts["e"], $tokenParts["u"], $tokenParts["d"], $tokenParts["c"])) {
             $expiry = $tokenParts["e"];
             $user = $tokenParts["u"];
             $digest = $tokenParts["d"];
@@ -443,9 +456,9 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     /**
      *
-     * @param  string $userId
+     * @param  string $uuid
      * 
-     * @return \RPI\Framework\Model\IUser
+     * @return \RPI\Framework\Model\IUser|boolean
      */
-    abstract protected function getCurrentUser($userId);
+    abstract protected function getUser($uuid);
 }

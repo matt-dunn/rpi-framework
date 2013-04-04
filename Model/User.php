@@ -7,37 +7,37 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
     /**
      * @var string
      */
-    protected $uuid;
+    protected $uuid = null;
     
     /**
      * @var string
      */
-    protected $firstname;
+    protected $firstname = null;
     
     /**
      * @var string
      */
-    protected $surname;
+    protected $surname = null;
     
     /**
      * @var string
      */
-    protected $userId;
+    protected $userId = null;
     
     /**
      * @var \DateTime
      */
-    protected $accountCreated;
+    protected $accountCreated = null;
     
     /**
      * @var \DateTime
      */
-    protected $accountLastAccessed;
+    protected $accountLastAccessed = null;
 
     /**
      * @var array
      */
-    protected $roles;
+    protected $roles = null;
 
     /**
      * @var boolean
@@ -60,7 +60,7 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
      * @param array $roles
      */
     public function __construct(
-        $uuid = null,
+        $uuid,
         $firstname = null,
         $surname = null,
         $userId = null,
@@ -69,7 +69,7 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
         array $roles = array(\RPI\Framework\Model\IUser::USER)
     ) {
         if (!\RPI\Framework\Helpers\Uuid::isValid($uuid)) {
-            throw new \RPI\Framework\Exceptions\InvalidArgument($uuid);
+            throw new \RPI\Framework\Exceptions\InvalidArgument($uuid, null, "UUID must be a valid v4 UUID");
         }
         
         $this->uuid = $uuid;
@@ -77,10 +77,13 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
         $this->surname = $surname;
         $this->userId = $userId;
 
-        $this->accountCreated = $accountCreated;
+        $this->accountCreated = (isset($accountCreated) ? $accountCreated : new \DateTime());
         $this->accountLastAccessed = $accountLastAccessed;
 
         $this->roles = $roles;
+        
+        $this->isAuthenticated = false;
+        $this->isAnonymous = true;
     }
     
     /**

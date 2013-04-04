@@ -28,6 +28,15 @@ interface IAuthentication
     public function isAnonymousUser();
 
     /**
+     * Update the user object authentication state
+     * 
+     * @param \RPI\Framework\Model\IUser $user
+     * 
+     * @return boolean  True is user is authenticated
+     */
+    public function setAuthenticationState(\RPI\Framework\Model\IUser $user);
+    
+    /**
      *
      * @param boolean $complete If true, remove the identification token cookie as
      *                          well as the authentication token cookie
