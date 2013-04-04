@@ -10,11 +10,20 @@ class InvalidArgument extends \InvalidArgumentException implements \RPI\Framewor
     {
         $message = "";
         
-        $this->value = $value;
+        if (is_object($value)) {
+            if (method_exists($value, "__toString")) {
+                $this->value = (string)$value;
+            } else {
+                $this->value = get_class($value);
+            }
+        } else {
+            $this->value = $value;
+        }
         if (is_array($value)) {
             $message = "Invalid parameters: '".implode("', '", $this->value)."'";
         } else {
-            $message = "Invalid parameter: '".$this->value."'";
+            $message ="Invalid parameter: '".$this->value."' (".
+                (is_object($this->value) ? get_class($this->value) : gettype($this->value)).")";
         }
 
         if (isset($availableOptions)) {
