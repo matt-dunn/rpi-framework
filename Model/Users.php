@@ -27,4 +27,14 @@ class Users extends \ArrayObject implements IUsers
     {
         return get_class($this);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addUser(IUser $user)
+    {
+        $this[$user->uuid] = $user;
+        
+        return $this;
+    }
 }
