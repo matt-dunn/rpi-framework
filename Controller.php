@@ -14,7 +14,7 @@ namespace RPI\Framework;
  * 
  * @property-read string $safeTypeName Object type as a 'safe' value
  * @property-read \RPI\Framework\Controller\Options $options Controller options
- * @property-read string $id Controller ID
+ * @property-read \RPI\Framework\Model\UUID $id Controller ID
  * @property-read string $type Controller type
  * @property-read \RPI\Framework\App $app
  * @property-read \RPI\Framework\App\Config $config
@@ -37,7 +37,7 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
 
     /**
      *
-     * @var string
+     * @var \RPI\Framework\Model\UUID
      */
     private $id = null;
     
@@ -107,7 +107,7 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
      * 
      * @throws \Exception
      */
-    public function __construct($id, \RPI\Framework\App $app, array $options = null)
+    public function __construct(\RPI\Framework\Model\UUID $id, \RPI\Framework\App $app, array $options = null)
     {
         $options = $this->setup($id, $app, $options);
         
@@ -130,16 +130,28 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
         return $properties;
     }
     
+    /**
+     * 
+     * @return \RPI\Framework\Controller\Options
+     */
     public function getOptions()
     {
         return $this->options;
     }
     
+    /**
+     * 
+     * @return \RPI\Framework\Model\UUID
+     */
     public function getId()
     {
         return $this->id;
     }
     
+    /**
+     * 
+     * @return string
+     */
     public function getSafeTypeName()
     {
         return $this->safeTypeName;
@@ -148,18 +160,14 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
     /**
      * Setup the controller. Only should be called in a __construct
      * 
-     * @param string $id
+     * @param \RPI\Framework\Model\UUID $id
      * @param \RPI\Framework\App $app
      * @param array $options
      * 
      * @throws \Exception
      */
-    protected function setup($id, \RPI\Framework\App $app, array $options = null)
+    protected function setup(\RPI\Framework\Model\UUID $id, \RPI\Framework\App $app, array $options = null)
     {
-        if (!isset($id) || $id == "") {
-            throw new \RPI\Framework\Exceptions\Exception("No valid ID passed to '".get_called_class()."'");
-        }
-        
         $this->id = $id;
         $this->app = $app;
         $this->type = get_called_class();

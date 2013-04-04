@@ -41,11 +41,11 @@ class UUID extends \RPI\Framework\Helpers\Object
      */
     protected function setUuid($uuid)
     {
-        if (!\RPI\Framework\Helpers\Uuid::isValid($uuid)) {
-            throw new \RPI\Framework\Exceptions\InvalidArgument($uuid, null, "UUID must be a valid v4 UUID");
+        if (!is_string($uuid) || !\RPI\Framework\Helpers\Uuid::isValid($uuid)) {
+            throw new \RPI\Framework\Exceptions\InvalidArgument($uuid, null, "UUID must be a valid v4 UUID string");
         }
         
-        $this->uuid = $uuid;
+        $this->uuid = (string)$uuid;
     }
     
     public function __toString()

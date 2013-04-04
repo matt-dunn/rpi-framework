@@ -110,7 +110,7 @@
         "mimetype": "image/jpeg",
         "fileExtension": "jpeg",
         "controller": "\\RPI\\Controllers\\Image\\Controller",
-        "uuid": "g10d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "uuid": "a60d5cc4-1233-480d-9618-3c3dfcdb2439",
         "action": "getjpegimagewithextensionandmime"
     },
     {
@@ -119,7 +119,7 @@
         "mimetype": "image/png",
         "fileExtension": "png",
         "controller": "\\RPI\\Controllers\\Image\\Controller",
-        "uuid": "g10d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "uuid": "a60d5cc4-1233-480d-9618-3c3dfcdb2439",
         "action": "getpngimagewithextensionandmime"
     },
     {
@@ -127,7 +127,7 @@
         "via": "get",
         "mimetype": "image/png",
         "controller": "\\RPI\\Controllers\\Image\\Controller",
-        "uuid": "g10d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "uuid": "a60d5cc4-1233-480d-9618-3c3dfcdb2439",
         "action": "getpngimagemime"
     },
     {
@@ -135,14 +135,14 @@
         "via": "get",
         "fileExtension": "png",
         "controller": "\\RPI\\Controllers\\Image\\Controller",
-        "uuid": "g10d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "uuid": "a60d5cc4-1233-480d-9618-3c3dfcdb2439",
         "action": "getpngimageextension"
     },
     {
         "match": "\/assets\/:size/:id",
         "via": "get",
         "controller": "\\RPI\\Controllers\\Image\\Controller",
-        "uuid": "g10d5cc4-1233-480d-9618-3c3dfcdb2439",
+        "uuid": "a60d5cc4-1233-480d-9618-3c3dfcdb2439",
         "action": "getanyimage"
     },
     {

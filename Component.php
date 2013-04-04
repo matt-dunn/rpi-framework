@@ -87,8 +87,18 @@ abstract class Component extends \RPI\Framework\Controller\HTML
      */
     protected $authenticationService = null;
     
+    /**
+     * 
+     * @param \RPI\Framework\Model\UUID $id
+     * @param \RPI\Framework\App $app
+     * @param \RPI\Framework\Cache\IFront $frontStore
+     * @param \RPI\Framework\Services\Authentication\IAuthentication $authenticationService
+     * @param \RPI\Framework\App\Security\Acl\Model\IAcl $acl
+     * @param \RPI\Framework\Views\IView $viewRendition
+     * @param array $options
+     */
     public function __construct(
-        $id,
+        \RPI\Framework\Model\UUID $id,
         \RPI\Framework\App $app,
         \RPI\Framework\Cache\IFront $frontStore,
         \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,

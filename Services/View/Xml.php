@@ -82,15 +82,9 @@ class Xml implements IView
 
     /**
      * {@inheritdoc}
-     * 
-     * @return \RPI\Framework\Controller
-     * 
-     * @throws \RPI\Framework\App\Security\Acl\Exceptions\PermissionDenied
-     * @throws \RPI\Framework\Services\View\Exceptions\NotFound
-     * @throws \RPI\Framework\Exceptions\InvalidType
      */
     public function createController(
-        $uuid,
+        \RPI\Framework\Model\UUID $uuid,
         $type = null,
         array $controllerOptions = null
     ) {
@@ -116,6 +110,7 @@ class Xml implements IView
                 $this->app,
                 $controllerOptions
             );
+            
             if (isset($type) && !$controller instanceof $type) {
                 throw new \RPI\Framework\Exceptions\InvalidType($controller, $type);
             }
@@ -228,7 +223,7 @@ class Xml implements IView
             $app,
             $controllerData["type"],
             array(
-                "id" => (isset($controllerData["id"]) && $controllerData["id"] !== "" ? $controllerData["id"] : null),
+                "id" => $controllerData["id"],
                 "app" => $app,
                 "options" => $componentOptions,
                 "viewRendition" => $viewRendition
@@ -412,7 +407,7 @@ class Xml implements IView
             }
             
             $controller = null;
-            $controllerUUID = \RPI\Framework\Helpers\Uuid::v4();
+            $controllerUUID = new \RPI\Framework\Model\UUID();
             
             $controllerElement = $xpath->query("RPI:controller", $route);
             if ($controllerElement->length > 0) {
@@ -445,7 +440,11 @@ class Xml implements IView
             $componentElements = $xpath->query("RPI:component", $route);
             if ($componentElements->length > 0) {
                 foreach ($componentElements as $componentElement) {
-                    $childController = $this->parseController(null, $xpath, $componentElement);
+                    $childController = $this->parseController(
+                        new \RPI\Framework\Model\UUID($componentElement->getAttribute("id")),
+                        $xpath,
+                        $componentElement
+                    );
                     
                     $order = 1;
                     if (isset($childController["controller"]["order"])) {
@@ -456,7 +455,7 @@ class Xml implements IView
   
                     $components = array_merge($components, $childController["components"]);
                     
-                    $components[$childController["controller"]["id"]] = $childController["controller"];
+                    $components[(string)$childController["controller"]["id"]] = $childController["controller"];
                 }
             }
 
@@ -543,7 +542,7 @@ class Xml implements IView
                     }
                 }
                 
-                $controllerMap[$controllerUUID] = $controller;
+                $controllerMap[(string)$controllerUUID] = $controller;
             } else {
                 $match = null;
             }
@@ -579,15 +578,11 @@ class Xml implements IView
     }
     
     private function parseController(
-        $controllerUUID,
+        \RPI\Framework\Model\UUID $controllerUUID,
         \DOMXPath $xpath,
         \DOMNode $controllerElement,
         $parseChildComponents = true
     ) {
-        if (!isset($controllerUUID)) {
-            $controllerUUID = $controllerElement->getAttribute("id");
-        }
-        
         $options = null;
         $optionElements = $xpath->query("RPI:option", $controllerElement);
         foreach ($optionElements as $option) {
@@ -708,7 +703,11 @@ class Xml implements IView
             if ($childComponentElements->length > 0) {
                 $controller["components"] = array();
                 foreach ($childComponentElements as $childComponentElement) {
-                    $childController = $this->parseController(null, $xpath, $childComponentElement);
+                    $childController = $this->parseController(
+                        new \RPI\Framework\Model\UUID($childComponentElement->getAttribute("id")),
+                        $xpath,
+                        $childComponentElement
+                    );
 
                     $order = 1;
                     if (isset($childController["controller"]["order"])) {
@@ -719,7 +718,7 @@ class Xml implements IView
 
                     $components = array_merge($components, $childController["components"]);
 
-                    $components[$childController["controller"]["id"]] = $childController["controller"];
+                    $components[(string)$childController["controller"]["id"]] = $childController["controller"];
                 }
             }
         }
@@ -878,7 +877,7 @@ class Xml implements IView
      * {@inheritdoc}
      */
     public function deleteComponent(
-        $uuid,
+        \RPI\Framework\Model\UUID $uuid,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $optionName = "model"
     ) {

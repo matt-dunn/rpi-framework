@@ -11,7 +11,7 @@ interface IView
     public function getRouter();
     
     /**
-     * @param string $uuid
+     * @param \RPI\Framework\Model\UUID $uuid
      * @param string $type
      * @param array $controllerOptions
      * 
@@ -22,7 +22,7 @@ interface IView
      * @throws \RPI\Framework\Exceptions\InvalidType
      */
     public function createController(
-        $uuid,
+        \RPI\Framework\Model\UUID $uuid,
         $type = null,
         array $controllerOptions = null
     );
@@ -49,9 +49,9 @@ interface IView
     
     /**
      * 
-     * @param type $uuid
+     * @param \RPI\Framework\Model\UUID $uuid
      * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
-     * @param type $optionName
+     * @param string $optionName
      * 
      * @return boolean
      * 
@@ -59,7 +59,7 @@ interface IView
      * @throws \RPI\Framework\Services\View\Exception
      */
     public function deleteComponent(
-        $uuid,
+        \RPI\Framework\Model\UUID $uuid,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $optionName = "model"
     );

@@ -24,7 +24,8 @@ class Route
     
     /**
      * UUID to controller instance
-     * @var UUID
+     * 
+     * @var \RPI\Framework\Model\UUID
      */
     public $uuid = null;
     
@@ -44,7 +45,7 @@ class Route
         $method,
         $route,
         $controller,
-        $uuid,
+        \RPI\Framework\Model\UUID $uuid,
         \RPI\Framework\App\Router\Action $action = null,
         $secure = false
     ) {

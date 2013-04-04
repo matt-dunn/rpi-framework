@@ -249,7 +249,7 @@ class Router
                 $method,
                 "status:$statusCode",
                 $match["controller"],
-                $match["uuid"],
+                new \RPI\Framework\Model\UUID($match["uuid"]),
                 null,
                 (isset($match["secure"]) ? $match["secure"] : null)
             );
@@ -348,7 +348,8 @@ class Router
                             $method,
                             $matchPath,
                             $match["controller"],
-                            $match["uuid"],
+                            ($match["uuid"] instanceof \RPI\Framework\Model\UUID ?
+                                $match["uuid"] : new \RPI\Framework\Model\UUID($match["uuid"])),
                             null,
                             (isset($match["secure"]) ? $match["secure"] : null)
                         );

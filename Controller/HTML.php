@@ -65,7 +65,7 @@ abstract class HTML extends \RPI\Framework\Controller\Cacheable
         }
         
         // TODO: remove array...?
-        $this->components[$component->id] = array("component" => $component);
+        $this->components[(string)$component->id] = array("component" => $component);
         
         return $component;
     }

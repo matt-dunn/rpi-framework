@@ -33,7 +33,7 @@ class Users extends \ArrayObject implements IUsers
      */
     public function addUser(IUser $user)
     {
-        $this[$user->uuid] = $user;
+        $this[(string)$user->uuid] = $user;
         
         return $this;
     }
