@@ -85,9 +85,16 @@ EOT;
 
     protected function renderFormItemInput($inputType, $attributes)
     {
+        $value = $this->value;
+        
+        // Never render the password
+        if ($this->isPassword) {
+            $value = "";
+        }
+        
         return <<<EOT
             <input class="t {$this->elementClassName}" type="{$inputType}" id="{$this->fullId}"
-                name="{$this->id}" maxlength="{$this->maxLength}" value="{$this->value}"{$attributes}/>
+                name="{$this->id}" maxlength="{$this->maxLength}" value="{$value}"{$attributes}/>
 EOT;
     }
 }
