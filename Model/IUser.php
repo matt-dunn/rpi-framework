@@ -6,6 +6,7 @@ namespace RPI\Framework\Model;
  * @property-read \RPI\Framework\Model\UUID $uuid
  * @property-read string $firstname
  * @property-read string $surname
+ * @property-read string $fullname
  * @property-read string $userId
  * @property-read \DateTime $accountCreated
  * @property-read \DateTime $accountLastAccessed
