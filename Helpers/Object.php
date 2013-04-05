@@ -120,7 +120,11 @@ abstract class Object implements \Serializable
             $methodName = $method->getName();
             if ($parameterCount == 0 && substr($methodName, 0, 3) == "get") {
                 if ($getValue) {
-                    $properties[lcfirst(substr($methodName, 3))] = $this->$methodName();
+                    $value = $this->$methodName();
+                    if (is_object($value) && $value instanceof Object) {
+                        $value = $value->getProperties($getValue);
+                    }
+                    $properties[lcfirst(substr($methodName, 3))] = $value;
                 } else {
                     $properties[lcfirst(substr($methodName, 3))] = lcfirst(substr($method->getName(), 3));
                 }
