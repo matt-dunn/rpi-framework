@@ -250,12 +250,7 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
             if (isset($controllerAction->method)) {
                 $methodName = $controllerAction->method."Action";
                 if (method_exists($this, $methodName)) {
-                    call_user_method_array($methodName, $this, $controllerAction->params);
-                } else {
-                    throw new \RPI\Framework\Exceptions\RuntimeException(
-                        "Action '{$controllerAction->method}' ({$this->type}::{$methodName}) ".
-                        "has not been implemented in '".$this->type."'."
-                    );
+                    call_user_func(array($this, $methodName), $controllerAction->params);
                 }
             }
             
