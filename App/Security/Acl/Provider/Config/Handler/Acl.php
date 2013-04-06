@@ -29,22 +29,26 @@ class Acl implements \RPI\Framework\App\Config\IHandler
         }
         
         foreach ($config["access"]["roles"]["role"] as $role) {
-            $roleName = $role["@"]["name"];
+            $roleNames = explode(",", $role["@"]["name"]);
             unset($role["@"]);
-            $config["access"]["roles"][$roleName] = $role;
             
-            if (isset($config["access"]["roles"][$roleName]["properties"])) {
-                $config["access"]["roles"][$roleName]["properties"] =
-                    $this->readSection($config["access"]["roles"][$roleName], "properties", "property");
-            }
-            
-            if (isset($config["access"]["roles"][$roleName]["operations"])) {
-                $config["access"]["roles"][$roleName]["operations"] =
-                    $this->readSection($config["access"]["roles"][$roleName], "operations", "operation");
-            } elseif (isset($config["access"]["roles"][$roleName]["properties"])) {
-                $config["access"]["roles"][$roleName]["operations"] = array("*" => null);
-                foreach ($config["access"]["roles"][$roleName]["properties"] as $property) {
-                    $config["access"]["roles"][$roleName]["operations"]["*"] |= $property;
+            foreach ($roleNames as $roleName) {
+                $roleName = trim($roleName);
+                $config["access"]["roles"][$roleName] = $role;
+
+                if (isset($config["access"]["roles"][$roleName]["properties"])) {
+                    $config["access"]["roles"][$roleName]["properties"] =
+                        $this->readSection($config["access"]["roles"][$roleName], "properties", "property");
+                }
+
+                if (isset($config["access"]["roles"][$roleName]["operations"])) {
+                    $config["access"]["roles"][$roleName]["operations"] =
+                        $this->readSection($config["access"]["roles"][$roleName], "operations", "operation");
+                } elseif (isset($config["access"]["roles"][$roleName]["properties"])) {
+                    $config["access"]["roles"][$roleName]["operations"] = array("*" => null);
+                    foreach ($config["access"]["roles"][$roleName]["properties"] as $property) {
+                        $config["access"]["roles"][$roleName]["operations"]["*"] |= $property;
+                    }
                 }
             }
         }
@@ -52,20 +56,6 @@ class Acl implements \RPI\Framework\App\Config\IHandler
         unset($config["access"]["roles"]["role"]);
         
         if (isset($config["@"]["name"])) {
-            if (preg_match(
-                "/^((((([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\\\{1})*)".
-                "[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\s*,{1}\s*)*)".
-                "(((([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)\\\{1})*)".
-                "[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\s*)$/",
-                $config["@"]["name"]
-            ) !== 1) {
-                throw new \RPI\Framework\Exceptions\InvalidArgument(
-                    $config["@"]["name"],
-                    null,
-                    "Name must be a comma separated list of valid namespaced objects"
-                );
-            }
-
             $names = explode(",", $config["@"]["name"]);
             
             unset($config["@"]["name"]);
