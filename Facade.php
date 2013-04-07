@@ -32,7 +32,7 @@ class Facade
         return \RPI\Framework\Helpers\Reflection::getDependency(
             $GLOBALS["RPI_APP"],
             "RPI\Framework\Services\Authentication\IAuthentication",
-            true
+            false
         );
     }
     
