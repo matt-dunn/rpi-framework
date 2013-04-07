@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\Exceptions;
 
-class InvalidType extends \InvalidArgumentException implements \RPI\Framework\Exceptions\IException
+class InvalidType extends RuntimeException implements \RPI\Framework\Exceptions\IException
 {
     protected $value;
 

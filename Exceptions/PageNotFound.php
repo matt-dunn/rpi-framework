@@ -5,7 +5,7 @@ namespace RPI\Framework\Exceptions;
 /**
  * 404 page not found exception
  */
-class PageNotFound extends \RuntimeException implements \RPI\Framework\Exceptions\IException
+class PageNotFound extends RuntimeException implements \RPI\Framework\Exceptions\IException
 {
     public $url;
 

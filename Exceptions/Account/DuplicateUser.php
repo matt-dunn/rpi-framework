@@ -5,7 +5,7 @@ namespace RPI\Framework\Exceptions\Account;
 /**
  * Duplicate User exception
  */
-class DuplicateUser extends \RuntimeException implements \RPI\Framework\Exceptions\IException
+class DuplicateUser extends \RPI\Framework\Exceptions\RuntimeException implements \RPI\Framework\Exceptions\IException
 {
     public function __construct($userId, $previous = null)
     {

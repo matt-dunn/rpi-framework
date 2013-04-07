@@ -5,7 +5,7 @@ namespace RPI\Framework\Exceptions\Account;
 /**
  * Account disabled exception
  */
-class Disabled extends \RuntimeException implements \RPI\Framework\Exceptions\IException
+class Disabled extends \RPI\Framework\Exceptions\RuntimeException implements \RPI\Framework\Exceptions\IException
 {
     public function __construct($userId, $previous = null)
     {

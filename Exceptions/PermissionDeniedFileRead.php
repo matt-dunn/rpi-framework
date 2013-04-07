@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\Exceptions;
 
-class PermissionDeniedFileRead extends \RuntimeException implements \RPI\Framework\Exceptions\IException
+class PermissionDeniedFileRead extends Security implements \RPI\Framework\Exceptions\IException
 {
     public function __construct($fileName = null, $previous = null)
     {
