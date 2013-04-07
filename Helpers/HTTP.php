@@ -94,7 +94,9 @@ class HTTP
 
         
         $mimeTypeDetails = array(
-            "mimetype" => $mimeType
+            "mimetype" => $mimeType,
+            "type" => null,
+            "subtype" => null
         );
         
         if (isset($mimeType)) {
