@@ -6,18 +6,21 @@ class Route
 {
     /**
      * HTTP verb
+     * 
      * @var string
      */
     public $method = null;
     
     /**
      * URI route
+     * 
      * @var string
      */
     public $route = null;
     
     /**
      * Controller class name
+     * 
      * @var string
      */
     public $controller = null;
@@ -31,6 +34,7 @@ class Route
     
     /**
      * Action details
+     * 
      * @var \RPI\Framework\App\Router\Action
      */
     public $action = null;
@@ -41,13 +45,20 @@ class Route
      */
     public $secure = null;
     
+    /**
+     *
+     * @var boolean
+     */
+    public $requiresAuthentication = null;
+    
     public function __construct(
         $method,
         $route,
         $controller,
         \RPI\Framework\Model\UUID $uuid,
         \RPI\Framework\App\Router\Action $action = null,
-        $secure = false
+        $secure = false,
+        $requiresAuthentication = false
     ) {
         \RPI\Framework\Helpers\Utils::validateOption(
             strtolower($method),
@@ -60,5 +71,6 @@ class Route
         $this->uuid = $uuid;
         $this->action = $action;
         $this->secure = $secure;
+        $this->requiresAuthentication = $requiresAuthentication;
     }
 }

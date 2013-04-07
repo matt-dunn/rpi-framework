@@ -81,10 +81,11 @@ abstract class Cacheable extends \RPI\Framework\Controller
     public function __construct(
         \RPI\Framework\Model\UUID $id,
         \RPI\Framework\App $app,
+        \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,
         array $options = null,
         \RPI\Framework\Views\IView $viewRendition = null
     ) {
-        $options = $this->setup($id, $app, $options);
+        $options = $this->setup($id, $app, $authenticationService, $options);
 
         if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
             if (!isset($options)) {

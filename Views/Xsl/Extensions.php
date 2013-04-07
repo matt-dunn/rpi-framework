@@ -24,15 +24,16 @@ class Extensions
     public static function aclCanUpdate($bind)
     {
         $acl = self::getAcl();
-        if (isset($acl)) {
+        $authenticationService = \RPI\Framework\Facade::authentication();
+        if (isset($acl, $authenticationService)) {
             return $acl->checkProperty(
-                \RPI\Framework\Facade::authentication()->getAuthenticatedUser(),
+                $authenticationService->getAuthenticatedUser(),
                 \RPI\Framework\Views\Xsl\View::getModel(),
                 \RPI\Framework\App\Security\Acl\Model\IAcl::UPDATE,
                 $bind
             );
         }
         
-        return false;
+        return true;
     }
 }

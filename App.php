@@ -318,17 +318,28 @@ class App extends \RPI\Framework\Helpers\Object
             $route = $router->route($this->getRequest()->getUrlPath(), $method);
             
             if (isset($route)) {
+                $authenticationService = \RPI\Framework\Helpers\Reflection::getDependency(
+                    $this,
+                    "RPI\Framework\Services\Authentication\IAuthentication",
+                    false
+                );
+                
+                $authenticatedUser = null;
+                if (isset($authenticationService) && $route->requiresAuthentication) {
+                    $authenticatedUser = $authenticationService->getAuthenticatedUser();
+                }
+                
+                if (isset($authenticatedUser) && $route->requiresAuthentication) {
+                    if (!$authenticatedUser->isAuthenticated || $authenticatedUser->isAnonymous) {
+                        throw new \RPI\Framework\Exceptions\Authorization();
+                    }
+                }
+
                 $forceSecure = null;
                 if (isset($route->secure)) {
                     $forceSecure = $route->secure;
-                } elseif (!$this->getRequest()->isAjax()) {
-                    $authenticationService = \RPI\Framework\Helpers\Reflection::getDependency(
-                        $this,
-                        "RPI\Framework\Services\Authentication\IAuthentication",
-                        true
-                    );
-
-                    $forceSecure = !$authenticationService->getAuthenticatedUser()->isAnonymous;
+                } elseif (isset($authenticatedUser) && !$this->getRequest()->isAjax()) {
+                    $forceSecure = !$authenticatedUser->isAnonymous;
                 }
 
                 if (isset($forceSecure)) {

@@ -18,16 +18,6 @@ interface IAuthentication
     public function authenticateUser($userId, $password);
 
     /**
-     * @return boolean
-     */
-    public function isAuthenticatedUser();
-
-    /**
-     * @return boolean
-     */
-    public function isAnonymousUser();
-
-    /**
      * Update the user object authentication state
      * 
      * @param \RPI\Framework\Model\IUser $user

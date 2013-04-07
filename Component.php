@@ -82,12 +82,6 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     protected $acl = null;
     
     /**
-     *
-     * @var \RPI\Framework\Services\Authentication\IAuthentication 
-     */
-    protected $authenticationService = null;
-    
-    /**
      * 
      * @param \RPI\Framework\Model\UUID $id
      * @param \RPI\Framework\App $app
@@ -107,10 +101,9 @@ abstract class Component extends \RPI\Framework\Controller\HTML
         array $options = null
     ) {
         $this->frontStore = $frontStore;
-        $this->authenticationService = $authenticationService;
         $this->acl = $acl;
         
-        parent::__construct($id, $app, $options, $viewRendition);
+        parent::__construct($id, $app, $authenticationService, $options, $viewRendition);
     }
     
     protected function initController()

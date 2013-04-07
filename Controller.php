@@ -78,6 +78,12 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
     public $types;
 
     /**
+     *
+     * @var \RPI\Framework\Services\Authentication\IAuthentication 
+     */
+    protected $authenticationService = null;
+    
+    /**
      * Initialise the controller
      * @return bool Boolean to indicate if processing should continue. Return FALSE to stop processing
      */
@@ -103,13 +109,18 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
      * 
      * @param string $id
      * @param \RPI\Framework\App $app
+     * @param \RPI\Framework\Services\Authentication\IAuthentication $authenticationService
      * @param array $options
      * 
      * @throws \Exception
      */
-    public function __construct(\RPI\Framework\Model\UUID $id, \RPI\Framework\App $app, array $options = null)
-    {
-        $options = $this->setup($id, $app, $options);
+    public function __construct(
+        \RPI\Framework\Model\UUID $id,
+        \RPI\Framework\App $app,
+        \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,
+        array $options = null
+    ) {
+        $options = $this->setup($id, $app, $authenticationService, $options);
         
         if ($this->initController() !== false) {
             $this->init();
@@ -162,14 +173,21 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
      * 
      * @param \RPI\Framework\Model\UUID $id
      * @param \RPI\Framework\App $app
+     * @param \RPI\Framework\Services\Authentication\IAuthentication $authenticationService
      * @param array $options
      * 
      * @throws \Exception
      */
-    protected function setup(\RPI\Framework\Model\UUID $id, \RPI\Framework\App $app, array $options = null)
-    {
+    protected function setup(
+        \RPI\Framework\Model\UUID $id,
+        \RPI\Framework\App $app,
+        \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,
+        array $options = null
+    ) {
         $this->id = $id;
         $this->app = $app;
+        $this->authenticationService = $authenticationService;
+        
         $this->type = get_called_class();
         $this->safeTypeName = str_replace("\\", "_", $this->type);
         
@@ -194,6 +212,13 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
             );
         }
         
+        if (isset($authenticationService) && $this->options->requiresAuthentication) {
+            $authenticatedUser = $authenticationService->getAuthenticatedUser();
+            if (!$authenticatedUser->isAuthenticated || $authenticatedUser->isAnonymous) {
+                throw new \RPI\Framework\Exceptions\Authorization();
+            }
+        }
+        
         return $options;
     }
     
@@ -210,6 +235,10 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
     {
         return new \RPI\Framework\Controller\Options(
             array(
+                "requiresAuthentication" => array(
+                    "type" => "bool",
+                    "description" => "Mark controller as requiring authentication"
+                )
             ),
             $options
         );

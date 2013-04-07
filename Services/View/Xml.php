@@ -499,6 +499,10 @@ class Xml implements IView
                     if (trim($route->getAttribute("secure")) != "") {
                         $secure = ($route->getAttribute("secure") == "true");
                     }
+                    $requiresAuthentication = null;
+                    if (trim($route->getAttribute("requiresAuthentication")) != "") {
+                        $requiresAuthentication = ($route->getAttribute("requiresAuthentication") == "true");
+                    }
                     $defaultParams = null;
                     if (trim($route->getAttribute("defaultParams")) != "") {
                         $defaultParamsParts = explode(",", $route->getAttribute("defaultParams"));
@@ -529,7 +533,8 @@ class Xml implements IView
                         "fileExtension" => $fileExtension,
                         "mimetype" => $mimetype,
                         "defaultParams" => $defaultParams,
-                        "secure" => $secure
+                        "secure" => $secure,
+                        "requiresAuthentication" => $requiresAuthentication
                     );
                 } else {
                     $statusCode = $route->getAttribute("status");

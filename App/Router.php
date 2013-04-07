@@ -109,6 +109,9 @@ class Router
                 if (!isset($details["secure"])) {
                     unset($details["secure"]);
                 }
+                if (!isset($details["requiresAuthentication"])) {
+                    unset($details["requiresAuthentication"]);
+                }
 
                 $pathParts = explode("/", $path);
 
@@ -252,10 +255,11 @@ class Router
                 ($match["uuid"] instanceof \RPI\Framework\Model\UUID ?
                     $match["uuid"] : new \RPI\Framework\Model\UUID($match["uuid"])),
                 null,
-                (isset($match["secure"]) ? $match["secure"] : null)
+                (isset($match["secure"]) ? $match["secure"] : null),
+                (isset($match["requiresAuthentication"]) ? $match["requiresAuthentication"] : null)
             );
         }
-        
+
         return $details;
     }
     
@@ -264,6 +268,7 @@ class Router
      * @param string $path      URI
      * @param string $method    HTTP method verb: one of "put", "get", "post", "delete"
      * @param string $mimetype  Request mime type
+     * 
      * @return \RPI\Framework\App\Router\Route|null
      */
     public function route($path, $method, $mimetype = null)
@@ -352,7 +357,8 @@ class Router
                             ($match["uuid"] instanceof \RPI\Framework\Model\UUID ?
                                 $match["uuid"] : new \RPI\Framework\Model\UUID($match["uuid"])),
                             null,
-                            (isset($match["secure"]) ? $match["secure"] : null)
+                            (isset($match["secure"]) ? $match["secure"] : null),
+                            (isset($match["requiresAuthentication"]) ? $match["requiresAuthentication"] : null)
                         );
 
                         if (isset($match["action"]) || isset($match["params"])) {

@@ -129,22 +129,6 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
     /**
      * {@inherit-doc}
      */
-    public function isAuthenticatedUser()
-    {
-        return ($this->getAuthenticatedUser() !== false && $this->getAuthenticatedUser()->isAuthenticated);
-    }
-
-    /**
-     * {@inherit-doc}
-     */
-    public function isAnonymousUser()
-    {
-        return ($this->getAuthenticatedUser() !== false && $this->getAuthenticatedUser()->isAnonymous);
-    }
-
-    /**
-     * {@inherit-doc}
-     */
     public function getAuthenticatedUser()
     {
         $user = false;
