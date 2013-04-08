@@ -13,23 +13,17 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "firephp/firephp-core": "dev-master",
-        "smarty/smarty": "dev-trunk"
+        "psr/log": "~1.0"
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url":  "http://packages.red-pixel.co.uk/"
-        },
-        {
-            "type": "composer",
-            "url":  "https://packagist.org/"
-        }
-    ],
     "require-dev": {
+        "firephp/firephp-core": "dev-master",
+        "phpunit/phpunit": "3.7.*"
     },
     "suggest": {
     },
     "target-dir": "RPI/Framework",
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": {"RPI": "src/"}
+    }
 }

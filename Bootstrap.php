@@ -18,11 +18,12 @@ if (!isset($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"])) {
 // ================================================================================================================
 // Application initialisation
 
-require(__DIR__."/Exception/Handler.php");
-\RPI\Framework\Exception\Handler::set();
-
 require(__DIR__."/Autoload.php");
-\RPI\Framework\Autoload::init();
+new \RPI\Framework\Autoload();
+
+if (file_exists(__DIR__."/vendor/autoload.php")) {
+    require(__DIR__."/vendor/autoload.php");
+}
 
 // =====================================================================
 // Event listeners:

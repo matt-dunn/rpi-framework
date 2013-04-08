@@ -13,9 +13,15 @@ ini_set("include_path", $GLOBALS["RPI_PATH_VENDOR"]."/PEAR".PATH_SEPARATOR.ini_g
 require_once(__DIR__."/Autoload.php");
 spl_autoload_register("rpiFrameworkPhpUnitAutoload");
 
+if (file_exists(__DIR__."/../vendor/autoload.php")) {
+    require(__DIR__."/../vendor/autoload.php");
+}
+
 // ================================================================================================================
 // Configure the tests:
 
-\RPI\Framework\Exception\Handler::set();
+new \RPI\Framework\Exception\Handler(
+    new \RPI\Framework\App\Logger\Syslog()
+);
 
 mb_internal_encoding("UTF-8");

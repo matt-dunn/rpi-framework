@@ -13,12 +13,21 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
     private $provider = null;
     
     /**
+     *
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger = null;
+    
+    /**
+     * @param \Psr\Log\LoggerInterface $logger
      * @param \RPI\Framework\App\Security\Acl\Model\IProvider $provider
      */
     public function __construct(
+        \Psr\Log\LoggerInterface $logger,
         \RPI\Framework\App\Security\Acl\Model\IProvider $provider
     ) {
         $this->provider = $provider;
+        $this->logger = $logger;
     }
     
     /**
@@ -134,11 +143,7 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
                 implode(", ", $permission).(isset($property) ? ":$property" : "").
                 " permission granted on object '{$domainObject->getType()}' (ID: {$domainObject->getId()})";
 
-            \RPI\Framework\Exception\Handler::logMessage(
-                "ROOT user [{$user->uuid} ({$user->fullname})]: {$message}",
-                LOG_AUTH,
-                "authentication"
-            );
+            $this->logger->info("ROOT user [{$user->uuid} ({$user->fullname})]: {$message}", array("idend" => "AUTH"));
 
             return true;
         }

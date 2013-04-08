@@ -10,28 +10,51 @@ class Debug
      */
     private $app = null;
     
-    private $logger = null;
+    /**
+     *
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $logger = null;
     
-    public function __construct(\RPI\Framework\App $app)
+    /**
+     *
+     * @var \FirePHP
+     */
+    private $fireLogger = null;
+    
+    public function __construct(\Psr\Log\LoggerInterface $logger, \RPI\Framework\App $app)
     {
+        $this->logger = $logger;
         $this->app = $app;
     }
     
-    public function log($object, $label = null, $options = array())
+    /**
+     * 
+     * @param mixed $object
+     * @param string $label
+     * @param array $options
+     * 
+     * @return boolean
+     */
+    public function log($object, $label = null, array $options = array())
     {
-        $this->getLogger()->log($object, $label, $options);
+        return $this->getLogger()->log($object, $label, $options);
     }
     
+    /**
+     * 
+     * @return \FirePHP
+     */
     private function getLogger()
     {
-        if (!isset($this->logger)) {
+        if (!isset($this->fireLogger)) {
             require_once($GLOBALS["RPI_PATH_VENDOR"]."/FirePHPCore/FirePHP.class.php");
-            $this->logger = \FirePHP::getInstance(true);
+            $this->fireLogger = \FirePHP::getInstance(true);
             if ($this->app->getConfig()->getValue("config/debug/@enabled", false) === false) {
-                \RPI\Framework\Exception\Handler::logMessage("Debug logger called when not in debug mode", LOG_WARNING);
+                $this->logger->warning("Debug logger called when not in debug mode");
             }
         }
         
-        return $this->logger;
+        return $this->fireLogger;
     }
 }

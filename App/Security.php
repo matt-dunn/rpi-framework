@@ -14,16 +14,29 @@ namespace RPI\Framework\App;
 
 class Security implements \RPI\Framework\App\DomainObjects\ISecurity
 {
+    /**
+     *
+     * @var \RPI\Framework\App\DomainObjects\ISession
+     */
     private $session = null;
     
     /**
+     *
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger = null;
+    
+    /**
      * 
+     * @param \Psr\Log\LoggerInterface $logger
      * @param \RPI\Framework\App\DomainObjects\ISession $session
      */
     public function __construct(
+        \Psr\Log\LoggerInterface $logger,
         \RPI\Framework\App\DomainObjects\ISession $session
     ) {
         $this->session = $session;
+        $this->logger = $logger;
         
         if (!isset($this->session->token)) {
             $this->session->token = \RPI\Framework\Helpers\Crypt::generateHash(microtime(true));
@@ -52,7 +65,7 @@ class Security implements \RPI\Framework\App\DomainObjects\ISecurity
     public function validateToken($token)
     {
         if ($token !== $this->session->token) {
-            \RPI\Framework\Exception\Handler::logMessage("Possible CSRF attack detected", LOG_CRIT, "CSRF");
+            $this->logger->critical("Possible CSRF attack detected", array("idend" => "CSRF"));
             throw new \RPI\Framework\Exceptions\Forbidden();
         }
         

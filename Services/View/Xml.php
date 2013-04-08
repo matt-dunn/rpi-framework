@@ -51,13 +51,23 @@ class Xml implements IView
     protected $authenticationService = null;
     
     /**
+     *
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger = null;
+    
+    /**
      * 
+     * @param \Psr\Log\LoggerInterface $logger
      * @param \RPI\Framework\Cache\IData $store
      * @param string $configFile
-     * 
-     * @return \RPI\Framework\App\DomainObjects\IRouter
+     * @param \RPI\Framework\App $app
+     * @param \RPI\Framework\App\DomainObjects\IRouter $router
+     * @param \RPI\Framework\Services\Authentication\IAuthentication $authenticationService
+     * @param \RPI\Framework\App\Security\Acl\Model\IAcl $acl
      */
     public function __construct(
+        \Psr\Log\LoggerInterface $logger,
         \RPI\Framework\Cache\IData $store,
         $configFile,
         \RPI\Framework\App $app,
@@ -70,6 +80,8 @@ class Xml implements IView
         $this->app = $app;
         $this->authenticationService = $authenticationService;
         $this->acl = $acl;
+        $this->logger = $logger;
+        
         $this->router = $this->parseViewConfig($router);
     }
     
@@ -293,7 +305,7 @@ class Xml implements IView
                     if ($this->store->deletePattern(
                         "#^".preg_quote("PHP_RPI_CONTENT_VIEWS-{$file}", "#").".*#"
                     ) === false) {
-                        \RPI\Framework\Exception\Handler::logMessage("Unable to clear data store", LOG_WARNING);
+                        $this->logger->warning("Unable to clear data store");
                     }
 
                     \RPI\Framework\Event\Manager::fire(
@@ -340,10 +352,9 @@ class Xml implements IView
                 }
 
                 if ($this->store->isAvailable()) {
-                    \RPI\Framework\Exception\Handler::logMessage(
+                    $this->logger->notice(
                         __CLASS__."::parseViewConfig - View data read from:\n".
-                        (is_array($fileDeps) ? implode("\n", $fileDeps) : $fileDeps),
-                        LOG_NOTICE
+                        (is_array($fileDeps) ? implode("\n", $fileDeps) : $fileDeps)
                     );
                 }
             } catch (\Exception $ex) {

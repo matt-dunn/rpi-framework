@@ -1,84 +1,43 @@
 {
-    "hash": "4b5416c597102340edf6182564ea8099",
+    "hash": "b0885302a39ca169adfde53d1e675df9",
     "packages": [
         {
-            "name": "firephp/firephp-core",
-            "version": "dev-master",
+            "name": "psr/log",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/firephp/firephp-core",
-                "reference": "f60753a8dd7817e4da6bc73e0e717387a9a0866a"
+                "url": "https://github.com/php-fig/log",
+                "reference": "1.0.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firephp/firephp-core/zipball/f60753a8dd7817e4da6bc73e0e717387a9a0866a",
-                "reference": "f60753a8dd7817e4da6bc73e0e717387a9a0866a",
+                "url": "https://github.com/php-fig/log/archive/1.0.0.zip",
+                "reference": "1.0.0",
                 "shasum": ""
             },
-            "time": "2013-01-19 22:55:24",
             "type": "library",
             "autoload": {
-                "classmap": [
-                    "lib/FirePHPCore/FirePHP.class.php",
-                    "lib/FirePHPCore/fb.php"
-                ]
+                "psr-0": {
+                    "Psr\\Log\\": ""
+                }
             },
-            "notification-url": "http://packagist.org/downloads/",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
             "authors": [
                 {
-                    "name": "Christoph Dorn",
-                    "email": "christoph@christophdorn.com",
-                    "homepage": "http://christophdorn.com"
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
                 }
             ],
-            "description": "Traditional FirePHPCore library for sending PHP variables to the browser.",
-            "homepage": "https://github.com/firephp/firephp-core"
-        },
-        {
-            "name": "smarty/smarty",
-            "version": "dev-trunk",
-            "source": {
-                "type": "svn",
-                "url": "http://smarty-php.googlecode.com/svn",
-                "reference": "/trunk/@4698"
-            },
-            "require": {
-                "php": ">=5.2"
-            },
-            "time": "2013-01-24 20:16:41",
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "distribution/libs/Smarty.class.php",
-                    "distribution/libs/SmartyBC.class.php"
-                ]
-            },
-            "notification-url": "http://packagist.org/downloads/",
-            "license": [
-                "LGPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "Monte Ohrt",
-                    "email": "monte@ohrt.com"
-                },
-                {
-                    "name": "Uwe Tews",
-                    "email": "uwe.tews@googlemail.com"
-                },
-                {
-                    "name": "Rodney Rehm",
-                    "email": "rodney.rehm@medialize.de"
-                }
-            ],
-            "description": "Smarty - the compiling PHP template engine",
-            "homepage": "http://www.smarty.net",
+            "description": "Common interface for logging libraries",
             "keywords": [
-                "templating"
-            ]
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "time": "2012-12-21 11:40:51"
         }
     ],
     "packages-dev": null,
@@ -87,7 +46,12 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "firephp/firephp-core": 20,
-        "smarty/smarty": 20
-    }
+        "firephp/firephp-core": 20
+    },
+    "platform": {
+        "php": ">=5.3.3"
+    },
+    "platform-dev": [
+
+    ]
 }

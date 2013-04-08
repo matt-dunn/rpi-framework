@@ -46,20 +46,29 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
      * @var \RPI\Framework\Services\User\IUser
      */
     protected $userService = null;
+    
+    /**
+     *
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger = null;
 
     /**
      * 
+     * @param \Psr\Log\LoggerInterface $logger
      * @param \RPI\Framework\App $app
      * @param \RPI\Framework\Services\User\IUser $userService
      * @param array $options
      */
     public function __construct(
+        \Psr\Log\LoggerInterface $logger,
         \RPI\Framework\App $app,
         \RPI\Framework\Services\User\IUser $userService,
         array $options = null
     ) {
         $this->app = $app;
         $this->userService = $userService;
+        $this->logger = $logger;
         
         $this->authenticatedUserSessionName = __CLASS__."-authenticatedUser";
 
@@ -184,10 +193,9 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
     private function authenticate($user, $userId)
     {
         if ($user !== false) {
-            \RPI\Framework\Exception\Handler::logMessage(
+            $this->logger->info(
                 __METHOD__." - [success] userId: $userId, name: ".$user->firstname." ".$user->surname,
-                LOG_AUTH,
-                "authentication"
+                array("ident" => "AUTH")
             );
             $this->setUser(
                 $user,
@@ -198,10 +206,9 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
             return $user;
         } else {
-            \RPI\Framework\Exception\Handler::logMessage(
+            $this->logger->info(
                 __METHOD__." - [failure] userId: $userId",
-                LOG_AUTH,
-                "authentication"
+                array("ident" => "AUTH")
             );
             $this->logout(false);
 
@@ -355,11 +362,10 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         }
         
         if (!$validToken) {
-            \RPI\Framework\Exception\Handler::logMessage(
+            $this->logger->error(
                 __METHOD__." - Authentication tamper detected (validateUserToken): 
                     [TOKEN: $token] [IP:". $this->app->getRequest()->getRemoteAddress()."]",
-                LOG_AUTH,
-                "authentication"
+                array("ident" => "AUTH")
             );
             $this->logout(true);
         }
@@ -418,11 +424,10 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         }
 
         if (!$validToken) {
-            \RPI\Framework\Exception\Handler::logMessage(
+            $this->logger->error(
                 __METHOD__." - Authentication tamper detected (validateAuthenticationToken): 
                     [TOKEN: $token] [IP:". $this->app->getRequest()->getRemoteAddress()."]",
-                LOG_AUTH,
-                "authentication"
+                array("ident" => "AUTH")
             );
             $this->logout(true);
         }

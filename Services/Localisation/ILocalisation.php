@@ -8,11 +8,6 @@ namespace RPI\Framework\Services\Localisation;
 interface ILocalisation
 {
     /**
-     * @param array $options
-     */
-    public function __construct(\RPI\Framework\App $app, \RPI\Framework\Cache\IData $store, array $options);
-
-    /**
      * Return a list of available locales
      * @return array Simple array list of locale codes as defined by xml:lang
      */

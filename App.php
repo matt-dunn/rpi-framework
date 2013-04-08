@@ -11,7 +11,7 @@ namespace RPI\Framework;
 /**
  * App kernel
  */
-class App extends \RPI\Framework\Helpers\Object
+class App extends \RPI\Framework\Helpers\Object implements \Psr\Log\LoggerAwareInterface
 {
     /**
      * Default character coding set to 'utf-8'
@@ -98,16 +98,31 @@ class App extends \RPI\Framework\Helpers\Object
     protected $locale = null;
     
     /**
+     *
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $logger = null;
+    
+    /**
+     *
+     * @var \RPI\Framework\Exception\Handler
+     */
+    protected $errorHandler = null;
+
+    /**
      * 
+     * @param \Psr\Log\LoggerInterface $logger
      * @param string $webConfigFile
      * @param \RPI\Framework\Services\View\IView $view
      * @param \RPI\Framework\Cache\IData $dataStore
      * @param \RPI\Framework\App\DomainObjects\ISecurity $security
      * @param \RPI\Framework\App\DomainObjects\ISession $session
      * @param \RPI\Framework\App\Security\Acl\Model\IAcl $acl
+     * @param \RPI\Framework\App\DomainObjects\ILocale $locale
      * @param string $characterEncoding
      */
     public function __construct(
+        \Psr\Log\LoggerInterface $logger,
         $webConfigFile,
         \RPI\Framework\Services\View\IView $view = null,
         \RPI\Framework\Cache\IData $dataStore = null,
@@ -119,7 +134,10 @@ class App extends \RPI\Framework\Helpers\Object
     ) {
         $GLOBALS["RPI_APP"] = $this;
         
+        $this->errorHandler = new \RPI\Framework\Exception\Handler($logger);
+        
         $this->webConfigFile = $webConfigFile;
+        $this->logger = $logger;
         $this->view = $view;
         $this->dataStore = $dataStore;
         $this->security = $security;
@@ -134,12 +152,22 @@ class App extends \RPI\Framework\Helpers\Object
         
         \RPI\Framework\Helpers\Reflection::addDependency($this);
 
+        \RPI\Framework\Helpers\Reflection::addDependency($this->logger, "Psr\Log\LoggerInterface");
         \RPI\Framework\Helpers\Reflection::addDependency($this->view, "RPI\Framework\Services\View\IView");
         \RPI\Framework\Helpers\Reflection::addDependency($this->dataStore, "RPI\Framework\Cache\IData");
         \RPI\Framework\Helpers\Reflection::addDependency($this->security, "RPI\Framework\App\DomainObjects\ISecurity");
         \RPI\Framework\Helpers\Reflection::addDependency($this->session, "RPI\Framework\App\DomainObjects\ISession");
         \RPI\Framework\Helpers\Reflection::addDependency($this->acl, "RPI\Framework\App\Security\Acl\Model\IAcl");
         \RPI\Framework\Helpers\Reflection::addDependency($this->locale, "RPI\Framework\App\DomainObjects\ILocale");
+    }
+    
+    /**
+     * 
+     * @return \RPI\Framework\Exception\Handler
+     */
+    public function getErrorHandler()
+    {
+        return $this->errorHandler;
     }
     
     /**
@@ -206,6 +234,7 @@ class App extends \RPI\Framework\Helpers\Object
     {
         if (!isset($this->config)) {
             $this->config = new \RPI\Framework\App\Config(
+                $this->logger,
                 $this->getDataStore(),
                 $this->webConfigFile
             );
@@ -290,7 +319,7 @@ class App extends \RPI\Framework\Helpers\Object
     public function getDebug()
     {
         if (!isset($this->debug)) {
-            $this->debug = new \RPI\Framework\App\Debug($this);
+            $this->debug = new \RPI\Framework\App\Debug($this->logger, $this);
         }
         
         return $this->debug;
@@ -459,5 +488,18 @@ class App extends \RPI\Framework\Helpers\Object
         } else {
             return null;
         }
+    }
+
+    public function setLogger(\Psr\Log\LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @return \Psr\Log\LoggerInterface
+     */
+    public function getLogger()
+    {
+        return $this->logger;
     }
 }

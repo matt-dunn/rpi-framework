@@ -36,8 +36,25 @@ abstract class Server extends \RPI\Framework\Controller
      */
     protected $acl = null;
     
+    /**
+     *
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger = null;
+    
+    /**
+     * 
+     * @param \RPI\Framework\Model\UUID $id
+     * @param \Psr\Log\LoggerInterface $logger
+     * @param \RPI\Framework\App $app
+     * @param \RPI\Framework\App\DomainObjects\ISecurity $security
+     * @param \RPI\Framework\Services\Authentication\IAuthentication $authenticationService
+     * @param \RPI\Framework\App\Security\Acl\Model\IAcl $acl
+     * @param array $options
+     */
     public function __construct(
-        $id,
+        \RPI\Framework\Model\UUID $id,
+        \Psr\Log\LoggerInterface $logger,
         \RPI\Framework\App $app,
         \RPI\Framework\App\DomainObjects\ISecurity $security,
         \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,
@@ -45,6 +62,7 @@ abstract class Server extends \RPI\Framework\Controller
         array $options = null
     ) {
         $this->security = $security;
+        $this->logger = $logger;
         $this->acl = $acl;
         
         parent::__construct($id, $app, $authenticationService, $options);
@@ -52,7 +70,7 @@ abstract class Server extends \RPI\Framework\Controller
     
     protected function initController()
     {
-        \RPI\Framework\Exception\Handler::$showFailSafeMessage = false;
+        $this->app->getErrorHandler()->setShowFailSafeMessageDisplayed(false);
         
         ob_start();
         
@@ -129,7 +147,7 @@ abstract class Server extends \RPI\Framework\Controller
                 $this->response->executionTime = (microtime(true) - $startTime) * 1000;
                 $this->app->getResponse()->getHeaders()->set("Execution-Time", $this->response->executionTime);
             } catch (\Exception $ex) {
-                \RPI\Framework\Exception\Handler::log($ex);
+                $this->logger->error(null, array("exception" => $ex));
 
                 ob_clean();
 
@@ -206,7 +224,7 @@ abstract class Server extends \RPI\Framework\Controller
 
             return $this->response->render();
         } catch (\Exception $ex) {
-            \RPI\Framework\Exception\Handler::log($ex);
+            $this->logger->error(null, array("exception" => $ex));
             $this->app->getResponse()->setStatusCode(500);
         }
     }

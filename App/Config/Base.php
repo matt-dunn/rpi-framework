@@ -28,17 +28,28 @@ abstract class Base implements \RPI\Framework\App\DomainObjects\IConfig
     private $valueCache = array();
 
     /**
+     *
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger = null;
+    
+    /**
      * Initialise the application configuration
+     * @param \Psr\Log\LoggerInterface $logger
      * @param \RPI\Framework\Cache\IData $store
      * @param string  $file        Name of the config file
      */
-    public function __construct(\RPI\Framework\Cache\IData $store, $file)
-    {
+    public function __construct(
+        \Psr\Log\LoggerInterface $logger,
+        \RPI\Framework\Cache\IData $store,
+        $file
+    ) {
         $configFile = \RPI\Framework\Helpers\Utils::buildFullPath($file);
         
         $this->cacheKey = "PHP_RPI_CONFIG-".realpath($configFile);
         
         $this->store = $store;
+        $this->logger = $logger;
         
         $this->config = $this->init($configFile);
     }
@@ -101,7 +112,7 @@ abstract class Base implements \RPI\Framework\App\DomainObjects\IConfig
                 $config = $this->store->fetch($this->cacheKey);
                 if ($config === false) {
                     if ($this->store->deletePattern("#^".preg_quote($this->cacheKey, "#").".*#") === false) {
-                        \RPI\Framework\Exception\Handler::logMessage("Unable to clear data store", LOG_WARNING);
+                        $this->logger->warning("Unable to clear data store");
                     }
 
                     $domDataConfig = new \DOMDocument();
@@ -143,10 +154,9 @@ abstract class Base implements \RPI\Framework\App\DomainObjects\IConfig
                     \RPI\Framework\Helpers\Locking::release($seg);
 
                     if ($this->store->isAvailable()) {
-                        \RPI\Framework\Exception\Handler::logMessage(
+                        $this->logger->notice(
                             __CLASS__."::".__METHOD__." - Config read from:\n".
-                            (is_array($fileDeps) ? implode("\n", $fileDeps) : $fileDeps),
-                            LOG_NOTICE
+                            (is_array($fileDeps) ? implode("\n", $fileDeps) : $fileDeps)
                         );
                     }
                 }

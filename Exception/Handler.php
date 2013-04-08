@@ -17,137 +17,46 @@ function isCli()
  */
 class Handler
 {
-    // TODO: these values should be either configurable or calculated depending on the environment
-    const MAX_MESSAGE_LENGTH = 50000;
-    const MAX_MESSAGE_LENGTH_WIN = 5000;
-    
-    const MAX_ARGUMENTS_LENGTH = 1000;
-
-    private function __construct()
-    {
-    }
-
+    /**
+     *
+     * @var int
+     */
     protected static $unloggedStrictErrorCount = 0;
-    public static $logMessageCallback;
-    public static $showFailSafeMessage = true;
-    private static $displayErrors;
-    private static $logErrorsToSysLog = true;
-
-    /**
-     * Write a message to the error log
-     * @param string $msg
-     * @param enum   $priority
-     * @param string $ident    Identifier to be used for the logged message. Defaults to 'php'.
-     */
-    public static function logMessage($msg, $priority = LOG_CRIT, $ident = null, $includeDebugInformation = true)
-    {
-        if ($priority != LOG_NOTICE && $priority != LOG_INFO && $priority != LOG_AUTH) {
-            $trace = "";
-            if ($includeDebugInformation) {
-                self::getArgs(debug_backtrace(), $trace);
-                $msg .= ": ".$trace;
-            }
-        }
-        self::writeToLog($msg, $priority, $ident, $includeDebugInformation);
-    }
-
-    /**
-     * Log an exception
-     * @param Exception $ex
-     * @param enum      $priority
-     * @param string    $ident    Identifier to be used for the logged message. Defaults to 'php'.
-     */
-    public static function log(\Exception $ex, $priority = LOG_ERR, $ident = null, $includeDebugInformation = true)
-    {
-        $traceMessage = "";
-        if ($includeDebugInformation) {
-            try {
-                $trace = $ex->getTrace();
-                $count = count($trace);
-                for ($i = 0; $i < $count; $i++) {
-                    $args = "";
-                    if (isset($trace[$i]["args"])) {
-                        self::getArgs($trace[$i]["args"], $args);
-                    }
-
-                    $traceMessage .= "\n>>> ";
-                    if (isset($trace[$i]["file"])) {
-                        $traceMessage .= $trace[$i]["file"];
-                    }
-                    if (isset($trace[$i]["line"])) {
-                        $traceMessage .= "#".$trace[$i]["line"];
-                    }
-                    if (isset($trace[$i]["class"])) {
-                        $traceMessage .= (":".$trace[$i]["class"]);
-                    }
-                    if (isset($trace[$i]["type"])) {
-                        $traceMessage .= $trace[$i]["type"];
-                    }
-                    if (isset($trace[$i]["function"])) {
-                        $traceMessage .= $trace[$i]["function"];
-                    }
-                    $traceMessage .= " - ".$args."\n ";
-                }
-            } catch (\Exception $ex) {
-            }
-        }
-
-        $msg = $ex->getMessage();
-
-        $errorCode = $ex->getCode();
-        if ($errorCode != 0) {
-            $errorCode = get_class($ex).":($errorCode)";
-        } else {
-            $errorCode = get_class($ex);
-        }
-        self::writeToLog(
-            "[$errorCode] $msg in {$ex->getFile()}#{$ex->getLine()}: \n$traceMessage",
-            $priority,
-            $ident,
-            $includeDebugInformation,
-            $ex->getMessage(),
-            $ex
-        );
-        
-        if ($ex->getPrevious() !== null) {
-            self::log($ex->getPrevious(), $priority, $ident, $includeDebugInformation);
-        }
-    }
-
-    private static function getArgs(array $args, &$argsText)
-    {
-        if (!isset($argsText) || $argsText == "") {
-            $argsText = "";
-        } elseif (strlen($argsText) > self::MAX_ARGUMENTS_LENGTH) {
-            $argsText .= substr($argsText, 0, self::MAX_ARGUMENTS_LENGTH)." [TRUNCATED]";
-
-            return;
-        }
-
-        if (count($args) > 0) {
-            if ($argsText == "") {
-                $argsText = "args: \n";
-            }
-            foreach ($args as $key => $value) {
-                $argsText .= ("[$key => ");
-                $argsText .= ("(".gettype($value).") ");
-
-                if (is_object($value)) {
-                    $argsText .= get_class($value);
-                } elseif (is_array($value)) {
-                    $argsText .= "\t";
-                    self::getArgs($value, $argsText);
-                } elseif (is_string($value)) {
-                    $argsText .= ("\"".$value."\"");
-                } else {
-                    $argsText .= $value;
-                }
-                $argsText .= "]\n";
-            }
-        }
-    }
     
-    private static function runErrorController($statusCode)
+    /**
+     *
+     * @var boolean
+     */
+    private $showFailSafeMessage = true;
+    
+    /**
+     *
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger = null;
+    
+    /**
+     * 
+     * @param \Psr\Log\LoggerInterface $logger
+     */
+    public function __construct(\Psr\Log\LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+        
+        ini_set("html_errors", 0);
+        ini_set("display_errors", 0);
+        // TODO: force error logging - always override the ini config?
+        ini_set("log_errors", 1);
+
+        // Report ALL errors
+        error_reporting(-1);
+
+        set_exception_handler(array($this , "handleExceptions"));
+        set_error_handler(array($this , "handleError"), ini_get("error_reporting"));
+        register_shutdown_function(array($this, "handleShutdown"));
+    }
+
+    private function runErrorController($statusCode)
     {
         if (!isCli()) {
             \RPI\Framework\Facade::app()
@@ -160,7 +69,7 @@ class Handler
      * Handle unhandled exceptions
      * @param \Exception $exception
      */
-    public static function handleExceptions(\Exception $exception)
+    public function handleExceptions(\Exception $exception)
     {
         if (ob_get_level() > 0) {
             ob_clean();
@@ -168,29 +77,29 @@ class Handler
 
         try {
             if ($exception instanceof \RPI\Framework\Exceptions\PageNotFound) {
-                self::log($exception, LOG_ERR, "404", false);
+                $this->logger->info(null, array("exception" => $exception, "ident"=> "404"));
 
                 self::runErrorController(404);
             } elseif ($exception instanceof \RPI\Framework\Exceptions\Authorization) {
-                self::log($exception, LOG_ERR, "authentication");
+                $this->logger->error(null, array("exception" => $exception, "ident"=> "AUTH"));
                 
                 self::runErrorController(401);
             } elseif ($exception instanceof \RPI\Framework\Exceptions\Forbidden) {
-                self::log($exception, LOG_ERR, "authentication");
+                $this->logger->error(null, array("exception" => $exception, "ident"=> "AUTH"));
                 
                 self::runErrorController(403);
             } elseif ($exception instanceof \ErrorException) {
-                self::log($exception, LOG_CRIT);
+                $this->logger->critical(null, array("exception" => $exception));
                 
                 self::runErrorController(500);
             } else {
-                self::log($exception, LOG_CRIT);
+                $this->logger->critical(null, array("exception" => $exception));
 
                 self::runErrorController(500);
             }
         } catch (\Exception $ex) {
-            self::log($ex, LOG_CRIT);
-            self::displayFailsafe();
+            $this->logger->critical(null, array("exception" => $ex));
+            $this->displayFailsafe();
         }
         
         exit();
@@ -203,7 +112,7 @@ class Handler
      * @param string  $errFile
      * @param integer $errLine
      */
-    public static function handle($errNo, $errStr, $errFile, $errLine)
+    public function handleError($errNo, $errStr, $errFile, $errLine)
     {
         switch ($errNo) {
             case E_STRICT:
@@ -211,7 +120,7 @@ class Handler
                 if (strpos($errFile, "PEAR") !== false) { // Don't log any PEAR errors
                     self::$unloggedStrictErrorCount++;
                 } else {
-                    self::logMessage("STRICT/DEPRECATED WARNING: [$errNo] $errStr - $errFile#$errLine", LOG_ERR);
+                    $this->logger->error("STRICT/DEPRECATED WARNING: [$errNo] $errStr - $errFile#$errLine");
                 }
                 break;
             default:
@@ -222,41 +131,42 @@ class Handler
     /**
      * Check for any exceptions on completion of a script
      */
-    public static function shutdown()
+    public function handleShutdown()
     {
         $error = error_get_last();
         if (isset($error)) {
-            self::logMessage("ERROR (shutdown): ".$error["message"]." - ".$error["file"]."#".$error["line"]);
-            self::displayFailsafe();
+            $this->logger->error("ERROR (shutdown): ".$error["message"]." - ".$error["file"]."#".$error["line"]);
+            $this->displayFailsafe();
         }
     }
-
+    
     /**
-     * Initialise error handlers
+     * 
+     * @param boolean $showFailSafeMessage
+     * 
+     * @return \RPI\Framework\Exception\Handler
      */
-    public static function set()
+    public function setShowFailSafeMessageDisplayed($showFailSafeMessage)
     {
-        ini_set("html_errors", 0);
-        ini_set("display_errors", 0);
-        // TODO: force error logging - always override the ini config?
-        ini_set("log_errors", 1);
-
-        // Report ALL errors
-        error_reporting(-1);
-
-        set_exception_handler(array(__CLASS__ , "handleExceptions"));
-        set_error_handler(array(__CLASS__ , "handle"), ini_get("error_reporting"));
-        register_shutdown_function(array(__CLASS__, "shutdown"));
-
-        self::$displayErrors = (ini_get("log_errors") == "1");
-        self::$logErrorsToSysLog = (ini_get("error_log") == "syslog");
+        $this->showFailSafeMessage = $showFailSafeMessage;
+        
+        return $this;
+    }
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function getShowFailSafeMessageDisplayed()
+    {
+        return $this->showFailSafeMessage;
     }
 
     // ----------------------------------------------------------------------------------
 
-    private static function displayFailsafe()
+    private function displayFailsafe()
     {
-        if (self::$showFailSafeMessage && !isCli()) {
+        if ($this->showFailSafeMessage && !isCli()) {
             try {
                 ob_start();
                 $app = \RPI\Framework\Facade::app();
@@ -275,82 +185,6 @@ class Handler
             } catch (\Exception $ex) {
             }
             exit();
-        }
-    }
-
-    private static function writeToLog(
-        $msg,
-        $priority = LOG_CRIT,
-        $ident = null,
-        $includeDebugInformation = true,
-        $originalMessage = null,
-        \Exception $ex = null
-    ) {
-        if (!isset($originalMessage)) {
-            $originalMessage = $msg;
-        }
-
-        if (self::$displayErrors) {
-            if (isset($_SERVER["HTTP_HOST"])) {
-                $host = $_SERVER["HTTP_HOST"];
-            } else {
-                $host = "php";
-            }
-            $msg = "[".$host."] ".$msg;
-
-            if (self::$logErrorsToSysLog) {
-                $maxMessageLength = self::MAX_MESSAGE_LENGTH;
-                if (strtoupper(substr(PHP_OS, 0, 3)) === "WIN") {
-                    $maxMessageLength = self::MAX_MESSAGE_LENGTH_WIN;
-                }
-
-                if ($ident !== null) {
-                    $ident = ":".$ident;
-                }
-
-                // Using LOG_USER facility as this is portable to windows systems if such a thing is required.....
-                openlog($host." (php".$ident.")", LOG_NDELAY, LOG_USER);
-
-                if ($includeDebugInformation && ($priority == LOG_CRIT || $priority == LOG_ERR)) {
-                    $msg .= "\n\nAdditional debug information:\n";
-                    if (isset($_COOKIE)) {
-                        $msg .= "COOKIE=".var_export($_COOKIE, true).";\n";
-                    }
-                    if (isset($_GET)) {
-                        $msg .= "GET=".var_export($_GET, true).";\n";
-                    }
-                    if (isset($_POST)) {
-                        $msg .= "POST=".var_export($_POST, true).";\n";
-                    }
-                    if (isset($_SERVER)) {
-                        $msg .= "SERVER=".var_export($_SERVER, true).";\n";
-                    }
-                    if (isset($_SESSION)) {
-                        $msg .= "SESSION=".var_export($_SESSION, true).";\n";
-                    }
-                }
-
-                if (strlen($msg) > $maxMessageLength) {
-                    $i = 1;
-                    $ts = time();
-                    while (strlen($msg) > 0 && $i <= 20) {
-                        $logMsg = "MULTIPART:".$ts." [PART:".$i."]: ";
-                        syslog($priority, $logMsg.substr($msg, 0, $maxMessageLength - strlen($logMsg)));
-                        $msg = substr($msg, $maxMessageLength - strlen($logMsg));
-                        $i++;
-                    }
-                } else {
-                    syslog($priority, $msg);
-                }
-
-                closelog();
-
-                if (isset(self::$logMessageCallback)) {
-                    call_user_func(self::$logMessageCallback, $originalMessage, $priority, $ident, $ex);
-                }
-            } else {
-                error_log($msg);
-            }
         }
     }
 }
