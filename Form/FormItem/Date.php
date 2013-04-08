@@ -14,7 +14,8 @@ class Date extends \RPI\Framework\Form\FormItem\Input
         $this->maxLength = \RPI\Framework\Helpers\Utils::getNamedValue($args, "maxLength", 10);
         $this->isMultiLine = false;
 
-        $this->format = \RPI\Framework\App\Locale::getDateFormat();
+        // TODO: remove hard-coded date format
+        $this->format = "dd-mm-yyyy";
 
         $this->format = str_replace("/", "-", $this->format);
 
