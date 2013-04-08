@@ -9,21 +9,20 @@ namespace RPI\Framework\App;
 /**
  * Locale support
  */
-class Locale
+class Locale implements \RPI\Framework\App\DomainObjects\ILocale
 {
-    private function __construct()
-    {
-    }
-
-    private static $locale = null;
-    private static $dateFormat = "dd-mm-yyyy";
+    private $locale = null;
+    private $dateFormat = null;
 
     /**
-     * Initialise localisation
+     * 
+     * @param string $timeZone
+     * @param string $defaultLocale
+     * @param string $dateFormat
      */
-    public static function init()
+    public function __construct($timeZone, $defaultLocale = null, $dateFormat = null)
     {
-        self::setTimezone("Europe/London");
+        $this->setTimezone($timeZone);
 
         // TODO: get available locales from the http head or querystring
         // (via rewrite) and try to match to available locales - need to somehow
@@ -37,25 +36,39 @@ class Locale
         // 4. if match, set locale to match
         // 5. if no match, set locale to the default (possibly from the web.config?)
 
-        self::setLocale("EN");
+        if (!isset($defaultLocale)) {
+            $this->set("EN");
+        } else {
+            $this->set($defaultLocale);
+        }
+
+        if (!isset($dateFormat)) {
+            $this->setDateFormat("dd-mm-yyyy");
+        } else {
+            $this->setDateFormat($dateFormat);
+        }
     }
 
     /**
      * Get the default locale
-     * @return <type> Get the default locale
+     * 
+     * @return string Get the default locale
      */
-    public static function getLocale()
+    public function get()
     {
-        return self::$locale;
+        return $this->locale;
     }
 
     /**
      * Set the default locale
-     * @param <type> $locale
+     * 
+     * @param string $locale
+     * 
+     * @return boolean
      */
-    public static function setLocale($locale)
+    public function set($locale)
     {
-        self::$locale = strtoupper($locale);
+        $this->locale = strtoupper($locale);
 
         // setlocale(LC_ALL, 'en_US.UTF-8');
         setlocale(LC_ALL, str_replace("-", "_", $locale));
@@ -67,25 +80,47 @@ class Locale
         // be able to convert the locale from the browser into something
         // suitable...
         // setlocale(LC_ALL, "en_GB", "en-US", "english", "english-gb"); // WINDOWS then UNIX LOCALE STRINGS
+        
+        return true;
     }
 
-    public static function setTimezone($timezone)
+    /**
+     * 
+     * @param string $timezone
+     * 
+     * @return boolean
+     */
+    public function setTimezone($timezone)
     {
         date_default_timezone_set($timezone);
+        
+        return true;
     }
 
-    public static function getTimezone()
+    /**
+     * 
+     * @return string
+     */
+    public function getTimezone()
     {
         return date_default_timezone_get();
     }
 
-    public static function setDateFormat($format)
+    /**
+     * 
+     * @param string $format
+     */
+    public function setDateFormat($format)
     {
-        self::$dateFormat = $format;
+        $this->dateFormat = $format;
     }
 
-    public static function getDateFormat()
+    /**
+     * 
+     * @return string
+     */
+    public function getDateFormat()
     {
-        return self::$dateFormat;
+        return $this->dateFormat;
     }
 }

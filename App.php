@@ -33,13 +33,13 @@ class App extends \RPI\Framework\Helpers\Object
     
     /**
      *
-     * @var \RPI\Framework\App\Router 
+     * @var \RPI\Framework\App\DomainObjects\IRouter 
      */
     protected $router = null;
     
     /**
      *
-     * @var \RPI\Framework\App\Config 
+     * @var \RPI\Framework\App\DomainObjects\IConfig 
      */
     protected $config = null;
     
@@ -81,23 +81,29 @@ class App extends \RPI\Framework\Helpers\Object
     
     /**
      *
-     * @var \RPI\Framework\App\Session
+     * @var \RPI\Framework\App\DomainObjects\ISession
      */
     protected $session = null;
     
     /**
      * 
-     * @var \RPI\Framework\App\Security
+     * @var \RPI\Framework\App\DomainObjects\ISecurity
      */
     protected $security = null;
+    
+    /**
+     *
+     * @var \RPI\Framework\App\DomainObjects\ILocale 
+     */
+    protected $locale = null;
     
     /**
      * 
      * @param string $webConfigFile
      * @param \RPI\Framework\Services\View\IView $view
      * @param \RPI\Framework\Cache\IData $dataStore
-     * @param \RPI\Framework\App\Security $security
-     * @param \RPI\Framework\App\Session $session
+     * @param \RPI\Framework\App\DomainObjects\ISecurity $security
+     * @param \RPI\Framework\App\DomainObjects\ISession $session
      * @param \RPI\Framework\App\Security\Acl\Model\IAcl $acl
      * @param string $characterEncoding
      */
@@ -105,9 +111,10 @@ class App extends \RPI\Framework\Helpers\Object
         $webConfigFile,
         \RPI\Framework\Services\View\IView $view = null,
         \RPI\Framework\Cache\IData $dataStore = null,
-        \RPI\Framework\App\Security $security = null,
-        \RPI\Framework\App\Session $session = null,
+        \RPI\Framework\App\DomainObjects\ISecurity $security = null,
+        \RPI\Framework\App\DomainObjects\ISession $session = null,
         \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null,
+        \RPI\Framework\App\DomainObjects\ILocale $locale = null,
         $characterEncoding = null
     ) {
         $GLOBALS["RPI_APP"] = $this;
@@ -121,6 +128,7 @@ class App extends \RPI\Framework\Helpers\Object
         if (isset($characterEncoding)) {
             $this->characterEncoding = $characterEncoding;
         }
+        $this->locale = $locale;
         
         mb_internal_encoding($this->characterEncoding);
         
@@ -128,18 +136,23 @@ class App extends \RPI\Framework\Helpers\Object
 
         \RPI\Framework\Helpers\Reflection::addDependency($this->view, "RPI\Framework\Services\View\IView");
         \RPI\Framework\Helpers\Reflection::addDependency($this->dataStore, "RPI\Framework\Cache\IData");
-        \RPI\Framework\Helpers\Reflection::addDependency($this->security, "RPI\Framework\App\Security");
-        \RPI\Framework\Helpers\Reflection::addDependency($this->session, "RPI\Framework\App\Session");
+        \RPI\Framework\Helpers\Reflection::addDependency($this->security, "RPI\Framework\App\DomainObjects\ISecurity");
+        \RPI\Framework\Helpers\Reflection::addDependency($this->session, "RPI\Framework\App\DomainObjects\ISession");
         \RPI\Framework\Helpers\Reflection::addDependency($this->acl, "RPI\Framework\App\Security\Acl\Model\IAcl");
+        \RPI\Framework\Helpers\Reflection::addDependency($this->locale, "RPI\Framework\App\DomainObjects\ILocale");
     }
     
     /**
-     * @return \RPI\Framework\App\Session
+     * @return \RPI\Framework\App\DomainObjects\ISession
      */
     public function getSession()
     {
         if (!isset($this->session)) {
-            $this->session = \RPI\Framework\Helpers\Reflection::getDependency($this, "RPI\Framework\App\Session", true);
+            $this->session = \RPI\Framework\Helpers\Reflection::getDependency(
+                $this,
+                "RPI\Framework\App\DomainObjects\ISession",
+                true
+            );
         }
         
         return $this->session;
@@ -147,14 +160,14 @@ class App extends \RPI\Framework\Helpers\Object
     
     /**
      * 
-     * @return \RPI\Framework\App\Security
+     * @return \RPI\Framework\App\DomainObjects\ISecurity
      */
     public function getSecurity()
     {
         if (!isset($this->security)) {
             $this->security = \RPI\Framework\Helpers\Reflection::getDependency(
                 $this,
-                "RPI\Framework\App\Security",
+                "RPI\Framework\App\DomainObjects\ISecurity",
                 true
             );
         }
@@ -187,7 +200,7 @@ class App extends \RPI\Framework\Helpers\Object
     
     /**
      * 
-     * @return \RPI\Framework\App\Config
+     * @return \RPI\Framework\App\DomainObjects\IConfig
      */
     public function getConfig()
     {
@@ -234,6 +247,22 @@ class App extends \RPI\Framework\Helpers\Object
     
     /**
      * 
+     * @return \RPI\Framework\App\DomainObjects\ILocale
+     */
+    public function getLocale()
+    {
+        if (!isset($this->locale)) {
+            $this->locale = \RPI\Framework\Helpers\Reflection::getDependency(
+                $this,
+                "RPI\Framework\App\DomainObjects\ILocale",
+                true
+            );
+        }
+        return $this->locale;
+    }
+    
+    /**
+     * 
      * @return \RPI\Framework\App\Router\Action
      */
     public function getAction()
@@ -243,7 +272,7 @@ class App extends \RPI\Framework\Helpers\Object
     
     /**
      * 
-     * @return \RPI\Framework\App\Router
+     * @return \RPI\Framework\App\DomainObjects\IRouter
      */
     protected function getRouter()
     {

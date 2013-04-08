@@ -2,7 +2,7 @@
 
 /**
  * App Config
- * @package RPI\Framework\App\Config
+ * 
  * @author  Matt Dunn
  */
 namespace RPI\Framework\App;

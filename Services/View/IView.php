@@ -6,7 +6,7 @@ interface IView
 {
     /**
      * 
-     * @return \RPI\Framework\App\Router
+     * @return \RPI\Framework\App\DomainObjects\IRouter
      */
     public function getRouter();
     

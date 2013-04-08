@@ -6,12 +6,12 @@
  * (c) Matt Dunn <matt@red-pixel.co.uk>
  */
 
-namespace RPI\Framework\App;
+namespace RPI\Framework\App\Session;
 
 /**
- * Session
+ * Cookie session
  */
-class Session
+class Cookie implements \RPI\Framework\App\DomainObjects\ISession
 {
     public function __construct()
     {
@@ -58,7 +58,7 @@ class Session
      * 
      * @param boolean $deleteOldSession
      * 
-     * @return \RPI\Framework\App\Session
+     * @return \RPI\Framework\App\DomainObjects\ISession
      */
     public function regenerate($deleteOldSession = false)
     {
@@ -89,7 +89,7 @@ class Session
      * @param string $name
      * @param mixed $value
      * 
-     * @return \RPI\Framework\App\Session
+     * @return \RPI\Framework\App\DomainObjects\ISession
      */
     public function __set($name, $value)
     {
@@ -103,7 +103,7 @@ class Session
      * 
      * @param string $name
      * 
-     * @return \RPI\Framework\App\Session
+     * @return \RPI\Framework\App\DomainObjects\ISession
      */
     public function __unset($name)
     {

@@ -3,7 +3,7 @@
 namespace RPI\Framework\App;
 
 // TODO: move out of App? This may need to be more self contained for better reuse...
-class Router
+class Router implements \RPI\Framework\App\DomainObjects\IRouter
 {
     private $map = array();
     
@@ -20,7 +20,7 @@ class Router
      *                          array(
      *                              array(
      *                                  "match" => "/<path>/:<id>",
-     *                                  "via" => "<post,get,put,delete>",
+     *                                  "via" => "<all,post,get,put,delete>",
      *                                  "controller" => "<fully qualified controller classname>",
      *                                  "uuid" => "<UUID>",
      *                                  "action" => "<action method name>"

@@ -26,7 +26,7 @@ abstract class Server extends \RPI\Framework\Controller
 
     /**
      *
-     * @var \RPI\Framework\App\Security 
+     * @var \RPI\Framework\App\DomainObjects\ISecurity 
      */
     protected $security = null;
     
@@ -39,7 +39,7 @@ abstract class Server extends \RPI\Framework\Controller
     public function __construct(
         $id,
         \RPI\Framework\App $app,
-        \RPI\Framework\App\Security $security,
+        \RPI\Framework\App\DomainObjects\ISecurity $security,
         \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,
         \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null,
         array $options = null

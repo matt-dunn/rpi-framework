@@ -27,7 +27,7 @@ class ObjectTest extends \RPI\Framework\Test\Base
                 null,
                 new \RPI\Framework\Cache\Data\Mock(),
                 null,
-                new \RPI\Framework\App\Session()
+                new \RPI\Framework\App\Session\Mock()
             ),
             new \RPI\Services\User\Mock()
         );

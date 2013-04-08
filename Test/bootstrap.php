@@ -18,6 +18,4 @@ spl_autoload_register("rpiFrameworkPhpUnitAutoload");
 
 \RPI\Framework\Exception\Handler::set();
 
-\RPI\Framework\App\Locale::init();
-
 mb_internal_encoding("UTF-8");

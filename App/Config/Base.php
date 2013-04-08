@@ -5,7 +5,7 @@ namespace RPI\Framework\App\Config;
 /**
  * Application configuration
  */
-abstract class Base
+abstract class Base implements \RPI\Framework\App\DomainObjects\IConfig
 {
     /**
      *

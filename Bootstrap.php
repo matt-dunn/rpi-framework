@@ -24,9 +24,6 @@ require(__DIR__."/Exception/Handler.php");
 require(__DIR__."/Autoload.php");
 \RPI\Framework\Autoload::init();
 
-// Configure the application:
-\RPI\Framework\App\Locale::init();
-
 // =====================================================================
 // Event listeners:
 

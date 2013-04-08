@@ -20,13 +20,11 @@ class Dependencies implements \RPI\Framework\App\Config\IHandler
                 $dependencyInfo["class"]["@"]["isSingleton"] = true;
             }
             
-            if (interface_exists($className)) {
+            if (!interface_exists($className)) {
                 $dependencyInfo["class"]["@"]["isInterface"] = true;
-            } elseif (class_exists($className)) {
-                $dependencyInfo["class"]["@"]["isInterface"] = false;
-            } else {
                 throw new \RPI\Framework\Exceptions\RuntimeException(
-                    "Class or interface '{$className}' cannot be found. Check application configuration."
+                    "Interface '{$className}' cannot be found or is not a valid interface. ".
+                    "Check application configuration."
                 );
             }
             

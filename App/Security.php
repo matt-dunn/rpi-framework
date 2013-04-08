@@ -12,12 +12,16 @@ namespace RPI\Framework\App;
  * Application security
  */
 
-class Security
+class Security implements \RPI\Framework\App\DomainObjects\ISecurity
 {
     private $session = null;
     
+    /**
+     * 
+     * @param \RPI\Framework\App\DomainObjects\ISession $session
+     */
     public function __construct(
-        \RPI\Framework\App\Session $session
+        \RPI\Framework\App\DomainObjects\ISession $session
     ) {
         $this->session = $session;
         

@@ -23,7 +23,7 @@ class Xml implements IView
     
     /**
      *
-     * @var \RPI\Framework\App\Router 
+     * @var \RPI\Framework\App\DomainObjects\IRouter 
      */
     private $router = null;
     
@@ -54,12 +54,14 @@ class Xml implements IView
      * 
      * @param \RPI\Framework\Cache\IData $store
      * @param string $configFile
-     * @return \RPI\Framework\App\Router
+     * 
+     * @return \RPI\Framework\App\DomainObjects\IRouter
      */
     public function __construct(
         \RPI\Framework\Cache\IData $store,
         $configFile,
         \RPI\Framework\App $app,
+        \RPI\Framework\App\DomainObjects\IRouter $router,
         \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,
         \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null
     ) {
@@ -68,12 +70,12 @@ class Xml implements IView
         $this->app = $app;
         $this->authenticationService = $authenticationService;
         $this->acl = $acl;
-        $this->router = $this->parseViewConfig();
+        $this->router = $this->parseViewConfig($router);
     }
     
     /**
      * 
-     * @return \RPI\Framework\App\Router
+     * @return \RPI\Framework\App\DomainObjects\IRouter
      */
     public function getRouter()
     {
@@ -256,10 +258,8 @@ class Xml implements IView
         return $controller;
     }
     
-    private function parseViewConfig()
+    private function parseViewConfig(\RPI\Framework\App\Router $router)
     {
-        $router = new \RPI\Framework\App\Router();
-
         $file = $this->file;
 
         $config = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-".$file);

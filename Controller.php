@@ -17,7 +17,7 @@ namespace RPI\Framework;
  * @property-read \RPI\Framework\Model\UUID $id Controller ID
  * @property-read string $type Controller type
  * @property-read \RPI\Framework\App $app
- * @property-read \RPI\Framework\App\Config $config
+ * @property-read \RPI\Framework\App\DomainObjects\IConfig $config
  * @property-read \RPI\Framework\Controller $parent Parent controller
  * @property-read \RPI\Framework\Controller $rootController Top level controller
  */
@@ -309,7 +309,7 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
     
     /**
      * 
-     * @return \RPI\Framework\App\Config
+     * @return \RPI\Framework\App\DomainObjects\IConfig
      */
     public function getConfig()
     {

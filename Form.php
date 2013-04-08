@@ -106,7 +106,7 @@ abstract class Form extends \RPI\Framework\Component
      * @param \RPI\Framework\Model\UUID $id
      * @param \RPI\Framework\App $app
      * @param \RPI\Framework\Cache\IFront $frontStore
-     * @param \RPI\Framework\App\Security $security
+     * @param \RPI\Framework\App\DomainObjects\ISecurity $security
      * @param \RPI\Framework\Services\Authentication\IAuthentication $authenticationService
      * @param \RPI\Framework\App\Security\Acl\Model\IAcl $acl
      * @param \RPI\Framework\Views\IView $viewRendition
@@ -116,7 +116,7 @@ abstract class Form extends \RPI\Framework\Component
         \RPI\Framework\Model\UUID $id,
         \RPI\Framework\App $app,
         \RPI\Framework\Cache\IFront $frontStore,
-        \RPI\Framework\App\Security $security,
+        \RPI\Framework\App\DomainObjects\ISecurity $security,
         \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,
         \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null,
         \RPI\Framework\Views\IView $viewRendition = null,
