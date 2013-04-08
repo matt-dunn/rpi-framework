@@ -66,8 +66,10 @@ class Reflection
             
             foreach ($constructor->getParameters() as $reflectionParameter) {
                 $param = null;
+                $paramClassName = null;
                 if (isset($params[$reflectionParameter->getName()])) {
-                    $param = $params[$reflectionParameter->getName()];
+                    $paramClassName = $reflectionParameter->getName();
+                    $param = $params[$paramClassName];
                 } else {
                     $class = $reflectionParameter->getClass();
                     if (isset($class)) {
