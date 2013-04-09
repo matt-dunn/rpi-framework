@@ -5,9 +5,6 @@
  */
 ob_start();
 
-$GLOBALS["RPI_PATH_VENDOR"] = __DIR__."/../Vendor";
-ini_set("include_path", $GLOBALS["RPI_PATH_VENDOR"]."/PEAR");
-
 // ================================================================================================================
 // Global config:
 

@@ -48,8 +48,12 @@ class Debug
     private function getLogger()
     {
         if (!isset($this->fireLogger)) {
-            require_once($GLOBALS["RPI_PATH_VENDOR"]."/FirePHPCore/FirePHP.class.php");
-            $this->fireLogger = \FirePHP::getInstance(true);
+            if (class_exists("FirePHP")) {
+                $this->fireLogger = \FirePHP::getInstance(true);
+            } else {
+                $this->logger->error("Unable to load FirePHP");
+            }
+            
             if ($this->app->getConfig()->getValue("config/debug/@enabled", false) === false) {
                 $this->logger->warning("Debug logger called when not in debug mode");
             }
