@@ -8,7 +8,7 @@ class Logger extends \Psr\Log\AbstractLogger implements \Psr\Log\LoggerInterface
 {
     /**
      *
-     * @var \\\RPI\Framework\App\Logger\Handler\IHandler
+     * @var \RPI\Framework\App\Logger\Handler\IHandler
      */
     private $handler = null;
     
@@ -20,7 +20,7 @@ class Logger extends \Psr\Log\AbstractLogger implements \Psr\Log\LoggerInterface
     
     /**
      * 
-     * @param \\RPI\Framework\App\Logger\Handler\IHandler $handler
+     * @param \RPI\Framework\App\Logger\Handler\IHandler $handler
      * @param \RPI\Framework\App\Logger\Formatter\IFormatter $formatter
      */
     public function __construct(
