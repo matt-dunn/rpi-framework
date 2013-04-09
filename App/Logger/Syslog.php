@@ -150,7 +150,6 @@ class Syslog extends \Psr\Log\AbstractLogger
             try {
                 $count = count($trace);
                 for ($i = 0; $i < $count; $i++) {
-                    $args = "";
                     if (isset($trace[$i]["file"])) {
                         $traceDetails[$i]["file"] = $trace[$i]["file"];
                     }
@@ -166,7 +165,7 @@ class Syslog extends \Psr\Log\AbstractLogger
                     if (isset($trace[$i]["function"])) {
                         $traceDetails[$i]["function"] = $trace[$i]["function"];
                     }
-                    if (isset($trace[$i]["args"])) {
+                    if (isset($trace[$i]["args"]) && is_array($trace[$i]["args"]) && count($trace[$i]["args"]) > 0) {
                         $traceDetails[$i]["args"] = $trace[$i]["args"];
                     }
                 }
