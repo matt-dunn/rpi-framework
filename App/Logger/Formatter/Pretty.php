@@ -12,7 +12,11 @@ class Pretty implements IFormatter
         unset($record["level"]);
         
         if (count($record) > 0) {
-            return $message."\n ".  str_replace(array("Array\n("," => Array"), "", print_r($this->removeObjects($record), true));
+            return $message."\n ".str_replace(
+                array("Array\n("," => Array"),
+                "",
+                print_r($this->removeObjects($record), true)
+            );
         } else {
             return $message;
         }
