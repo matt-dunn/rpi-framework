@@ -120,6 +120,9 @@ class Logger extends \Psr\Log\AbstractLogger implements \Psr\Log\LoggerInterface
             
         if ($includeDebugInformation
             && ($level == LogLevel::CRITICAL || $level == LogLevel::ERROR || $level == LogLevel::DEBUG)) {
+            if (isset($context) && count($context) > 0) {
+                $record["context"] = $context;
+            }
             if (isset($_COOKIE) && count($_COOKIE) > 0) {
                 $record["_COOKIE"] = $_COOKIE;
             }
