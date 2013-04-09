@@ -24,6 +24,6 @@
     "target-dir": "RPI/Framework",
     "minimum-stability": "dev",
     "autoload": {
-        "psr-0": {"RPI": "src/"}
+        "psr-0": {"RPI": "/"}
     }
 }
