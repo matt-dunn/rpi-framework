@@ -5,12 +5,28 @@ namespace RPI\Framework\App;
 // TODO: move out of App? This may need to be more self contained for better reuse...
 class Router implements \RPI\Framework\App\DomainObjects\IRouter
 {
+    /**
+     *
+     * @var array
+     */
     private $map = array();
     
-    public function __construct(array $map = null)
+    /**
+     *
+     * @var \Psr\Log\LoggerInterface 
+     */
+    private $logger = null;
+    
+    public function __construct(array $map = null, $traceRoute = null)
     {
         if (isset($map)) {
             $this->setMap($map);
+        }
+
+        if ($traceRoute === true) {
+            $this->logger = new \RPI\Framework\App\Logger(
+                new \RPI\Framework\App\Logger\Handler\Syslog(__CLASS__, LOG_LOCAL0)
+            );
         }
     }
     
@@ -341,6 +357,17 @@ class Router implements \RPI\Framework\App\DomainObjects\IRouter
 
                 // If there is a match, set the controller details
                 if (isset($match)) {
+                    if (isset($this->logger)) {
+                        $this->logger->debug(
+                            "Found route path match - ".strtoupper($method).":".$path,
+                            array(
+                                "method" => $method,
+                                "route" => $match,
+                                "mimetype" => $mimetype
+                            )
+                        );
+                    }
+                    
                     $params = array_splice($pathParts, $pathPosition);
                     $matchPath = implode("/", array_slice($pathParts, 0, $pathPosition));
 
@@ -426,10 +453,31 @@ class Router implements \RPI\Framework\App\DomainObjects\IRouter
                     }
 
                     return $details;
+                } elseif (isset($this->logger, $m["#"])) {
+                    $this->logger->debug(
+                        "Route path found but no matching method - ".strtoupper($method).":".$path,
+                        array(
+                            "method" => $method,
+                            "route" => $m["#"],
+                            "mimetype" => $mimetype
+                        )
+                    );
+                    
+                    return null;
                 }
             }
         }
         
+        if (isset($this->logger)) {
+            $this->logger->debug(
+                "No route found - ".strtoupper($method).":".$path,
+                array(
+                    "method" => $method,
+                    "mimetype" => $mimetype
+                )
+            );
+        }
+
         return null;
     }
 }
