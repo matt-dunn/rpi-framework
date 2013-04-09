@@ -77,7 +77,7 @@ class Handler
 
         try {
             if ($exception instanceof \RPI\Framework\Exceptions\PageNotFound) {
-                $this->logger->info(null, array("exception" => $exception, "ident"=> "404"));
+                $this->logger->error(null, array("exception" => $exception, "ident"=> "404"));
 
                 self::runErrorController(404);
             } elseif ($exception instanceof \RPI\Framework\Exceptions\Authorization) {
@@ -88,10 +88,6 @@ class Handler
                 $this->logger->error(null, array("exception" => $exception, "ident"=> "AUTH"));
                 
                 self::runErrorController(403);
-            } elseif ($exception instanceof \ErrorException) {
-                $this->logger->critical(null, array("exception" => $exception));
-                
-                self::runErrorController(500);
             } else {
                 $this->logger->critical(null, array("exception" => $exception));
 

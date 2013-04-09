@@ -13,13 +13,39 @@ class Syslog extends \Psr\Log\AbstractLogger
     
     /**
      *
+     * @var \RPI\Framework\App\Logger\Formatter\IFormatter 
+     */
+    private $formatter = null;
+    
+    /**
+     *
      * @var string
      */
     private $ident = null;
     
-    public function __construct($ident = null)
-    {
+    /**
+     *
+     * @var int Valid syslog facility. Default: LOG_USER
+     */
+    private $facility = null;
+    
+    public function __construct(
+        \RPI\Framework\App\Logger\Formatter\IFormatter $formatter = null,
+        $ident = null,
+        $facility = LOG_USER
+    ) {
+        if (isset($formatter)) {
+            $this->formatter = $formatter;
+        } else {
+            $this->formatter = new \RPI\Framework\App\Logger\Formatter\Pretty();
+        }
+        
         $this->ident = $ident;
+        
+        if (!isset($facility)) {
+            $facility = LOG_USER;
+        }
+        $this->facility = $facility;
     }
     
     public function log($level, $message, array $context = array())
@@ -84,38 +110,19 @@ class Syslog extends \Psr\Log\AbstractLogger
             $maxMessageLength = self::MAX_MESSAGE_LENGTH_WIN;
         }
 
+        $record = array();
+        $trace = null;
+        
+        $record["level"] = strtoupper($level);
+
+        if (isset($message)) {
+            $record["message"] = $message;
+        }
+        
         if (isset($exception)) {
-            $traceMessage = "";
-            try {
-                $trace = $exception->getTrace();
-                $count = count($trace);
-                for ($i = 0; $i < $count; $i++) {
-                    $args = "";
-                    if (isset($trace[$i]["args"])) {
-                        self::getArgs($trace[$i]["args"], $args);
-                    }
-
-                    $traceMessage .= "\n>>> ";
-                    if (isset($trace[$i]["file"])) {
-                        $traceMessage .= $trace[$i]["file"];
-                    }
-                    if (isset($trace[$i]["line"])) {
-                        $traceMessage .= "#".$trace[$i]["line"];
-                    }
-                    if (isset($trace[$i]["class"])) {
-                        $traceMessage .= (":".$trace[$i]["class"]);
-                    }
-                    if (isset($trace[$i]["type"])) {
-                        $traceMessage .= $trace[$i]["type"];
-                    }
-                    if (isset($trace[$i]["function"])) {
-                        $traceMessage .= $trace[$i]["function"];
-                    }
-                    $traceMessage .= " - ".$args."\n ";
-                }
-            } catch (\Exception $ex) {
-            }
-
+            $record["message"] = ((isset($message) && $message != "") ? "[".$message."] " : "").
+                "[".get_class($exception)."] ".$exception->getMessage();
+            
             $errorCode = $exception->getCode();
             if ($errorCode != 0) {
                 $errorCode = get_class($exception).":($errorCode)";
@@ -123,28 +130,69 @@ class Syslog extends \Psr\Log\AbstractLogger
                 $errorCode = get_class($exception);
             }
 
-            $message = (
-                (isset($message) && $message != "") ? $message.": " : "").
-                "[$errorCode] {$exception->getMessage()} in ".
-                "{$exception->getFile()}#{$exception->getLine()}: \n$traceMessage";
+            $record["exception"] = array(
+                "message" => $exception->getMessage(),
+                "errorCode" => $errorCode,
+                "type" => get_class($exception),
+                "file" => $exception->getFile(),
+                "line" => $exception->getLine()
+            );
+            
+            $trace = $exception->getTrace();
+        } elseif ($priority == LOG_CRIT || $priority == LOG_ERR || $priority == LOG_DEBUG) {
+            $trace = debug_backtrace();
+            // skip first since it's always the current method
+            array_shift($trace);
+        }
+        
+        if (isset($trace)) {
+            $traceDetails = array();
+            try {
+                $count = count($trace);
+                for ($i = 0; $i < $count; $i++) {
+                    $args = "";
+                    if (isset($trace[$i]["file"])) {
+                        $traceDetails[$i]["file"] = $trace[$i]["file"];
+                    }
+                    if (isset($trace[$i]["line"])) {
+                        $traceDetails[$i]["line"] = $trace[$i]["line"];
+                    }
+                    if (isset($trace[$i]["class"])) {
+                        $traceDetails[$i]["class"] = $trace[$i]["class"];
+                    }
+                    if (isset($trace[$i]["type"])) {
+                        $traceDetails[$i]["type"] = $trace[$i]["type"];
+                    }
+                    if (isset($trace[$i]["function"])) {
+                        $traceDetails[$i]["function"] = $trace[$i]["function"];
+                    }
+                    if (isset($trace[$i]["args"])) {
+                        $traceDetails[$i]["args"] = $trace[$i]["args"];
+                    }
+                }
+            } catch (\Exception $ex) {
+            }
+
+            if (count($traceDetails) > 0) {
+                $record["trace"] = $traceDetails;
+            }
         }
             
-        if ($includeDebugInformation && ($priority == LOG_CRIT || $priority == LOG_ERR)) {
-            $message .= "\n\nAdditional debug information:\n";
-            if (isset($_COOKIE)) {
-                $message .= "COOKIE=".var_export($_COOKIE, true).";\n";
+        if ($includeDebugInformation && ($priority == LOG_CRIT || $priority == LOG_ERR || $priority == LOG_DEBUG)) {
+            if (isset($_COOKIE) && count($_COOKIE) > 0) {
+                $record["_COOKIE"] = $_COOKIE;
             }
-            if (isset($_GET)) {
-                $message .= "GET=".var_export($_GET, true).";\n";
+            if (isset($_GET) && count($_GET) > 0) {
+                $record["_GET"] = $_GET;
             }
-            if (isset($_POST)) {
-                $message .= "POST=".var_export($_POST, true).";\n";
+            if (isset($_POST) && count($_POST) > 0) {
+                $record["_POST"] = $_POST;
             }
-            if (isset($_SERVER)) {
-                $message .= "SERVER=".var_export($_SERVER, true).";\n";
+            if (isset($_SERVER) && count($_SERVER) > 0) {
+                $record["_SERVER"] = $_SERVER;
             }
-            if (isset($_SESSION)) {
-                $message .= "SESSION=".var_export($_SESSION, true).";\n";
+            if (isset($_SESSION) && count($_SESSION) > 0) {
+                $record["_SESSION"] = $_SESSION;
             }
         }
         
@@ -153,55 +201,27 @@ class Syslog extends \Psr\Log\AbstractLogger
             $ident = $context["ident"];
         }
         
-        // Using LOG_USER facility as this is portable to windows systems if such a thing is required.....
-        openlog($host." (php".(isset($ident) ? ":".$ident : "").")", LOG_NDELAY, LOG_USER);
+        openlog(
+            $host." [".strtoupper($level)."] (php".(isset($ident) ? ":".$ident : "").")",
+            LOG_NDELAY,
+            $this->facility
+        );
 
-        if (strlen($message) > $maxMessageLength) {
+        $formattedMessage = $this->formatter->format($record);
+        
+        if (strlen($formattedMessage) > $maxMessageLength) {
             $i = 1;
             $ts = time();
-            while (strlen($message) > 0 && $i <= 20) {
+            while (strlen($formattedMessage) > 0 && $i <= 20) {
                 $logMsg = "MULTIPART:".$ts." [PART:".$i."]: ";
-                syslog($priority, $logMsg.substr($message, 0, $maxMessageLength - strlen($logMsg)));
-                $message = substr($message, $maxMessageLength - strlen($logMsg));
+                syslog($priority, $logMsg.substr($formattedMessage, 0, $maxMessageLength - strlen($logMsg)));
+                $formattedMessage = substr($formattedMessage, $maxMessageLength - strlen($logMsg));
                 $i++;
             }
         } else {
-            syslog($priority, $message);
+            syslog($priority, $formattedMessage);
         }
 
         closelog();
-    }
-    
-    private static function getArgs(array $args, &$argsText)
-    {
-        if (!isset($argsText) || $argsText == "") {
-            $argsText = "";
-        } elseif (strlen($argsText) > self::MAX_ARGUMENTS_LENGTH) {
-            $argsText .= substr($argsText, 0, self::MAX_ARGUMENTS_LENGTH)." [TRUNCATED]";
-
-            return;
-        }
-
-        if (count($args) > 0) {
-            if ($argsText == "") {
-                $argsText = "args: \n";
-            }
-            foreach ($args as $key => $value) {
-                $argsText .= ("[$key => ");
-                $argsText .= ("(".gettype($value).") ");
-
-                if (is_object($value)) {
-                    $argsText .= get_class($value);
-                } elseif (is_array($value)) {
-                    $argsText .= "\t";
-                    self::getArgs($value, $argsText);
-                } elseif (is_string($value)) {
-                    $argsText .= ("\"".$value."\"");
-                } else {
-                    $argsText .= $value;
-                }
-                $argsText .= "]\n";
-            }
-        }
     }
 }
