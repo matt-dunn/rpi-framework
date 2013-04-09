@@ -22,9 +22,9 @@ class ObjectTest extends \RPI\Framework\Test\Base
         parent::setUp();
         
         $authenticationService = new \RPI\Services\Authentication\Mock\Service(
-            new \RPI\Framework\App\Logger\Syslog(),
+            $this->logger,
             new \RPI\Framework\App(
-                new \RPI\Framework\App\Logger\Syslog(),
+                $this->logger,
                 "~/Conf/test.config",
                 null,
                 new \RPI\Framework\Cache\Data\Mock(),
@@ -37,9 +37,9 @@ class ObjectTest extends \RPI\Framework\Test\Base
         $this->object = new AclObject(
             $authenticationService->getAuthenticatedUser(),
             new \RPI\Framework\App\Security\Acl(
-                new \RPI\Framework\App\Logger\Syslog(),
+                $this->logger,
                 new \RPI\Framework\App\Security\Acl\Provider\Config(
-                    new \RPI\Framework\App\Logger\Syslog(),
+                    $this->logger,
                     new \RPI\Framework\Cache\Data\Mock(),
                     "~/Conf/Security.xml"
                 )

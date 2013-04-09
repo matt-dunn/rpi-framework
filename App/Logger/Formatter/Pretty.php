@@ -22,7 +22,7 @@ class Pretty implements IFormatter
         }
     }
     
-    private function removeObjects(array $args)
+    private function removeObjects(array $args, $depth = 0)
     {
         $cleanArgs = array();
         
@@ -30,7 +30,13 @@ class Pretty implements IFormatter
             if (is_object($value) && !$value instanceof \stdClass) {
                 $cleanArgs[$name] = "[".get_class($value)."]";
             } elseif (is_array($value)) {
-                $cleanArgs[$name] = $this->removeObjects($value);
+                if ($name != "GLOBALS") {
+                    if ($depth < 10) {
+                        $cleanArgs[$name] = $this->removeObjects($value, $depth + 1);
+                    } else {
+                        $cleanArgs[$name] = "[truncated...]";
+                    }
+                }
             } else {
                 $cleanArgs[$name] = $value;
             }

@@ -7,8 +7,18 @@ namespace RPI\Framework\Test;
  */
 abstract class Base extends \PHPUnit_Framework_TestCase
 {
+    /**
+     *
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $logger = null;
+    
     protected function setUp()
     {
+        $this->logger = new \RPI\Framework\App\Logger(
+            new \RPI\Framework\App\Logger\Handler\Syslog()
+        );
+        
         $this->setUpGlobals();
         $GLOBALS["RPI_FRAMEWORK_RUNNING_TEST"] = get_called_class();
     }

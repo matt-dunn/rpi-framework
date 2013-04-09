@@ -18,7 +18,9 @@ if (file_exists(__DIR__."/../vendor/autoload.php")) {
 // Configure the tests:
 
 new \RPI\Framework\Exception\Handler(
-    new \RPI\Framework\App\Logger\Syslog()
+    new \RPI\Framework\App\Logger(
+        new \RPI\Framework\App\Logger\Handler\Syslog()
+    )
 );
 
 mb_internal_encoding("UTF-8");
