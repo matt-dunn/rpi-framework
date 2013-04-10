@@ -132,7 +132,15 @@ class App extends \RPI\Framework\Helpers\Object implements \Psr\Log\LoggerAwareI
         \RPI\Framework\App\DomainObjects\ILocale $locale = null,
         $characterEncoding = null
     ) {
+        if (!isset($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"])) {
+            $GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] = true;
+        }
+        
         $GLOBALS["RPI_APP"] = $this;
+        
+        if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
+            ob_start();
+        }
         
         $this->errorHandler = new \RPI\Framework\Exception\Handler($logger);
         
@@ -159,6 +167,24 @@ class App extends \RPI\Framework\Helpers\Object implements \Psr\Log\LoggerAwareI
         \RPI\Framework\Helpers\Reflection::addDependency($this->session, "RPI\Framework\App\DomainObjects\ISession");
         \RPI\Framework\Helpers\Reflection::addDependency($this->acl, "RPI\Framework\App\Security\Acl\Model\IAcl");
         \RPI\Framework\Helpers\Reflection::addDependency($this->locale, "RPI\Framework\App\DomainObjects\ILocale");
+        
+        \RPI\Framework\Event\Manager::addEventListener(
+            "RPI\Framework\Events\ViewUpdated",
+            function (\RPI\Framework\Event $event, $params) {
+                $frontStore = \RPI\Framework\Helpers\Reflection::getDependency(
+                    \RPI\Framework\Facade::app(),
+                    "RPI\Framework\Cache\IFront"
+                );
+
+                if (!isset($frontStore)) {
+                    throw new \RPI\Framework\Exceptions\RuntimeException(
+                        "RPI\Framework\Cache\IFront dependency not configured correctly"
+                    );
+                }
+
+                $frontStore->clear();
+            }
+        );
     }
     
     /**
