@@ -298,7 +298,7 @@ class Xml implements IView
 
                     \RPI\Framework\Helpers\Dom::validateSchema(
                         $domDataViews,
-                        __DIR__."/../../../Schemas/Conf/Views.2.0.0.xsd"
+                        new \RPI\Schemas\SchemaDocument("Conf/Views.2.0.0.xsd")
                     );
 
                     // Clear the view keys in the store

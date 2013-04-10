@@ -14,6 +14,6 @@ final class Config extends \RPI\Framework\App\Config\Base
 {
     protected function getSchema()
     {
-        return __DIR__."/../../Schemas/Conf/App.2.0.0.xsd";
+        return new \RPI\Schemas\SchemaDocument("Conf/App.2.0.0.xsd");
     }
 }
