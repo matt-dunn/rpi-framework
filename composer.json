@@ -11,6 +11,12 @@
             "email": "matt@red-pixel.co.uk"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@git.assembla.com:rpi-schemas.git"
+        }
+    ],
     "require": {
         "php": ">=5.3.3",
         "psr/log": "~1.0",
