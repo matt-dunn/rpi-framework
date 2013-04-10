@@ -132,11 +132,11 @@ class App extends \RPI\Framework\Helpers\Object implements \Psr\Log\LoggerAwareI
         \RPI\Framework\App\DomainObjects\ILocale $locale = null,
         $characterEncoding = null
     ) {
+        $GLOBALS["RPI_APP"] = $this;
+        
         if (!isset($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"])) {
             $GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] = true;
         }
-        
-        $GLOBALS["RPI_APP"] = $this;
         
         if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
             ob_start();
