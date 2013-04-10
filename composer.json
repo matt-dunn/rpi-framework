@@ -13,7 +13,8 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "psr/log": "~1.0"
+        "psr/log": "~1.0",
+        "rpi/schemas": "dev-master"
     },
     "require-dev": {
         "firephp/firephp-core": "dev-master",
@@ -21,9 +22,9 @@
     },
     "suggest": {
     },
-    "target-dir": "RPI/Framework",
+    "target-dir": "/RPI/Framework",
     "minimum-stability": "dev",
     "autoload": {
-        "psr-0": {"RPI": "/"}
+        "psr-0": {"RPI": ""}
     }
 }
