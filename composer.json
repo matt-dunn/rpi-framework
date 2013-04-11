@@ -15,6 +15,10 @@
         {
             "type": "vcs",
             "url": "git@git.assembla.com:rpi-schemas.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@git.assembla.com:rpi-test-harness.git"
         }
     ],
     "require": {
@@ -24,7 +28,7 @@
     },
     "require-dev": {
         "firephp/firephp-core": "dev-master",
-        "phpunit/phpunit": "3.7.*"
+        "rpi/test-harness": "dev-master"
     },
     "suggest": {
     },

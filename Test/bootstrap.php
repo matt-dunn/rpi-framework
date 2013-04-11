@@ -3,16 +3,7 @@
 //session_start();
 ob_start();
 
-require_once 'PHPUnit/Autoload.php';
-
-// ================================================================================================================
-
-require_once(__DIR__."/Autoload.php");
-spl_autoload_register("rpiFrameworkPhpUnitAutoload");
-
-if (file_exists(__DIR__."/../vendor/autoload.php")) {
-    require(__DIR__."/../vendor/autoload.php");
-}
+require_once __DIR__."/../vendor/autoload.php";
 
 // ================================================================================================================
 // Configure the tests:
