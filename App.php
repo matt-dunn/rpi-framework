@@ -176,13 +176,9 @@ class App extends \RPI\Framework\Helpers\Object implements \Psr\Log\LoggerAwareI
                     "RPI\Framework\Cache\IFront"
                 );
 
-                if (!isset($frontStore)) {
-                    throw new \RPI\Framework\Exceptions\RuntimeException(
-                        "RPI\Framework\Cache\IFront dependency not configured correctly"
-                    );
+                if (isset($frontStore)) {
+                    $frontStore->clear();
                 }
-
-                $frontStore->clear();
             }
         );
     }
