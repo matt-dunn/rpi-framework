@@ -21,7 +21,7 @@ class ObjectTest extends \RPI\Test\Harness\Base
     {
         parent::setUp();
         
-        $authenticationService = new \RPI\Framework\Test\RPI\Framework\Services\Authentication\Mock\Service(
+        $authenticationService = new \RPI\Test\Harness\Mock\Services\Authentication\Service(
             $this->logger,
             new \RPI\Framework\App(
                 $this->logger,
@@ -31,7 +31,7 @@ class ObjectTest extends \RPI\Test\Harness\Base
                 null,
                 new \RPI\Framework\App\Session\Mock()
             ),
-            new \RPI\Framework\Test\RPI\Framework\Services\User\Mock\Service()
+            new \RPI\Test\Harness\Mock\Services\User\Service()
         );
         
         $this->object = new AclObject(
