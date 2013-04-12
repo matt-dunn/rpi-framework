@@ -23,6 +23,14 @@
     ],
     "require": {
         "php": ">=5.3.3",
+        "ext-mcrypt": "*",
+        "ext-apc": "*",
+        "ext-dom": "*",
+        "ext-libxml": "*",
+        "ext-mbstring": "*",
+        "ext-simplexml": "*",
+        "ext-xml": "*",
+        "ext-xsl": "*",
         "psr/log": "~1.0",
         "rpi/schemas": "dev-master"
     },
@@ -31,6 +39,8 @@
         "rpi/test-harness": "dev-master"
     },
     "suggest": {
+        "ext-gd": "May be used by other libraries to manipulate images",
+        "ext-xslcache": "Boost performance of XSL transformations"
     },
     "target-dir": "RPI/Framework",
     "minimum-stability": "dev",
