@@ -78,33 +78,64 @@ class View implements \RPI\Framework\Views\IView
             $this->xslOptions["contentPath"] = "/compiled/__debug";
         }
 
-        if ($xp == null) {
-            if (!$this->debug && $this->options["useCacheIfAvailable"] && class_exists("xsltCache")) {
-                $xp = new \xsltCache();
-                $xp->importStyleSheet($this->xsltFilename);
-            } else {
-                $xp = new \XsltProcessor();
-                $doc = new \DOMDocument();
-                $doc->load($this->xsltFilename);
-                $xp->importStylesheet($doc);
-            }
-
-            $xp->registerPHPFunctions();
-            //$profile = realpath($_SERVER["DOCUMENT_ROOT"]."/../profiling/")."/profile.txt";
-            //$xp->setProfiling($profile);
-
-            if ($this->xslOptions != null) {
-                foreach ($this->xslOptions as $name => $value) {
-                    $xp->setParameter("", $name, $value);
-                }
-            }
-            self::$xslt[$this->xsltFilename] = $xp;
-        }
+        $currentState = libxml_use_internal_errors(true);
         
-        if (isset($this->stream)) {
-            return $xp->transformToURI($model, $this->stream);
-        } else {
-            return $xp->transformToXML($model);
+        try {
+            if ($xp == null) {
+                if (!$this->debug && $this->options["useCacheIfAvailable"] && class_exists("xsltCache")) {
+                    $xp = new \xsltCache();
+                    $xp->importStyleSheet($this->xsltFilename);
+                } else {
+                    $xp = new \XsltProcessor();
+                    $doc = new \DOMDocument();
+                    $doc->load($this->xsltFilename);
+                    $xp->importStylesheet($doc);
+                }
+
+                $xp->registerPHPFunctions();
+                //$profile = realpath($_SERVER["DOCUMENT_ROOT"]."/../profiling/")."/profile.txt";
+                //$xp->setProfiling($profile);
+
+                if ($this->xslOptions != null) {
+                    foreach ($this->xslOptions as $name => $value) {
+                        $xp->setParameter("", $name, $value);
+                    }
+                }
+                self::$xslt[$this->xsltFilename] = $xp;
+            }
+
+            if (isset($this->stream)) {
+                return $xp->transformToURI($model, $this->stream);
+            } else {
+                return $xp->transformToXML($model);
+            }
+        } catch (\Exception $ex) {
+            $errors = libxml_get_errors();
+            $message = $ex->getMessage()." \n";
+            foreach ($errors as $error) {
+                switch ($error->level) {
+                    case LIBXML_ERR_WARNING:
+                        $message .= "Warning [$error->code]: ";
+                        break;
+                    case LIBXML_ERR_ERROR:
+                        $message .= "Error [$error->code]: ";
+                        break;
+                    case LIBXML_ERR_FATAL:
+                        $message .= "Fatal Error [$error->code]: ";
+                        break;
+                }
+                $message .= trim($error->message);
+                if ($error->file) {
+                    $message .= " in '$error->file'";
+                }
+                $message .= " on line $error->line.\n";
+            }
+
+            libxml_clear_errors();
+            
+            libxml_use_internal_errors($currentState);
+            
+            throw new \RPI\Framework\Exceptions\RuntimeException($message);
         }
     }
 
