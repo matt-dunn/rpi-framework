@@ -19,6 +19,10 @@
         {
             "type": "vcs",
             "url": "git@git.assembla.com:rpi-test-harness.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@git.assembla.com:rpi-jquery.git"
         }
     ],
     "require": {
@@ -32,7 +36,8 @@
         "ext-xml": "*",
         "ext-xsl": "*",
         "psr/log": "~1.0",
-        "rpi/schemas": "dev-master"
+        "rpi/schemas": "dev-master",
+        "rpi/jquery": "dev-master"
     },
     "require-dev": {
         "firephp/firephp-core": "dev-master",
