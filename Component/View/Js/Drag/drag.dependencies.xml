@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dependencies>
-	<dependency name="../../../../../Vendor/jQuery/plugins/jqueryui/jquery.ui.draggable.js"/>
-	<dependency name="../../../../../Vendor/jQuery/plugins/jqueryui/jquery.ui.droppable.js"/>
-	<dependency name="../../../../../Vendor/jQuery/plugins/jqueryui/jquery.ui.sortable.js"/>
+	<dependency name="composer://rpi/jquery#plugins/jqueryui/jquery.ui.draggable.js"/>
+	<dependency name="composer://rpi/jquery#plugins/jqueryui/jquery.ui.droppable.js"/>
+	<dependency name="composer://rpi/jquery#plugins/jqueryui/jquery.ui.sortable.js"/>
     
 	<dependency name="../../Css/Drag/drag.css"/>
 </dependencies>
