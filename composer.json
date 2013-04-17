@@ -13,16 +13,8 @@
     ],
     "repositories": [
         {
-            "type": "vcs",
-            "url": "git@git.assembla.com:rpi-schemas.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@git.assembla.com:rpi-test-harness.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@git.assembla.com:rpi-jquery.git"
+            "type": "composer",
+            "url": "http://packages.red-pixel.co.uk/"
         }
     ],
     "require": {
@@ -37,7 +29,7 @@
         "ext-xsl": "*",
         "psr/log": "~1.0",
         "rpi/schemas": "dev-master",
-        "rpi/jquery": "dev-master"
+        "rpi/jquery": "1.*"
     },
     "require-dev": {
         "firephp/firephp-core": "dev-master",
