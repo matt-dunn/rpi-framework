@@ -2,3 +2,4 @@
 /vendor/
 /Test/logs/
 .DS_Store
+/build/

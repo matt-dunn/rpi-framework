@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "42bfad34658bd93f85e92f98deb65e5d",
+    "hash": "1ca5fb79655a545cab5e9c11e084562d",
     "packages": [
         {
             "name": "psr/log",
@@ -42,6 +42,25 @@
                 "psr-3"
             ],
             "time": "2012-12-21 11:40:51"
+        },
+        {
+            "name": "rpi/jquery",
+            "version": "1.9.1",
+            "source": {
+                "type": "git",
+                "url": "git@git.assembla.com:rpi-jquery.git",
+                "reference": "1.9.1"
+            },
+            "type": "library",
+            "license": [
+                "MIT"
+            ],
+            "description": "jQuery component",
+            "keywords": [
+                "component",
+                "jquery"
+            ],
+            "time": "2013-04-11 19:24:12"
         },
         {
             "name": "rpi/schemas",
@@ -346,12 +365,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "3.7.19"
+                "reference": "b52bacb0c8545f238d5e1e6176fd5749827e1a20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3.7.19",
-                "reference": "3.7.19",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b52bacb0c8545f238d5e1e6176fd5749827e1a20",
+                "reference": "b52bacb0c8545f238d5e1e6176fd5749827e1a20",
                 "shasum": ""
             },
             "require": {
@@ -412,7 +431,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2013-03-25 11:45:06"
+            "time": "2013-04-16 16:15:34"
         },
         {
             "name": "phpunit/phpunit-mock-objects",

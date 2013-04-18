@@ -3,7 +3,8 @@
 //session_start();
 ob_start();
 
-require_once __DIR__."/../vendor/autoload.php";
+$autoload = require __DIR__."/../vendor/autoload.php";
+$autoload->add("RPI\\Framework\\Test", __DIR__."/Src");
 
 // ================================================================================================================
 // Configure the tests:

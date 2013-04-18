@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="rpi-components-navigation" default="build" basedir=".">
+    <property name="source" value="Src"/>
+
+    <target name="clean"
+            description="Clean up and create artifact directories">
+        <delete dir="${basedir}/build"/>
+
+        <mkdir dir="${basedir}/build/logs"/>
+        <mkdir dir="${basedir}/build/pdepend"/>
+    </target>
+
+    <target name="composer">
+        <exec dir="${basedir}" executable="composer" failonerror="true">
+            <arg line="update"/>
+        </exec>
+    </target>
+
+    <target name="phpunit">
+        <exec dir="${basedir}/Test" executable="../vendor/phpunit/phpunit/phpunit.php" failonerror="true">
+            <arg line="--configuration phpunit.xml ."/>
+        </exec>
+    </target>
+
+    <target name="parallelTasks"
+            description="Run the pdepend, phpmd, phpcpd, phpcs, phpdoc and phploc tasks in parallel using a maximum of 2 threads.">
+        <parallel threadCount="2">
+            <sequential>
+                <antcall target="pdepend"/>
+<!--                <antcall target="phpmd"/>-->
+            </sequential>
+            <antcall target="phpcpd"/>
+            <antcall target="phpcs"/>
+            <!--<antcall target="phpdoc"/>-->
+            <antcall target="phploc"/>
+        </parallel>
+    </target>
+
+    <target name="pdepend"
+            description="Generate jdepend.xml and software metrics charts using PHP_Depend">
+        <exec executable="pdepend" failonerror="true">
+            <arg value="--jdepend-xml=${basedir}/build/logs/jdepend.xml" />
+            <arg value="--jdepend-chart=${basedir}/build/pdepend/dependencies.svg" />
+            <arg value="--overview-pyramid=${basedir}/build/pdepend/overview-pyramid.svg" />
+            <arg path="${source}" />
+        </exec>
+    </target>
+
+    <target name="phpmd"
+            description="Generate pmd.xml using PHPMD">
+        <exec executable="phpmd" failonerror="true">
+            <arg path="${source}" />
+            <arg value="xml" />
+            <arg value="${basedir}/build/phpmd.xml" />
+            <arg value="--reportfile" />
+            <arg value="${basedir}/build/logs/pmd.xml" />
+        </exec>
+    </target>
+
+    <target name="phpcpd"
+            description="Generate pmd-cpd.xml using PHPCPD">
+        <exec executable="phpcpd" failonerror="false">
+            <arg value="--log-pmd" />
+            <arg value="${basedir}/build/logs/pmd-cpd.xml" />
+            <arg path="${source}" />
+        </exec>
+    </target>
+
+    <target name="phploc"
+            description="Generate phploc.csv">
+        <exec executable="phploc" failonerror="true">
+            <arg value="--log-csv" />
+            <arg value="${basedir}/build/logs/phploc.csv" />
+            <arg path="${source}" />
+        </exec>
+    </target>
+
+    <target name="phpcs"
+            description="Generate checkstyle.xml using PHP_CodeSniffer">
+        <exec executable="phpcs" failonerror="true">
+            <arg value="--report=checkstyle" />
+            <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
+            <arg value="--standard=PSR2" />
+            <arg value="--extensions=php,inc" />
+            <arg value="--ignore=*/Vendor/*,*/.cache/*,*/__*,*/vendor/*,*/composer/*"/>
+            <arg path="${basedir}" />
+        </exec>
+    </target>
+
+    <target name="phpdoc"
+            description="Generate API documentation using PHPDocumentor">
+        <exec executable="phpdoc" failonerror="true">
+            <arg value="--directory" />
+            <arg path="${source}" />
+            <arg value="--target" />
+            <arg path="${basedir}/build/api" />
+        </exec>
+    </target>
+
+    <target name="phpcb"
+            description="Aggregate tool output with PHP_CodeBrowser">
+        <exec executable="phpcb" failonerror="true">
+            <arg value="--log" />
+            <arg path="${basedir}/build/logs" />
+            <arg value="--source" />
+            <arg path="${source}" />
+            <arg value="--output" />
+            <arg path="${basedir}/build/code-browser" />
+        </exec>
+    </target>
+
+    <target name="build" depends="clean,composer,parallelTasks,phpunit,phpcb"/>
+</project>
