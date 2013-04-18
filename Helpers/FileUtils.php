@@ -17,15 +17,13 @@ class FileUtils
         if (($absolutePath = realpath($path)) !== false) {
             return $absolutePath;
         }
-        if (!preg_match('%^phar://([^.]+\.phar(?:\.gz)?)(.+)%', $path, $pathComponents)) {
-            return;
-        }
-        list(, $relativePath, $pharPath) = $pathComponents;
 
+        $relativePath = $_SERVER["PHP_SELF"];
+        
         $pharPath = implode(
             '/',
             array_reduce(
-                explode('/', $pharPath),
+                explode('/', substr($path, strlen("phar://".$_SERVER["PHP_SELF"]))),
                 function ($parts, $value) {
                     if ($value == '..') {
                         array_pop($parts);
