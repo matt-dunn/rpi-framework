@@ -11,7 +11,39 @@ class FileUtils
     private function __construct()
     {
     }
-    
+
+    public static function realPath($path)
+    {
+        if (($absolutePath = realpath($path)) !== false) {
+            return $absolutePath;
+        }
+        if (!preg_match('%^phar://([^.]+\.phar(?:\.gz)?)(.+)%', $path, $pathComponents)) {
+            return;
+        }
+        list(, $relativePath, $pharPath) = $pathComponents;
+
+        $pharPath = implode(
+            '/',
+            array_reduce(
+                explode('/', $pharPath),
+                function ($parts, $value) {
+                    if ($value == '..') {
+                        array_pop($parts);
+                    } elseif ($value != '.') {
+                        $parts[] = $value;
+                    }
+                    return $parts;
+                }
+            )
+        );
+
+        if (($resolvedPath = realpath($relativePath)) !== false) {
+            if (file_exists($absolutePath = "phar://{$resolvedPath}{$pharPath}")) {
+                return $absolutePath;
+            }
+        }
+    }
+
     /**
      * 
      * @param string $basePath
@@ -28,7 +60,7 @@ class FileUtils
         $recursive = true
     ) {
         $files = array();
-        
+
         if (file_exists($basePath)) {
             $dir = dir($basePath);
             while (false !== ($entry = $dir->read())) {
@@ -44,10 +76,10 @@ class FileUtils
             }
             $dir->close();
         }
-        
+
         return $files;
     }
-    
+
     private static function isMatch(array $patterns, $file)
     {
         foreach ($patterns as $pattern) {
@@ -55,7 +87,7 @@ class FileUtils
                 return true;
             }
         }
-        
+
         return false;
     }
 
