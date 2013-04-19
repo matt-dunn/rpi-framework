@@ -18,12 +18,12 @@ class FileUtils
             return $absolutePath;
         }
 
-        $relativePath = $_SERVER["PHP_SELF"];
+        $pharBasePath = realpath($_SERVER["PHP_SELF"]);
         
         $pharPath = implode(
             '/',
             array_reduce(
-                explode('/', substr($path, strlen("phar://".$_SERVER["PHP_SELF"]))),
+                explode('/', substr($path, strlen("phar://".$pharBasePath))),
                 function ($parts, $value) {
                     if ($value == '..') {
                         array_pop($parts);
@@ -34,8 +34,8 @@ class FileUtils
                 }
             )
         );
-
-        if (($resolvedPath = realpath($relativePath)) !== false) {
+            
+        if (($resolvedPath = realpath($pharBasePath)) !== false) {
             if (file_exists($absolutePath = "phar://{$resolvedPath}{$pharPath}")) {
                 return $absolutePath;
             }
