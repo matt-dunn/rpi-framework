@@ -3,7 +3,11 @@
 //session_start();
 ob_start();
 
-$autoload = require __DIR__."/../vendor/autoload.php";
+if (file_exists(__DIR__."/../vendor/autoload.php")) {
+    $autoload = require __DIR__."/../vendor/autoload.php";
+} else {
+    $autoload = require __DIR__."/../../../autoload.php";
+}
 $autoload->add("RPI\\Framework\\Test", __DIR__."/Src");
 
 // ================================================================================================================
