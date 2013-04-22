@@ -4,7 +4,7 @@ namespace RPI\Framework\Form\View\Php;
 
 abstract class View extends \RPI\Framework\Component\View\Php\View implements \RPI\Framework\Views\Php\IView
 {
-    protected function renderView($model, \RPI\Framework\Controller $controller, array $options)
+    protected function renderView($model, \RPI\Framework\Controller $controller, array $options, $viewType)
     {
         if ($controller->isValidPostBack) {
             $rendition = $this->renderFormViewPostback($model, $controller, $options);
