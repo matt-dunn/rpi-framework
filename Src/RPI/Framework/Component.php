@@ -288,11 +288,20 @@ EOT;
     
     public function getRenderViewType()
     {
-        return $this->app->getView()->getDecoratorView(
-            (object)array(
-                "controller" => $this->type
-            )
+        $view = \RPI\Framework\Helpers\Reflection::getDependency(
+            $this->app,
+            "RPI\Framework\Services\View\IView"
         );
+        
+        if (isset($view)) {
+            return $this->app->getView()->getDecoratorView(
+                (object)array(
+                    "controller" => $this->type
+                )
+            );
+        }
+        
+        return false;
     }
     
     public function renderView()
