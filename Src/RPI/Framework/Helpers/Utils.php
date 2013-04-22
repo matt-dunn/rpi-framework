@@ -175,7 +175,7 @@ class Utils
         }
     }
 
-    public static function formatCamelCaseTitle($title)
+    public static function formatCamelCaseTitle($title, $removeSpaces = false)
     {
         $parts = explode(" ", preg_replace('/([a-z0-9])?([A-Z])|[\-]/', '$1 $2', $title));
         $ret = "";
@@ -186,7 +186,13 @@ class Utils
             }
         }
 
-        return trim($ret);
+        $ret = trim($ret);
+        
+        if ($removeSpaces) {
+            $ret = str_replace(" ", "", $ret);
+        }
+        
+        return $ret;
     }
 
     public static function setArrayValueByKeyPath($values, $keyPath, $value)
