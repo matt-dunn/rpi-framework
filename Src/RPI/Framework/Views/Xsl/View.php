@@ -39,7 +39,7 @@ class View implements \RPI\Framework\Views\IView
         $this->xsltFilename = realpath($xsltFilename);
     }
 
-    public function render(\RPI\Framework\Controller $controller)
+    public function render(\RPI\Framework\Controller $controller, $viewType = null)
     {
         self::$controller = $controller;
         self::$model = $controller->model;

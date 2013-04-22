@@ -108,8 +108,6 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     
     protected function initController()
     {
-        $this->viewType = "component".(isset($this->id) && $this->id !== "" ? "_".$this->id : "");
-        
         if (isset($this->match)) {
             if (eval($this->match) === false) {
                 $this->visible = false;
@@ -288,6 +286,15 @@ EOT;
         return $this->view;
     }
     
+    public function getRenderViewType()
+    {
+        return $this->app->getView()->getDecoratorView(
+            (object)array(
+                "controller" => $this->type
+            )
+        );
+    }
+    
     public function renderView()
     {
         if ($this->visible) {
@@ -300,7 +307,7 @@ EOT;
             
             //echo "RENDER:[{$this->type}]<br/>\n";
             
-            $rendition = $this->getView()->render($this);
+            $rendition = $this->getView()->render($this, $this->getRenderViewType());
 
             if ($this->getCacheKey() !== false && !$this->canRenderViewFromCache() && $this->isCacheable()) {
                 $this->frontStore->store($this->getCacheKey(), $rendition, $this->type);

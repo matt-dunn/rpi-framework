@@ -22,12 +22,6 @@ abstract class Cacheable extends \RPI\Framework\Controller
      * @var \RPI\Framework\Views\IView
      */
     protected $view = null;
-
-    /**
-     *
-     * @var string
-     */
-    public $viewType = null;
     
     /**
      * Set by viewdata

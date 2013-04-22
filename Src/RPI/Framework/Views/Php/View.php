@@ -19,7 +19,7 @@ class View implements \RPI\Framework\Views\IView
         }
     }
 
-    public function render(\RPI\Framework\Controller $controller)
+    public function render(\RPI\Framework\Controller $controller, $viewType = null)
     {
         if (isset($this->options["debug"])) {
             $this->debug = ($this->options["debug"] === true);
@@ -27,7 +27,7 @@ class View implements \RPI\Framework\Views\IView
             $this->debug = ($controller->getConfig()->getValue("config/debug/@enabled", false) === true);
         }
         
-        return $this->template->render($controller->model, $controller, $this->options);
+        return $this->template->render($controller->model, $controller, $this->options, $viewType);
     }
 
     public function getViewTimestamp()

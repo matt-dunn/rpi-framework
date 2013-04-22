@@ -11,11 +11,11 @@ abstract class View extends \RPI\Framework\Controller\Message\View\Php\View impl
      * @param array $options
      * @return type
      */
-    final public function render($model, \RPI\Framework\Controller $controller, array $options)
+    final public function render($model, \RPI\Framework\Controller $controller, array $options, $viewType)
     {
         $rendition = "";
 
-        $componentRendition = $this->renderComponentView($model, $controller, $options);
+        $componentRendition = $this->renderComponentView($model, $controller, $options, $viewType);
         if ($componentRendition != "") {
             $sectionAttributes = "";
             $sectionOptionsHTML = "";
@@ -38,7 +38,7 @@ abstract class View extends \RPI\Framework\Controller\Message\View\Php\View impl
                 }
 
                 if ($controller->editable) {
-                    $componentSectionOptionsHTML = $this->renderOptions($model, $controller, $options);
+                    $componentSectionOptionsHTML = $this->renderOptions($model, $controller, $options, $viewType);
                     if ($componentSectionOptionsHTML !== "") {
                         $sectionOptionsHTML = "<ul class=\"options\">{$componentSectionOptionsHTML}</ul>";
                         
@@ -86,7 +86,7 @@ EOT;
         return $rendition;
     }
     
-    protected function renderOptions($model, \RPI\Framework\Controller $controller, array $options)
+    protected function renderOptions($model, \RPI\Framework\Controller $controller, array $options, $viewType)
     {
         // TODO: localise:
         $sectionOptionsHTML = "";
@@ -109,18 +109,27 @@ EOT;
         return $sectionOptionsHTML;
     }
 
-    protected function renderComponentView($model, \RPI\Framework\Controller $controller, array $options)
+    protected function renderComponentView($model, \RPI\Framework\Controller $controller, array $options, $viewType)
     {
+        $renderMethod = "renderView";
+        if (isset($viewType) && $viewType !== false) {
+            $renderMethodViewType = "renderView".\RPI\Framework\Helpers\Utils::formatCamelCaseTitle($viewType, true);
+            if (method_exists($this, $renderMethodViewType)) {
+                $renderMethod = $renderMethodViewType;
+            }
+        }
+        
         $rendition = <<<EOT
             {$this->renderHeaderMessages($model, $controller, $options)}
 
-            {$this->renderView($model, $controller, $options)}
+            {$this->$renderMethod($model, $controller, $options, $viewType)}
 EOT;
 
         return $rendition;
     }
     
     protected function getEditableElementAttributes(
+        $model,
         $className,
         $editMode,
         $editable,
@@ -128,7 +137,11 @@ EOT;
         $allowRichEdit = false
     ) {
         $attributes = " class=\"$className";
-        if ($editMode && $editable) {
+        if ($editMode && $editable
+            && (
+                $model instanceof \RPI\Framework\App\Security\Acl\Model\Object
+                && $model->canUpdate($bindElementName))
+            ) {
             $attributes .= " editable\"";
             $attributes .=
                 " contenteditable=\"true\" data-rich-edit=\"".
@@ -140,5 +153,5 @@ EOT;
         return $attributes;
     }
 
-    abstract protected function renderView($model, \RPI\Framework\Controller $controller, array $options);
+    abstract protected function renderView($model, \RPI\Framework\Controller $controller, array $options, $viewType);
 }
