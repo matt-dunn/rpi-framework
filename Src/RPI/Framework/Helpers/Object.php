@@ -59,7 +59,7 @@ abstract class Object implements \Serializable
     
     public function __sleep()
     {
-        return array_keys($this->getProperties(false, \ReflectionProperty::IS_PUBLIC));
+        return $this->getProperties();
     }
     
     public function __toString()
@@ -109,17 +109,13 @@ abstract class Object implements \Serializable
         }
     }
     
-    protected function getProperties($getValue = false, $methodType = null)
+    protected function getProperties($getValue = false)
     {
         $properties = array();
         
         $reflect = new \ReflectionObject($this);
         
-        if (!isset($methodType)) {
-            $methodType = \ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED;
-        }
-        
-        foreach ($reflect->getMethods($methodType) as $method) {
+        foreach ($reflect->getMethods(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED) as $method) {
             $parameterCount = count($method->getParameters());
             $methodName = $method->getName();
             if ($parameterCount == 0 && substr($methodName, 0, 3) == "get") {
