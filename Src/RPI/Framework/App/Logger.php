@@ -79,6 +79,10 @@ class Logger extends \Psr\Log\AbstractLogger implements \Psr\Log\LoggerInterface
                 "line" => $exception->getLine()
             );
             
+            if ($exception->getPrevious() !== null) {
+                $record["message"] .= ". In addition: ".$exception->getPrevious()->getMessage();
+            }
+            
             $trace = $exception->getTrace();
         } elseif ($level == LogLevel::CRITICAL || $level == LogLevel::ERROR || $level == LogLevel::DEBUG) {
             $trace = debug_backtrace();
