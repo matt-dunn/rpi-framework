@@ -42,6 +42,7 @@ body.component_js .component-editable select.editable {
 
 .component .options-c {
     position:relative;
+    z-index:999999;
 }
 
 .component-editable ul.options {
