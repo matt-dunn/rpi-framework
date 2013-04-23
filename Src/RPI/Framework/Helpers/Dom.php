@@ -191,6 +191,9 @@ class Dom
             $elementName = $defaultElementName;
         }
         $elementName = str_replace(array(".", " ", "\\"), "_", $elementName);
+        if ($elementName == "arrayCopy") {
+            $elementName = $defaultElementName."s";
+        }
         $elementNameClose = $elementName;
 
         if (isset($namespace)) {
