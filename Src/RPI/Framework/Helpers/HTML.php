@@ -12,6 +12,11 @@ class HTML
     {
     }
 
+    public static function getSafeClassName($name)
+    {
+        return strtolower(str_replace(array("/", "\\", " ", "."), "-", $name));
+    }
+    
     /**
      * Sanitise HTML content
      * @param string $htmlSource
