@@ -286,7 +286,7 @@ EOT;
         return $this->view;
     }
     
-    public function getRenderViewType()
+    protected function getRenderViewType()
     {
         $view = \RPI\Framework\Helpers\Reflection::getDependency(
             $this->app,
