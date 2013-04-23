@@ -128,30 +128,5 @@ EOT;
         return $rendition;
     }
     
-    protected function getEditableElementAttributes(
-        $model,
-        $className,
-        $editMode,
-        $editable,
-        $bindElementName,
-        $allowRichEdit = false
-    ) {
-        $attributes = " class=\"$className";
-        if ($editMode && $editable
-            && (
-                $model instanceof \RPI\Framework\App\Security\Acl\Model\Object
-                && $model->canUpdate($bindElementName))
-            ) {
-            $attributes .= " editable\"";
-            $attributes .=
-                " contenteditable=\"true\" data-rich-edit=\"".
-                ($allowRichEdit ? "true" : "false")."\" data-bind=\"{$bindElementName}\"";
-        } else {
-            $attributes .= "\"";
-        }
-        
-        return $attributes;
-    }
-
     abstract protected function renderView($model, \RPI\Framework\Controller $controller, array $options, $viewType);
 }
