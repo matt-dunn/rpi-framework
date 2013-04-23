@@ -18,6 +18,12 @@ abstract class Base implements \RPI\Framework\App\DomainObjects\IConfig
      * @var array
      */
     private $config = null;
+    
+    /**
+     *
+     * @var string
+     */
+    private $configFile = null;
 
     /**
      *
@@ -44,14 +50,12 @@ abstract class Base implements \RPI\Framework\App\DomainObjects\IConfig
         \RPI\Framework\Cache\IData $store,
         $file
     ) {
-        $configFile = \RPI\Framework\Helpers\Utils::buildFullPath($file);
+        $this->configFile = \RPI\Framework\Helpers\Utils::buildFullPath($file);
         
-        $this->cacheKey = "PHP_RPI_CONFIG-".realpath($configFile);
+        $this->cacheKey = "PHP_RPI_CONFIG-".realpath($this->configFile);
         
         $this->store = $store;
         $this->logger = $logger;
-        
-        $this->config = $this->init($configFile);
     }
 
     /**
@@ -62,6 +66,10 @@ abstract class Base implements \RPI\Framework\App\DomainObjects\IConfig
      */
     public function getValue($keyPath, $default = null)
     {
+        if (!isset($this->config)) {
+            $this->config = $this->init($this->configFile);
+        }
+
         if (isset($this->valueCache[$keyPath])) {
             return $this->valueCache[$keyPath];
         }
@@ -112,7 +120,7 @@ abstract class Base implements \RPI\Framework\App\DomainObjects\IConfig
                 $config = $this->store->fetch($this->cacheKey);
                 if ($config === false) {
                     if ($this->store->deletePattern("#^".preg_quote($this->cacheKey, "#").".*#") === false) {
-                        $this->logger->warning("Unable to clear data store");
+                        throw new \RPI\Framework\Exceptions\RuntimeException("Unable to clear data store");
                     }
 
                     $domDataConfig = new \DOMDocument();
