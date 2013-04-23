@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "1ca5fb79655a545cab5e9c11e084562d",
+    "hash": "d708d4725e027c49896b4d4211bea716",
     "packages": [
         {
             "name": "psr/log",
@@ -489,7 +489,7 @@
             "source": {
                 "type": "git",
                 "url": "git@git.assembla.com:rpi-test-harness.git",
-                "reference": "36e15273a5b7002546b0f251b9759696ae70fd29"
+                "reference": "e4203f1ec0c4eae2694ddf21672781e1a1d7843d"
             },
             "require": {
                 "php": ">=5.3.3",
@@ -512,7 +512,7 @@
             ],
             "description": "RPI Test Harness",
             "homepage": "http://packages.red-pixel.co.uk/",
-            "time": "2013-04-12 08:09:25"
+            "time": "2013-04-19 12:59:38"
         },
         {
             "name": "symfony/yaml",
