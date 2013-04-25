@@ -20,7 +20,7 @@ class InvalidArgument extends \InvalidArgumentException implements \RPI\Framewor
             $this->value = $value;
         }
         if (is_array($value)) {
-            $message = "Invalid parameters: '".implode("', '", $this->value)."'";
+            $message = "Invalid parameters: '".print_r($this->value, true)."'";
         } else {
             $message ="Invalid parameter: '".$this->value."' (".
                 (is_object($this->value) ? get_class($this->value) : gettype($this->value)).")";
