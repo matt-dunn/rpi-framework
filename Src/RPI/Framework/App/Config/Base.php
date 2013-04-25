@@ -21,9 +21,9 @@ abstract class Base implements \RPI\Framework\App\DomainObjects\IConfig
     
     /**
      *
-     * @var string
+     * @var array
      */
-    private $configFile = null;
+    private $configFiles = null;
 
     /**
      *
@@ -43,16 +43,31 @@ abstract class Base implements \RPI\Framework\App\DomainObjects\IConfig
      * Initialise the application configuration
      * @param \Psr\Log\LoggerInterface $logger
      * @param \RPI\Framework\Cache\IData $store
-     * @param string  $file        Name of the config file
+     * @param string|array  $files        Name of the config file(s)
      */
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \RPI\Framework\Cache\IData $store,
-        $file
+        $files
     ) {
-        $this->configFile = \RPI\Framework\Helpers\Utils::buildFullPath($file);
+        if (!is_array($files)) {
+            $files = array($files);
+        } elseif (isset($files["file"])) {
+            $files = $files["file"];
+            if (!is_array($files)) {
+                $files = array($files);
+            }
+        } else {
+            throw new \RPI\Framework\Exceptions\InvalidArgument($files, null, "Config must pass 'file' as parameter name");
+        }
         
-        $this->cacheKey = "PHP_RPI_CONFIG-".realpath($this->configFile);
+        $this->configFiles = array();
+
+        foreach ($files as $file) {
+            $this->configFiles[] = \RPI\Framework\Helpers\Utils::buildFullPath($file);
+        }
+        
+        $this->cacheKey = "PHP_RPI_CONFIG-".md5(serialize($this->configFiles));
         
         $this->store = $store;
         $this->logger = $logger;
@@ -67,9 +82,9 @@ abstract class Base implements \RPI\Framework\App\DomainObjects\IConfig
     public function getValue($keyPath, $default = null)
     {
         if (!isset($this->config)) {
-            $this->config = $this->init($this->configFile);
+            $this->config = $this->init($this->configFiles);
         }
-
+        
         if (isset($this->valueCache[$keyPath])) {
             return $this->valueCache[$keyPath];
         }
@@ -111,52 +126,49 @@ abstract class Base implements \RPI\Framework\App\DomainObjects\IConfig
     /**
     * @ignore
     */
-    private function init($file)
+    private function init(array $files)
     {
         $seg = null;
         
         try {
-            if (file_exists($file)) {
-                $config = $this->store->fetch($this->cacheKey);
-                if ($config === false) {
-                    if ($this->store->deletePattern("#^".preg_quote($this->cacheKey, "#").".*#") === false) {
-                        throw new \RPI\Framework\Exceptions\RuntimeException("Unable to clear data store");
-                    }
+            $config = $this->store->fetch($this->cacheKey);
+            if ($config === false) {
+                if ($this->store->deletePattern("#^".preg_quote($this->cacheKey, "#").".*#") === false) {
+                    throw new \RPI\Framework\Exceptions\RuntimeException("Unable to clear data store");
+                }
 
-                    $domDataConfig = new \DOMDocument();
-                    $domDataConfig->load($file);
-                    
-                    $fileDeps = realpath($file);
-                    
-                    $xincludes = \RPI\Framework\Helpers\Dom::getElementsByXPath(
-                        $domDataConfig->documentElement,
-                        "//xi:include[@parse='xml']/@href"
-                    );
-                    if ($xincludes->length > 0) {
-                        $fileDeps = array($fileDeps);
-                        foreach ($xincludes as $xinclude) {
-                            $fileDeps[] = realpath(dirname($file)."/".$xinclude->nodeValue);
-                        }
-                    }
-                    
-                    $domDataConfig->xinclude();
-                    
-                    \RPI\Framework\Helpers\Dom::validateSchema(
-                        $domDataConfig,
-                        $this->getSchema()
-                    );
-                    
-                    $seg = \RPI\Framework\Helpers\Locking::lock(__CLASS__);
+                $seg = \RPI\Framework\Helpers\Locking::lock(__CLASS__);
 
-                    $config = array(
-                        "config" => $this->processConfig(
-                            \RPI\Framework\Helpers\Dom::deserialize(
-                                simplexml_import_dom($domDataConfig)
-                            ),
-                            $this->cacheKey
-                        )
-                    );
-                    
+                $config = array("config" => array());
+                $fileDeps = array();
+                
+                foreach ($files as $file) {
+                    if (file_exists($file)) {
+                        $domDataConfig = new \DOMDocument();
+                        $domDataConfig->load($file);
+
+                        $fileDeps[] = realpath($file);
+
+                        \RPI\Framework\Helpers\Dom::validateSchema(
+                            $domDataConfig,
+                            $this->getSchema()
+                        );
+
+                        $config["config"] = array_merge(
+                            $config["config"],
+                            $this->processConfig(
+                                \RPI\Framework\Helpers\Dom::deserialize(
+                                    simplexml_import_dom($domDataConfig)
+                                ),
+                                $this->cacheKey
+                            )
+                        );
+                    } else {
+                        throw new \RPI\Framework\Exceptions\RuntimeException("Unable to load config file '$file'");
+                    }
+                }
+
+                if ($config !== false) {
                     $this->store->store($this->cacheKey, $config, $fileDeps);
 
                     \RPI\Framework\Helpers\Locking::release($seg);
@@ -168,11 +180,9 @@ abstract class Base implements \RPI\Framework\App\DomainObjects\IConfig
                         );
                     }
                 }
-
-                return $config;
-            } else {
-                throw new \RPI\Framework\Exceptions\RuntimeException("Unable to load config file '$file'");
             }
+            
+            return $config;
         } catch (\Exception $ex) {
             if (isset($seg)) {
                 \RPI\Framework\Helpers\Locking::release($seg);
