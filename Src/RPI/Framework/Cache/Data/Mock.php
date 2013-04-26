@@ -15,45 +15,27 @@ class Mock implements \RPI\Framework\Cache\IData
     /**
      * {@inheritdoc}
      */
-    public function isAvailable()
-    {
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function fetch($key, $autoDelete = true, &$existingCacheData = null)
     {
-        if ($this->isAvailable() === true) {
-            if (!isset($this->data[$key])) {
-                return false;
-            }
-            
-            $data = $this->data[$key];
+        if (!isset($this->data[$key])) {
+            return false;
+        }
 
-            $existingCacheData = $data["value"];
-            
-            if (isset($data["expire"]) && microtime(true) > $data["expire"]) {
-                $this->delete($key);
-                
-                return false;
-            }
+        $data = $this->data[$key];
 
-            if (isset($data["fileDep"]) && isset($data["fileDep_mod"])) {
-                if (is_array($data["fileDep"])) {
-                    $fileCount = count($data["fileDep"]);
-                    for ($i = 0; $i < $fileCount; $i++) {
-                        if (filemtime($data["fileDep"][$i]) > $data["fileDep_mod"][$i]) {
-                            if ($autoDelete) {
-                                $this->delete($key);
-                            }
+        $existingCacheData = $data["value"];
 
-                            return false;
-                        }
-                    }
-                } else {
-                    if (filemtime($data["fileDep"]) > $data["fileDep_mod"]) {
+        if (isset($data["expire"]) && microtime(true) > $data["expire"]) {
+            $this->delete($key);
+
+            return false;
+        }
+
+        if (isset($data["fileDep"]) && isset($data["fileDep_mod"])) {
+            if (is_array($data["fileDep"])) {
+                $fileCount = count($data["fileDep"]);
+                for ($i = 0; $i < $fileCount; $i++) {
+                    if (filemtime($data["fileDep"][$i]) > $data["fileDep_mod"][$i]) {
                         if ($autoDelete) {
                             $this->delete($key);
                         }
@@ -61,12 +43,18 @@ class Mock implements \RPI\Framework\Cache\IData
                         return false;
                     }
                 }
-            }
+            } else {
+                if (filemtime($data["fileDep"]) > $data["fileDep_mod"]) {
+                    if ($autoDelete) {
+                        $this->delete($key);
+                    }
 
-            return $data["value"];
-        } else {
-            return false;
+                    return false;
+                }
+            }
         }
+
+        return $data["value"];
     }
 
     /**
@@ -74,36 +62,32 @@ class Mock implements \RPI\Framework\Cache\IData
      */
     public function store($key, $value, $fileDep = null, $ttl = 0)
     {
-        if ($this->isAvailable() === true) {
-            $expire = null;
-            if (isset($ttl) && $ttl > 0) {
-                $expire = microtime(true) + $ttl;
-            }
-            
-            if (is_array($fileDep)) {
-                $fileDepMod = array();
-                foreach ($fileDep as $file) {
-                    $fileDepMod[] = filemtime($file);
-                }
+        $expire = null;
+        if (isset($ttl) && $ttl > 0) {
+            $expire = microtime(true) + $ttl;
+        }
 
-                return $this->data[$key] = array(
-                    "expire" => $expire,
-                    "value" => $value,
-                    "modified" => microtime(true),
-                    "fileDep" => $fileDep,
-                    "fileDep_mod" => $fileDepMod
-                );
-            } else {
-                return $this->data[$key] = array(
-                    "expire" => $expire,
-                    "value" => $value,
-                    "modified" => microtime(true),
-                    "fileDep" => $fileDep,
-                    "fileDep_mod" => filemtime($fileDep)
-                );
+        if (is_array($fileDep)) {
+            $fileDepMod = array();
+            foreach ($fileDep as $file) {
+                $fileDepMod[] = filemtime($file);
             }
+
+            return $this->data[$key] = array(
+                "expire" => $expire,
+                "value" => $value,
+                "modified" => microtime(true),
+                "fileDep" => $fileDep,
+                "fileDep_mod" => $fileDepMod
+            );
         } else {
-            return false;
+            return $this->data[$key] = array(
+                "expire" => $expire,
+                "value" => $value,
+                "modified" => microtime(true),
+                "fileDep" => $fileDep,
+                "fileDep_mod" => filemtime($fileDep)
+            );
         }
     }
 
@@ -112,12 +96,8 @@ class Mock implements \RPI\Framework\Cache\IData
      */
     public function clear()
     {
-        if ($this->isAvailable() === true) {
-            $this->data = array();
-            return true;
-        }
-        
-        return false;
+        $this->data = array();
+        return true;
     }
 
     /**
@@ -125,13 +105,11 @@ class Mock implements \RPI\Framework\Cache\IData
      */
     public function delete($key)
     {
-        if ($this->isAvailable() === true) {
-            if (isset($this->data[$key])) {
-                unset($this->data[$key]);
-                return true;
-            }
+        if (isset($this->data[$key])) {
+            unset($this->data[$key]);
+            return true;
         }
-        
+
         return false;
     }
 
@@ -140,19 +118,15 @@ class Mock implements \RPI\Framework\Cache\IData
      */
     public function deletePattern($pattern)
     {
-        if ($this->isAvailable() === true) {
-            $deleteCount = 0;
-            foreach ($this->data as $key => $value) {
-                if (preg_match($pattern, $key) !== 0) {
-                    unset($this->data[$key]);
-                    $deleteCount++;
-                }
+        $deleteCount = 0;
+        foreach ($this->data as $key => $value) {
+            if (preg_match($pattern, $key) !== 0) {
+                unset($this->data[$key]);
+                $deleteCount++;
             }
-            
-            return $deleteCount;
         }
-        
-        return false;
+
+        return $deleteCount;
     }
     
     /**
@@ -173,16 +147,14 @@ class Mock implements \RPI\Framework\Cache\IData
 
     public function getItemModifiedTime($key)
     {
-        if ($this->isAvailable() === true) {
-            if (!isset($this->data[$key])) {
-                return false;
-            }
-            
-            $data = $this->data[$key];
-            
-            if (isset($data["modified"])) {
-                return (double)$data["modified"];
-            }
+        if (!isset($this->data[$key])) {
+            return false;
+        }
+
+        $data = $this->data[$key];
+
+        if (isset($data["modified"])) {
+            return (double)$data["modified"];
         }
         
         return false;

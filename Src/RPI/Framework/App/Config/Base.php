@@ -173,12 +173,10 @@ abstract class Base implements \RPI\Framework\App\DomainObjects\IConfig
 
                     \RPI\Framework\Helpers\Locking::release($seg);
 
-                    if ($this->store->isAvailable()) {
-                        $this->logger->notice(
-                            __CLASS__."::".__METHOD__." - Config read from:\n".
-                            (is_array($fileDeps) ? implode("\n", $fileDeps) : $fileDeps)
-                        );
-                    }
+                    $this->logger->notice(
+                        __CLASS__."::".__METHOD__." - Config read from:\n".
+                        (is_array($fileDeps) ? implode("\n", $fileDeps) : $fileDeps)
+                    );
                 }
             }
             

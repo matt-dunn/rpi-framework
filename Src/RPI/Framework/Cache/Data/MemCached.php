@@ -10,8 +10,6 @@ namespace RPI\Framework\Cache\Data;
  */
 class MemCached implements \RPI\Framework\Cache\IData
 {
-    private $isAvailable = null;
-    
     /**
      *
      * @var \Memcached
@@ -61,45 +59,24 @@ class MemCached implements \RPI\Framework\Cache\IData
         return $this->memCached;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isAvailable()
-    {
-        if ($this->isAvailable === null) {
-            $this->isAvailable = extension_loaded("Memcached");
-        }
-
-        return $this->isAvailable;
-    }
 
     /**
      * {@inheritdoc}
      */
     public function fetch($key, $autoDelete = true, &$existingCacheData = null)
     {
-        if ($this->isAvailable() === true) {
-            $data = $this->getMemcached()->get($key);
-            if ($data === false) {
-                return false;
-            }
+        $data = $this->getMemcached()->get($key);
+        if ($data === false) {
+            return false;
+        }
 
-            $existingCacheData = $data["value"];
+        $existingCacheData = $data["value"];
 
-            if (isset($data["fileDep"]) && isset($data["fileDep_mod"])) {
-                if (is_array($data["fileDep"])) {
-                    $fileCount = count($data["fileDep"]);
-                    for ($i = 0; $i < $fileCount; $i++) {
-                        if (filemtime($data["fileDep"][$i]) > $data["fileDep_mod"][$i]) {
-                            if ($autoDelete) {
-                                $this->delete($key);
-                            }
-
-                            return false;
-                        }
-                    }
-                } else {
-                    if (filemtime($data["fileDep"]) > $data["fileDep_mod"]) {
+        if (isset($data["fileDep"]) && isset($data["fileDep_mod"])) {
+            if (is_array($data["fileDep"])) {
+                $fileCount = count($data["fileDep"]);
+                for ($i = 0; $i < $fileCount; $i++) {
+                    if (filemtime($data["fileDep"][$i]) > $data["fileDep_mod"][$i]) {
                         if ($autoDelete) {
                             $this->delete($key);
                         }
@@ -107,12 +84,18 @@ class MemCached implements \RPI\Framework\Cache\IData
                         return false;
                     }
                 }
-            }
+            } else {
+                if (filemtime($data["fileDep"]) > $data["fileDep_mod"]) {
+                    if ($autoDelete) {
+                        $this->delete($key);
+                    }
 
-            return $data["value"];
-        } else {
-            return false;
+                    return false;
+                }
+            }
         }
+
+        return $data["value"];
     }
 
     /**
@@ -120,37 +103,33 @@ class MemCached implements \RPI\Framework\Cache\IData
      */
     public function store($key, $value, $fileDep = null, $ttl = 0)
     {
-        if ($this->isAvailable() === true) {
-            if (is_array($fileDep)) {
-                $fileDepMod = array();
-                foreach ($fileDep as $file) {
-                    $fileDepMod[] = filemtime($file);
-                }
-                
-                $this->getMemcached()->set(
-                    $key,
-                    array(
-                        "value" => $value,
-                        "modified" => microtime(true),
-                        "fileDep" => $fileDep,
-                        "fileDep_mod" => $fileDepMod
-                    ),
-                    $ttl
-                );
-            } else {
-                $this->getMemcached()->set(
-                    $key,
-                    array(
-                        "value" => $value,
-                        "modified" => microtime(true),
-                        "fileDep" => $fileDep,
-                        "fileDep_mod" => filemtime($fileDep)
-                    ),
-                    $ttl
-                );
+        if (is_array($fileDep)) {
+            $fileDepMod = array();
+            foreach ($fileDep as $file) {
+                $fileDepMod[] = filemtime($file);
             }
+
+            return $this->getMemcached()->set(
+                $key,
+                array(
+                    "value" => $value,
+                    "modified" => microtime(true),
+                    "fileDep" => $fileDep,
+                    "fileDep_mod" => $fileDepMod
+                ),
+                $ttl
+            );
         } else {
-            return false;
+            return $this->getMemcached()->set(
+                $key,
+                array(
+                    "value" => $value,
+                    "modified" => microtime(true),
+                    "fileDep" => $fileDep,
+                    "fileDep_mod" => filemtime($fileDep)
+                ),
+                $ttl
+            );
         }
     }
 
@@ -159,11 +138,7 @@ class MemCached implements \RPI\Framework\Cache\IData
      */
     public function clear()
     {
-        if ($this->isAvailable() === true) {
-            return $this->getMemcached()->flush(0);
-        }
-        
-        return false;
+        return $this->getMemcached()->flush(0);
     }
 
     /**
@@ -171,11 +146,7 @@ class MemCached implements \RPI\Framework\Cache\IData
      */
     public function delete($key)
     {
-        if ($this->isAvailable() === true) {
-            return $this->getMemcached()->delete($key);
-        }
-        
-        return false;
+        return $this->getMemcached()->delete($key);
     }
 
     /**
@@ -183,43 +154,37 @@ class MemCached implements \RPI\Framework\Cache\IData
      */
     public function deletePattern($pattern)
     {
-        if ($this->isAvailable() === true) {
-            $cacheKeys = $this->getMemcached()->getAllKeys();
-            if ($cacheKeys !== false) {
-                $keys = new \RegexIterator(
-                    new \ArrayIterator($cacheKeys),
-                    $pattern,
-                    \RegexIterator::MATCH
-                );
+        $cacheKeys = $this->getMemcached()->getAllKeys();
+        if ($cacheKeys !== false) {
+            $keys = new \RegexIterator(
+                new \ArrayIterator($cacheKeys),
+                $pattern,
+                \RegexIterator::MATCH
+            );
 
-                $deleteCount = 0;
-                foreach ($keys as $key) {
-                    if ($this->delete($key) !== false) {
-                        $deleteCount++;
-                    }
+            $deleteCount = 0;
+            foreach ($keys as $key) {
+                if ($this->delete($key) !== false) {
+                    $deleteCount++;
                 }
-                return $deleteCount;
-            } else {
-                throw new \RPI\Framework\Exceptions\Exception(
-                    "Memcached server not found '".$this->host.":".$this->port."'"
-                );
             }
+            return $deleteCount;
+        } else {
+            throw new \RPI\Framework\Exceptions\Exception(
+                "Memcached server not found '".$this->host.":".$this->port."'"
+            );
         }
-        
-        return false;
     }
 
     public function getItemModifiedTime($key)
     {
-        if ($this->isAvailable() === true) {
-            $data = $this->getMemcached()->get($key);
-            if ($data === false) {
-                return false;
-            }
-            
-            if (isset($data["modified"])) {
-                return (double)$data["modified"];
-            }
+        $data = $this->getMemcached()->get($key);
+        if ($data === false) {
+            return false;
+        }
+
+        if (isset($data["modified"])) {
+            return (double)$data["modified"];
         }
         
         return false;

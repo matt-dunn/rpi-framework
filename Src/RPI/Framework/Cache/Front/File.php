@@ -158,11 +158,6 @@ class File implements \RPI\Framework\Cache\IFront
         return false;
     }
 
-    public function isAvailable()
-    {
-        return true;
-    }
-
     public function validateCacheItem($key, $timestamp = null, $group = null)
     {
         $cacheFile = self::getFileCachePath().md5($key);

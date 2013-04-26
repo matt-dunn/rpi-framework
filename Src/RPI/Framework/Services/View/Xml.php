@@ -351,12 +351,10 @@ class Xml implements IView
                     throw $ex;
                 }
 
-                if ($this->store->isAvailable()) {
-                    $this->logger->notice(
-                        __CLASS__."::parseViewConfig - View data read from:\n".
-                        (is_array($fileDeps) ? implode("\n", $fileDeps) : $fileDeps)
-                    );
-                }
+                $this->logger->notice(
+                    __CLASS__."::parseViewConfig - View data read from:\n".
+                    (is_array($fileDeps) ? implode("\n", $fileDeps) : $fileDeps)
+                );
             } catch (\Exception $ex) {
                 throw $ex;
             }

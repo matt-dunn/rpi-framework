@@ -56,11 +56,6 @@ class Mock implements \RPI\Framework\Cache\IFront
         return true;
     }
 
-    public function isAvailable()
-    {
-        return true;
-    }
-
     public function validateCacheItem($key, $timestamp = null, $group = null)
     {
         return false;

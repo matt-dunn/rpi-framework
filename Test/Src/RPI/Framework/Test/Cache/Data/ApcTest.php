@@ -33,17 +33,6 @@ class ApcTest extends \RPI\Test\Harness\Base
     }
 
     /**
-     * @todo Implement testIsAvailable().
-     */
-    public function testIsAvailable()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
      * @todo Implement testFetch().
      */
     public function testFetch()

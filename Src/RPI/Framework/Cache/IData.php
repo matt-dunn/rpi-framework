@@ -5,13 +5,6 @@ namespace RPI\Framework\Cache;
 interface IData
 {
     /**
-     * Check to see if cache is available
-     * 
-     * @return boolean True if cache is available.
-     */
-    public function isAvailable();
-
-    /**
      * Fetch an item from the cache
      * 
      * @param  string  $key                 Unique key to identify a cache item
