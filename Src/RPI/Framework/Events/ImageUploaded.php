@@ -5,6 +5,7 @@ namespace RPI\Framework\Events;
 class ImageUploaded implements \RPI\Framework\Event\IClientEvent
 {
     private $parameters = null;
+    private $returnValue = null;
     
     public function __construct(array $parameters = null)
     {
@@ -19,5 +20,15 @@ class ImageUploaded implements \RPI\Framework\Event\IClientEvent
     public function getType()
     {
         return "imageuploaded.RPI";
+    }
+
+    public function getReturnValue()
+    {
+        return $this->returnValue;
+    }
+
+    public function setReturnValue($value)
+    {
+        $this->returnValue = $value;
     }
 }

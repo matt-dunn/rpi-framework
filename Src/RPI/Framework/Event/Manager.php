@@ -50,6 +50,7 @@ class Manager
             $eventSource = new \RPI\Framework\Event(
                 $event->getType(),
                 $context,
+                $event,
                 microtime(true)
             );
             

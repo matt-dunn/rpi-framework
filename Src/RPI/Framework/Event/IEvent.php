@@ -15,4 +15,8 @@ interface IEvent
      * @return array
      */
     public function getParameters();
+    
+    public function setReturnValue($value);
+    
+    public function getReturnValue();
 }
