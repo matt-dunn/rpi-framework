@@ -90,11 +90,19 @@ RPI.validation = new function() {
 		
                     this.validating = true;
                 
+                    var oFormItem = jQuery(formItem);
+                    setTimeout(
+                        function() {
+                            oFormItem.parent(".c:first").addClass("processing");
+                        },
+                        1000
+                    );
                     var component = jQuery(form).parents(".component:first");
                     RPI.webService.call("/ws/form/", "validateCustom", {"id": component.data("id"), "bind": formItem.name, "value": _getFormElementValue(formItem), "formValues": formValues}, 
                         function(data, response, sourceData) {
                             validator.validating = false;
-                            jQuery(formItem).unbind("keypress")
+                            oFormItem.unbind("keypress");
+                            oFormItem.parent(".c:first").removeClass("processing");
                             
                             if(data.hasError == true) {
                                 this.hasError = true;
@@ -104,7 +112,8 @@ RPI.validation = new function() {
                             }
                         },
                         function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
-                            jQuery(formItem).unbind("keypress")
+                            oFormItem.unbind("keypress")
+                            oFormItem.parent(".c:first").removeClass("processing");
                             validator.validating = false;
                         }
                     );

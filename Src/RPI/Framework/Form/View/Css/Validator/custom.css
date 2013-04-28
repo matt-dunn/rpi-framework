@@ -1,0 +1,20 @@
+form fieldset span.processing {
+    display: block;
+    position: relative;
+}
+
+form fieldset span.processing input.t,
+form fieldset span.processing input.r,
+form fieldset select {
+    color:#ccc;
+}
+
+form fieldset span.processing:after {
+    background:url(i/Controller/Loader/loading.gif) no-repeat 0 0;
+    content:"";
+    position:absolute;
+    top:5px;
+    right:0;
+    height:20px;
+    width:20px;
+}
