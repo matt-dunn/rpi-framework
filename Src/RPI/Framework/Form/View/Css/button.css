@@ -10,6 +10,7 @@ form button.b {
 	letter-spacing:0.03em;
 	float:right;
     cursor:pointer;
+    border-radius: 6px;
 }
 
 form a.b-cancel {

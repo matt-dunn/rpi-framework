@@ -91,7 +91,7 @@ RPI.validation = new function() {
                     this.validating = true;
                 
                     var oFormItem = jQuery(formItem);
-                    setTimeout(
+                    var hProcessing = setTimeout(
                         function() {
                             oFormItem.parent(".c:first").addClass("processing");
                         },
@@ -102,6 +102,7 @@ RPI.validation = new function() {
                         function(data, response, sourceData) {
                             validator.validating = false;
                             oFormItem.unbind("keypress");
+                            clearInterval(hProcessing);
                             oFormItem.parent(".c:first").removeClass("processing");
                             
                             if(data.hasError == true) {
@@ -113,6 +114,7 @@ RPI.validation = new function() {
                         },
                         function(response, textStatus, errorThrown, isAuthenticationException, sourceData) {
                             oFormItem.unbind("keypress")
+                            clearInterval(hProcessing);
                             oFormItem.parent(".c:first").removeClass("processing");
                             validator.validating = false;
                         }

@@ -7,10 +7,11 @@ form fieldset span.processing input.t,
 form fieldset span.processing input.r,
 form fieldset select {
     color:#ccc;
+    background-color:#fff !important;
 }
 
 form fieldset span.processing:after {
-    background:url(i/Controller/Loader/loading.gif) no-repeat 0 0;
+    background:url(i/Form/processing.gif) no-repeat 0 0;
     content:"";
     position:absolute;
     top:5px;
