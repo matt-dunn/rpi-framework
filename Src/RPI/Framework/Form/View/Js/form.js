@@ -43,7 +43,11 @@ RPI.form = (function() {
         );
 	}
 
-	init();
+    jQuery(document).ready(
+        function() {
+        	init();
+        }
+    );
 
 	return {
 	};
