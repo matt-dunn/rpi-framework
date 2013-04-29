@@ -29,7 +29,8 @@
         "ext-xsl": "*",
         "psr/log": "~1.0",
         "rpi/schemas": "dev-master",
-        "rpi/jquery": "1.9.*"
+        "rpi/jquery": "1.9.*",
+        "rpi/foundation": "dev-master"
     },
     "require-dev": {
         "firephp/firephp-core": "dev-master",
