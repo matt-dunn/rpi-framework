@@ -10,7 +10,7 @@ class File extends \RPI\Framework\Form\FormItem
     public function __construct($id, $displayText, array $args = null, \RPI\Framework\Form\Button $defaultButton = null)
     {
         parent::__construct($id, $displayText, $args, $defaultButton);
-        $this->maxSize = \RPI\Framework\Helpers\Utils::getNamedValue($args, "maxSize", 10240);
+        $this->maxSize = \RPI\Foundation\Helpers\Utils::getNamedValue($args, "maxSize", 10240);
     }
 
     public function init()
@@ -27,7 +27,7 @@ class File extends \RPI\Framework\Form\FormItem
                     $file = $_FILES[$this->id];
 
                     if (isset($this->allowedMimeTypes)) {
-                        $mimeType = explode(";", \RPI\Framework\Helpers\FileUtils::getMimeType($file["tmp_name"]));
+                        $mimeType = explode(";", \RPI\Foundation\Helpers\FileUtils::getMimeType($file["tmp_name"]));
                         if (array_search($mimeType[0], $this->allowedMimeTypes) === false) {
                             $this->setMessage(
                                 \RPI\Framework\Facade::localisation()->t("rpi.framework.forms.fileMimeType")

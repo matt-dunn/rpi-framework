@@ -60,7 +60,7 @@ class Route
         $secure = false,
         $requiresAuthentication = false
     ) {
-        \RPI\Framework\Helpers\Utils::validateOption(
+        \RPI\Foundation\Helpers\Utils::validateOption(
             strtolower($method),
             array("get", "post", "delete", "put", "head")
         );

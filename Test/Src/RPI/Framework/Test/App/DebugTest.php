@@ -30,7 +30,7 @@ class DebugTest extends \RPI\Test\Harness\Base
             $this->logger,
             dirname(__FILE__)."/Conf/debug.test.config",
             null,
-            new \RPI\Framework\Cache\Data\Mock()
+            new \RPI\Foundation\Cache\Data\Mock()
         );
         
         $this->object = new \RPI\Framework\App\Debug(

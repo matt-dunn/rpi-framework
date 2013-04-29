@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\Model;
 
-class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model\IUser
+class User extends \RPI\Foundation\Helpers\Object implements \RPI\Framework\Model\IUser
 {
     /**
      * @var \RPI\Framework\Model\UUID
@@ -154,7 +154,7 @@ class User extends \RPI\Framework\Helpers\Object implements \RPI\Framework\Model
         $role = trim(strtolower($role));
         
         if ($role == \RPI\Framework\Model\IUser::ROOT) {
-            throw new \RPI\Framework\Exceptions\InvalidArgument($role, null, "User '$role' cannot be added to a user");
+            throw new \RPI\Foundation\Exceptions\InvalidArgument($role, null, "User '$role' cannot be added to a user");
         }
         
         if (!in_array($role, $this->roles)) {

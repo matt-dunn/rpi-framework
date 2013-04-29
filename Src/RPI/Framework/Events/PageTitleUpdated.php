@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\Events;
 
-class PageTitleUpdated implements \RPI\Framework\Event\IClientEvent
+class PageTitleUpdated implements \RPI\Foundation\Event\IClientEvent
 {
     private $parameters = null;
     private $returnValue = null;

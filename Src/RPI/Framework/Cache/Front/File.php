@@ -24,10 +24,10 @@ class File implements \RPI\Framework\Cache\IFront
         
         if (!file_exists($cachePath)) {
             if (!is_writable(dirname($cachePath))) {
-                throw new \RPI\Framework\Exceptions\RuntimeException(
+                throw new \RPI\Foundation\Exceptions\RuntimeException(
                     "Unable to create cache directory '$cachePath'",
                     null,
-                    new \RPI\Framework\Exceptions\PermissionDeniedFileWrite(
+                    new \RPI\Foundation\Exceptions\PermissionDeniedFileWrite(
                         dirname($cachePath)
                     )
                 );
@@ -37,10 +37,10 @@ class File implements \RPI\Framework\Cache\IFront
         }
         
         if (!is_writable($cachePath)) {
-            throw new \RPI\Framework\Exceptions\PermissionDeniedFileWrite($cachePath);
+            throw new \RPI\Foundation\Exceptions\PermissionDeniedFileWrite($cachePath);
         }
         if (!is_readable($cachePath)) {
-            throw new \RPI\Framework\Exceptions\PermissionDeniedFileRead($cachePath);
+            throw new \RPI\Foundation\Exceptions\PermissionDeniedFileRead($cachePath);
         }
         
         $this->fileCachePath = $cachePath;
@@ -62,7 +62,7 @@ class File implements \RPI\Framework\Cache\IFront
         
         if (file_exists($cacheFile)) {
             if (!is_readable($cacheFile)) {
-                throw new \RPI\Framework\Exceptions\PermissionDeniedFileRead($cacheFile);
+                throw new \RPI\Foundation\Exceptions\PermissionDeniedFileRead($cacheFile);
             }
 
             if (isset($timestamp) && $timestamp >= filemtime($cacheFile)) {
@@ -103,7 +103,7 @@ class File implements \RPI\Framework\Cache\IFront
         }
         
         if (!is_writable(dirname($cacheFile))) {
-            throw new \RPI\Framework\Exceptions\PermissionDeniedFileWrite($cacheFile);
+            throw new \RPI\Foundation\Exceptions\PermissionDeniedFileWrite($cacheFile);
         }
 
         if (file_put_contents($cacheFile, $value, LOCK_EX) !== false) {
@@ -111,7 +111,7 @@ class File implements \RPI\Framework\Cache\IFront
             // clearstatcache(true, $cacheFile);
             return realpath($cacheFile);
         } else {
-            throw new \RPI\Framework\Cache\Exceptions\CacheStore($key);
+            throw new \RPI\Foundation\Cache\Exceptions\CacheStore($key);
         }
     }
 
@@ -127,11 +127,11 @@ class File implements \RPI\Framework\Cache\IFront
         }
         
         if (!is_writable($cachePath)) {
-            throw new \RPI\Framework\Exceptions\PermissionDeniedFileWrite($cachePath);
+            throw new \RPI\Foundation\Exceptions\PermissionDeniedFileWrite($cachePath);
         }
         
         // TOO: review locking
-        \RPI\Framework\Helpers\FileUtils::deleteFiles($cachePath, $filePattern);
+        \RPI\Foundation\Helpers\FileUtils::deleteFiles($cachePath, $filePattern);
     }
 
     /**
@@ -147,7 +147,7 @@ class File implements \RPI\Framework\Cache\IFront
         // TOO: review locking
         if (file_exists($cacheFile)) {
             if (!is_writable(dirname($cacheFile))) {
-                throw new \RPI\Framework\Exceptions\PermissionDeniedFileWrite($cacheFile);
+                throw new \RPI\Foundation\Exceptions\PermissionDeniedFileWrite($cacheFile);
             }
 
             unlink($cacheFile);

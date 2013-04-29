@@ -39,7 +39,7 @@ class Security implements \RPI\Framework\App\DomainObjects\ISecurity
         $this->logger = $logger;
         
         if (!isset($this->session->token)) {
-            $this->session->token = \RPI\Framework\Helpers\Crypt::generateHash(microtime(true));
+            $this->session->token = \RPI\Foundation\Helpers\Crypt::generateHash(microtime(true));
         }
     }
     

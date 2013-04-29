@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\App\Security\Acl\Provider;
 
-final class Config extends \RPI\Framework\App\Config\Base implements \RPI\Framework\App\Security\Acl\Model\IProvider
+final class Config extends \RPI\Foundation\App\Config\Base implements \RPI\Framework\App\Security\Acl\Model\IProvider
 {
     private $aceMap = array();
     

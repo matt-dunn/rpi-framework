@@ -17,11 +17,11 @@ namespace RPI\Framework;
  * @property-read \RPI\Framework\Model\UUID $id Controller ID
  * @property-read string $type Controller type
  * @property-read \RPI\Framework\App $app
- * @property-read \RPI\Framework\App\DomainObjects\IConfig $config
+ * @property-read \RPI\Foundation\App\DomainObjects\IConfig $config
  * @property-read \RPI\Framework\Controller $parent Parent controller
  * @property-read \RPI\Framework\Controller $rootController Top level controller
  */
-abstract class Controller extends \RPI\Framework\Helpers\Object
+abstract class Controller extends \RPI\Foundation\Helpers\Object
 {
     /**
      *
@@ -197,7 +197,7 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
  
         $this->options = $this->getControllerOptions($this->parseOptions($options));
         if (!$this->options instanceof \RPI\Framework\Controller\Options) {
-            throw new \RPI\Framework\Exceptions\RuntimeException(
+            throw new \RPI\Foundation\Exceptions\RuntimeException(
                 "Invalid type returned from Component::getOptions. ".
                 "Must be of type '\RPI\Framework\Controller\Options'."
             );
@@ -309,7 +309,7 @@ abstract class Controller extends \RPI\Framework\Helpers\Object
     
     /**
      * 
-     * @return \RPI\Framework\App\DomainObjects\IConfig
+     * @return \RPI\Foundation\App\DomainObjects\IConfig
      */
     public function getConfig()
     {

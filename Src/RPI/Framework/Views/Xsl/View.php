@@ -31,10 +31,10 @@ class View implements \RPI\Framework\Views\IView
 
         $this->xslOptions["DEBUG"] = $this->debug;
 
-        $xsltFilename = \RPI\Framework\Helpers\Utils::buildFullPath($xsltFilename);
+        $xsltFilename = \RPI\Foundation\Helpers\Utils::buildFullPath($xsltFilename);
 
         if (!file_exists($xsltFilename)) {
-            throw new \RPI\Framework\Exceptions\RuntimeException("XSL file '$xsltFilename' not found");
+            throw new \RPI\Foundation\Exceptions\RuntimeException("XSL file '$xsltFilename' not found");
         }
         $this->xsltFilename = realpath($xsltFilename);
     }
@@ -61,7 +61,7 @@ class View implements \RPI\Framework\Views\IView
             $defaultTagName = "item";
         }
 
-        $model = \RPI\Framework\Helpers\Dom::serializeObject(
+        $model = \RPI\Foundation\Helpers\Dom::serializeObject(
             $controller,
             array(
                 "rootName" => $rootName,
@@ -135,7 +135,7 @@ class View implements \RPI\Framework\Views\IView
             
             libxml_use_internal_errors($currentState);
             
-            throw new \RPI\Framework\Exceptions\RuntimeException($message);
+            throw new \RPI\Foundation\Exceptions\RuntimeException($message);
         }
     }
 

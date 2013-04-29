@@ -15,7 +15,7 @@ class State
         $this->form = $form;
         $this->key = $form->getApp()->getConfig()->getValue("config/keys/formState");
         if (!isset($this->key)) {
-            throw new \RPI\Framework\Exceptions\RuntimeException(
+            throw new \RPI\Foundation\Exceptions\RuntimeException(
                 "Encryption key 'config/keys/formState' not configured."
             );
         }
@@ -27,7 +27,7 @@ class State
             try {
                 $stateString = base64_decode($state);
                 if ($stateString !== false) {
-                    $formValues = explode("&", \RPI\Framework\Helpers\Crypt::decrypt($this->key, $stateString));
+                    $formValues = explode("&", \RPI\Foundation\Helpers\Crypt::decrypt($this->key, $stateString));
 
                     foreach ($formValues as $formValue) {
                         $valueParts = explode("=", $formValue);
@@ -92,7 +92,7 @@ class State
                 $formValue = substr($formValue, 0, strlen($formValue) - 1);
             }
 
-            $formValue = base64_encode(\RPI\Framework\Helpers\Crypt::encrypt($this->key, $formValue));
+            $formValue = base64_encode(\RPI\Foundation\Helpers\Crypt::encrypt($this->key, $formValue));
         }
 
         return $formValue;

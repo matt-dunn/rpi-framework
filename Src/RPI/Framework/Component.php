@@ -256,12 +256,12 @@ EOT;
             } else {
                 $controller = $this->getRootController();
                 if (!isset($controller) || !$controller instanceof \RPI\Framework\Controller\HTML\Front) {
-                    $rendition = \RPI\Framework\Helpers\Utils::processPHP($this->renderView(), true);
+                    $rendition = \RPI\Foundation\Helpers\Utils::processPHP($this->renderView(), true);
                 } else {
                     $rendition = <<<EOT
 <?php
 // Component: {$this->type}
-\RPI\Framework\Helpers\Utils::processPHP(\$GLOBALS["RPI_COMPONENTS"]["{$this->id}"]->renderView());
+\RPI\Foundation\Helpers\Utils::processPHP(\$GLOBALS["RPI_COMPONENTS"]["{$this->id}"]->renderView());
 ?>
 EOT;
                 }
@@ -269,7 +269,7 @@ EOT;
 
             return $rendition;
         } else {
-            return \RPI\Framework\Helpers\Utils::processPHP($this->renderView(), true);
+            return \RPI\Foundation\Helpers\Utils::processPHP($this->renderView(), true);
         }
     }
     
@@ -339,7 +339,7 @@ EOT;
             }
 
             if ($cacheFile === false) {
-                throw new \RPI\Framework\Exceptions\RuntimeException("Unable to store rendition in cache");
+                throw new \RPI\Foundation\Exceptions\RuntimeException("Unable to store rendition in cache");
             }
         }
         

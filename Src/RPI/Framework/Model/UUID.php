@@ -5,7 +5,7 @@ namespace RPI\Framework\Model;
 /**
  * @property string $uuid
  */
-class UUID extends \RPI\Framework\Helpers\Object
+class UUID extends \RPI\Foundation\Helpers\Object
 {
     /**
      *
@@ -22,7 +22,7 @@ class UUID extends \RPI\Framework\Helpers\Object
         if (isset($uuid)) {
             $this->setUuid($uuid);
         } else {
-            $this->setUuid(\RPI\Framework\Helpers\Uuid::v4());
+            $this->setUuid(\RPI\Foundation\Helpers\Uuid::v4());
         }
     }
     
@@ -41,8 +41,8 @@ class UUID extends \RPI\Framework\Helpers\Object
      */
     protected function setUuid($uuid)
     {
-        if (!is_string($uuid) || !\RPI\Framework\Helpers\Uuid::isValid($uuid)) {
-            throw new \RPI\Framework\Exceptions\InvalidArgument($uuid, null, "UUID must be a valid v4 UUID string");
+        if (!is_string($uuid) || !\RPI\Foundation\Helpers\Uuid::isValid($uuid)) {
+            throw new \RPI\Foundation\Exceptions\InvalidArgument($uuid, null, "UUID must be a valid v4 UUID string");
         }
         
         $this->uuid = (string)$uuid;

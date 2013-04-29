@@ -33,7 +33,7 @@
 <!-- If the component cannot be rendered from cache, use the pre-rendered component -->
 <xsl:template match="components/item/component">
     <xsl:text disable-output-escaping="yes">&lt;</xsl:text>?php
-    \RPI\Framework\Helpers\Utils::processPHP($GLOBALS["RPI_COMPONENTS"]["<xsl:value-of select="id"/>"]-<xsl:text disable-output-escaping="yes">&gt;</xsl:text>renderView());
+    \RPI\Foundation\Helpers\Utils::processPHP($GLOBALS["RPI_COMPONENTS"]["<xsl:value-of select="id"/>"]-<xsl:text disable-output-escaping="yes">&gt;</xsl:text>renderView());
     ?<xsl:text disable-output-escaping="yes">&gt;</xsl:text>
 </xsl:template>
 
@@ -41,7 +41,7 @@
     <xsl:text disable-output-escaping="yes">&lt;</xsl:text>?php
     $component = $GLOBALS["RPI_APP"]->getView()->createController(new \RPI\Framework\Model\UUID("<xsl:value-of select="id"/>"));
     $component-<xsl:text disable-output-escaping="yes">&gt;</xsl:text>process();
-    \RPI\Framework\Helpers\Utils::processPHP($component-<xsl:text disable-output-escaping="yes">&gt;</xsl:text>renderView());
+    \RPI\Foundation\Helpers\Utils::processPHP($component-<xsl:text disable-output-escaping="yes">&gt;</xsl:text>renderView());
     ?<xsl:text disable-output-escaping="yes">&gt;</xsl:text>
 </xsl:template>
 

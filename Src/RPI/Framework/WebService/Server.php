@@ -92,13 +92,13 @@ abstract class Server extends \RPI\Framework\Controller
             $_SERVER["REDIRECT_URL"] = parse_url($documentLocation, PHP_URL_PATH);
         }
         
-        \RPI\Framework\Event\Manager::addEventListener(
-            "RPI\Framework\Event\IClientEvent",
+        \RPI\Foundation\Event\Manager::addEventListener(
+            "RPI\Foundation\Event\IClientEvent",
             array($this, "clientEvent")
         );
     }
     
-    public function clientEvent(\RPI\Framework\Event $event, $params)
+    public function clientEvent(\RPI\Foundation\Event\IEvent $event, $params)
     {
         unset($event->target);
         
@@ -172,7 +172,7 @@ abstract class Server extends \RPI\Framework\Controller
                     );
                     
                     $this->app->getResponse()->setStatusCode($ex->httpCode);
-                } elseif ($ex instanceof \RPI\Framework\Exceptions\InvalidArgument) {
+                } elseif ($ex instanceof \RPI\Foundation\Exceptions\InvalidArgument) {
                     $response->error = new \RPI\Framework\WebService\Error(
                         -32602,
                         get_class($ex),
@@ -321,7 +321,7 @@ abstract class Server extends \RPI\Framework\Controller
      */
     private function getRequest($content, $mimetype)
     {
-        $className = "\\RPI\Framework\\WebService\\Handler\\".\RPI\Framework\Helpers\Utils::toCamelCase(
+        $className = "\\RPI\Framework\\WebService\\Handler\\".\RPI\Foundation\Helpers\Utils::toCamelCase(
             strtolower(str_replace(array("/", "-"), "_", $mimetype))
         );
 

@@ -2,6 +2,6 @@
 
 namespace RPI\Framework\Exceptions;
 
-class Security extends RuntimeException implements \RPI\Framework\Exceptions\IException
+class Security extends \RPI\Foundation\Exceptions\RuntimeException implements \RPI\Foundation\Exceptions\IException
 {
 }

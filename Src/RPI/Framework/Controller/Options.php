@@ -198,7 +198,7 @@ class Options
             if (isset($optionDetails["default"])) {
                 $default = $optionDetails["default"];
             }
-            return \RPI\Framework\Helpers\Utils::getNamedValue($this->options, $name, $default);
+            return \RPI\Foundation\Helpers\Utils::getNamedValue($this->options, $name, $default);
         } else {
             throw new \InvalidArgumentException(
                 "Invalid property '$name'. Must be one of [".

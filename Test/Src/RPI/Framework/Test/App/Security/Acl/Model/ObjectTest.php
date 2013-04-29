@@ -27,7 +27,7 @@ class ObjectTest extends \RPI\Test\Harness\Base
                 $this->logger,
                 "~/Conf/test.config",
                 null,
-                new \RPI\Framework\Cache\Data\Mock(),
+                new \RPI\Foundation\Cache\Data\Mock(),
                 null,
                 new \RPI\Framework\App\Session\Mock()
             ),
@@ -40,7 +40,7 @@ class ObjectTest extends \RPI\Test\Harness\Base
                 $this->logger,
                 new \RPI\Framework\App\Security\Acl\Provider\Config(
                     $this->logger,
-                    new \RPI\Framework\Cache\Data\Mock(),
+                    new \RPI\Foundation\Cache\Data\Mock(),
                     "~/Conf/Security.xml"
                 )
             )

@@ -24,8 +24,8 @@ class Router implements \RPI\Framework\App\DomainObjects\IRouter
         }
 
         if ($traceRoute === true) {
-            $this->logger = new \RPI\Framework\App\Logger(
-                new \RPI\Framework\App\Logger\Handler\Syslog(__CLASS__, LOG_LOCAL0)
+            $this->logger = new \RPI\Foundation\App\Logger(
+                new \RPI\Foundation\App\Logger\Handler\Syslog(__CLASS__, LOG_LOCAL0)
             );
         }
     }
@@ -65,7 +65,7 @@ class Router implements \RPI\Framework\App\DomainObjects\IRouter
             }
             
             if (isset($details["via"])) {
-                $methodParts = \RPI\Framework\Helpers\Utils::removeEmptyItems(
+                $methodParts = \RPI\Foundation\Helpers\Utils::removeEmptyItems(
                     array_map(
                         function ($s) {
                             return strtolower(trim($s));
@@ -75,7 +75,7 @@ class Router implements \RPI\Framework\App\DomainObjects\IRouter
                 );
             }
 
-            \RPI\Framework\Helpers\Utils::validateOption(
+            \RPI\Foundation\Helpers\Utils::validateOption(
                 $methodParts,
                 array("all", "get", "post", "delete", "put", "head")
             );
@@ -255,7 +255,7 @@ class Router implements \RPI\Framework\App\DomainObjects\IRouter
     public function routeStatusCode($statusCode, $method)
     {
         $method = strtolower($method);
-        \RPI\Framework\Helpers\Utils::validateOption(
+        \RPI\Foundation\Helpers\Utils::validateOption(
             $method,
             array("get", "post", "delete", "put", "head")
         );
@@ -301,7 +301,7 @@ class Router implements \RPI\Framework\App\DomainObjects\IRouter
         }
 
         $method = strtolower($method);
-        \RPI\Framework\Helpers\Utils::validateOption(
+        \RPI\Foundation\Helpers\Utils::validateOption(
             $method,
             array("get", "post", "delete", "put", "head")
         );

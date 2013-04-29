@@ -17,7 +17,7 @@ class Select extends \RPI\Framework\Form\FormItem
         parent::__construct($id, $displayText, $args, $defaultButton);
 
         if (is_array($args)) {
-            $this->size = \RPI\Framework\Helpers\Utils::getNamedValue($args, "size", null);
+            $this->size = \RPI\Foundation\Helpers\Utils::getNamedValue($args, "size", null);
         }
 
         $this->options = $options;

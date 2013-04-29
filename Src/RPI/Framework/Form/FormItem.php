@@ -35,16 +35,16 @@ abstract class FormItem
     public function __construct($id, $displayText, array $args = null, Button $defaultButton = null)
     {
         //if (strpos($id, "_") !== false) {
-        //    throw new \RPI\Framework\Exceptions\RuntimeException
+        //    throw new \RPI\Foundation\Exceptions\RuntimeException
         //    ("Formitem ID '$id' cannot contain '_'. This is a reserved character.");
         //}
         $this->id = $id;
         $this->displayText = $displayText;
         $this->defaultButton = $defaultButton;
-        $this->normalizeString = \RPI\Framework\Helpers\Utils::getNamedValue($args, "normalizeString", true);
-        $this->disabled = \RPI\Framework\Helpers\Utils::getNamedValue($args, "disabled", false);
-        $this->className = \RPI\Framework\Helpers\Utils::getNamedValue($args, "className");
-        $this->elementClassName = \RPI\Framework\Helpers\Utils::getNamedValue($args, "elementClassName");
+        $this->normalizeString = \RPI\Foundation\Helpers\Utils::getNamedValue($args, "normalizeString", true);
+        $this->disabled = \RPI\Foundation\Helpers\Utils::getNamedValue($args, "disabled", false);
+        $this->className = \RPI\Foundation\Helpers\Utils::getNamedValue($args, "className");
+        $this->elementClassName = \RPI\Foundation\Helpers\Utils::getNamedValue($args, "elementClassName");
     }
 
     public function __get($key)
@@ -57,7 +57,7 @@ abstract class FormItem
                         $value = explode("\r\n", $value);
                         $value = join("\n", $value);
                         if ($this->normalizeString) {
-                            $value = \RPI\Framework\Helpers\Utils::normalizeString($value);
+                            $value = \RPI\Foundation\Helpers\Utils::normalizeString($value);
                         }
                     }
 

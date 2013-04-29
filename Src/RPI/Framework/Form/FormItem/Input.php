@@ -17,17 +17,17 @@ class Input extends \RPI\Framework\Form\FormItem
     {
         parent::__construct($id, $displayText, $args, $defaultButton);
 
-        $this->isMultiLine = \RPI\Framework\Helpers\Utils::getNamedValue($args, "isMultiLine", false);
-        $this->multiLineRows = \RPI\Framework\Helpers\Utils::getNamedValue($args, "rows", $this->multiLineRows);
-        $this->multiLineCols = \RPI\Framework\Helpers\Utils::getNamedValue($args, "cols", $this->multiLineCols);
-        $this->maxLength = \RPI\Framework\Helpers\Utils::getNamedValue(
+        $this->isMultiLine = \RPI\Foundation\Helpers\Utils::getNamedValue($args, "isMultiLine", false);
+        $this->multiLineRows = \RPI\Foundation\Helpers\Utils::getNamedValue($args, "rows", $this->multiLineRows);
+        $this->multiLineCols = \RPI\Foundation\Helpers\Utils::getNamedValue($args, "cols", $this->multiLineCols);
+        $this->maxLength = \RPI\Foundation\Helpers\Utils::getNamedValue(
             $args,
             "maxLength",
             ($this->isMultiLine ? $this->maxLengthMulti : $this->maxLength)
         );
-        $this->isPassword = \RPI\Framework\Helpers\Utils::getNamedValue($args, "isPassword", false);
-        $this->isReadOnly = \RPI\Framework\Helpers\Utils::getNamedValue($args, "isReadOnly", false);
-        $this->allowRichContent = \RPI\Framework\Helpers\Utils::getNamedValue($args, "allowRichContent", false);
+        $this->isPassword = \RPI\Foundation\Helpers\Utils::getNamedValue($args, "isPassword", false);
+        $this->isReadOnly = \RPI\Foundation\Helpers\Utils::getNamedValue($args, "isReadOnly", false);
+        $this->allowRichContent = \RPI\Foundation\Helpers\Utils::getNamedValue($args, "allowRichContent", false);
     }
 
     public function __get($key)

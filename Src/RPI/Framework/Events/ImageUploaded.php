@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\Events;
 
-class ImageUploaded implements \RPI\Framework\Event\IClientEvent
+class ImageUploaded implements \RPI\Foundation\Event\IClientEvent
 {
     private $parameters = null;
     private $returnValue = null;

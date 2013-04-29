@@ -11,7 +11,7 @@ class Xml implements IView
 {
     /**
      *
-     * @var \RPI\Framework\Cache\IData 
+     * @var \RPI\Foundation\Cache\IData 
      */
     private $store = null;
     
@@ -59,7 +59,7 @@ class Xml implements IView
     /**
      * 
      * @param \Psr\Log\LoggerInterface $logger
-     * @param \RPI\Framework\Cache\IData $store
+     * @param \RPI\Foundation\Cache\IData $store
      * @param string $configFile
      * @param \RPI\Framework\App $app
      * @param \RPI\Framework\App\DomainObjects\IRouter $router
@@ -68,7 +68,7 @@ class Xml implements IView
      */
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \RPI\Framework\Cache\IData $store,
+        \RPI\Foundation\Cache\IData $store,
         $configFile,
         \RPI\Framework\App $app,
         \RPI\Framework\App\DomainObjects\IRouter $router,
@@ -76,7 +76,7 @@ class Xml implements IView
         \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null
     ) {
         $this->store = $store;
-        $this->file = \RPI\Framework\Helpers\Utils::buildFullPath($configFile);
+        $this->file = \RPI\Foundation\Helpers\Utils::buildFullPath($configFile);
         $this->app = $app;
         $this->authenticationService = $authenticationService;
         $this->acl = $acl;
@@ -126,7 +126,7 @@ class Xml implements IView
             );
             
             if (isset($type) && !$controller instanceof $type) {
-                throw new \RPI\Framework\Exceptions\InvalidType($controller, $type);
+                throw new \RPI\Foundation\Exceptions\InvalidType($controller, $type);
             }
             
             return $controller;
@@ -261,7 +261,7 @@ class Xml implements IView
                     }
                 }
             } else {
-                throw new \RPI\Framework\Exceptions\RuntimeException(
+                throw new \RPI\Foundation\Exceptions\RuntimeException(
                     "'".$controllerData["type"]."' is not a valid type. Must be of type '\RPI\Framework\Component'"
                 );
             }
@@ -284,19 +284,19 @@ class Xml implements IView
             }
         } else {
             try {
-                $seg = \RPI\Framework\Helpers\Locking::lock(__CLASS__);
+                $seg = \RPI\Foundation\Helpers\Locking::lock(__CLASS__);
 
                 $fileDeps = realpath($file);
 
                 try {
                     if (!file_exists($file)) {
-                        throw new \RPI\Framework\Exceptions\RuntimeException("Unable to locate '$file'");
+                        throw new \RPI\Foundation\Exceptions\RuntimeException("Unable to locate '$file'");
                     }
 
                     $domDataViews = new \DOMDocument();
                     $domDataViews->load($file);
 
-                    \RPI\Framework\Helpers\Dom::validateSchema(
+                    \RPI\Foundation\Helpers\Dom::validateSchema(
                         $domDataViews,
                         new \RPI\Schemas\SchemaDocument("Conf/Views.2.0.0.xsd")
                     );
@@ -308,7 +308,7 @@ class Xml implements IView
                         $this->logger->warning("Unable to clear data store");
                     }
 
-                    \RPI\Framework\Event\Manager::fire(
+                    \RPI\Foundation\Event\Manager::fire(
                         new \RPI\Framework\Events\ViewUpdated()
                     );
 
@@ -344,9 +344,9 @@ class Xml implements IView
                     // Reference to config file so that the cache can be invalidated on file modification
                     $this->store->store("PHP_RPI_CONTENT_VIEWS-".$file, null, $file);
 
-                    \RPI\Framework\Helpers\Locking::release($seg);
+                    \RPI\Foundation\Helpers\Locking::release($seg);
                 } catch (\Exception $ex) {
-                    \RPI\Framework\Helpers\Locking::release($seg);
+                    \RPI\Foundation\Helpers\Locking::release($seg);
 
                     throw $ex;
                 }
@@ -481,7 +481,7 @@ class Xml implements IView
 
                     $matchFullPath = "/".$match.($match == "" ? "" : "/");
                     if (isset($routeMap[$matchFullPath])) {
-                        throw new \RPI\Framework\Exceptions\RuntimeException(
+                        throw new \RPI\Foundation\Exceptions\RuntimeException(
                             "Duplicate pattern match '$matchFullPath' found in ".
                             "{$route->ownerDocument->documentURI}".
                             "#{$route->getLineNo()}."
@@ -524,7 +524,7 @@ class Xml implements IView
 
                                 $defaultParams[trim($defaultParamPart[0])] = $defaultParamPart[1];
                             } else {
-                                throw new \RPI\Framework\Exceptions\RuntimeException(
+                                throw new \RPI\Foundation\Exceptions\RuntimeException(
                                     "Invalid syntax '$defaultParamsPart'. Must be '<name>=<value>' in".
                                     "{$route->ownerDocument->documentURI}".
                                     "#{$route->getLineNo()}."
@@ -601,7 +601,7 @@ class Xml implements IView
         $optionElements = $xpath->query("RPI:option", $controllerElement);
         foreach ($optionElements as $option) {
             if ($option->childNodes->length > 0) {
-                $value = \RPI\Framework\Helpers\Dom::deserialize(simplexml_import_dom($option));
+                $value = \RPI\Foundation\Helpers\Dom::deserialize(simplexml_import_dom($option));
             } else {
                 $value = trim($option->getAttribute("value"));
                 if ($value == "null" || $value == "") {
@@ -626,7 +626,7 @@ class Xml implements IView
         $viewRendition = null;
         $viewRenditionElements = $xpath->query("RPI:viewRendition", $controllerElement);
         if ($viewRenditionElements->length > 0) {
-            $viewRendition = \RPI\Framework\Helpers\Dom::deserialize(
+            $viewRendition = \RPI\Foundation\Helpers\Dom::deserialize(
                 simplexml_import_dom($viewRenditionElements->item(0))
             );
         }
@@ -765,7 +765,7 @@ class Xml implements IView
 
                     $d = &$d[$name];
                 } else {
-                    throw new \RPI\Framework\Exceptions\RuntimeException(
+                    throw new \RPI\Foundation\Exceptions\RuntimeException(
                         "Invalid decorator syntax '$matchPart' in ".
                         "{$decorator->ownerDocument->documentURI}".
                         "#{$decorator->getLineNo()}. Must be <name>=<value>"
@@ -797,7 +797,7 @@ class Xml implements IView
         $domDataViews->preserveWhiteSpace = false;
         $domDataViews->load($this->file);
         
-        $components = \RPI\Framework\Helpers\Dom::getElementsByXPath(
+        $components = \RPI\Foundation\Helpers\Dom::getElementsByXPath(
             $domDataViews->documentElement,
             "/config:views//config:component[@id = '$uuid']",
             array(
@@ -808,7 +808,7 @@ class Xml implements IView
         if ($components->length > 0) {
             $component = $components->item(0);
             
-            $optionsModel = \RPI\Framework\Helpers\Dom::getElementsByXPath(
+            $optionsModel = \RPI\Foundation\Helpers\Dom::getElementsByXPath(
                 $component,
                 "./config:option[@name='$optionName']",
                 array(
@@ -819,11 +819,11 @@ class Xml implements IView
                 $optionsModel->item(0)->parentNode->removeChild($optionsModel->item(0));
             }
             
-            $modelXml = dom_import_simplexml(\RPI\Framework\Helpers\Dom::serialize($model));
+            $modelXml = dom_import_simplexml(\RPI\Foundation\Helpers\Dom::serialize($model));
             
             $option = $domDataViews->createElementNS("http://www.rpi.co.uk/presentation/config/views/", "option");
             $option->setAttribute("name", $optionName);
-            $options = \RPI\Framework\Helpers\Dom::getElementsByXPath(
+            $options = \RPI\Foundation\Helpers\Dom::getElementsByXPath(
                 $component,
                 "./*[1]"
             );
@@ -857,7 +857,7 @@ class Xml implements IView
         
         $domDataViews = $this->getUpdatedComponentDomDocument($domainObject, $optionName);
         if ($domDataViews !== false) {
-            $seg = \RPI\Framework\Helpers\Locking::lock(__CLASS__);
+            $seg = \RPI\Foundation\Helpers\Locking::lock(__CLASS__);
             try {
                 $modifiedTime = filemtime($this->file);
                 if ($domDataViews->save($this->file) !== false) {
@@ -876,10 +876,10 @@ class Xml implements IView
                     }
                 }
             } catch (\Exception $ex) {
-                \RPI\Framework\Helpers\Locking::release($seg);
+                \RPI\Foundation\Helpers\Locking::release($seg);
                 throw $ex;
             }
-            \RPI\Framework\Helpers\Locking::release($seg);
+            \RPI\Foundation\Helpers\Locking::release($seg);
             
             return true;
         }
@@ -905,7 +905,7 @@ class Xml implements IView
         
         $domDataViews = $this->getUpdatedComponentDomDocument($domainObject, $optionName);
         if ($domDataViews !== false) {
-            $components = \RPI\Framework\Helpers\Dom::getElementsByXPath(
+            $components = \RPI\Foundation\Helpers\Dom::getElementsByXPath(
                 $domDataViews->documentElement,
                 "/config:views//config:component[@id = '$uuid']",
                 array(
@@ -917,7 +917,7 @@ class Xml implements IView
                 $component = $components->item(0);
                 $component->parentNode->removeChild($component);
 
-                $seg = \RPI\Framework\Helpers\Locking::lock(__CLASS__);
+                $seg = \RPI\Foundation\Helpers\Locking::lock(__CLASS__);
                 try {
                     $modifiedTime = filemtime($this->file);
                     if ($domDataViews->save($this->file) !== false) {
@@ -950,11 +950,11 @@ class Xml implements IView
                         }
                     }
                 } catch (\Exception $ex) {
-                    \RPI\Framework\Helpers\Locking::release($seg);
+                    \RPI\Foundation\Helpers\Locking::release($seg);
                     throw $ex;
                 }
                 
-                \RPI\Framework\Helpers\Locking::release($seg);
+                \RPI\Foundation\Helpers\Locking::release($seg);
             }
             
             return true;

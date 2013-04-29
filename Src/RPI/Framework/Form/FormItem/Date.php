@@ -11,7 +11,7 @@ class Date extends \RPI\Framework\Form\FormItem\Input
     {
         parent::__construct($id, $displayText, $args, $defaultButton);
 
-        $this->maxLength = \RPI\Framework\Helpers\Utils::getNamedValue($args, "maxLength", 10);
+        $this->maxLength = \RPI\Foundation\Helpers\Utils::getNamedValue($args, "maxLength", 10);
         $this->isMultiLine = false;
 
         // TODO: remove hard-coded date format

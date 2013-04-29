@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\App\Security\Acl\Model;
 
-abstract class Object extends \RPI\Framework\Helpers\Object implements IDomainObject
+abstract class Object extends \RPI\Foundation\Helpers\Object implements IDomainObject
 {
     /**
      *
@@ -151,7 +151,7 @@ abstract class Object extends \RPI\Framework\Helpers\Object implements IDomainOb
                     ) === true) {
                     $value = $this->$methodName();
                     if ($value instanceof \DOMDocument) {
-                        $value = new \RPI\Framework\Helpers\Dom\SerializableDomDocumentWrapper($value);
+                        $value = new \RPI\Foundation\Helpers\Dom\SerializableDomDocumentWrapper($value);
                     }
                     $properties[$name] = $value;
                 }

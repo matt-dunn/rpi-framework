@@ -73,21 +73,21 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         $this->authenticatedUserSessionName = __CLASS__."-authenticatedUser";
 
         $this->authenticationExpiryOffset =
-            \RPI\Framework\Helpers\Utils::getNamedValue(
+            \RPI\Foundation\Helpers\Utils::getNamedValue(
                 $options,
                 "authenticationExpiryOffset",
                 $this->authenticationExpiryOffset
             );
         
         $this->forceSecureAuthenticationToken =
-            \RPI\Framework\Helpers\Utils::getNamedValue(
+            \RPI\Foundation\Helpers\Utils::getNamedValue(
                 $options,
                 "forceSecureAuthenticationToken",
                 $this->forceSecureAuthenticationToken
             );
 
         $this->cookieDetectionEnabled =
-            \RPI\Framework\Helpers\Utils::getNamedValue(
+            \RPI\Foundation\Helpers\Utils::getNamedValue(
                 $options,
                 "cookieDetectionEnabled",
                 true
@@ -146,7 +146,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         if (isset($this->authenticatedUser)) {
             return $this->authenticatedUser;
         } elseif ($this->app->getRequest()->getCookies()->get("u") !== null) {
-            $token = \RPI\Framework\Helpers\Crypt::decrypt(
+            $token = \RPI\Foundation\Helpers\Crypt::decrypt(
                 $this->app->getConfig()->getValue("config/keys/userTokenSession"),
                 $this->app->getRequest()->getCookies()->getValue("u")
             );
@@ -225,7 +225,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         $user->isAnonymous = true;
         
         if ($this->app->getRequest()->getCookies()->get("a") != null) {
-            $token = \RPI\Framework\Helpers\Crypt::decrypt(
+            $token = \RPI\Foundation\Helpers\Crypt::decrypt(
                 $this->app->getConfig()->getValue("config/keys/authenticationTokenSession"),
                 $this->app->getRequest()->getCookies()->getValue("a")
             );
@@ -242,7 +242,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         }
         
         if ($this->app->getRequest()->getCookies()->get("u") !== null) {
-            $token = \RPI\Framework\Helpers\Crypt::decrypt(
+            $token = \RPI\Foundation\Helpers\Crypt::decrypt(
                 $this->app->getConfig()->getValue("config/keys/userTokenSession"),
                 $this->app->getRequest()->getCookies()->getValue("u")
             );
@@ -271,7 +271,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         $this->authenticatedUser = $this->app->getSession()->$authenticatedUserSessionName = $user;
 
         if ($userToken != null) {
-            $encryptedUserToken = \RPI\Framework\Helpers\Crypt::encrypt(
+            $encryptedUserToken = \RPI\Foundation\Helpers\Crypt::encrypt(
                 $this->app->getConfig()->getValue("config/keys/userTokenSession"),
                 $userToken
             );
@@ -290,7 +290,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         }
 
         if ($authenticationToken != null) {
-            $encryptedAuthenticationToken = \RPI\Framework\Helpers\Crypt::encrypt(
+            $encryptedAuthenticationToken = \RPI\Foundation\Helpers\Crypt::encrypt(
                 $this->app->getConfig()->getValue("config/keys/authenticationTokenSession"),
                 $authenticationToken
             );

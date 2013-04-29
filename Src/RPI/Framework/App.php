@@ -11,7 +11,7 @@ namespace RPI\Framework;
 /**
  * App kernel
  */
-class App extends \RPI\Framework\Helpers\Object implements \Psr\Log\LoggerAwareInterface
+class App extends \RPI\Foundation\Helpers\Object implements \Psr\Log\LoggerAwareInterface
 {
     /**
      * Default character coding set to 'utf-8'
@@ -27,7 +27,7 @@ class App extends \RPI\Framework\Helpers\Object implements \Psr\Log\LoggerAwareI
     
     /**
      *
-     * @var \RPI\Framework\Cache\IData 
+     * @var \RPI\Foundation\Cache\IData 
      */
     protected $dataStore;
     
@@ -39,7 +39,7 @@ class App extends \RPI\Framework\Helpers\Object implements \Psr\Log\LoggerAwareI
     
     /**
      *
-     * @var \RPI\Framework\App\DomainObjects\IConfig 
+     * @var \RPI\Foundation\App\DomainObjects\IConfig 
      */
     protected $config = null;
     
@@ -114,7 +114,7 @@ class App extends \RPI\Framework\Helpers\Object implements \Psr\Log\LoggerAwareI
      * @param \Psr\Log\LoggerInterface $logger
      * @param string $webConfigFile
      * @param \RPI\Framework\Services\View\IView $view
-     * @param \RPI\Framework\Cache\IData $dataStore
+     * @param \RPI\Foundation\Cache\IData $dataStore
      * @param \RPI\Framework\App\DomainObjects\ISecurity $security
      * @param \RPI\Framework\App\DomainObjects\ISession $session
      * @param \RPI\Framework\App\Security\Acl\Model\IAcl $acl
@@ -125,7 +125,7 @@ class App extends \RPI\Framework\Helpers\Object implements \Psr\Log\LoggerAwareI
         \Psr\Log\LoggerInterface $logger,
         $webConfigFile,
         \RPI\Framework\Services\View\IView $view = null,
-        \RPI\Framework\Cache\IData $dataStore = null,
+        \RPI\Foundation\Cache\IData $dataStore = null,
         \RPI\Framework\App\DomainObjects\ISecurity $security = null,
         \RPI\Framework\App\DomainObjects\ISession $session = null,
         \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null,
@@ -162,15 +162,15 @@ class App extends \RPI\Framework\Helpers\Object implements \Psr\Log\LoggerAwareI
 
         \RPI\Framework\Helpers\Reflection::addDependency($this->logger, "Psr\Log\LoggerInterface");
         \RPI\Framework\Helpers\Reflection::addDependency($this->view, "RPI\Framework\Services\View\IView");
-        \RPI\Framework\Helpers\Reflection::addDependency($this->dataStore, "RPI\Framework\Cache\IData");
+        \RPI\Framework\Helpers\Reflection::addDependency($this->dataStore, "RPI\Foundation\Cache\IData");
         \RPI\Framework\Helpers\Reflection::addDependency($this->security, "RPI\Framework\App\DomainObjects\ISecurity");
         \RPI\Framework\Helpers\Reflection::addDependency($this->session, "RPI\Framework\App\DomainObjects\ISession");
         \RPI\Framework\Helpers\Reflection::addDependency($this->acl, "RPI\Framework\App\Security\Acl\Model\IAcl");
         \RPI\Framework\Helpers\Reflection::addDependency($this->locale, "RPI\Framework\App\DomainObjects\ILocale");
         
-        \RPI\Framework\Event\Manager::addEventListener(
+        \RPI\Foundation\Event\Manager::addEventListener(
             "RPI\Framework\Events\ViewUpdated",
-            function (\RPI\Framework\Event $event, $params) {
+            function (\RPI\Foundation\Event $event, $params) {
                 $frontStore = \RPI\Framework\Helpers\Reflection::getDependency(
                     \RPI\Framework\Facade::app(),
                     "RPI\Framework\Cache\IFront"
@@ -227,13 +227,13 @@ class App extends \RPI\Framework\Helpers\Object implements \Psr\Log\LoggerAwareI
     
     /**
      * 
-     * @return \RPI\Framework\Cache\IData
+     * @return \RPI\Foundation\Cache\IData
      */
     protected function getDataStore()
     {
         if (!isset($this->dataStore)) {
-            $this->dataStore = new \RPI\Framework\Cache\Data\Apc();
-            \RPI\Framework\Helpers\Reflection::addDependency($this->dataStore, "RPI\Framework\Cache\IData");
+            $this->dataStore = new \RPI\Foundation\Cache\Data\Apc();
+            \RPI\Framework\Helpers\Reflection::addDependency($this->dataStore, "RPI\Foundation\Cache\IData");
         }
         
         return $this->dataStore;
@@ -250,12 +250,12 @@ class App extends \RPI\Framework\Helpers\Object implements \Psr\Log\LoggerAwareI
     
     /**
      * 
-     * @return \RPI\Framework\App\DomainObjects\IConfig
+     * @return \RPI\Foundation\App\DomainObjects\IConfig
      */
     public function getConfig()
     {
         if (!isset($this->config)) {
-            $this->config = new \RPI\Framework\App\Config(
+            $this->config = new \RPI\Foundation\App\Config(
                 $this->logger,
                 $this->getDataStore(),
                 $this->webConfigFile
@@ -437,13 +437,13 @@ class App extends \RPI\Framework\Helpers\Object implements \Psr\Log\LoggerAwareI
                 }
 
                 if ($this->runRouteController($route, $method) === null) {
-                    throw new \RPI\Framework\Exceptions\RuntimeException("Unable to create controller");
+                    throw new \RPI\Foundation\Exceptions\RuntimeException("Unable to create controller");
                 }
             } else {
                 throw new \RPI\Framework\Exceptions\PageNotFound();
             }
         } else {
-            throw new \RPI\Framework\Exceptions\RuntimeException("Router not initialised");
+            throw new \RPI\Foundation\Exceptions\RuntimeException("Router not initialised");
         }
         
         return $this->getResponse();
@@ -470,15 +470,15 @@ class App extends \RPI\Framework\Helpers\Object implements \Psr\Log\LoggerAwareI
             
             if (isset($route)) {
                 if ($this->runRouteController($route, $method) === null) {
-                    throw new \RPI\Framework\Exceptions\RuntimeException("Unable to create controller");
+                    throw new \RPI\Foundation\Exceptions\RuntimeException("Unable to create controller");
                 }
             } else {
-                throw new \RPI\Framework\Exceptions\RuntimeException(
+                throw new \RPI\Foundation\Exceptions\RuntimeException(
                     "Error document handler not found for status code $statusCode"
                 );
             }
         } else {
-            throw new \RPI\Framework\Exceptions\RuntimeException("Router not initialised");
+            throw new \RPI\Foundation\Exceptions\RuntimeException("Router not initialised");
         }
         
         return $this->getResponse();

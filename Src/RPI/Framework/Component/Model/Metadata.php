@@ -8,7 +8,7 @@ namespace RPI\Framework\Component\Model;
  * @property-read string $version
  * @property-read string $description
  */
-class Metadata extends \RPI\Framework\Helpers\Object
+class Metadata extends \RPI\Foundation\Helpers\Object
 {
     private $viewImageUri = null;
     private $name = null;
@@ -29,7 +29,7 @@ class Metadata extends \RPI\Framework\Helpers\Object
         } elseif (is_string($component)) {
             $classPath = dirname(realpath(\RPI\Framework\Autoload::getClassPath($component)));
         } else {
-            throw new \RPI\Framework\Exceptions\InvalidType($component, "\RPI\Framework\Component|string");
+            throw new \RPI\Foundation\Exceptions\InvalidType($component, "\RPI\Framework\Component|string");
         }
         
         $filename = $classPath."/Metadata/Component.json";

@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\HTTP;
 
-class Headers extends \RPI\Framework\Helpers\Object implements IHeaders
+class Headers extends \RPI\Foundation\Helpers\Object implements IHeaders
 {
     private $headers = null;
     

@@ -113,7 +113,7 @@ EOT;
     {
         $renderMethod = "renderView";
         if (isset($viewType) && $viewType !== false) {
-            $renderMethodViewType = "renderView".\RPI\Framework\Helpers\Utils::formatCamelCaseTitle($viewType, true);
+            $renderMethodViewType = "renderView".\RPI\Foundation\Helpers\Utils::formatCamelCaseTitle($viewType, true);
             if (method_exists($this, $renderMethodViewType)) {
                 $renderMethod = $renderMethodViewType;
             }

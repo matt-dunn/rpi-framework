@@ -2,11 +2,11 @@
 
 namespace RPI\Framework\App\Security\Acl\Provider\Config\Handler;
 
-class Acl implements \RPI\Framework\App\Config\IHandler
+class Acl implements \RPI\Foundation\App\Config\IHandler
 {
     /**
      *
-     * @var \RPI\Framework\Cache\IData
+     * @var \RPI\Foundation\Cache\IData
      */
     private $store = null;
     
@@ -16,7 +16,7 @@ class Acl implements \RPI\Framework\App\Config\IHandler
      */
     private $cacheKeyPrefix = null;
     
-    public function __construct(\RPI\Framework\Cache\IData $store, $cacheKeyPrefix)
+    public function __construct(\RPI\Foundation\Cache\IData $store, $cacheKeyPrefix)
     {
         $this->store = $store;
         $this->cacheKeyPrefix = $cacheKeyPrefix;
@@ -70,7 +70,7 @@ class Acl implements \RPI\Framework\App\Config\IHandler
                     if ($this->store->fetch($this->cacheKeyPrefix.$name, false) === false) {
                         $this->store->store($this->cacheKeyPrefix.$name, $config);
                     } else {
-                        throw new \RPI\Framework\Exceptions\InvalidArgument(
+                        throw new \RPI\Foundation\Exceptions\InvalidArgument(
                             $name,
                             null,
                             "Name has already been defined"
@@ -81,7 +81,7 @@ class Acl implements \RPI\Framework\App\Config\IHandler
             
             return null;
         } else {
-            throw new \RPI\Framework\Exceptions\Exception("Invalid data format");
+            throw new \RPI\Foundation\Exceptions\Exception("Invalid data format");
         }
     }
     

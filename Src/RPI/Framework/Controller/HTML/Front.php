@@ -24,7 +24,7 @@ abstract class Front extends \RPI\Framework\Controller\HTML
             );
 
             if (!isset($frontStore)) {
-                throw new \RPI\Framework\Exceptions\RuntimeException(
+                throw new \RPI\Foundation\Exceptions\RuntimeException(
                     "RPI\Framework\Cache\IFront dependency not configured correctly"
                 );
             }
@@ -89,7 +89,7 @@ abstract class Front extends \RPI\Framework\Controller\HTML
             self::$pageTitleDetails["title"] = $title;
             self::$pageTitleDetails["priority"] = (int)$priority;
 
-            \RPI\Framework\Event\Manager::fire(
+            \RPI\Foundation\Event\Manager::fire(
                 new \RPI\Framework\Events\PageTitleUpdated(array("title" => $title))
             );
             
@@ -100,7 +100,7 @@ abstract class Front extends \RPI\Framework\Controller\HTML
                 );
 
                 if (!isset($frontStore)) {
-                    throw new \RPI\Framework\Exceptions\RuntimeException(
+                    throw new \RPI\Foundation\Exceptions\RuntimeException(
                         "RPI\Framework\Cache\IFront dependency not configured correctly"
                     );
                 }

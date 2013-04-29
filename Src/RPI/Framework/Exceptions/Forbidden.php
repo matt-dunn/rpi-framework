@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\Exceptions;
 
-class Forbidden extends Security implements \RPI\Framework\Exceptions\IException
+class Forbidden extends Security implements \RPI\Foundation\Exceptions\IException
 {
     public function __construct($previous = null)
     {

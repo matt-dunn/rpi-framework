@@ -19,7 +19,7 @@ interface IView
      * 
      * @throws \RPI\Framework\App\Security\Acl\Exceptions\PermissionDenied
      * @throws \RPI\Framework\Services\View\Exceptions\NotFound
-     * @throws \RPI\Framework\Exceptions\InvalidType
+     * @throws \RPI\Foundation\Exceptions\InvalidType
      */
     public function createController(
         \RPI\Framework\Model\UUID $uuid,

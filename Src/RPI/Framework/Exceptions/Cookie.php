@@ -5,7 +5,7 @@ namespace RPI\Framework\Exceptions;
 /**
  * Raised if no cookie support is detected
  */
-class Cookie extends RuntimeException implements \RPI\Framework\Exceptions\IException
+class Cookie extends \RPI\Foundation\Exceptions\RuntimeException implements \RPI\Foundation\Exceptions\IException
 {
     public function __construct($previous = null)
     {

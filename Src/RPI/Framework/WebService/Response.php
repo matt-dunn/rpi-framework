@@ -84,7 +84,7 @@ class Response
     public function render()
     {
         $contentType = "application_{$this->format}";
-        $className = "\\RPI\Framework\\WebService\\Handler\\".\RPI\Framework\Helpers\Utils::toCamelCase($contentType);
+        $className = "\\RPI\Framework\\WebService\\Handler\\".\RPI\Foundation\Helpers\Utils::toCamelCase($contentType);
 
         if (class_exists($className)) {
             $params = $this->params;

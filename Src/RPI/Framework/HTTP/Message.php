@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\HTTP;
 
-abstract class Message extends \RPI\Framework\Helpers\Object implements \RPI\Framework\HTTP\IMessage
+abstract class Message extends \RPI\Foundation\Helpers\Object implements \RPI\Framework\HTTP\IMessage
 {
     private $protocolVersion = null;
 
@@ -70,7 +70,7 @@ abstract class Message extends \RPI\Framework\Helpers\Object implements \RPI\Fra
 
     public function setProtocolVersion($version)
     {
-        \RPI\Framework\Helpers\Utils::validateOption($version, array("0.9", "1.0", "1.1"));
+        \RPI\Foundation\Helpers\Utils::validateOption($version, array("0.9", "1.0", "1.1"));
         
         $this->protocolVersion = $version;
         

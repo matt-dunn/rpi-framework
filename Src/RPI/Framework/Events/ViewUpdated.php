@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\Events;
 
-class ViewUpdated implements \RPI\Framework\Event\IEvent
+class ViewUpdated implements \RPI\Foundation\Event\IEvent
 {
     private $parameters = null;
     private $returnValue = null;
