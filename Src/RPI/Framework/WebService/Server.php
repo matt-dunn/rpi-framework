@@ -98,7 +98,7 @@ abstract class Server extends \RPI\Framework\Controller
         );
     }
     
-    public function clientEvent(\RPI\Foundation\Event\IEvent $event, $params)
+    public function clientEvent(\RPI\Foundation\Event $event, $params)
     {
         unset($event->target);
         
