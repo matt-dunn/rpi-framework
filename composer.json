@@ -37,8 +37,7 @@
         "rpi/test-harness": "dev-master"
     },
     "suggest": {
-        "ext-gd": "May be used by other libraries to manipulate images",
-        "ext-xslcache": "Boost performance of XSL transformations"
+        "ext-gd": "May be used by other libraries to manipulate images"
     },
     "minimum-stability": "dev",
     "autoload": {
