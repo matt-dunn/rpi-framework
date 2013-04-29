@@ -5,7 +5,7 @@ form fieldset span.processing {
 
 form fieldset span.processing input.t,
 form fieldset span.processing input.r,
-form fieldset select {
+form fieldset span.processing select {
     color:#ccc;
     background-color:#fff !important;
 }
