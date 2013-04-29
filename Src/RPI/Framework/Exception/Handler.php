@@ -15,6 +15,51 @@ class Handler extends \RPI\Foundation\Exception\Handler
     private $showFailSafeMessage = true;
     
     /**
+     * Handle unhandled exceptions
+     * @param \Exception $exception
+     */
+    public function handleExceptions(\Exception $exception)
+    {
+        if (ob_get_level() > 0) {
+            ob_clean();
+        }
+
+        try {
+            if ($exception instanceof \RPI\Framework\Exceptions\PageNotFound) {
+                $this->logger->error(null, array("exception" => $exception, "ident"=> "404"));
+
+                self::runErrorController(404);
+            } elseif ($exception instanceof \RPI\Framework\Exceptions\Authorization) {
+                $this->logger->error(null, array("exception" => $exception, "ident"=> "AUTH"));
+                
+                self::runErrorController(401);
+            } elseif ($exception instanceof \RPI\Framework\Exceptions\Forbidden) {
+                $this->logger->error(null, array("exception" => $exception, "ident"=> "AUTH"));
+                
+                self::runErrorController(403);
+            } else {
+                $this->logger->critical(null, array("exception" => $exception));
+
+                self::runErrorController(500);
+            }
+        } catch (\Exception $ex) {
+            $this->logger->critical(null, array("exception" => $ex));
+            $this->completeException();
+        }
+        
+        exit();
+    }
+    
+    protected function runErrorController($statusCode)
+    {
+        if (!$this->isCli()) {
+            \RPI\Framework\Facade::app()
+                ->runStatusCode($statusCode)
+                ->dispatch();
+        }
+    }
+
+    /**
      * 
      * @param boolean $showFailSafeMessage
      * 
