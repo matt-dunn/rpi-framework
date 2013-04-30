@@ -47,7 +47,7 @@ class Reflection
      * @return object
      * 
      * @throws \InvalidArgumentException
-     * @throws \RPI\Framework\Exceptions\RuntimeException
+     * @throws \RPI\Foundation\Exceptions\RuntimeException
      */
     public static function createObject(
         \RPI\Framework\App $app,
@@ -82,7 +82,7 @@ class Reflection
                 }
                 
                 if (!isset($param) && !$reflectionParameter->isDefaultValueAvailable()) {
-                    throw new \RPI\Framework\Exceptions\RuntimeException(
+                    throw new \RPI\Foundation\Exceptions\RuntimeException(
                         "Class '$className' constructor parameter '".$reflectionParameter->getName().
                         "' ($paramClassName) must be defined as a dependency. Check the application".
                         " configuration settings."
@@ -132,14 +132,14 @@ class Reflection
      * 
      * @return object|null
      * 
-     * @throws \RPI\Framework\Exceptions\RuntimeException
+     * @throws \RPI\Foundation\Exceptions\RuntimeException
      */
     public static function getDependency(\RPI\Framework\App $app, $className, $throwsException = false)
     {
         $dependency = self::getDependencyObject($app, ltrim($className, "\\"));
         
         if ($throwsException === true && !isset($dependency)) {
-            throw new \RPI\Framework\Exceptions\RuntimeException(
+            throw new \RPI\Foundation\Exceptions\RuntimeException(
                 "Unable to create dependency '$className'. Check configuration settings"
             );
         }
@@ -217,7 +217,7 @@ class Reflection
      * 
      * @return object
      * 
-     * @throws \RPI\Framework\Exceptions\RuntimeException
+     * @throws \RPI\Foundation\Exceptions\RuntimeException
      */
     private static function createObjectByClassInfo(\RPI\Framework\App $app, $classInfo, $type = null)
     {
@@ -252,7 +252,7 @@ class Reflection
 
             return self::createObject($app, $className, $params, $type);
         } else {
-            throw new \RPI\Framework\Exceptions\RuntimeException("Invalid class information");
+            throw new \RPI\Foundation\Exceptions\RuntimeException("Invalid class information");
         }
     }
 }
