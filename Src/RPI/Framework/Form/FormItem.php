@@ -79,7 +79,7 @@ abstract class FormItem
         } elseif ($key == "name") {
             return $this->id;
         } elseif ($key == "fullId") {
-            return $this->form->id."-".$this->id;
+            return $this->id."-".$this->form->id;
         }
         if (isset($this->$key)) {
             return $this->$key;
