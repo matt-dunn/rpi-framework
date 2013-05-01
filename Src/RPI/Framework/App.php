@@ -258,9 +258,15 @@ class App extends \RPI\Foundation\Helpers\Object implements \Psr\Log\LoggerAware
     public function getConfig()
     {
         if (!isset($this->config)) {
+            $dataStore = $this->dataStore;
+            
+            if (!isset($dataStore)) {
+                $dataStore = new \RPI\Foundation\Cache\Data\Apc();
+            }
+            
             $this->config = new \RPI\Foundation\App\Config(
                 $this->logger,
-                new \RPI\Foundation\Cache\Data\Apc(),
+                $dataStore,
                 $this->webConfigFile
             );
         }
