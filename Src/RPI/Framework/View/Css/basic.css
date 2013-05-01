@@ -5,20 +5,80 @@ BASIC STYLING
 
 /* resets */
 
-body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, legend, input, textarea, p, blockquote, th, td { 
-	margin:0;
-	padding:0;
+/*
+
+Goldilocks: http://goldilocksapproach.com/
+
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size:100%;
+    font: inherit;
+    vertical-align: baseline;
 }
 
+b,
+strong {
+    font-weight: bold;
+}
+
+i,
+em {
+    font-style: italic;
+}
+
+small {
+    font-size: 80%;
+}
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+    display: block;
+}
+  
+html { 
+    overflow-y: scroll;
+    background: #FFF;
+}
+  
+/* /ht Ethan Marcotte - http://front.ie/l8rJaA */
+img, embed, object, video { max-width: 100%; }
+.ie6 img.full, .ie6 object.full, .ie6 embed, .ie6 video { width: 100%; }
+
 body {
-	line-height:1.6;
-	font-size:85%;
-	color:#000;
+    line-height: 1.618em;
+    font-size: 1em;
+    color: #333;
 	background:#fff;
 	font-family:Verdana, Arial, Tahoma, Helvetica, sans-serif;
 }
 
-ol, ul {
+ol,
+ul {
 	list-style:none;
 }
 
@@ -27,23 +87,25 @@ table {
 	border-spacing:0;
 }
 
-caption, th, td {
+caption,
+th,
+td {
 	text-align:left;
 	font-weight:normal;
 }
 
-fieldset, iframe {
-	border:none;
-}
-
-abbr, acronym,
 img {
 	border:0;
 }
 
-h1, h2, h3, h4, h5, h6 {
-	font-weight:normal;
-	margin:0.25em 0 0.5em 0 0 0;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-bottom: 0.809em;
+    line-height: 1em;
 }
 
 h1 {
@@ -62,22 +124,39 @@ h4, h5, h6 {
 	font-size: 1.1em;
 }
 
-p {
-	padding:0.5em 0;
+p,
+ul,
+ol,
+dl,
+blockquote {
+    font-size: 1em;
+    margin:0.5em 0;
+}
+
+article p,
+article ul,
+article ol,
+article dl,
+article blockquote {
+    /*Optimal width for long-form text*/ 
+    /*max-width: 30em;*/  
+    margin-bottom: 1.618em; 
+    line-height: 1.618em;
 }
 
 input,
 button,
 textarea {
 	font-size:1em;
-	font-family:Tahoma, Arial, Verdana, Helvetica, sans-serif; 
+	font-family:Verdana, Arial, Tahoma, Helvetica, sans-serif;
 }
 
 input.t {
 	padding:1px 0;
 }
 
-blockquote, q {
+blockquote,
+q {
 	quotes: none;
 }
 
@@ -88,7 +167,13 @@ q:before, q:after {
 	content: none;
 }
 
-address,caption,cite,code,dfn,th,var {
+address,
+caption,
+cite,
+code,
+dfn,
+th,
+var {
 	font-style:normal;
 	font-weight:normal;
 }
@@ -109,6 +194,22 @@ sup {
 
 sub {
 	top: .5ex;
+}
+
+a,
+a:visited {
+    outline: none;
+    text-decoration: underline;
+}  
+
+a:hover {
+    outline: none;
+    text-decoration:none;
+}
+
+a:active,
+a:focus {
+    outline: none;
 }
 
 /* end resets */
