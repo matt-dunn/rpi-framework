@@ -2,7 +2,7 @@
 
 namespace RPI\Framework\App\Security\Acl\Exceptions;
 
-class PermissionDenied extends \RPI\Framework\Exceptions\Forbidden implements \RPI\Framework\Exceptions\IException
+class PermissionDenied extends \RPI\Framework\Exceptions\Forbidden implements \RPI\Foundation\Exceptions\IException
 {
     /**
      * 
