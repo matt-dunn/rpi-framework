@@ -232,8 +232,11 @@ class App extends \RPI\Foundation\Helpers\Object implements \Psr\Log\LoggerAware
     protected function getDataStore()
     {
         if (!isset($this->dataStore)) {
-            $this->dataStore = new \RPI\Foundation\Cache\Data\Apc();
-            \RPI\Framework\Helpers\Reflection::addDependency($this->dataStore, "RPI\Foundation\Cache\IData");
+            $this->dataStore = \RPI\Framework\Helpers\Reflection::getDependency(
+                $this,
+                "RPI\Foundation\Cache\IData",
+                true
+            );
         }
         
         return $this->dataStore;
@@ -257,7 +260,7 @@ class App extends \RPI\Foundation\Helpers\Object implements \Psr\Log\LoggerAware
         if (!isset($this->config)) {
             $this->config = new \RPI\Foundation\App\Config(
                 $this->logger,
-                $this->getDataStore(),
+                new \RPI\Foundation\Cache\Data\Apc(),
                 $this->webConfigFile
             );
         }
