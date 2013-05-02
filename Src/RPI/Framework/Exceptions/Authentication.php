@@ -5,7 +5,7 @@ namespace RPI\Framework\Exceptions;
 /**
  * Authentication exception
  */
-class Authentication extends Security implements \RPI\Foundation\Exceptions\IException
+class Authentication extends \RPI\Foundation\Exceptions\Security implements \RPI\Foundation\Exceptions\IException
 {
     public $from;
 

@@ -6,7 +6,7 @@ namespace RPI\Framework\Exceptions;
  * Authorization exception
  * Thrown when role does not gave access to a resource
  */
-class Authorization extends Security implements \RPI\Foundation\Exceptions\IException
+class Authorization extends \RPI\Foundation\Exceptions\Security implements \RPI\Foundation\Exceptions\IException
 {
     public function __construct($previous = null)
     {
