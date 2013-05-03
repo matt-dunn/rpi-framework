@@ -31,7 +31,7 @@ form fieldset p.success span.c {
 
 form fieldset.error:after,
 form fieldset p.error span.c:after {
-    #sprite:url(../../../../View/Css/I/Sprites/cross.png);
+    #sprite:url(composer://rpi/view#Src/RPI/View/Css/I/Sprites/cross.png);
     position:absolute;
     top:5px;
     right:0;
@@ -39,7 +39,7 @@ form fieldset p.error span.c:after {
 
 form fieldset.success:after,
 form fieldset p.success span.c:after {
-    #sprite:url(../../../../View/Css/I/Sprites/tick.png);
+    #sprite:url(composer://rpi/view#Src/RPI/View/Css/I/Sprites/tick.png);
     position:absolute;
     top:5px;
     right:0;

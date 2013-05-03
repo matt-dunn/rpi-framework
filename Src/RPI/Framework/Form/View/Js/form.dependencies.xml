@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dependencies>
-	<dependency name="../../../View/Js/core.js"/>
+	<dependency name="composer://rpi/view#Src/RPI/View/Js/core.js"/>
 	<dependency name="composer://rpi/jquery#jquery.js"/>
 
 	<dependency name="../Css/description.css"/>
