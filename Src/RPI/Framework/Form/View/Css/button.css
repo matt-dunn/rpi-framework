@@ -1,16 +1,17 @@
 form button.b {
-	border:1px solid #555;
+	border:1px solid #666;
 	background-color:#999;
 	color:#fff;
 	font-family: Verdana, Arial, Tahoma, Helvetica, sans-serif;
 /*	font-size:1.1em;*/
 	padding:0.25em 0.5em;
 	line-height:1;
-	margin:0 0 0 0.5em;
+	margin:0 8px 8px 0.5em;
 	letter-spacing:0.03em;
 	float:right;
     cursor:pointer;
-    border-radius: 6px;
+    border-radius: 50px;
+    box-shadow: 3px 3px 5px #ccc;
 }
 
 form a.b-cancel {
