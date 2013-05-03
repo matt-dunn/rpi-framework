@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<dependencies>
-	<dependency name="table.css"/>
-	<dependency name="caption.css"/>
-	<dependency name="../../Js/Document/style.js"/>
-</dependencies>
