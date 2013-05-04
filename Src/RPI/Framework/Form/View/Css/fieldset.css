@@ -23,6 +23,7 @@ form fieldset fieldset {
 form fieldset p {
 	clear:both;
 	overflow:hidden;
+    position: relative;
 }
 
 form fieldset > fieldset.r legend span.m,
