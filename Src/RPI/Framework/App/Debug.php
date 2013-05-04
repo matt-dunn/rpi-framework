@@ -38,7 +38,11 @@ class Debug
      */
     public function log($object, $label = null, array $options = array())
     {
-        return $this->getLogger()->log($object, $label, $options);
+        if ($this->getLogger() !== null) {
+            return $this->getLogger()->log($object, $label, $options);
+        } else {
+            return false;
+        }
     }
     
     /**
