@@ -879,7 +879,12 @@ class Xml implements IView
                 }
             } catch (\Exception $ex) {
                 \RPI\Foundation\Helpers\Locking::release($seg);
-                throw $ex;
+                throw new \RPI\Foundation\Exceptions\RuntimeException(
+                    "There was a problem updating the componennt model '{$this->file}'. ".
+                    "Check write permissions and that the file is owned by the web server.",
+                    null,
+                    $ex
+                );
             }
             \RPI\Foundation\Helpers\Locking::release($seg);
             
