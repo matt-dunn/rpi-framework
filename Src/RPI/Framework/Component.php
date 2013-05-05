@@ -297,7 +297,8 @@ EOT;
             return $this->app->getView()->getDecoratorView(
                 (object)array(
                     "controller" => $this->type
-                )
+                ),
+                $this->viewMode
             );
         }
         

@@ -138,16 +138,18 @@ class Xml implements IView
     /**
      * 
      * @param \stdClass $decoratorDetails
+     * @param string $viewMode
      * 
      * @return boolean
      */
-    public function getDecoratorView(\stdClass $decoratorDetails)
+    public function getDecoratorView(\stdClass $decoratorDetails, $viewMode)
     {
         if (!isset($this->decoratorData)) {
             $this->decoratorData = $this->store->fetch("PHP_RPI_CONTENT_VIEWS-".$this->file."-decorators");
         }
         
         if ($this->decoratorData !== false) {
+            $decoratorDetails->viewMode = $viewMode;
             $properties = get_object_vars($decoratorDetails);
 
             // TODO: Optimise this...

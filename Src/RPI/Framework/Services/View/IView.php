@@ -30,10 +30,11 @@ interface IView
     /**
      * 
      * @param \stdClass $decoratorDetails
+     * @param string $viewMode
      * 
      * @return boolean
      */
-    public function getDecoratorView(\stdClass $decoratorDetails);
+    public function getDecoratorView(\stdClass $decoratorDetails, $viewMode);
     
     /**
      * 
