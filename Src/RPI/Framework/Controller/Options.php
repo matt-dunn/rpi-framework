@@ -208,6 +208,28 @@ class Options
     }
     
     /**
+     * Get an options
+     * 
+     * @param string $name
+     * @param string $value
+     * 
+     * @return mixed
+     * 
+     * @throws \InvalidArgumentException
+     */
+    public function __set($name, $value)
+    {
+        if (isset($this->availableOptions[$name])) {
+            $this->options[$name] = $value;
+        } else {
+            throw new \InvalidArgumentException(
+                "Invalid property '$name'. Must be one of [".
+                implode(", ", array_keys($this->availableOptions))."]"
+            );
+        }
+    }
+    
+    /**
      * @ignore
      */
     public function __sleep()
