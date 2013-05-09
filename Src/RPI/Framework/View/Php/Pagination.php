@@ -13,7 +13,8 @@ class Pagination implements \RPI\Framework\Views\Php\IView
 
             $paginationDetails = "";
             if ($pagination["start"] != $pagination["end"]) {
-                $paginationDetails = "Showing items ".($pagination["start"] + 1);
+                $paginationDetails = "Showing items ".($pagination["start"] + 1).
+                    " to ".($pagination["end"] + 1);
             } else {
                 $paginationDetails = "Showing item ".($pagination["end"] + 1);
             }
