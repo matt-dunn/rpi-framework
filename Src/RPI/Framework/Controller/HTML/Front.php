@@ -32,7 +32,7 @@ abstract class Front extends \RPI\Framework\Controller\HTML
             // TODO: store in data cache?
             //if ($GLOBALS["RPI_FRAMEWORK_CACHE_ENABLED"] === true) {
                 self::$pageTitleDetails = $frontStore->fetchContent(
-                    \RPI\Framework\Helpers\HTTP::getUrlPath()."-title",
+                    \RPI\Foundation\Helpers\HTTP::getUrlPath()."-title",
                     null,
                     "title"
                 );
@@ -106,7 +106,7 @@ abstract class Front extends \RPI\Framework\Controller\HTML
                 }
 
                 $frontStore->store(
-                    \RPI\Framework\Helpers\HTTP::getUrlPath()."-title",
+                    \RPI\Foundation\Helpers\HTTP::getUrlPath()."-title",
                     serialize(self::$pageTitleDetails),
                     "title"
                 );

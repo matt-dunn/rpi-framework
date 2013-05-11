@@ -83,7 +83,7 @@ abstract class Server extends \RPI\Framework\Controller
         if (!isset($documentLocation) && isset($_SERVER["HTTP_REFERER"])) {
             $documentLocation = $_SERVER["HTTP_REFERER"];
         }
-        if (isset($documentLocation) && \RPI\Framework\Helpers\HTTP::isValidUrl($documentLocation)) {
+        if (isset($documentLocation) && \RPI\Foundation\Helpers\HTTP::isValidUrl($documentLocation)) {
             $this->app->getRequest()->setUrl($documentLocation);
             
             // Slightly nasty 'hack' to ensure any code requesting the current url gets the document location

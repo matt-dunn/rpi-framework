@@ -69,13 +69,13 @@ class App extends \RPI\Foundation\Helpers\Object implements \Psr\Log\LoggerAware
 
     /**
      *
-     * @var \RPI\Framework\HTTP\IRequest
+     * @var \RPI\HTTP\IRequest
      */
     protected $request = null;
     
     /**
      *
-     * @var \RPI\Framework\HTTP\IResponse 
+     * @var \RPI\HTTP\IResponse 
      */
     protected $response = null;
     
@@ -357,12 +357,12 @@ class App extends \RPI\Foundation\Helpers\Object implements \Psr\Log\LoggerAware
     }
     
     /**
-     * @return \RPI\Framework\HTTP\IRequest
+     * @return \RPI\HTTP\IRequest
      */
     public function getRequest()
     {
         if (!isset($this->request)) {
-            $this->request = new \RPI\Framework\HTTP\Request();
+            $this->request = new \RPI\HTTP\Request();
         }
         
         return $this->request;
@@ -370,21 +370,21 @@ class App extends \RPI\Foundation\Helpers\Object implements \Psr\Log\LoggerAware
     
     /**
      * 
-     * @param \RPI\Framework\HTTP\IRequest $request
+     * @param \RPI\HTTP\IRequest $request
      */
-    public function setRequest(\RPI\Framework\HTTP\IRequest $request)
+    public function setRequest(\RPI\HTTP\IRequest $request)
     {
         $this->request = $request;
     }
     
     /**
      * 
-     * @return \RPI\Framework\HTTP\IResponse
+     * @return \RPI\HTTP\IResponse
      */
     public function getResponse()
     {
         if (!isset($this->response)) {
-            $this->response = new \RPI\Framework\HTTP\Response();
+            $this->response = new \RPI\HTTP\Response();
             $this->response->setContentEncoding($this->characterEncoding);
         }
         
@@ -393,7 +393,7 @@ class App extends \RPI\Foundation\Helpers\Object implements \Psr\Log\LoggerAware
 
     /**
      * 
-     * @return \RPI\Framework\HTTP\IResponse
+     * @return \RPI\HTTP\IResponse
      * 
      * @throws \RPI\Framework\Exceptions\PageNotFound|\Exception
      */
@@ -462,7 +462,7 @@ class App extends \RPI\Foundation\Helpers\Object implements \Psr\Log\LoggerAware
      * 
      * @param int $statusCode   Valid HTTP status code
      * 
-     * @return \RPI\Framework\HTTP\IResponse
+     * @return \RPI\HTTP\IResponse
      * 
      * @throws \Exception
      */
