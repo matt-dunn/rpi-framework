@@ -30,6 +30,7 @@
         "psr/log": "~1.0",
         "rpi/schemas": "dev-master",
         "rpi/foundation": "dev-master",
+        "rpi/httpfoundation": "dev-master",
         "rpi/view": "dev-master"
     },
     "require-dev": {
