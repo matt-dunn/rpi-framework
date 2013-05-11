@@ -2,10 +2,10 @@
 
 namespace RPI\Framework\Model;
 
-class User extends \RPI\Foundation\Helpers\Object implements \RPI\Framework\Model\IUser
+class User extends \RPI\Foundation\Helpers\Object implements \RPI\Foundation\Model\IUser
 {
     /**
-     * @var \RPI\Framework\Model\UUID
+     * @var \RPI\Foundation\Model\UUID
      */
     protected $uuid = null;
     
@@ -51,7 +51,7 @@ class User extends \RPI\Foundation\Helpers\Object implements \RPI\Framework\Mode
 
     /**
      * 
-     * @param \RPI\Framework\Model\UUID $uuid
+     * @param \RPI\Foundation\Model\UUID $uuid
      * @param string $firstname
      * @param string $surname
      * @param string $userId
@@ -60,13 +60,13 @@ class User extends \RPI\Foundation\Helpers\Object implements \RPI\Framework\Mode
      * @param array $roles
      */
     public function __construct(
-        \RPI\Framework\Model\UUID $uuid,
+        \RPI\Foundation\Model\UUID $uuid,
         $firstname = null,
         $surname = null,
         $userId = null,
         \DateTime $accountCreated = null,
         \DateTime $accountLastAccessed = null,
-        array $roles = array(\RPI\Framework\Model\IUser::USER)
+        array $roles = array(\RPI\Foundation\Model\IUser::USER)
     ) {
         $this->uuid = $uuid;
         $this->firstname = $firstname;
@@ -153,7 +153,7 @@ class User extends \RPI\Foundation\Helpers\Object implements \RPI\Framework\Mode
     {
         $role = trim(strtolower($role));
         
-        if ($role == \RPI\Framework\Model\IUser::ROOT) {
+        if ($role == \RPI\Foundation\Model\IUser::ROOT) {
             throw new \RPI\Foundation\Exceptions\InvalidArgument($role, null, "User '$role' cannot be added to a user");
         }
         

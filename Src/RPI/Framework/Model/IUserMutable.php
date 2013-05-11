@@ -2,21 +2,21 @@
 
 namespace RPI\Framework\Model;
 
-interface IUserMutable extends \RPI\Framework\Model\IUser
+interface IUserMutable extends \RPI\Foundation\Model\IUser
 {
     /**
      * 
-     * @param \RPI\Framework\Model\UUID $uuid
+     * @param \RPI\Foundation\Model\UUID $uuid
      * 
-     * @return \RPI\Framework\Model\IUser
+     * @return \RPI\Foundation\Model\IUser
      */
-    public function setUuid(\RPI\Framework\Model\UUID $uuid);
+    public function setUuid(\RPI\Foundation\Model\UUID $uuid);
 
     /**
      * 
      * @param string $firstname
      * 
-     * @return \RPI\Framework\Model\IUser
+     * @return \RPI\Foundation\Model\IUser
      */
     public function setFirstname($firstname);
 
@@ -24,7 +24,7 @@ interface IUserMutable extends \RPI\Framework\Model\IUser
      * 
      * @param string $surname
      * 
-     * @return \RPI\Framework\Model\IUser
+     * @return \RPI\Foundation\Model\IUser
      */
     public function setSurname($surname);
 
@@ -32,7 +32,7 @@ interface IUserMutable extends \RPI\Framework\Model\IUser
      * 
      * @param string $userId
      * 
-     * @return \RPI\Framework\Model\IUser
+     * @return \RPI\Foundation\Model\IUser
      */
     public function setUserId($userId);
 
@@ -40,7 +40,7 @@ interface IUserMutable extends \RPI\Framework\Model\IUser
      * 
      * @param \DateTime $accountCreated
      * 
-     * @return \RPI\Framework\Model\IUser
+     * @return \RPI\Foundation\Model\IUser
      */
     public function setAccountCreated(\DateTime $accountCreated);
     
@@ -48,7 +48,7 @@ interface IUserMutable extends \RPI\Framework\Model\IUser
      * 
      * @param \DateTime $accountLastAccessed
      * 
-     * @return \RPI\Framework\Model\IUser
+     * @return \RPI\Foundation\Model\IUser
      */
     public function setAccountLastAccessed(\DateTime $accountLastAccessed);
 
@@ -56,7 +56,7 @@ interface IUserMutable extends \RPI\Framework\Model\IUser
      * 
      * @param array $roles
      * 
-     * @return \RPI\Framework\Model\IUser
+     * @return \RPI\Foundation\Model\IUser
      */
     public function setRoles(array $roles);
 }

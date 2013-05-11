@@ -12,23 +12,23 @@ class DomainObject implements IDomainObject
     
     /**
      *
-     * @var \RPI\Framework\Model\UUID
+     * @var \RPI\Foundation\Model\UUID
      */
     private $id = null;
     
     /**
      *
-     * @var \RPI\Framework\Model\UUID
+     * @var \RPI\Foundation\Model\UUID
      */
     private $ownerId = null;
     
     /**
      * 
      * @param string $type
-     * @param \RPI\Framework\Model\UUID $id
-     * @param \RPI\Framework\Model\UUID $ownerId
+     * @param \RPI\Foundation\Model\UUID $id
+     * @param \RPI\Foundation\Model\UUID $ownerId
      */
-    public function __construct($type, \RPI\Framework\Model\UUID $id = null, \RPI\Framework\Model\UUID $ownerId = null)
+    public function __construct($type, \RPI\Foundation\Model\UUID $id = null, \RPI\Foundation\Model\UUID $ownerId = null)
     {
         $this->type = $type;
         $this->id = $id;
@@ -36,7 +36,7 @@ class DomainObject implements IDomainObject
     }
     
     /**
-     * @return \RPI\Framework\Model\UUID
+     * @return \RPI\Foundation\Model\UUID
      */
     public function getId()
     {
@@ -52,7 +52,7 @@ class DomainObject implements IDomainObject
     }
     
     /**
-     * @return \RPI\Framework\Model\UUID
+     * @return \RPI\Foundation\Model\UUID
      */
     public function getOwnerId()
     {

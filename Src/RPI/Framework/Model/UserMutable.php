@@ -6,9 +6,9 @@ class UserMutable extends \RPI\Framework\Model\User implements \RPI\Framework\Mo
 {
     /**
      * 
-     * @param \RPI\Framework\Model\IUser $user
+     * @param \RPI\Foundation\Model\IUser $user
      */
-    public function __construct(\RPI\Framework\Model\IUser $user)
+    public function __construct(\RPI\Foundation\Model\IUser $user)
     {
         $this->uuid = $user->uuid;
         $this->firstname = $user->firstname;
@@ -24,7 +24,7 @@ class UserMutable extends \RPI\Framework\Model\User implements \RPI\Framework\Mo
     /**
      * {@inherit-doc}
      */
-    public function setUuid(\RPI\Framework\Model\UUID $uuid)
+    public function setUuid(\RPI\Foundation\Model\UUID $uuid)
     {
         $this->uuid = $uuid;
         

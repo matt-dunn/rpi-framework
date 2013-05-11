@@ -134,7 +134,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "methodpostget",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("210d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("210d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 null,
                 array(
@@ -169,7 +169,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "post",
             "methodpostget",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("210d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("210d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 null,
                 array(
@@ -190,7 +190,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "post",
             "simplenoaction",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("110d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("110d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 null,
                 array(
@@ -204,7 +204,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "simple",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("010d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("010d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "simpleaction",
                 null
@@ -216,7 +216,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "simple/test",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("010d5cc4-2233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("010d5cc4-2233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "simpletestaction",
                 array(
@@ -237,7 +237,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "put",
             "simple",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("010d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("010d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "simpleaction",
                 null
@@ -249,7 +249,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "post",
             "simple",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("010d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("010d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "simpleaction",
                 null
@@ -261,7 +261,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "delete",
             "simple",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("010d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("010d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "simpleaction",
                 null
@@ -273,7 +273,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("c10d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("c10d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "actiondefault",
                 null
@@ -287,7 +287,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "test",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("a10d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("a10d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "getaction",
                 array(
@@ -301,7 +301,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "post",
             "test",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("a10d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("a10d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "postaction",
                 array(
@@ -317,7 +317,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "test/view",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("a20d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("a20d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "view",
                 array(
@@ -331,7 +331,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "test/view/section",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("a21d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("a21d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "viewsection",
                 array(
@@ -345,7 +345,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "test/delete",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("a30d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("a30d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "delete",
                 array(
@@ -364,7 +364,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "test2",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("b10d5cc4-1233-480d-9618-3c3dfcdb2439")
+            new \RPI\Foundation\Model\UUID("b10d5cc4-1233-480d-9618-3c3dfcdb2439")
         );
         $this->assertEquals($route, $this->object->route("/test2/", $defaultMethod, $defaultMimetype));
                 
@@ -378,7 +378,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "ws/component",
             "\RPI\WebServices\Component\Service",
-            new \RPI\Framework\Model\UUID("d10d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("d10d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "action1",
                 array(
@@ -402,7 +402,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "assets/images",
             "\RPI\Controllers\Image\Controller",
-            new \RPI\Framework\Model\UUID("e10d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("e10d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "display",
                 array(
@@ -424,7 +424,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "post",
             "assets/images",
             "\RPI\Controllers\Image\Controller",
-            new \RPI\Framework\Model\UUID("e10d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("e10d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "uploadImage",
                 array(
@@ -446,7 +446,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "delete",
             "assets/images",
             "\RPI\Controllers\Image\Controller",
-            new \RPI\Framework\Model\UUID("e10d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("e10d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "deleteImage",
                 array(
@@ -472,7 +472,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "assets",
             "\RPI\Controllers\Image\Controller",
-            new \RPI\Framework\Model\UUID("a60d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("a60d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "getanyimage",
                 array(
@@ -487,7 +487,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "assets",
             "\RPI\Controllers\Image\Controller",
-            new \RPI\Framework\Model\UUID("a60d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("a60d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "getjpegimagewithextensionandmime",
                 array(
@@ -502,7 +502,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "assets",
             "\RPI\Controllers\Image\Controller",
-            new \RPI\Framework\Model\UUID("a60d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("a60d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "getjpegimagewithextensionandmime",
                 array(
@@ -517,7 +517,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "assets",
             "\RPI\Controllers\Image\Controller",
-            new \RPI\Framework\Model\UUID("a60d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("a60d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "getpngimageextension",
                 array(
@@ -532,7 +532,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "testdefault",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("f97d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("f97d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "getactionwithdefault",
                 array(
@@ -546,7 +546,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "testdefault",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("f97d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("f97d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "getactionwithdefault",
                 array(
@@ -560,7 +560,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "testdefault2",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("f98d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("f98d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "getactionwithdefault",
                 array(
@@ -575,7 +575,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "testdefault2",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("f98d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("f98d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "getactionwithdefault",
                 array(
@@ -590,7 +590,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "testdefault2",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("f98d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("f98d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "getactionwithdefault",
                 array(
@@ -607,7 +607,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "testdefault3",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("f99d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("f99d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "getactionwithdefault",
                 array(
@@ -622,7 +622,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "testdefault3",
             "\RPI\Controllers\HTMLFront\Controller",
-            new \RPI\Framework\Model\UUID("f99d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("f99d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "getactionwithdefault",
                 array(
@@ -637,7 +637,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "thumb/Assets/Images",
             "\RPI\Controllers\Image\Controller",
-            new \RPI\Framework\Model\UUID("f99d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("f99d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "get",
                 array(
@@ -663,7 +663,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "thumb/Assets/Images",
             "\RPI\Controllers\Image\Controller",
-            new \RPI\Framework\Model\UUID("f99d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("f99d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "get",
                 array(
@@ -685,7 +685,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "thumb/Assets/Images",
             "\RPI\Controllers\Image\Controller",
-            new \RPI\Framework\Model\UUID("f99d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("f99d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "get",
                 array(
@@ -723,7 +723,7 @@ class RouterTest extends \RPI\Test\Harness\Base
             "get",
             "thumb/Assets/Images",
             "\RPI\Controllers\Image\Controller",
-            new \RPI\Framework\Model\UUID("f99d5cc4-1233-480d-9618-3c3dfcdb2439"),
+            new \RPI\Foundation\Model\UUID("f99d5cc4-1233-480d-9618-3c3dfcdb2439"),
             new \RPI\Framework\App\Router\Action(
                 "get",
                 array(

@@ -268,8 +268,8 @@ class Router implements \RPI\Framework\App\DomainObjects\IRouter
                 $method,
                 "status:$statusCode",
                 $match["controller"],
-                ($match["uuid"] instanceof \RPI\Framework\Model\UUID ?
-                    $match["uuid"] : new \RPI\Framework\Model\UUID($match["uuid"])),
+                ($match["uuid"] instanceof \RPI\Foundation\Model\UUID ?
+                    $match["uuid"] : new \RPI\Foundation\Model\UUID($match["uuid"])),
                 null,
                 (isset($match["secure"]) ? $match["secure"] : null),
                 (isset($match["requiresAuthentication"]) ? $match["requiresAuthentication"] : null)
@@ -381,8 +381,8 @@ class Router implements \RPI\Framework\App\DomainObjects\IRouter
                             $method,
                             $matchPath,
                             $match["controller"],
-                            ($match["uuid"] instanceof \RPI\Framework\Model\UUID ?
-                                $match["uuid"] : new \RPI\Framework\Model\UUID($match["uuid"])),
+                            ($match["uuid"] instanceof \RPI\Foundation\Model\UUID ?
+                                $match["uuid"] : new \RPI\Foundation\Model\UUID($match["uuid"])),
                             null,
                             (isset($match["secure"]) ? $match["secure"] : null),
                             (isset($match["requiresAuthentication"]) ? $match["requiresAuthentication"] : null)

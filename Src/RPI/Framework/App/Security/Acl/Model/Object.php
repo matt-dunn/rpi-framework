@@ -12,12 +12,12 @@ abstract class Object extends \RPI\Foundation\Helpers\Object implements IDomainO
     
     /**
      *
-     * @var \RPI\Framework\Model\IUser 
+     * @var \RPI\Foundation\Model\IUser 
      */
     protected $user = null;
     
     public function __construct(
-        \RPI\Framework\Model\IUser $user = null,
+        \RPI\Foundation\Model\IUser $user = null,
         \RPI\Framework\App\Security\Acl\Model\IAcl $acl = null
     ) {
         $this->user = $user;

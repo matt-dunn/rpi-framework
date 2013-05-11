@@ -98,7 +98,7 @@ class Xml implements IView
      * {@inheritdoc}
      */
     public function createController(
-        \RPI\Framework\Model\UUID $uuid,
+        \RPI\Foundation\Model\UUID $uuid,
         $type = null,
         array $controllerOptions = null
     ) {
@@ -418,7 +418,7 @@ class Xml implements IView
             }
             
             $controller = null;
-            $controllerUUID = new \RPI\Framework\Model\UUID();
+            $controllerUUID = new \RPI\Foundation\Model\UUID();
             
             $controllerElement = $xpath->query("RPI:controller", $route);
             if ($controllerElement->length > 0) {
@@ -452,7 +452,7 @@ class Xml implements IView
             if ($componentElements->length > 0) {
                 foreach ($componentElements as $componentElement) {
                     $childController = $this->parseController(
-                        new \RPI\Framework\Model\UUID($componentElement->getAttribute("id")),
+                        new \RPI\Foundation\Model\UUID($componentElement->getAttribute("id")),
                         $xpath,
                         $componentElement
                     );
@@ -594,7 +594,7 @@ class Xml implements IView
     }
     
     private function parseController(
-        \RPI\Framework\Model\UUID $controllerUUID,
+        \RPI\Foundation\Model\UUID $controllerUUID,
         \DOMXPath $xpath,
         \DOMNode $controllerElement,
         $parseChildComponents = true
@@ -720,7 +720,7 @@ class Xml implements IView
                 $controller["components"] = array();
                 foreach ($childComponentElements as $childComponentElement) {
                     $childController = $this->parseController(
-                        new \RPI\Framework\Model\UUID($childComponentElement->getAttribute("id")),
+                        new \RPI\Foundation\Model\UUID($childComponentElement->getAttribute("id")),
                         $xpath,
                         $childComponentElement
                     );
@@ -898,7 +898,7 @@ class Xml implements IView
      * {@inheritdoc}
      */
     public function deleteComponent(
-        \RPI\Framework\Model\UUID $uuid,
+        \RPI\Foundation\Model\UUID $uuid,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $optionName = "model"
     ) {

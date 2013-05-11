@@ -67,13 +67,13 @@ abstract class Cacheable extends \RPI\Framework\Controller
     
     /**
      * 
-     * @param \RPI\Framework\Model\UUID $id
+     * @param \RPI\Foundation\Model\UUID $id
      * @param \RPI\Framework\App $app
      * @param array $options
      * @param \RPI\Framework\Views\IView $viewRendition
      */
     public function __construct(
-        \RPI\Framework\Model\UUID $id,
+        \RPI\Foundation\Model\UUID $id,
         \RPI\Framework\App $app,
         \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,
         array $options = null,

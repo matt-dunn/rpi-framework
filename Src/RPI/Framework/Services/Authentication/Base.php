@@ -25,7 +25,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     /**
      *
-     * @var \RPI\Framework\Model\IUser 
+     * @var \RPI\Foundation\Model\IUser 
      */
     private $authenticatedUser = null;
 
@@ -155,16 +155,16 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
                 if (isset($this->app->getSession()->$authenticatedUserSessionName)) {
                     $user = $this->setUser(
                         $this->app->getSession()->$authenticatedUserSessionName,
-                        $this->createUserToken(new \RPI\Framework\Model\UUID($tokenParts["u"]), $tokenParts["s"])
+                        $this->createUserToken(new \RPI\Foundation\Model\UUID($tokenParts["u"]), $tokenParts["s"])
                     );
                 } else {
-                    $currentUser = $this->getUser(new \RPI\Framework\Model\UUID($tokenParts["u"]));
+                    $currentUser = $this->getUser(new \RPI\Foundation\Model\UUID($tokenParts["u"]));
                     if ($currentUser !== false) {
                         $this->logout(false);
 
                         $user = $this->setUser(
                             $currentUser,
-                            $this->createUserToken(new \RPI\Framework\Model\UUID($tokenParts["u"]), $tokenParts["s"])
+                            $this->createUserToken(new \RPI\Foundation\Model\UUID($tokenParts["u"]), $tokenParts["s"])
                         );
                     }
                 }
@@ -176,7 +176,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
         if ($user !== false) {
             $this->setAuthenticationState($user);
         } else {
-            $uuid = new \RPI\Framework\Model\UUID();
+            $uuid = new \RPI\Foundation\Model\UUID();
             $user = $this->setUser($this->createAnonymousUser($uuid), $this->createUserToken($uuid, true));
         }
 
@@ -185,7 +185,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     /**
      *
-     * @param  \RPI\Framework\Model\IUser|boolean  $user
+     * @param  \RPI\Foundation\Model\IUser|boolean  $user
      * @param string $userId
      * 
      * @return boolean
@@ -219,7 +219,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
     /**
      * {@inherit-doc}
      */
-    public function setAuthenticationState(\RPI\Framework\Model\IUser $user)
+    public function setAuthenticationState(\RPI\Foundation\Model\IUser $user)
     {
         $user->isAuthenticated = false;
         $user->isAnonymous = true;
@@ -263,9 +263,9 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
      * @param  string                    $userToken
      * @param  string                    $authenticationToken
      * 
-     * @return \RPI\Framework\Model\IUser
+     * @return \RPI\Foundation\Model\IUser
      */
-    private function setUser(\RPI\Framework\Model\IUser $user, $userToken = null, $authenticationToken = null)
+    private function setUser(\RPI\Foundation\Model\IUser $user, $userToken = null, $authenticationToken = null)
     {
         $authenticatedUserSessionName = $this->authenticatedUserSessionName;
         $this->authenticatedUser = $this->app->getSession()->$authenticatedUserSessionName = $user;
@@ -320,12 +320,12 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     /**
      *
-     * @param \RPI\Framework\Model\UUID $uuid
+     * @param \RPI\Foundation\Model\UUID $uuid
      * @param boolean $isAnonymous
      * 
      * @return string Unencrypted token
      */
-    private function createUserToken(\RPI\Framework\Model\UUID $uuid, $isAnonymous = false)
+    private function createUserToken(\RPI\Foundation\Model\UUID $uuid, $isAnonymous = false)
     {
         // TODO: add agent string?
         $agent = "";
@@ -355,7 +355,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
             $validToken =
                 ($crc == $tokenParts["c"]
                     && $token == $this->createUserToken(
-                        new \RPI\Framework\Model\UUID($tokenParts["u"]),
+                        new \RPI\Foundation\Model\UUID($tokenParts["u"]),
                         $tokenParts["s"]
                     )
                 );
@@ -375,12 +375,12 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     /**
      *
-     * @param \RPI\Framework\Model\UUID $uuid
+     * @param \RPI\Foundation\Model\UUID $uuid
      * @param integer $expiry
      * 
      * @return string    Unencrypted token
      */
-    private function createAuthenticationToken(\RPI\Framework\Model\UUID $uuid, $expiry)
+    private function createAuthenticationToken(\RPI\Foundation\Model\UUID $uuid, $expiry)
     {
         // TODO: store something in the token from the identification token to ensure it is valid for this server
         // TODO: add an absolute expiry. e.g. not only have the inactivity expiry currentl implemented but also
@@ -417,7 +417,7 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
             $validToken =
                 ($crc == $tokenParts["c"]
                     && $token == $this->createAuthenticationToken(
-                        new \RPI\Framework\Model\UUID($tokenParts["u"]),
+                        new \RPI\Foundation\Model\UUID($tokenParts["u"]),
                         $expiry
                     )
                 );
@@ -437,11 +437,11 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
 
     /**
      * 
-     * @param \RPI\Framework\Model\UUID $uuid
+     * @param \RPI\Foundation\Model\UUID $uuid
      * 
-     * @return \RPI\Framework\Model\IUser
+     * @return \RPI\Foundation\Model\IUser
      */
-    protected function createAnonymousUser(\RPI\Framework\Model\UUID $uuid)
+    protected function createAnonymousUser(\RPI\Foundation\Model\UUID $uuid)
     {
         return new \RPI\Framework\Model\User(
             $uuid
@@ -453,15 +453,15 @@ abstract class Base implements \RPI\Framework\Services\Authentication\IAuthentic
      * @param  string $userId
      * @param  string $password
      * 
-     * @return \RPI\Framework\Model\IUser
+     * @return \RPI\Foundation\Model\IUser
      */
     abstract protected function authenticateUserDetails($userId, $password);
 
     /**
      *
-     * @param \RPI\Framework\Model\UUID $uuid
+     * @param \RPI\Foundation\Model\UUID $uuid
      * 
-     * @return \RPI\Framework\Model\IUser|boolean
+     * @return \RPI\Foundation\Model\IUser|boolean
      */
-    abstract protected function getUser(\RPI\Framework\Model\UUID $uuid);
+    abstract protected function getUser(\RPI\Foundation\Model\UUID $uuid);
 }

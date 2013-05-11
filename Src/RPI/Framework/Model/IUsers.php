@@ -6,9 +6,9 @@ interface IUsers extends \RPI\Framework\App\Security\Acl\Model\IDomainObject
 {
     /**
      * 
-     * @param \RPI\Framework\Model\IUser $user
+     * @param \RPI\Foundation\Model\IUser $user
      * 
      * @return \RPI\Framework\Model\IUsers
      */
-    public function addUser(\RPI\Framework\Model\IUser $user);
+    public function addUser(\RPI\Foundation\Model\IUser $user);
 }

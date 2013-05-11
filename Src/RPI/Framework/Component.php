@@ -83,7 +83,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
     
     /**
      * 
-     * @param \RPI\Framework\Model\UUID $id
+     * @param \RPI\Foundation\Model\UUID $id
      * @param \RPI\Framework\App $app
      * @param \RPI\Framework\Cache\IFront $frontStore
      * @param \RPI\Framework\Services\Authentication\IAuthentication $authenticationService
@@ -92,7 +92,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
      * @param array $options
      */
     public function __construct(
-        \RPI\Framework\Model\UUID $id,
+        \RPI\Foundation\Model\UUID $id,
         \RPI\Framework\App $app,
         \RPI\Framework\Cache\IFront $frontStore,
         \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,
@@ -229,7 +229,7 @@ abstract class Component extends \RPI\Framework\Controller\HTML
 <?php
 // Component: {$this->type}
 \$GLOBALS["RPI_COMPONENTS"]["{$this->id}"] = \$GLOBALS["RPI_APP"]->getView()->createController(
-    new \RPI\Framework\Model\UUID("{$this->id}")
+    new \RPI\Foundation\Model\UUID("{$this->id}")
 );
 \$GLOBALS["RPI_COMPONENTS"]["{$this->id}"]->process();
 ?>

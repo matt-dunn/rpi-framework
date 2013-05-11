@@ -14,7 +14,7 @@ namespace RPI\Framework;
  * 
  * @property-read string $safeTypeName Object type as a 'safe' value
  * @property-read \RPI\Framework\Controller\Options $options Controller options
- * @property-read \RPI\Framework\Model\UUID $id Controller ID
+ * @property-read \RPI\Foundation\Model\UUID $id Controller ID
  * @property-read string $type Controller type
  * @property-read \RPI\Framework\App $app
  * @property-read \RPI\Foundation\App\DomainObjects\IConfig $config
@@ -37,7 +37,7 @@ abstract class Controller extends \RPI\Foundation\Helpers\Object
 
     /**
      *
-     * @var \RPI\Framework\Model\UUID
+     * @var \RPI\Foundation\Model\UUID
      */
     private $id = null;
     
@@ -115,7 +115,7 @@ abstract class Controller extends \RPI\Foundation\Helpers\Object
      * @throws \Exception
      */
     public function __construct(
-        \RPI\Framework\Model\UUID $id,
+        \RPI\Foundation\Model\UUID $id,
         \RPI\Framework\App $app,
         \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,
         array $options = null
@@ -152,7 +152,7 @@ abstract class Controller extends \RPI\Foundation\Helpers\Object
     
     /**
      * 
-     * @return \RPI\Framework\Model\UUID
+     * @return \RPI\Foundation\Model\UUID
      */
     public function getId()
     {
@@ -171,7 +171,7 @@ abstract class Controller extends \RPI\Foundation\Helpers\Object
     /**
      * Setup the controller. Only should be called in a __construct
      * 
-     * @param \RPI\Framework\Model\UUID $id
+     * @param \RPI\Foundation\Model\UUID $id
      * @param \RPI\Framework\App $app
      * @param \RPI\Framework\Services\Authentication\IAuthentication $authenticationService
      * @param array $options
@@ -179,7 +179,7 @@ abstract class Controller extends \RPI\Foundation\Helpers\Object
      * @throws \Exception
      */
     protected function setup(
-        \RPI\Framework\Model\UUID $id,
+        \RPI\Foundation\Model\UUID $id,
         \RPI\Framework\App $app,
         \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,
         array $options = null

@@ -14,13 +14,13 @@ interface IProvider
     
     /**
      * 
-     * @param \RPI\Framework\Model\User $user
+     * @param \RPI\Foundation\Model\IUser $user
      * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
      * 
      * @return boolean
      */
     public function isOwner(
-        \RPI\Framework\Model\User $user,
+        \RPI\Foundation\Model\IUser $user,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
     );
 }

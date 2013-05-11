@@ -20,11 +20,11 @@ interface IAuthentication
     /**
      * Update the user object authentication state
      * 
-     * @param \RPI\Framework\Model\IUser $user
+     * @param \RPI\Foundation\Model\IUser $user
      * 
      * @return boolean  True is user is authenticated
      */
-    public function setAuthenticationState(\RPI\Framework\Model\IUser $user);
+    public function setAuthenticationState(\RPI\Foundation\Model\IUser $user);
     
     /**
      *
@@ -34,7 +34,7 @@ interface IAuthentication
     public function logout($complete = true);
 
     /**
-     * @return \RPI\Framework\Model\IUser
+     * @return \RPI\Foundation\Model\IUser
      */
     public function getAuthenticatedUser();
 }

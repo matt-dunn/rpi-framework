@@ -44,7 +44,7 @@ abstract class Server extends \RPI\Framework\Controller
     
     /**
      * 
-     * @param \RPI\Framework\Model\UUID $id
+     * @param \RPI\Foundation\Model\UUID $id
      * @param \Psr\Log\LoggerInterface $logger
      * @param \RPI\Framework\App $app
      * @param \RPI\Framework\App\DomainObjects\ISecurity $security
@@ -53,7 +53,7 @@ abstract class Server extends \RPI\Framework\Controller
      * @param array $options
      */
     public function __construct(
-        \RPI\Framework\Model\UUID $id,
+        \RPI\Foundation\Model\UUID $id,
         \Psr\Log\LoggerInterface $logger,
         \RPI\Framework\App $app,
         \RPI\Framework\App\DomainObjects\ISecurity $security,

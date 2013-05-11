@@ -34,7 +34,7 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
      * {@inheritdoc}
      */
     public function checkProperty(
-        \RPI\Framework\Model\IUser $user,
+        \RPI\Foundation\Model\IUser $user,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $access,
         $property = null
@@ -46,7 +46,7 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
      * {@inheritdoc}
      */
     public function checkOperation(
-        \RPI\Framework\Model\IUser $user,
+        \RPI\Foundation\Model\IUser $user,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $access,
         $operation = null
@@ -58,7 +58,7 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
      * {@inheritdoc}
      */
     public function canEdit(
-        \RPI\Framework\Model\IUser $user,
+        \RPI\Foundation\Model\IUser $user,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
     ) {
         return $this->canUpdate($user, $domainObject)
@@ -70,7 +70,7 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
      * {@inheritdoc}
      */
     public function canRead(
-        \RPI\Framework\Model\IUser $user,
+        \RPI\Foundation\Model\IUser $user,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
     ) {
         return $this->checkRoles($user, $domainObject, IAcl::READ, null, "operations");
@@ -80,7 +80,7 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
      * {@inheritdoc}
      */
     public function canUpdate(
-        \RPI\Framework\Model\IUser $user,
+        \RPI\Foundation\Model\IUser $user,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
     ) {
         return $this->checkRoles($user, $domainObject, IAcl::UPDATE, null, "operations");
@@ -90,7 +90,7 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
      * {@inheritdoc}
      */
     public function canDelete(
-        \RPI\Framework\Model\IUser $user,
+        \RPI\Foundation\Model\IUser $user,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
     ) {
         return $this->checkRoles($user, $domainObject, IAcl::DELETE, null, "operations");
@@ -100,7 +100,7 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
      * {@inheritdoc}
      */
     public function canCreate(
-        \RPI\Framework\Model\IUser $user,
+        \RPI\Foundation\Model\IUser $user,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
     ) {
         return $this->checkRoles($user, $domainObject, IAcl::CREATE, null, "operations");
@@ -108,7 +108,7 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
     
     /**
      * 
-     * @param \RPI\Framework\Model\IUser $user
+     * @param \RPI\Foundation\Model\IUser $user
      * @param \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject
      * @param integer $access
      * @param string $property
@@ -117,13 +117,13 @@ class Acl implements \RPI\Framework\App\Security\Acl\Model\IAcl
      * @return boolean
      */
     private function checkRoles(
-        \RPI\Framework\Model\IUser $user,
+        \RPI\Foundation\Model\IUser $user,
         \RPI\Framework\App\Security\Acl\Model\IDomainObject $domainObject,
         $access,
         $property,
         $type
     ) {
-        if (in_array(\RPI\Framework\Model\IUser::ROOT, $user->roles)) {
+        if (in_array(\RPI\Foundation\Model\IUser::ROOT, $user->roles)) {
             $permission = array();
 
             if ($access & \RPI\Framework\App\Security\Acl\Model\IAcl::CREATE) {

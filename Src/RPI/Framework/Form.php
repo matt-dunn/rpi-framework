@@ -103,7 +103,7 @@ abstract class Form extends \RPI\Framework\Component
 
     /**
      * 
-     * @param \RPI\Framework\Model\UUID $id
+     * @param \RPI\Foundation\Model\UUID $id
      * @param \RPI\Framework\App $app
      * @param \RPI\Framework\Cache\IFront $frontStore
      * @param \RPI\Framework\App\DomainObjects\ISecurity $security
@@ -113,7 +113,7 @@ abstract class Form extends \RPI\Framework\Component
      * @param array $options
      */
     public function __construct(
-        \RPI\Framework\Model\UUID $id,
+        \RPI\Foundation\Model\UUID $id,
         \RPI\Framework\App $app,
         \RPI\Framework\Cache\IFront $frontStore,
         \RPI\Framework\App\DomainObjects\ISecurity $security,
