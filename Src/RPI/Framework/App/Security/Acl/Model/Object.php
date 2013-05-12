@@ -24,7 +24,8 @@ abstract class Object extends \RPI\Foundation\Helpers\Object implements IDomainO
         $this->acl = $acl;
     }
      
-    public function canRead($propertyName) {
+    public function canRead($propertyName)
+    {
         if (!isset($this->acl)
             || $this->acl->checkProperty(
                 $this->user,
@@ -38,7 +39,8 @@ abstract class Object extends \RPI\Foundation\Helpers\Object implements IDomainO
         return false;
     }
     
-    public function canUpdate($propertyName) {
+    public function canUpdate($propertyName)
+    {
         if (!isset($this->acl)
             || $this->acl->checkProperty(
                 $this->user,

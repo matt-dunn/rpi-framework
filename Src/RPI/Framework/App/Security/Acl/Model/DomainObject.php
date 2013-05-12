@@ -28,8 +28,11 @@ class DomainObject implements IDomainObject
      * @param \RPI\Foundation\Model\UUID $id
      * @param \RPI\Foundation\Model\UUID $ownerId
      */
-    public function __construct($type, \RPI\Foundation\Model\UUID $id = null, \RPI\Foundation\Model\UUID $ownerId = null)
-    {
+    public function __construct(
+        $type,
+        \RPI\Foundation\Model\UUID $id = null,
+        \RPI\Foundation\Model\UUID $ownerId = null
+    ) {
         $this->type = $type;
         $this->id = $id;
         $this->ownerId = $ownerId;
