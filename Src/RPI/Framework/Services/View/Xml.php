@@ -417,7 +417,6 @@ class Xml implements IView
                 $match = "";
             }
             
-            $controller = null;
             $controllerUUID = new \RPI\Foundation\Model\UUID();
             
             $controllerElement = $xpath->query("RPI:controller", $route);
@@ -596,7 +595,7 @@ class Xml implements IView
     private function parseController(
         \RPI\Foundation\Model\UUID $controllerUUID,
         \DOMXPath $xpath,
-        \DOMNode $controllerElement,
+        \DOMElement $controllerElement,
         $parseChildComponents = true
     ) {
         $options = null;

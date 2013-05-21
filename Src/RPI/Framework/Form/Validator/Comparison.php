@@ -24,8 +24,6 @@ class Comparison extends \RPI\Framework\Form\Validator
 
     public function validate($value)
     {
-        $itemToCompare = null;
-
         if (!isset($this->formItem)) {
             $itemToCompare = \RPI\Framework\Form\Handler::$postBackForm->formItems[$this->compareItemName];
         } else {

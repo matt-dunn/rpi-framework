@@ -11,7 +11,6 @@ class Pagination implements \RPI\Framework\Views\Php\IView
         if (isset($model["pagination"])) {
             $pagination = $model["pagination"];
 
-            $paginationDetails = "";
             if ($pagination["start"] != $pagination["end"]) {
                 $paginationDetails = "Showing items ".($pagination["start"] + 1).
                     " to ".($pagination["end"] + 1);

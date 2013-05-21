@@ -50,9 +50,6 @@ class View implements \RPI\Framework\Views\IView
             $this->debug = ($controller->getConfig()->getValue("config/debug/@enabled", false) === true);
         }
         
-        $rootName = null;
-        $defaultTagName = null;
-
         if ($controller instanceof \RPI\Framework\Component) {
             $rootName = "component";
             $defaultTagName = "item";

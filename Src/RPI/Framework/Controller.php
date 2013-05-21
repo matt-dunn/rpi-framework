@@ -120,7 +120,7 @@ abstract class Controller extends \RPI\Foundation\Helpers\Object
         \RPI\Framework\Services\Authentication\IAuthentication $authenticationService = null,
         array $options = null
     ) {
-        $options = $this->setup($id, $app, $authenticationService, $options);
+        $this->setup($id, $app, $authenticationService, $options);
         
         if ($this->initController() !== false) {
             $this->init();

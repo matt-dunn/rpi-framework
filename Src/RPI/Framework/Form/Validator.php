@@ -33,6 +33,12 @@ abstract class Validator
      * @var string
      */
     private $validatorMessage = null;
+    
+    /**
+     *
+     * @var string
+     */
+    protected $message = null;
 
     public function __construct($type, array $buttons = null)
     {

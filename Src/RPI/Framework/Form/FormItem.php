@@ -12,7 +12,8 @@ abstract class FormItem
      *
      * @var \RPI\Framework\Form
      */
-    protected $form;
+    public $form;
+    
     /**
      * Set to true if all the defined validators have been run. Validators may
      * not run if they have been set to run against specific validators

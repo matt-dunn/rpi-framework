@@ -45,7 +45,6 @@ class Password
         for ($i = 0; $i < $maxLength; $i++) {
             $salt .= $characterList{mt_rand(0, strlen($characterList) - 1)};
         }
-        $i = 0;
 
         return $salt;
     }

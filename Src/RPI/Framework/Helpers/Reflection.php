@@ -40,7 +40,7 @@ class Reflection
     /**
      * 
      * @param \RPI\Framework\App $app
-     * @param type $className
+     * @param string $className
      * @param array $params
      * @param string $type
      * 
