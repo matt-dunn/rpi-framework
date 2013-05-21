@@ -141,7 +141,7 @@ abstract class Object extends \RPI\Foundation\Helpers\Object implements IDomainO
         
         foreach ($reflect->getMethods(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED) as $method) {
             $parameterCount = count($method->getParameters());
-            $methodName = $method->getName();
+            $methodName = $method->name;
             if ($parameterCount == 0 && substr($methodName, 0, 3) == "get") {
                 $name = lcfirst(substr($methodName, 3));
                 if (!isset($this->acl)
@@ -175,7 +175,7 @@ abstract class Object extends \RPI\Foundation\Helpers\Object implements IDomainO
         
         foreach ($reflect->getMethods($methodType) as $method) {
             $parameterCount = count($method->getParameters());
-            $methodName = $method->getName();
+            $methodName = $method->name;
             if ($parameterCount == 0 && substr($methodName, 0, 3) == "get") {
                 $name = lcfirst(substr($methodName, 3));
                 if (!isset($this->acl)
@@ -192,7 +192,7 @@ abstract class Object extends \RPI\Foundation\Helpers\Object implements IDomainO
                         }
                         $properties[$name] = $value;
                     } else {
-                        $properties[$name] = lcfirst(substr($method->getName(), 3));
+                        $properties[$name] = lcfirst(substr($method->name, 3));
                     }
                 }
             }
