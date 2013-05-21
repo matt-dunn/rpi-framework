@@ -13,21 +13,36 @@ class Pagination
     }
 
     /**
-     * Insert pagination XML into a DOMDocument
-     * @param integer $totalCount   Total number of items
-     * @param integer $itemsPerPage Number of items per page
-     * @param integer $offset       Zero based offset of first item
-     * @param void
+     * 
+     * @param \RPI\HTTP\IRequest $request
+     * @param int $totalCount
+     * @param int $itemsPerPage
+     * @param int $offset
+     * @param int $maxPages
+     * @param array $parameters
+     * 
+     * @return array
      */
-    public static function getPaginationData($totalCount, $itemsPerPage, $offset, $maxPages = null, $parameters = null)
-    {
+    public static function getPaginationData(
+        \RPI\HTTP\IRequest $request,
+        $totalCount,
+        $itemsPerPage,
+        $offset,
+        $maxPages = null
+    ) {
         $data = null;
         
-        if (!isset($maxPages)) {
-            $maxPages = 10;
-        }
-
         if ($itemsPerPage > 0 && $totalCount > $itemsPerPage) {
+            if (!isset($maxPages)) {
+                $maxPages = 10;
+            } elseif ($maxPages < 5) {
+                $maxPages = 5;
+            }
+
+            $url = $request->getUrlPath();
+            $querystring = "";
+            $parameters = $request->getParameters();
+            
             $data = array();
             $data["totalItems"] = $totalCount;
             $data["itemsPerPage"] = $itemsPerPage;
@@ -38,12 +53,6 @@ class Pagination
             $page = ($offset / $itemsPerPage) + 1;
             $totalPages = ceil($totalCount / $itemsPerPage);
             $data["totalPages"] = $totalPages;
-
-            if (isset($_SERVER["REQUEST_URI"])) {
-                $url = preg_replace("/page-[0-9]{1,}\//", "", parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH));
-            }
-
-            $querystring = "";
 
             // Safely remove the 'page' qs value:
             if (isset($parameters)) {
@@ -73,9 +82,6 @@ class Pagination
                 $data["pages"]["next"] = array("number" => $page + 1, "url" => $pageUrl);
             }
 
-            if ($maxPages < 5) {
-                $maxPages = 5;
-            }
             $startPage = (int) ($page - 1 - (($maxPages / 2) - 1));
             if ($startPage + $maxPages > $totalPages) {
                 $startPage = $totalPages - $maxPages;
