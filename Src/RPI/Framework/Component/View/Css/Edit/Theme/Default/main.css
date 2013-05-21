@@ -27,7 +27,7 @@
 }
 
 .nicEdit-panel .nicEdit-select-control {
-    background:url(i/Component/Edit/Theme/Default/nicEditorIcons.gif) no-repeat;
+    background:url(I/Component/Edit/Theme/Default/nicEditorIcons.gif) no-repeat;
     background-position: -378px 0;
     width:18px;
     height:18px;
@@ -54,7 +54,7 @@
 }
 
 .nicEdit-panel .nicEdit-btn {
-    background:url(i/Component/Edit/Theme/Default/nicEditorIcons.gif) no-repeat;
+    background:url(I/Component/Edit/Theme/Default/nicEditorIcons.gif) no-repeat;
     width: 18px;
     height: 18px;
 }
@@ -130,7 +130,7 @@
 .nicEdit-pane-container .nicEdit-btn-close {
     height:16px;
     width:16px;
-    background:url(i/Component/Edit/Theme/Default/nicEditorIcons.gif) no-repeat;
+    background:url(I/Component/Edit/Theme/Default/nicEditorIcons.gif) no-repeat;
     background-position: -360px 0;
 }
 
