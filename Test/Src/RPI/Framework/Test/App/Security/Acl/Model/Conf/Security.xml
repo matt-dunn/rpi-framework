@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.rpi.co.uk/presentation/config/security/ ../../../RPI/Schemas/Conf/Security.1.0.0.xsd"
+    xsi:schemaLocation="http://www.rpi.co.uk/presentation/config/security/ ../../../../../../../../../../../schemas/Src/RPI/Schemas/Conf/Security.1.0.0.xsd"
     xmlns:xi="http://www.w3.org/2001/XInclude"
     
     xmlns="http://www.rpi.co.uk/presentation/config/security/"
