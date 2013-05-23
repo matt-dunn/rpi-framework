@@ -32,12 +32,6 @@ abstract class Validator
      *
      * @var string
      */
-    private $validatorMessage = null;
-    
-    /**
-     *
-     * @var string
-     */
     protected $message = null;
 
     public function __construct($type, array $buttons = null)
@@ -82,19 +76,19 @@ abstract class Validator
     public function __get($key)
     {
         if ($key == "message") {
-            if (isset($this->validatorMessage) && $this->validatorMessage !== true
-                    && $this->validatorMessage !== false) {
-                return vsprintf($this->validatorMessage, array($this->formItem->displayText));
+            if (isset($this->message) && $this->message !== true
+                    && $this->message !== false) {
+                return vsprintf($this->message, array($this->formItem->displayText));
             }
 
-            return $this->validatorMessage;
+            return $this->message;
         }
     }
 
     public function __set($key, $value)
     {
         if ($key == "message") {
-            $this->validatorMessage = $value;
+            $this->message = $value;
         }
     }
 
@@ -105,7 +99,7 @@ abstract class Validator
 
     public function render()
     {
-        $message = addslashes($this->message);
+        $message = addslashes($this->__get("message"));
 
         $additionParameters = $this->renderValidatorAdditionalParameters();
         if (trim($additionParameters) != "") {
