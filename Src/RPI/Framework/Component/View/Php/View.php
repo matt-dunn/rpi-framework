@@ -4,6 +4,9 @@ namespace RPI\Framework\Component\View\Php;
 
 abstract class View extends \RPI\Framework\Controller\Message\View\Php\View implements \RPI\Framework\Views\Php\IView
 {
+    protected $componentElementName = "section";
+    protected $componentRole = null;
+    
     /**
      * 
      * @param type $model
@@ -73,12 +76,17 @@ EOT;
             }
 
             if ($componentRendition !== false) {
+                $componentRole = null;
+                if (isset($this->componentRole)) {
+                    $componentRole = " role=\"{$this->componentRole}\"";
+                }
+                
                 $rendition = <<<EOT
-    <section class="$className"$sectionAttributes>
+    <{$this->componentElementName}{$componentRole} class="$className"$sectionAttributes>
         {$sectionOptionsHTML}
 
         {$componentRendition}
-    </section>
+    </{$this->componentElementName}>
 EOT;
             }
         }
