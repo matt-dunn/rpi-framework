@@ -24,7 +24,7 @@ body.component_js .component-editmode.draggable-container .component-delete {
 }
 
 body.component_js .component-editmode.draggable-container .component-delete .option-delete {
-    #sprite:url(composer://rpi/view#Src/RPI/View/Css/I/Sprites/delete.png);
+    sprite:url(composer://rpi/view#Src/RPI/View/Css/I/Sprites/delete.png);
     position:absolute;
     top:0;
     right:0;
