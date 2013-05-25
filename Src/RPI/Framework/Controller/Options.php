@@ -167,7 +167,7 @@ class Options
         $options = array();
         
         foreach ($this->options as $name => $value) {
-            if (isset($value) && trim($value) != "") {
+            if (isset($value)) {
                 if (!isset($optionType)
                     || (
                         isset($this->availableOptions[$name]["optionType"])
