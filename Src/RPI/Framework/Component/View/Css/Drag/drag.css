@@ -31,3 +31,10 @@ body.component_js .component-editmode.draggable-container .component-delete .opt
     cursor:pointer;
     z-index:9999999;
 }
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2), 
+only screen and (min-device-pixel-ratio: 2) {
+    body.component_js .component-editmode.draggable-container .component-delete .option-delete {
+        sprite:url(composer://rpi/view#Src/RPI/View/Css/I/Sprites/deleteX2.png) ratio=2;
+    }
+}

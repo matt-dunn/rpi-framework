@@ -37,10 +37,26 @@ form fieldset p.error span.c:after {
     right:0;
 }
 
+@media only screen and (-webkit-min-device-pixel-ratio: 2), 
+only screen and (min-device-pixel-ratio: 2) {
+    form fieldset.error:after,
+    form fieldset p.error span.c:after {
+        sprite:url(composer://rpi/view#Src/RPI/View/Css/I/Sprites/crossX2.png) ratio=2;
+    }
+}
+
 form fieldset.success:after,
 form fieldset p.success span.c:after {
     sprite:url(composer://rpi/view#Src/RPI/View/Css/I/Sprites/tick.png);
     position:absolute;
     top:5px;
     right:0;
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2), 
+only screen and (min-device-pixel-ratio: 2) {
+    form fieldset.success:after,
+    form fieldset p.success span.c:after {
+        sprite:url(composer://rpi/view#Src/RPI/View/Css/I/Sprites/tickX2.png) ratio=2;
+    }
 }
