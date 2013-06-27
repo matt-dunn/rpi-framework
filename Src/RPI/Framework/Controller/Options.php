@@ -119,7 +119,7 @@ class Options
                 $optionDetails = $this->availableOptions[$name];
                 
                 if ($optionDetails["type"] == "bool") {
-                    if (!($value == "true" || $value == "false")) {
+                    if (!($value == "true" || $value == "false" || is_bool($value))) {
                         throw new \InvalidArgumentException(
                             "Invalid type '".gettype($value)."' ($value) for '$name'. Must be of type '".
                             $optionDetails["type"]."'"
