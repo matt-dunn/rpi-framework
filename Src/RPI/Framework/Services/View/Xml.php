@@ -621,7 +621,14 @@ class Xml implements IView
             if (!isset($options)) {
                 $options = array();
             }
-            $options[$option->getAttribute("name")] = $value;
+            if (isset($options[$option->getAttribute("name")])) {
+                if (!is_array($options[$option->getAttribute("name")])) {
+                    $options[$option->getAttribute("name")] = array($options[$option->getAttribute("name")]);
+                }
+                $options[$option->getAttribute("name")][] = $value;
+            } else {
+                $options[$option->getAttribute("name")] = $value;
+            }
         }
         
         $viewRendition = null;

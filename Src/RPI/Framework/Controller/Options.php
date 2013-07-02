@@ -125,7 +125,15 @@ class Options
                             $optionDetails["type"]."'"
                         );
                     }
+                } elseif ($optionDetails["type"] == "array" && !is_array($value)) {
+                    $this->options[$name] = array($value);
                 } else {
+                    if (!function_exists("is_".$optionDetails["type"])) {
+                        throw new \InvalidArgumentException(
+                            "Invalid type '{$optionDetails["type"]}'"
+                        );
+                    }
+                    
                     if ($optionDetails["type"] != "string" && !call_user_func("is_".$optionDetails["type"], $value)) {
                         throw new \InvalidArgumentException(
                             "Invalid type '".gettype($value)."' ($value) for '$name'. Must be of type '".
